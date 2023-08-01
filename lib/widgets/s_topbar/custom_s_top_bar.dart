@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CustomTopBar extends StatelessWidget {
+class CustomSTopBar extends StatelessWidget {
   double extent;
-  CustomTopBar({required this.extent, super.key});
+  CustomSTopBar({required this.extent, super.key});
 
   @override
   Widget build(

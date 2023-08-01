@@ -1,5 +1,5 @@
-import 'package:august_testing/widgets/topbar/path/top_bar_wave_clipper.dart';
-import 'package:august_testing/widgets/topbar/top_bar.dart';
+import 'package:august_testing/widgets/s_topbar/path/custom_s_top_bar_wave_clipper.dart';
+import 'package:august_testing/widgets/s_topbar/custom_s_top_bar.dart';
 import 'package:flutter/material.dart';
 
 class SliverATAppBar extends SliverPersistentHeaderDelegate {
@@ -9,8 +9,8 @@ class SliverATAppBar extends SliverPersistentHeaderDelegate {
     return SizedBox(
       height: 300,
       child: ClipPath(
-        clipper: TopBarWaveClipper(),
-        child: CustomTopBar(extent: adjustedShrinkOffset),
+        clipper: CustomSTopBarWaveClipper(),
+        child: CustomSTopBar(extent: adjustedShrinkOffset),
       ),
     );
   }
