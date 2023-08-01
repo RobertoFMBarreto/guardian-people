@@ -1,5 +1,5 @@
-import 'package:august_testing/widgets/top_bar.dart';
-import 'package:august_testing/widgets/path/top_bar_wave_clipper.dart';
+import 'package:august_testing/widgets/topbar/path/top_bar_wave_clipper.dart';
+import 'package:august_testing/widgets/topbar/top_bar.dart';
 import 'package:flutter/material.dart';
 
 class SliverATAppBar extends SliverPersistentHeaderDelegate {

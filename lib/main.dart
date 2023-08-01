@@ -1,6 +1,5 @@
-import 'package:august_testing/widgets/sliver_at_app_bar.dart';
+import 'package:august_testing/pages/admin/admin_home.dart';
 import 'package:flutter/material.dart';
-import 'widgets/path/top_bar_wave_clipper.dart';
 import 'colors.dart';
 
 void main() {
@@ -50,57 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         bottomSheetTheme: const BottomSheetThemeData(backgroundColor: atBackgroundColor),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              delegate: SliverATAppBar(),
-              // Set this param so that it won't go off the screen when scrolling
-              pinned: true,
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                return Container(
-                    margin: const EdgeInsets.all(8),
-                    padding: const EdgeInsets.all(16),
-                    child: const Text(
-                      'Cruelty-free brand',
-                      style: TextStyle(fontSize: 20),
-                    ));
-              }, childCount: 20),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Adicionar Produtor',
-        backgroundColor: theme.colorScheme.secondary,
-        shape: CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: theme.colorScheme.onSecondary,
-        ),
-      ),
+      home: const AdminHome(),
     );
   }
 }
