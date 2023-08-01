@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class TopBar extends StatelessWidget {
+class CustomTopBar extends StatelessWidget {
   double extent;
-  TopBar({required this.extent, super.key});
+  CustomTopBar({required this.extent, super.key});
 
   @override
   Widget build(
     BuildContext context,
   ) {
-    print(extent);
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 300,
@@ -45,38 +45,43 @@ class TopBar extends StatelessWidget {
                 ],
               ),
             )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.menu,
-                        color: theme.colorScheme.onSecondary,
-                        size: 30,
-                      ),
+          : FittedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: deviceWidth,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.menu,
+                            color: theme.colorScheme.onSecondary,
+                            size: 30,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  radius: 60 * (1 - (extent / 100)),
-                ),
-                Text(
-                  'Nome Produtor',
-                  style: theme.textTheme.headlineMedium!
-                      .copyWith(color: theme.colorScheme.onSecondary),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: deviceHeight * 0.08,
                   ),
-                )
-              ],
+                  CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    radius: 60 * (1 - (extent / 100)),
+                  ),
+                  Text(
+                    'Nome Produtor',
+                    style: theme.textTheme.headlineMedium!
+                        .copyWith(color: theme.colorScheme.onSecondary),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: deviceHeight * 0.08,
+                    ),
+                  )
+                ],
+              ),
             ),
     );
   }

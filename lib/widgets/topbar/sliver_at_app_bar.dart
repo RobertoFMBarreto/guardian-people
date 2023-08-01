@@ -10,7 +10,7 @@ class SliverATAppBar extends SliverPersistentHeaderDelegate {
       height: 300,
       child: ClipPath(
         clipper: TopBarWaveClipper(),
-        child: TopBar(extent: adjustedShrinkOffset),
+        child: CustomTopBar(extent: adjustedShrinkOffset),
       ),
     );
   }
