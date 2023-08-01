@@ -1,6 +1,5 @@
 import 'package:august_testing/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:august_testing/widgets/pages/admin/admin_home/producers.dart';
-import 'package:august_testing/widgets/producer.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/topbar/sliver_at_app_bar.dart';

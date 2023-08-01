@@ -8,6 +8,7 @@ class TopBar extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
+    print(extent);
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
     return Container(
@@ -23,7 +24,7 @@ class TopBar extends StatelessWidget {
           ],
         ),
       ),
-      child: extent == 70
+      child: extent >= 70
           ? Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Row(
@@ -61,9 +62,9 @@ class TopBar extends StatelessWidget {
                     ),
                   ],
                 ),
-                const CircleAvatar(
+                CircleAvatar(
                   backgroundColor: Colors.grey,
-                  radius: 60,
+                  radius: 60 * (1 - (extent / 100)),
                 ),
                 Text(
                   'Nome Produtor',
