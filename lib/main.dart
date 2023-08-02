@@ -49,7 +49,10 @@ class MyApp extends StatelessWidget {
         ),
         bottomSheetTheme: const BottomSheetThemeData(backgroundColor: atBackgroundColor),
       ),
-      home: const AdminHome(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const AdminHome(),
+      },
     );
   }
 }

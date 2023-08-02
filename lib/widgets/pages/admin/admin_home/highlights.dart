@@ -28,7 +28,7 @@ class Highlights extends StatelessWidget {
               right: 10.0,
             ),
             child: SizedBox(
-              height: deviceHeight * 0.24,
+              height: deviceHeight * 0.23,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: 10,
