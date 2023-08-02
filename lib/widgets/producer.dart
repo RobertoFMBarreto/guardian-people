@@ -22,12 +22,12 @@ class Producer extends StatelessWidget {
                 Radius.circular(20),
               ),
               child: SizedBox(
-                height: 130,
+                height: 110,
                 width: 0.43 * deviceWidth,
                 child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0, top: 35.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0, top: 20.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'Nome Produtor',
@@ -41,7 +41,7 @@ class Producer extends StatelessWidget {
                           '2 dispositivos em alerta vermelho',
                           style: theme.textTheme.bodyLarge!.copyWith(
                             color: Colors.grey,
-                            fontSize: 18,
+                            fontSize: 15,
                             height: 1.2,
                           ),
                           textAlign: TextAlign.center,

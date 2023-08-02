@@ -13,7 +13,7 @@ class Producers extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 0,
         mainAxisSpacing: 0,
-        mainAxisExtent: deviceHeight * 0.25,
+        mainAxisExtent: deviceHeight * 0.24,
       ),
       itemCount: 10,
       itemBuilder: (context, index) => Producer(),

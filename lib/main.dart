@@ -1,4 +1,4 @@
-import 'package:august_testing/pages/admin/admin_home.dart';
+import 'package:guardian/pages/admin/admin_home.dart';
 import 'package:flutter/material.dart';
 import 'colors.dart';
 

@@ -17,7 +17,7 @@ class Highlights extends StatelessWidget {
             padding: const EdgeInsets.only(left: 20.0),
             child: Text(
               'Destaques',
-              style: theme.textTheme.headlineMedium,
+              style: theme.textTheme.headlineMedium!.copyWith(fontSize: 25),
             ),
           ),
           Padding(
@@ -28,7 +28,7 @@ class Highlights extends StatelessWidget {
               right: 10.0,
             ),
             child: SizedBox(
-              height: deviceHeight * 0.25,
+              height: deviceHeight * 0.24,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: 10,

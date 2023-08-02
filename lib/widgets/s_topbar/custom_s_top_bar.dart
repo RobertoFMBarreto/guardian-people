@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 
 class CustomSTopBar extends StatelessWidget {
   double extent;
-  CustomSTopBar({required this.extent, super.key});
+  String name;
+  String imageUrl;
+  CustomSTopBar({
+    required this.extent,
+    required this.name,
+    required this.imageUrl,
+    super.key,
+  });
 
   @override
   Widget build(
@@ -31,7 +38,7 @@ class CustomSTopBar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'Nome Produtor',
+                    name,
                     style:
                         theme.textTheme.bodyMedium!.copyWith(color: theme.colorScheme.onSecondary),
                   ),
@@ -58,9 +65,9 @@ class CustomSTopBar extends StatelessWidget {
                         IconButton(
                           onPressed: () {},
                           icon: Icon(
-                            Icons.menu,
+                            Icons.logout,
+                            size: 25,
                             color: theme.colorScheme.onSecondary,
-                            size: 30,
                           ),
                         ),
                       ],
@@ -71,7 +78,7 @@ class CustomSTopBar extends StatelessWidget {
                     radius: 60 * (1 - (extent / 100)),
                   ),
                   Text(
-                    'Nome Produtor',
+                    name,
                     style: theme.textTheme.headlineMedium!
                         .copyWith(color: theme.colorScheme.onSecondary),
                   ),

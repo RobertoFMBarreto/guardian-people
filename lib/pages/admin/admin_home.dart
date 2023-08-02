@@ -1,5 +1,5 @@
-import 'package:august_testing/widgets/pages/admin/admin_home/highlights.dart';
-import 'package:august_testing/widgets/pages/admin/admin_home/producers.dart';
+import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
+import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/s_topbar/sliver_at_app_bar.dart';
@@ -24,7 +24,7 @@ class AdminHome extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
                   'Produtores',
-                  style: theme.textTheme.headlineMedium,
+                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 25),
                 ),
               ),
             ),
