@@ -10,6 +10,7 @@ class Producer extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed('/admin/producer'),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Stack(

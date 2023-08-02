@@ -1,8 +1,7 @@
 import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
-
-import '../../widgets/s_topbar/sliver_at_app_bar.dart';
+import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
 class AdminHomePage extends StatelessWidget {
   const AdminHomePage({super.key});
@@ -15,7 +14,9 @@ class AdminHomePage extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: SliverATAppBar(),
+              delegate: SliverMainAppBar(
+                isHomeShape: true,
+              ),
               pinned: true,
             ),
             const Highlights(),

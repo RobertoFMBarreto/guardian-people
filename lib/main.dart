@@ -1,5 +1,7 @@
+import 'package:flutter/services.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/pages/admin/producer_page.dart';
 import 'colors.dart';
 
 void main() {
@@ -11,6 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Change status bar color
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Color.fromRGBO(147, 215, 166, 1),
+      ),
+    );
     return MaterialApp(
       title: 'August Demo',
       debugShowCheckedModeBanner: false,
@@ -49,9 +57,10 @@ class MyApp extends StatelessWidget {
         ),
         bottomSheetTheme: const BottomSheetThemeData(backgroundColor: atBackgroundColor),
       ),
-      initialRoute: '/',
+      initialRoute: '/admin',
       routes: {
-        '/': (context) => const AdminHomePage(),
+        '/admin': (context) => const AdminHomePage(),
+        '/admin/producer': (context) => const ProducerPage(),
       },
     );
   }
