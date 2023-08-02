@@ -1,4 +1,4 @@
-import 'package:guardian/pages/admin/admin_home.dart';
+import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'colors.dart';
 
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const AdminHome(),
+        '/': (context) => const AdminHomePage(),
       },
     );
   }

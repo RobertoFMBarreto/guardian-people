@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/s_topbar/sliver_at_app_bar.dart';
 
-class AdminHome extends StatelessWidget {
-  const AdminHome({super.key});
+class AdminHomePage extends StatelessWidget {
+  const AdminHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
