@@ -55,6 +55,11 @@ class MyApp extends StatelessWidget {
           surface: gdBackgroundColor,
           onSurface: gdtOnBackgroundColor,
         ),
+        elevatedButtonTheme: const ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(gdSecondaryColor),
+          ),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
