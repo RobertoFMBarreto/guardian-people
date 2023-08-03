@@ -3,31 +3,31 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/models/focus_manager.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
 
-class AddDeviceBottomSheet extends StatefulWidget {
-  final Function()? onAddDevice;
-  const AddDeviceBottomSheet({super.key, required this.onAddDevice});
+class AddProducerBottomSheet extends StatefulWidget {
+  final Function()? onAddProducer;
+  const AddProducerBottomSheet({super.key, this.onAddProducer});
 
   @override
-  State<AddDeviceBottomSheet> createState() => _AddDeviceBottomSheetState();
+  State<AddProducerBottomSheet> createState() => _AddProducerBottomSheetState();
 }
 
-class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
-  String imei = '';
+class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
+  String producerName = '';
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
     return DefaultBottomSheet(
-      title: 'Adicionar Dispositivo',
+      title: 'Adicionar Produtor',
       body: [
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
           child: TextField(
-            decoration: const InputDecoration(
-              label: Text('IMEI'),
+            decoration: InputDecoration(
+              label: Text('Nome'),
             ),
             onChanged: (value) {
-              imei = value;
+              producerName = value;
             },
           ),
         ),
@@ -55,7 +55,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
                 width: deviceWidth * 0.05,
               ),
               ElevatedButton(
-                onPressed: widget.onAddDevice,
+                onPressed: widget.onAddProducer,
                 child: Text(
                   'Adicionar',
                   style: theme.textTheme.bodyMedium!.copyWith(

@@ -1,3 +1,4 @@
+import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,16 @@ class AdminHomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => AddProducerBottomSheet(
+                    onAddProducer: () {
+                      //!TODO: Add device code
+                    },
+                  ));
+        },
         tooltip: 'Adicionar Produtor',
         backgroundColor: theme.colorScheme.secondary,
         shape: const CircleBorder(),
