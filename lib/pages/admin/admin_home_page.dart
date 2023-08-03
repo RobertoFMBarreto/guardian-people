@@ -15,7 +15,27 @@ class AdminHomePage extends StatelessWidget {
           slivers: [
             SliverPersistentHeader(
               delegate: SliverMainAppBar(
+                imageUrl: '',
+                name: 'Admin',
                 isHomeShape: true,
+                title: Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      'Destaques',
+                      style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
+                    ),
+                  ),
+                ),
+                tailWidget: IconButton(
+                  icon: Icon(
+                    Icons.logout,
+                    size: 30,
+                    color: theme.colorScheme.onSecondary,
+                  ),
+                  onPressed: () {},
+                ),
               ),
               pinned: true,
             ),
@@ -25,7 +45,7 @@ class AdminHomePage extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
                   'Produtores',
-                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 25),
+                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                 ),
               ),
             ),

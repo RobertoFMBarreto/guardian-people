@@ -7,25 +7,39 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;
   bool isHomeShape;
+  Widget? title;
+  String name;
+  String imageUrl;
   SliverMainAppBar({
     this.leadingWidget,
     this.tailWidget,
+    this.title,
+    required this.name,
+    required this.imageUrl,
     this.isHomeShape = false,
   });
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     var adjustedShrinkOffset = shrinkOffset > minExtent ? minExtent : shrinkOffset;
+
+    ThemeData theme = Theme.of(context);
     return SizedBox(
       height: 300,
-      child: ClipPath(
-        clipper: isHomeShape ? CustomSTopBarWaveClipper() : CustomMainTopBarWaveClipper(),
-        child: CustomMainTopBar(
-          name: 'Nome Produtor',
-          imageUrl: 'Image Url',
-          extent: adjustedShrinkOffset,
-          leadingWidget: leadingWidget,
-          tailWidget: tailWidget,
-        ),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          title ?? const SizedBox(),
+          ClipPath(
+            clipper: isHomeShape ? CustomSTopBarWaveClipper() : CustomMainTopBarWaveClipper(),
+            child: CustomMainTopBar(
+              name: 'Nome Produtor',
+              imageUrl: 'Image Url',
+              extent: adjustedShrinkOffset,
+              leadingWidget: leadingWidget,
+              tailWidget: tailWidget,
+            ),
+          ),
+        ],
       ),
     );
   }

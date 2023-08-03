@@ -7,36 +7,23 @@ class Highlights extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
     return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Text(
-              'Destaques',
-              style: theme.textTheme.headlineMedium!.copyWith(fontSize: 25),
-            ),
+      child: Padding(
+        padding: const EdgeInsets.only(
+          bottom: 8.0,
+          top: 8.0,
+          left: 10.0,
+          right: 10.0,
+        ),
+        child: SizedBox(
+          height: deviceHeight * 0.23,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 10,
+            itemBuilder: (context, index) => Producer(),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 8.0,
-              top: 8.0,
-              left: 10.0,
-              right: 10.0,
-            ),
-            child: SizedBox(
-              height: deviceHeight * 0.23,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 10,
-                itemBuilder: (context, index) => Producer(),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
