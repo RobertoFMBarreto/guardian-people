@@ -10,6 +10,7 @@ import 'package:guardian/widgets/device_item.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
 import 'package:guardian/widgets/inputs/range_input.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
+import 'package:guardian/widgets/pages/admin/producer_page/add_device_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';
 
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
@@ -130,7 +131,14 @@ class _ProducerPageState extends State<ProducerPage> {
               title: 'Adicionar Dispositivo',
               icon: Icons.add,
               onTap: () {
-                //!TODO: code for add device
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => AddDeviceBottomSheet(
+                          onAddDevice: () {
+                            //!TODO: Add device code
+                          },
+                        ));
               },
             ),
             CustomFloatingActionButtonOption(

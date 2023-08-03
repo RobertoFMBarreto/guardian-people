@@ -14,3 +14,4 @@ const gdTextColor = Colors.black;
 const gdSecondaryTextColor = Colors.grey;
 
 const gdCancelTextColor = Colors.blueAccent;
+const gdCancelBtnColor = Colors.grey;
