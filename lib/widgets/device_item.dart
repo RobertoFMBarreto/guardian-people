@@ -7,12 +7,17 @@ class DeviceItem extends StatelessWidget {
   final int deviceData;
   final int deviceBattery;
   final bool isBlocked;
+  final bool isRemoveMode;
+  final Function()? onRemoveDevice;
+
   const DeviceItem({
     super.key,
     required this.deviceImei,
     required this.deviceData,
     required this.deviceBattery,
+    required this.isRemoveMode,
     this.isBlocked = false,
+    this.onRemoveDevice,
   });
 
   @override
@@ -28,12 +33,15 @@ class DeviceItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Expanded(
+          Expanded(
             flex: 2,
-            child: Icon(
-              Icons.sensors,
-              size: 35,
-              color: gdSecondaryColor,
+            child: GestureDetector(
+              onTap: isRemoveMode ? onRemoveDevice : null,
+              child: Icon(
+                isRemoveMode ? Icons.delete_forever : Icons.sensors,
+                size: 35,
+                color: isRemoveMode ? gdErrorColor : gdSecondaryColor,
+              ),
             ),
           ),
           Expanded(

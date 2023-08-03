@@ -12,3 +12,5 @@ const gdOnErrorColor = Color.fromRGBO(252, 118, 118, 1);
 
 const gdTextColor = Colors.black;
 const gdSecondaryTextColor = Colors.grey;
+
+const gdCancelTextColor = Colors.blueAccent;

@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/models/custom_floating_btn_options.dart';
 import 'package:guardian/models/models/device.dart';
 import 'package:guardian/models/models/devices.dart';
@@ -21,7 +22,7 @@ class ProducerPage extends StatefulWidget {
 }
 
 class _ProducerPageState extends State<ProducerPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String searchString = '';
   RangeValues _batteryRangeValues = const RangeValues(0, 100);
   RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
@@ -29,6 +30,9 @@ class _ProducerPageState extends State<ProducerPage> {
       const RangeValues(0, 1500); //!TODO: Get maior/menor altura de todos os devices
   RangeValues _tmpRangeValues =
       const RangeValues(0, 35); //!TODO: Get maior/menor tmp de todos os devices
+
+  bool isRemoveMode = false;
+
   List<Device> devices = const [
     Device(
         imei: 999999999999999, dataUsage: 10, battery: 80, elevation: 417.42828, temperature: 24),
@@ -56,6 +60,7 @@ class _ProducerPageState extends State<ProducerPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
+    print('rebuild: $isRemoveMode');
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
@@ -129,10 +134,12 @@ class _ProducerPageState extends State<ProducerPage> {
               },
             ),
             CustomFloatingActionButtonOption(
-              title: 'Remover Dispositivo',
-              icon: Icons.remove,
+              title: isRemoveMode ? 'Cancelar' : 'Remover Dispositivo',
+              icon: isRemoveMode ? Icons.cancel : Icons.remove,
               onTap: () {
-                //!TODO: code for remove device
+                setState(() {
+                  isRemoveMode = !isRemoveMode;
+                });
               },
             ),
           ],
@@ -141,14 +148,38 @@ class _ProducerPageState extends State<ProducerPage> {
           child: CustomScrollView(
             slivers: [
               SliverPersistentHeader(
+                key: ValueKey('$isRemoveMode'),
                 pinned: true,
                 delegate: SliverMainAppBar(
                   imageUrl: '',
                   name: 'Nome Produtor',
-                  title: Text(
-                    'Dispositivos',
-                    style: theme.textTheme.headlineSmall!.copyWith(
-                      fontWeight: FontWeight.w500,
+                  title: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Dispositivos',
+                          style: theme.textTheme.headlineSmall!.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        isRemoveMode
+                            ? TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isRemoveMode = false;
+                                  });
+                                },
+                                child: Text(
+                                  'Cancelar',
+                                  style: theme.textTheme.bodyMedium!.copyWith(
+                                    color: gdCancelTextColor,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox()
+                      ],
                     ),
                   ),
                   leadingWidget: IconButton(
@@ -210,6 +241,7 @@ class _ProducerPageState extends State<ProducerPage> {
                   deviceImei: devices[index].imei,
                   deviceData: devices[index].dataUsage,
                   deviceBattery: devices[index].battery,
+                  isRemoveMode: isRemoveMode,
                 ),
               ),
               SliverToBoxAdapter(
