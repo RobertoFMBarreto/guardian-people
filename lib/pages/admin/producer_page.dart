@@ -28,9 +28,9 @@ class _ProducerPageState extends State<ProducerPage> {
   RangeValues _batteryRangeValues = const RangeValues(0, 100);
   RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
   RangeValues _elevationRangeValues =
-      const RangeValues(0, 1500); //!TODO: Get maior/menor altura de todos os devices
+      const RangeValues(0, 1500); //TODO: Get maior/menor altura de todos os devices
   RangeValues _tmpRangeValues =
-      const RangeValues(0, 35); //!TODO: Get maior/menor tmp de todos os devices
+      const RangeValues(0, 35); //TODO: Get maior/menor tmp de todos os devices
 
   bool isRemoveMode = false;
 
@@ -136,7 +136,7 @@ class _ProducerPageState extends State<ProducerPage> {
                   isScrollControlled: true,
                   builder: (context) => AddDeviceBottomSheet(
                     onAddDevice: () {
-                      //!TODO: Add device code
+                      //TODO: Add device code
                     },
                   ),
                 );
@@ -208,7 +208,7 @@ class _ProducerPageState extends State<ProducerPage> {
                       size: 30,
                     ),
                     onPressed: () {
-                      //!TODO: Code for deleting the producer
+                      //TODO: Code for deleting the producer
                       Navigator.of(context).pop();
                     },
                   ),

@@ -9,15 +9,17 @@ class DeviceItem extends StatelessWidget {
   final bool isBlocked;
   final bool isRemoveMode;
   final Function()? onRemoveDevice;
+  final bool isPopPush;
 
   const DeviceItem({
     super.key,
     required this.deviceImei,
     required this.deviceData,
     required this.deviceBattery,
-    required this.isRemoveMode,
+    this.isRemoveMode = false,
     this.isBlocked = false,
     this.onRemoveDevice,
+    this.isPopPush = false,
   });
 
   @override
@@ -26,7 +28,11 @@ class DeviceItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed('/admin/producer/device');
+        if (isPopPush) {
+          Navigator.of(context).popAndPushNamed('/admin/producer/device');
+        } else {
+          Navigator.of(context).pushNamed('/admin/producer/device');
+        }
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
