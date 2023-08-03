@@ -21,7 +21,11 @@ class Highlights extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: 10,
-            itemBuilder: (context, index) => Producer(),
+            itemBuilder: (context, index) => const Producer(
+              producerName: 'Nome Produtor',
+              devicesInfo: '2 dispositivos em alerta vermelho',
+              imageUrl: '',
+            ),
           ),
         ),
       ),

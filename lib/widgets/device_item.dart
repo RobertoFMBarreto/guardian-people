@@ -20,14 +20,21 @@ class DeviceItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+        vertical: 8.0,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Expanded(
-            flex: 1,
-            child: Icon(Icons.sensors),
+            flex: 2,
+            child: Icon(
+              Icons.sensors,
+              size: 35,
+              color: gdSecondaryColor,
+            ),
           ),
           Expanded(
             flex: 10,
@@ -35,18 +42,18 @@ class DeviceItem extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     deviceImei.toString(),
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.w600,
+                      fontSize: 18,
                     ),
                   ),
                   Text(
-                    deviceData.toString(),
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      color: gdSecondaryTextColor,
-                    ),
+                    '${deviceData.toString()}/10MB',
+                    style: theme.textTheme.bodyMedium!.copyWith(),
                   ),
                 ],
               ),
@@ -56,11 +63,17 @@ class DeviceItem extends StatelessWidget {
             flex: 1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 DeviceWidgetProvider.getBatteryWidget(
-                    deviceBattery: deviceBattery, color: theme.colorScheme.secondary),
+                  deviceBattery: deviceBattery,
+                  color: theme.colorScheme.secondary,
+                ),
                 Text(
                   '${deviceBattery.toString()}%',
+                  style: theme.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

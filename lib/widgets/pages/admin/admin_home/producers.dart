@@ -16,7 +16,11 @@ class Producers extends StatelessWidget {
         mainAxisExtent: deviceHeight * 0.23,
       ),
       itemCount: 10,
-      itemBuilder: (context, index) => Producer(),
+      itemBuilder: (context, index) => const Producer(
+        producerName: 'Nome Produtor',
+        devicesInfo: '10 dispositivos',
+        imageUrl: '',
+      ),
     );
   }
 }

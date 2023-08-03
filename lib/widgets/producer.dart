@@ -4,7 +4,15 @@ import 'package:guardian/colors.dart';
 import 'circle_avatar_border.dart';
 
 class Producer extends StatelessWidget {
-  const Producer({super.key});
+  final String producerName;
+  final String devicesInfo;
+  final String imageUrl;
+  const Producer({
+    super.key,
+    required this.producerName,
+    required this.devicesInfo,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +41,7 @@ class Producer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Nome Produtor',
+                            producerName,
                             style: theme.textTheme.headlineSmall!.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 19,
@@ -41,7 +49,7 @@ class Producer extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           Text(
-                            '2 dispositivos em alerta vermelho',
+                            devicesInfo,
                             style: theme.textTheme.bodyLarge!.copyWith(
                               color: gdSecondaryTextColor,
                               fontSize: 15,
