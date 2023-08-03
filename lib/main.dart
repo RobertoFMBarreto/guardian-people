@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: gdSecondaryColor,
           selectionHandleColor: gdSecondaryColor,
-          selectionColor: gdSecondaryColor,
+          selectionColor: gdSecondaryAltColor,
         ),
         colorScheme: const ColorScheme(
           brightness: Brightness.light,
@@ -54,6 +54,24 @@ class MyApp extends StatelessWidget {
           onBackground: gdtOnBackgroundColor,
           surface: gdBackgroundColor,
           onSurface: gdtOnBackgroundColor,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: const BorderSide(color: gdErrorColor),
+          ),
+          floatingLabelStyle: const TextStyle(color: gdSecondaryTextColor),
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 0,
+            horizontal: 15,
+          ),
         ),
         bottomSheetTheme: const BottomSheetThemeData(backgroundColor: gdBackgroundColor),
       ),
