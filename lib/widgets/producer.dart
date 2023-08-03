@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 
 import 'circle_avatar_border.dart';
 
@@ -42,7 +43,7 @@ class Producer extends StatelessWidget {
                           Text(
                             '2 dispositivos em alerta vermelho',
                             style: theme.textTheme.bodyLarge!.copyWith(
-                              color: Colors.grey,
+                              color: gdSecondaryTextColor,
                               fontSize: 15,
                               height: 1.2,
                             ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-const atPrimaryColor = Colors.white;
-const atBackgroundColor = Colors.white;
-const atOnBackgroundColor = Colors.black;
-const atOnPrimaryColor = Colors.black;
-const atSecondaryColor = Color.fromRGBO(147, 215, 166, 1);
-const atOnSecondaryColor = Colors.white;
-const atErrorColor = Color.fromRGBO(252, 118, 118, 1);
-const atOnErrorColor = Color.fromRGBO(252, 118, 118, 1);
+const gdPrimaryColor = Colors.white;
+const gdBackgroundColor = Colors.white;
+const gdtOnBackgroundColor = Colors.black;
+const gdOnPrimaryColor = Colors.black;
+const gdSecondaryColor = Color.fromRGBO(147, 215, 166, 1);
+const gdOnSecondaryColor = Colors.white;
+const gdErrorColor = Color.fromRGBO(252, 118, 118, 1);
+const gdOnErrorColor = Color.fromRGBO(252, 118, 118, 1);
 
-const atTextColor = Colors.black;
+const gdTextColor = Colors.black;
+const gdSecondaryTextColor = Colors.grey;

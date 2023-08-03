@@ -22,13 +22,18 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     var adjustedShrinkOffset = shrinkOffset > minExtent ? minExtent : shrinkOffset;
 
-    ThemeData theme = Theme.of(context);
     return SizedBox(
       height: 300,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
-          title ?? const SizedBox(),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: title ?? const SizedBox(),
+            ),
+          ),
           ClipPath(
             clipper: isHomeShape ? CustomSTopBarWaveClipper() : CustomMainTopBarWaveClipper(),
             child: CustomMainTopBar(

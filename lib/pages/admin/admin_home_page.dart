@@ -18,15 +18,9 @@ class AdminHomePage extends StatelessWidget {
                 imageUrl: '',
                 name: 'Admin',
                 isHomeShape: true,
-                title: Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      'Destaques',
-                      style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
-                    ),
-                  ),
+                title: Text(
+                  'Destaques',
+                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                 ),
                 tailWidget: IconButton(
                   icon: Icon(
