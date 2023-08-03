@@ -57,4 +57,37 @@ class DeviceWidgetProvider {
 
     return icon;
   }
+
+  /*
+  Method for getting the device battery indicator icon
+  @param int deviceBattery -> actual device battery
+  @param Color color -> icon color
+  @returns Battery icon
+  */
+  static IconData getBatteryIcon({
+    required int deviceBattery,
+    required Color color,
+  }) {
+    IconData icon;
+
+    if (deviceBattery == 100) {
+      icon = Icons.battery_full;
+    } else if (deviceBattery <= 99 && deviceBattery > 85) {
+      icon = Icons.battery_6_bar;
+    } else if (deviceBattery <= 85 && deviceBattery > 50) {
+      icon = Icons.battery_5_bar;
+    } else if (deviceBattery <= 50 && deviceBattery > 25) {
+      icon = Icons.battery_4_bar;
+    } else if (deviceBattery <= 25 && deviceBattery > 10) {
+      icon = Icons.battery_3_bar;
+    } else if (deviceBattery <= 10 && deviceBattery > 5) {
+      icon = Icons.battery_2_bar;
+    } else if (deviceBattery <= 5 && deviceBattery > 0) {
+      icon = Icons.battery_1_bar;
+    } else {
+      icon = Icons.battery_0_bar;
+    }
+
+    return icon;
+  }
 }

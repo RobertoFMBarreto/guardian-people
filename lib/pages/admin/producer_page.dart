@@ -132,13 +132,14 @@ class _ProducerPageState extends State<ProducerPage> {
               icon: Icons.add,
               onTap: () {
                 showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) => AddDeviceBottomSheet(
-                          onAddDevice: () {
-                            //!TODO: Add device code
-                          },
-                        ));
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => AddDeviceBottomSheet(
+                    onAddDevice: () {
+                      //!TODO: Add device code
+                    },
+                  ),
+                );
               },
             ),
             CustomFloatingActionButtonOption(

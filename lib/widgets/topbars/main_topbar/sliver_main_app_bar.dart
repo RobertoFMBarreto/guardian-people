@@ -1,3 +1,5 @@
+import 'package:guardian/widgets/topbars/main_topbar/device_info_body_top_bar.dart';
+import 'package:guardian/widgets/topbars/main_topbar/path/custom_device_top_bar_wave_clipper.dart';
 import 'package:guardian/widgets/topbars/main_topbar/path/custom_main_top_bar_wave_clipper.dart';
 import 'package:guardian/widgets/topbars/main_topbar/custom_main_top_bar.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;
   bool isHomeShape;
+  bool isDeviceShape;
   Widget? title;
   String name;
   String imageUrl;
@@ -17,6 +20,7 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
     required this.name,
     required this.imageUrl,
     this.isHomeShape = false,
+    this.isDeviceShape = false,
   });
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -35,14 +39,20 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
             ),
           ),
           ClipPath(
-            clipper: isHomeShape ? CustomSTopBarWaveClipper() : CustomMainTopBarWaveClipper(),
-            child: CustomMainTopBar(
-              name: 'Nome Produtor',
-              imageUrl: 'Image Url',
-              extent: adjustedShrinkOffset,
-              leadingWidget: leadingWidget,
-              tailWidget: tailWidget,
-            ),
+            clipper: isHomeShape
+                ? CustomSTopBarWaveClipper()
+                : isDeviceShape
+                    ? CustomDeviceTopBarWaveClipper()
+                    : CustomMainTopBarWaveClipper(),
+            child: isDeviceShape
+                ? DeviceInfoBodyTopBar()
+                : CustomMainTopBar(
+                    name: 'Nome Produtor',
+                    imageUrl: 'Image Url',
+                    extent: adjustedShrinkOffset,
+                    leadingWidget: leadingWidget,
+                    tailWidget: tailWidget,
+                  ),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/producer_page.dart';
 import 'colors.dart';
 
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/admin': (context) => const AdminHomePage(),
         '/admin/producer': (context) => const ProducerPage(),
+        '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
       },
     );
   }
