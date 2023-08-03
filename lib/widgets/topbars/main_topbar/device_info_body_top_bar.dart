@@ -64,7 +64,7 @@ class DeviceInfoBodyTopBar extends StatelessWidget {
                       style: theme.textTheme.headlineMedium,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconText(
                           icon: Icons.sim_card,
@@ -72,9 +72,6 @@ class DeviceInfoBodyTopBar extends StatelessWidget {
                           text: '10/10MB',
                           fontSize: 23,
                           iconSize: 25,
-                        ),
-                        SizedBox(
-                          width: 20,
                         ),
                         IconText(
                           isInverted: true,
@@ -87,17 +84,14 @@ class DeviceInfoBodyTopBar extends StatelessWidget {
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconText(
                           icon: Icons.device_thermostat,
                           iconColor: theme.colorScheme.secondary,
-                          text: '10/10MB',
+                          text: '24ºC',
                           fontSize: 23,
                           iconSize: 30,
-                        ),
-                        SizedBox(
-                          width: 20,
                         ),
                         IconText(
                           icon: DeviceWidgetProvider.getBatteryIcon(
