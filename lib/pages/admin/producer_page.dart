@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/custom_floating_btn_options.dart';
+import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/devices.dart';
 import 'package:guardian/models/focus_manager.dart';
