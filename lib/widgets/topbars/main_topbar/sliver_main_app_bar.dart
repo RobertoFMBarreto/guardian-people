@@ -47,8 +47,8 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
             child: isDeviceShape
                 ? DeviceInfoBodyTopBar()
                 : CustomMainTopBar(
-                    name: 'Nome Produtor',
-                    imageUrl: 'Image Url',
+                    name: name,
+                    imageUrl: imageUrl,
                     extent: adjustedShrinkOffset,
                     leadingWidget: leadingWidget,
                     tailWidget: tailWidget,
