@@ -101,13 +101,13 @@ class _LoginFormState extends State<LoginForm> {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    // se retornar true quer dizer que os inputs estão corretos
+                    // if true the inputs are filled and correct
                     if (_formKey.currentState!.validate()) {
-                      // mostrar loading
+                      // show loading
                       showLoadingDialog(context);
 
-                      // procurar o user e verificar se está certo
-                      //!TODO: Trocar para serviços
+                      // search user and verify if its correct
+                      //!TODO: Change to services
                       loadUsers().then(
                         (value) {
                           List<User> users = value;
@@ -123,10 +123,10 @@ class _LoginFormState extends State<LoginForm> {
                           } else {
                             // pop loading dialog
                             Navigator.of(context).pop();
-                            // guardar dados de sessão
+                            // store session data
                             setUserSession(user.first.uid, user.first.role);
-                            // guardar perfil do user
-                            // enviar para admin ou produtor
+                            // store user profile
+                            // send to admin or producer
                             switch (user.first.role) {
                               case 0:
                                 Navigator.of(context).popAndPushNamed('/admin');

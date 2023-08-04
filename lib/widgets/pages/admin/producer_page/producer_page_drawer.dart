@@ -61,16 +61,16 @@ class ProducerPageDrawer extends StatelessWidget {
             ),
             RangeInput(
               currentRangeValues: tmpRangeValues,
-              max: 35, //TODO: Get maior tmp de todos os devices
-              min: 0, //TODO: Get menor tmp de todos os devices
+              max: 35, //TODO: Get biggest tmp of all devices
+              min: 0, //TODO: Get lowest tmp of all devices
               title: 'Temperatura do animal',
               label: '${tmpRangeValues.start.round()}ºC - ${tmpRangeValues.end.round()}ºC',
               onChanged: onChangedTmp,
             ),
             RangeInput(
               currentRangeValues: elevationRangeValues,
-              max: 1500, //TODO: Get maior altura de todos os devices
-              min: 0, //TODO: Get menor altura de todos os devices
+              max: 1500, //TODO: Get biggest elevation of all devices
+              min: 0, //TODO: Get lowest elevation of all devices
               title: 'Elevação',
               label:
                   '${elevationRangeValues.start.round()}m - ${elevationRangeValues.end.round()}m',
