@@ -33,7 +33,9 @@ class AdminHomePage extends StatelessWidget {
                         Navigator.of(context).pushNamed('/profile');
                         break;
                       case 1:
-                      //! Logout code
+                        //! Logout code
+                        Navigator.of(context).popAndPushNamed('/login');
+                        break;
                     }
                   },
                   itemBuilder: (BuildContext context) => [

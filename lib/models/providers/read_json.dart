@@ -3,25 +3,30 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/models/device.dart';
 import 'package:guardian/models/models/device_data.dart';
-import 'package:guardian/models/models/devices.dart';
+import 'package:guardian/models/models/user.dart';
 
-Future readJsonFile() async {
+Future<List<User>> loadUsers() async {
   String usersInput = await rootBundle.loadString('assets/data/users.json');
-  String devicesInput = await rootBundle.loadString('assets/data/devices.json');
-  Map usersMap = await json.decode(usersInput);
-  Map devicesMap = await json.decode(devicesInput);
-  print(usersMap['users']);
-  print(devicesMap['devices']);
+  Map<String, dynamic> usersMap = await json.decode(usersInput);
+  List<User> users = [];
+  usersMap['users']!.forEach(
+    (user) {
+      users.add(
+        User(
+          uid: user['id'],
+          name: user['name'],
+          imageUrl: user['imageUrl'],
+          email: user['email'],
+          password: user['password'],
+          role: user['role'],
+        ),
+      );
+    },
+  );
+  return users;
 }
 
-Future<Map> loadUsers() async {
-  String usersInput = await rootBundle.loadString('assets/data/users.json');
-  Map usersMap = await json.decode(usersInput);
-  print(usersMap['users']);
-  return usersMap;
-}
-
-Future<Map> loadUserDevices(int uid) async {
+Future<List<Device>> loadUserDevices(int uid) async {
   String devicesInput = await rootBundle.loadString('assets/data/devices.json');
   Map devicesMap = await json.decode(devicesInput);
   List<Map> devicesMapList = devicesMap['devices'];
@@ -60,6 +65,5 @@ Future<Map> loadUserDevices(int uid) async {
       }
     },
   );
-  print(devices);
-  return devicesMap;
+  return devices;
 }

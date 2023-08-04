@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
-import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/producer_page.dart';
+import 'package:guardian/pages/login_page.dart';
 import 'package:guardian/pages/profile_page.dart';
 import 'colors.dart';
 
@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    readJsonFile();
     // Change status bar color
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -84,8 +83,9 @@ class MyApp extends StatelessWidget {
         ),
         bottomSheetTheme: const BottomSheetThemeData(backgroundColor: gdBackgroundColor),
       ),
-      initialRoute: '/admin',
+      initialRoute: '/login',
       routes: {
+        '/login': (context) => const LoginPage(),
         '/admin': (context) => const AdminHomePage(),
         '/admin/producer': (context) => const ProducerPage(),
         '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
