@@ -23,7 +23,7 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
           child: TextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               label: Text('Nome'),
             ),
             onChanged: (value) {

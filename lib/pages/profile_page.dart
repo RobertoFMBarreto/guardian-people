@@ -23,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
         body: SafeArea(
           child: CustomScrollView(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverPersistentHeader(
                 delegate: SliverMainAppBar(

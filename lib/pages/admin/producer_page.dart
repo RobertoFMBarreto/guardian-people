@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/models/custom_floating_btn_options.dart';
@@ -8,7 +6,6 @@ import 'package:guardian/models/models/devices.dart';
 import 'package:guardian/models/models/focus_manager.dart';
 import 'package:guardian/widgets/device_item.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
-import 'package:guardian/widgets/inputs/range_input.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/add_device_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';
@@ -61,7 +58,6 @@ class _ProducerPageState extends State<ProducerPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
-    print('rebuild: $isRemoveMode');
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);

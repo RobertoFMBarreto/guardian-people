@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/widgets/icon_text.dart';
 

@@ -45,7 +45,7 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
                     ? CustomDeviceTopBarWaveClipper()
                     : CustomMainTopBarWaveClipper(),
             child: isDeviceShape
-                ? DeviceInfoBodyTopBar()
+                ? const DeviceInfoBodyTopBar()
                 : CustomMainTopBar(
                     name: name,
                     imageUrl: imageUrl,

@@ -10,10 +10,10 @@ class CustomSTopBarWaveClipper extends CustomClipper<Path> {
 
     path.lineTo(0.0, p0);
     if (p0 != minSize) {
-      final p1_middle = Offset(size.width * 0.001, size.height * 0.8);
+      final p1Middle = Offset(size.width * 0.001, size.height * 0.8);
       final p1 = Offset(size.width * 0.15, size.height * 0.8);
 
-      path.quadraticBezierTo(p1_middle.dx, p1_middle.dy, p1.dx, p1.dy);
+      path.quadraticBezierTo(p1Middle.dx, p1Middle.dy, p1.dx, p1.dy);
 
       final p2 = Offset(size.width * 0.9, size.height * 0.8);
       final p2Middle = Offset(size.width, size.height * 0.8);
