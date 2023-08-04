@@ -1,15 +1,15 @@
+import 'package:guardian/models/models/device_data.dart';
+
 class Device {
   final int imei;
-  final int dataUsage;
-  final int battery;
-  final double elevation;
-  final double temperature;
+  final String color;
+  final bool isBlocked;
+  final List<DeviceData> data;
 
   const Device({
     required this.imei,
-    required this.dataUsage,
-    required this.battery,
-    required this.elevation,
-    required this.temperature,
+    required this.color,
+    required this.isBlocked,
+    required this.data,
   });
 }

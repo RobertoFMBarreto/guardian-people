@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": 0,
+      "name": "Admin",
+      "role": 0,
+      "imageUrl": "",
+      "email": "admin@admin.com",
+      "password": "admin"
+    },
+    {
+      "id": 1,
+      "name": "João Gonçalves",
+      "role": 1,
+      "imageUrl": "",
+      "email": "joao.goncalves@teste.com",
+      "password": "teste123@"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    readJsonFile();
     // Change status bar color
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
       ),
     );
     return MaterialApp(
-      title: 'August Demo',
+      title: 'Guardian',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,

@@ -31,22 +31,8 @@ class _ProducerPageState extends State<ProducerPage> {
 
   bool isRemoveMode = false;
 
-  List<Device> devices = const [
-    Device(
-        imei: 999999999999999, dataUsage: 10, battery: 80, elevation: 417.42828, temperature: 24),
-    Device(imei: 999999999999998, dataUsage: 9, battery: 50, elevation: 1013.5688, temperature: 24),
-    Device(imei: 999999999999997, dataUsage: 8, battery: 75, elevation: 894.76483, temperature: 24),
-    Device(imei: 999999999999996, dataUsage: 7, battery: 60, elevation: 134.28778, temperature: 24),
-    Device(imei: 999999999999995, dataUsage: 6, battery: 90, elevation: 1500, temperature: 24),
-    Device(imei: 999999999999994, dataUsage: 5, battery: 5, elevation: 1500, temperature: 24),
-    Device(imei: 999999999999993, dataUsage: 4, battery: 15, elevation: 1500, temperature: 24),
-    Device(imei: 999999999999992, dataUsage: 3, battery: 26, elevation: 1500, temperature: 24),
-    Device(imei: 999999999999991, dataUsage: 2, battery: 40, elevation: 1500, temperature: 24),
-    Device(imei: 999999999999990, dataUsage: 1, battery: 61, elevation: 1500, temperature: 24),
-  ];
-
   List<Device> backupDevices = [];
-
+  List<Device> devices = [];
   @override
   void initState() {
     // backup all devices
@@ -244,8 +230,8 @@ class _ProducerPageState extends State<ProducerPage> {
                 itemCount: devices.length,
                 itemBuilder: (context, index) => DeviceItem(
                   deviceImei: devices[index].imei,
-                  deviceData: devices[index].dataUsage,
-                  deviceBattery: devices[index].battery,
+                  deviceData: devices[index].data.first.dataUsage,
+                  deviceBattery: devices[index].data.first.battery,
                   isRemoveMode: isRemoveMode,
                 ),
               ),

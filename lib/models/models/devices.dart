@@ -22,7 +22,7 @@ class Devices {
     List<Device> result = [];
     result = devicesList
         .where(
-          (element) => element.battery <= batMax && element.battery >= batMin,
+          (element) => element.data.first.battery <= batMax && element.data.first.battery >= batMin,
         )
         .toList();
     return result;
@@ -33,7 +33,9 @@ class Devices {
     List<Device> result = [];
     result = devicesList
         .where(
-          (element) => element.elevation <= elevationMax && element.elevation >= elevationMin,
+          (element) =>
+              element.data.first.elevation <= elevationMax &&
+              element.data.first.elevation >= elevationMin,
         )
         .toList();
     return result;
@@ -43,7 +45,9 @@ class Devices {
     List<Device> result = [];
     result = devicesList
         .where(
-          (element) => element.dataUsage <= dtUsageMax && element.dataUsage >= dtUsageMin,
+          (element) =>
+              element.data.first.dataUsage <= dtUsageMax &&
+              element.data.first.dataUsage >= dtUsageMin,
         )
         .toList();
     return result;
@@ -53,7 +57,8 @@ class Devices {
     List<Device> result = [];
     result = devicesList
         .where(
-          (element) => element.temperature <= tmpMax && element.temperature >= tmpMin,
+          (element) =>
+              element.data.first.temperature <= tmpMax && element.data.first.temperature >= tmpMin,
         )
         .toList();
     return result;
