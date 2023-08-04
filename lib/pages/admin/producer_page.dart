@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/models/custom_floating_btn_options.dart';
-import 'package:guardian/models/models/device.dart';
-import 'package:guardian/models/models/devices.dart';
-import 'package:guardian/models/models/focus_manager.dart';
+import 'package:guardian/models/custom_floating_btn_options.dart';
+import 'package:guardian/models/device.dart';
+import 'package:guardian/models/devices.dart';
+import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/device_item.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';

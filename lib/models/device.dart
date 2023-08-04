@@ -1,4 +1,4 @@
-import 'package:guardian/models/models/device_data.dart';
+import 'package:guardian/models/device_data.dart';
 
 class Device {
   final int imei;

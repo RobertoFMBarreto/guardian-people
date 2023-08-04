@@ -1,3 +1,4 @@
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
@@ -34,7 +35,10 @@ class AdminHomePage extends StatelessWidget {
                         break;
                       case 1:
                         //! Logout code
-                        Navigator.of(context).popAndPushNamed('/login');
+                        clearUserSession().then(
+                          (value) => Navigator.of(context).popAndPushNamed('/login'),
+                        );
+
                         break;
                     }
                   },

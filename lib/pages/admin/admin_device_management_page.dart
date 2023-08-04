@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/models/device.dart';
+import 'package:guardian/models/device.dart';
 import 'package:guardian/widgets/device_item.dart';
 import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';

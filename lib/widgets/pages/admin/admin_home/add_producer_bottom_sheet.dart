@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/models/focus_manager.dart';
+import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
 
 class AddProducerBottomSheet extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/models/device.dart';
+import 'package:guardian/models/device.dart';
 
 class Devices {
   static List<Device> searchDevice(String searchString, List<Device> allDevices) {

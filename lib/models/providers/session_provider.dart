@@ -8,3 +8,19 @@ Future<void> setUserSession(int uid, int role) async {
   await prefs.setInt("uid", uid);
   await prefs.setInt("role", role);
 }
+
+Future<void> clearUserSession() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // remove all session data
+  await prefs.clear();
+
+  //!TODO call logout service
+}
+
+Future<int?> hasUserSession() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  int? role = prefs.getInt('role');
+  return role;
+}

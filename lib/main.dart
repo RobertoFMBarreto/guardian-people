@@ -5,6 +5,7 @@ import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
 import 'package:guardian/pages/profile_page.dart';
+import 'package:guardian/pages/welcome_page.dart';
 import 'colors.dart';
 
 void main() {
@@ -83,8 +84,9 @@ class MyApp extends StatelessWidget {
         ),
         bottomSheetTheme: const BottomSheetThemeData(backgroundColor: gdBackgroundColor),
       ),
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
+        '/': (context) => const WelcomePage(),
         '/login': (context) => const LoginPage(),
         '/admin': (context) => const AdminHomePage(),
         '/admin/producer': (context) => const ProducerPage(),

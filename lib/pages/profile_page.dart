@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/models/focus_manager.dart';
+import 'package:guardian/models/focus_manager.dart';
 
 import '../widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:guardian/models/models/device.dart';
-import 'package:guardian/models/models/device_data.dart';
-import 'package:guardian/models/models/user.dart';
+import 'package:guardian/models/device.dart';
+import 'package:guardian/models/device_data.dart';
+import 'package:guardian/models/user.dart';
 
 Future<List<User>> loadUsers() async {
   String usersInput = await rootBundle.loadString('assets/data/users.json');

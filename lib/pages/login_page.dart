@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/models/focus_manager.dart';
-import 'package:guardian/models/models/user.dart';
+import 'package:guardian/models/focus_manager.dart';
+import 'package:guardian/models/user.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/login/login_form.dart';
 

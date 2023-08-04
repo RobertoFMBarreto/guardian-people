@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/models/user.dart';
+import 'package:guardian/models/user.dart';
 import 'package:guardian/models/providers/loading_dialog_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
