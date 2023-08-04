@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/widgets/topbars/main_topbar/extended_top_bar.dart';
 import 'package:guardian/widgets/topbars/main_topbar/normal_top_bar.dart';
 
+//ignore: must_be_immutable
 class CustomMainTopBar extends StatelessWidget {
   double extent;
   String name;
