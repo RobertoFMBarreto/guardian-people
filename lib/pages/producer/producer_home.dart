@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
 class ProducerHome extends StatelessWidget {
@@ -66,6 +67,22 @@ class ProducerHome extends StatelessWidget {
                 ),
               ),
               pinned: true,
+            ),
+            const SliverToBoxAdapter(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SquareDevicesInfo(
+                    title: 'Dispositivos',
+                    description: '10',
+                  ),
+                  SquareDevicesInfo(
+                    title: 'Alertas',
+                    description: '2',
+                    isAlert: true,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
