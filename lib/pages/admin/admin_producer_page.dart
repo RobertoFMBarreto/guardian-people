@@ -12,14 +12,14 @@ import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.
 
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
-class ProducerPage extends StatefulWidget {
-  const ProducerPage({super.key});
+class AdminProducerPage extends StatefulWidget {
+  const AdminProducerPage({super.key});
 
   @override
-  State<ProducerPage> createState() => _ProducerPageState();
+  State<AdminProducerPage> createState() => _AdminProducerPageState();
 }
 
-class _ProducerPageState extends State<ProducerPage> {
+class _AdminProducerPageState extends State<AdminProducerPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String searchString = '';
   RangeValues _batteryRangeValues = const RangeValues(0, 100);

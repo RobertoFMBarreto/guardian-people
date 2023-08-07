@@ -2,8 +2,9 @@ import 'package:flutter/services.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
-import 'package:guardian/pages/admin/producer_page.dart';
+import 'package:guardian/pages/admin/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
+import 'package:guardian/pages/producer/producer_home.dart';
 import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';
 import 'colors.dart';
@@ -88,10 +89,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const WelcomePage(),
         '/login': (context) => const LoginPage(),
-        '/admin': (context) => const AdminHomePage(),
-        '/admin/producer': (context) => const ProducerPage(),
-        '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
         '/profile': (context) => const ProfilePage(),
+        '/admin': (context) => const AdminHomePage(),
+        '/admin/producer': (context) => const AdminProducerPage(),
+        '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
+        '/producer': (context) => const ProducerHome(),
       },
     );
   }
