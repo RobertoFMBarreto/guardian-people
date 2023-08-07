@@ -31,32 +31,55 @@ class SquareDevicesInfo extends StatelessWidget {
                 ],
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style:
-                    theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.onSecondary),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Text(
-                  description,
-                  style: theme.textTheme.headlineLarge!.copyWith(
-                    fontSize: 45,
-                    fontWeight: FontWeight.w500,
-                    color: theme.colorScheme.onSecondary,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style:
+                      theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.onSecondary),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text(
+                    description,
+                    style: theme.textTheme.headlineLarge!.copyWith(
+                      fontSize: 45,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSecondary,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              clipBehavior: Clip.hardEdge,
+              child: isAlert
+                  ? Icon(
+                      Icons.warning,
+                      size: 75,
+                      color: theme.colorScheme.onSecondary.withOpacity(0.8),
+                    )
+                  : Transform.rotate(
+                      angle: -35,
+                      child: Icon(
+                        Icons.sensors,
+                        size: 75,
+                        color: theme.colorScheme.onSecondary.withOpacity(0.8),
+                      ),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
