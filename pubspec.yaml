@@ -36,6 +36,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_speed_dial: ^7.0.0
   shared_preferences: ^2.2.0
+  latlong2: any
+  flutter_map: any
+  flutter_map_marker_cluster: any
+  flutter_map_line_editor: ^5.0.0
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+import 'package:latlong2/latlong.dart';
 
 class ProducerHome extends StatelessWidget {
   const ProducerHome({super.key});
@@ -94,6 +96,35 @@ class ProducerHome extends StatelessWidget {
                 ],
               ),
             ),
+            SliverFillRemaining(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: FlutterMap(
+                    options: MapOptions(center: LatLng(51.5, -0.09), zoom: 5, minZoom: 3),
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                      ),
+                      CircleLayer(
+                        circles: [
+                          CircleMarker(
+                            color: Color.fromRGBO(167, 90, 90, 0.498),
+                            borderColor: Color.fromRGBO(255, 0, 0, 1),
+                            borderStrokeWidth: 2,
+                            point: LatLng(41.694569, -8.830160),
+                            radius: 1000,
+                            useRadiusInMeter: true,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
