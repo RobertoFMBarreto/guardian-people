@@ -70,16 +70,26 @@ class ProducerHome extends StatelessWidget {
             ),
             const SliverToBoxAdapter(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SquareDevicesInfo(
-                    title: 'Dispositivos',
-                    description: '10',
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20, right: 8),
+                      child: SquareDevicesInfo(
+                        title: 'Dispositivos',
+                        description: '10',
+                      ),
+                    ),
                   ),
-                  SquareDevicesInfo(
-                    title: 'Alertas',
-                    description: '2',
-                    isAlert: true,
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 20, left: 8),
+                      child: SquareDevicesInfo(
+                        title: 'Alertas',
+                        description: '2',
+                        isAlert: true,
+                      ),
+                    ),
                   ),
                 ],
               ),
