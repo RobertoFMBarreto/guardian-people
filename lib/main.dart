@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
+import 'package:guardian/pages/producer/fences_page.dart';
 import 'package:guardian/pages/producer/geofencing_page.dart';
+import 'package:guardian/pages/producer/manage_fence_page.dart';
 import 'package:guardian/pages/producer/producer_home.dart';
 import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';
@@ -96,6 +98,8 @@ class MyApp extends StatelessWidget {
         '/admin/producer': (context) => const AdminProducerPage(),
         '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
         '/producer': (context) => const ProducerHome(),
+        '/producer/fences': (context) => const FencesPage(),
+        '/producer/fence/manage': (context) => const ManageFencePage(),
         '/producer/geofencing': (context) => const GeofencingPage(),
       },
     );

@@ -7,6 +7,7 @@ import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/device_item.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
+import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/add_device_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';
 
@@ -199,30 +200,16 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 12,
-                        child: SearchFieldInput(
-                          label: 'Pesquisar',
-                          onChanged: (value) {
-                            setState(() {
-                              searchString = value;
-                              devices = Devices.searchDevice(value, backupDevices);
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                          flex: 2,
-                          child: IconButton(
-                            icon: const Icon(Icons.filter_alt_outlined),
-                            onPressed: () {
-                              _scaffoldKey.currentState!.openEndDrawer();
-                            },
-                            iconSize: 30,
-                          )),
-                    ],
+                  child: SearchWithFilterInput(
+                    onFilter: () {
+                      _scaffoldKey.currentState!.openEndDrawer();
+                    },
+                    onSearchChanged: (value) {
+                      setState(() {
+                        searchString = value;
+                        devices = Devices.searchDevice(value, backupDevices);
+                      });
+                    },
                   ),
                 ),
               ),

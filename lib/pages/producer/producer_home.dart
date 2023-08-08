@@ -155,9 +155,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.of(context).pushNamed('/producer/geofencing');
+                                  Navigator.of(context).pushNamed('/producer/fences');
                                 },
-                                child: const Text('Cerca'),
+                                child: const Text('Cercas'),
                               ),
                             ],
                           ),
