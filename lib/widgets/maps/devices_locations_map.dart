@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
@@ -10,12 +11,12 @@ import 'package:latlong2/latlong.dart';
 class DevicesLocationsMap extends StatefulWidget {
   final Position currentPosition;
   final List<Device> devices;
-  final List<LatLng>? fencePoints;
+  final List<Fence>? fences;
   const DevicesLocationsMap({
     super.key,
     required this.currentPosition,
     required this.devices,
-    this.fencePoints,
+    this.fences,
   });
 
   @override
@@ -24,88 +25,124 @@ class DevicesLocationsMap extends StatefulWidget {
 
 class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   final polygons = <Polygon>[];
+  final circles = <Polygon>[];
   @override
   void initState() {
-    if (widget.fencePoints != null) {
-      polygons.add(
-        Polygon(
-          color: gdMapGeofenceFillColor,
-          borderColor: gdMapGeofenceBorderColor,
-          borderStrokeWidth: 2,
-          isFilled: true,
-          points: widget.fencePoints!,
-        ),
-      );
-    }
+    _loadFences();
+
     super.initState();
+  }
+
+  void _loadFences() {
+    setState(() {
+      if (widget.fences != null) {
+        for (Fence fence in widget.fences!) {
+          if (fence.points.length > 2) {
+            polygons.add(
+              Polygon(
+                points: fence.points,
+                color: HexColor(fence.fillColor).withOpacity(0.5),
+                borderColor: HexColor(fence.borderColor),
+                borderStrokeWidth: 2,
+                isFilled: true,
+              ),
+            );
+          } else {
+            circles.add(
+              Polygon(
+                points: fence.points,
+                color: HexColor(fence.fillColor).withOpacity(0.5),
+                borderColor: HexColor(fence.borderColor),
+                borderStrokeWidth: 2,
+                isFilled: true,
+              ),
+            );
+          }
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlutterMap(
-      options: MapOptions(
-        center: LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
-        zoom: 17,
-        minZoom: 3,
-      ),
-      children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.linovt.guardian',
-        ),
-        polygons.first.points.length == 2
-            ? CircleLayer(
+    ThemeData theme = Theme.of(context);
+    return widget.fences != null &&
+            widget.fences!.isNotEmpty &&
+            (polygons.isEmpty && circles.isEmpty)
+        ? Center(
+            child: CircularProgressIndicator(
+              color: theme.colorScheme.secondary,
+            ),
+          )
+        : FlutterMap(
+            options: MapOptions(
+              center: LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
+              zoom: 17,
+              minZoom: 3,
+              maxZoom: 18,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.linovt.guardian',
+              ),
+              CircleLayer(
                 circles: [
-                  CircleMarker(
-                    useRadiusInMeter: true,
-                    color: gdMapGeofenceFillColor,
-                    borderColor: gdMapGeofenceBorderColor,
-                    borderStrokeWidth: 2,
-                    point: LatLng(
-                      polygons.first.points.first.latitude,
-                      polygons.first.points.first.longitude,
-                    ),
-                    radius: calculateDistance(
-                      polygons.first.points.first.latitude,
-                      polygons.first.points.first.longitude,
-                      polygons.first.points.last.latitude,
-                      polygons.first.points.last.longitude,
-                    ),
-                  )
+                  ...circles
+                      .map(
+                        (circle) => CircleMarker(
+                          useRadiusInMeter: true,
+                          color: circle.color,
+                          borderColor: circle.borderColor,
+                          borderStrokeWidth: 2,
+                          point: LatLng(
+                            polygons.first.points.first.latitude,
+                            polygons.first.points.first.longitude,
+                          ),
+                          radius: calculateDistance(
+                            polygons.first.points.first.latitude,
+                            polygons.first.points.first.longitude,
+                            polygons.first.points.last.latitude,
+                            polygons.first.points.last.longitude,
+                          ),
+                        ),
+                      )
+                      .toList()
                 ],
-              )
-            : PolygonLayer(
+              ),
+              PolygonLayer(
                 polygons: polygons,
               ),
-        MarkerLayer(
-          markers: [
-            Marker(
-              point: LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
-              builder: (context) {
-                return const Icon(
-                  Icons.circle,
-                  color: gdMapLocationPointColor,
-                  size: 30,
-                );
-              },
-            ),
-            ...widget.devices
-                .map(
-                  (device) => Marker(
-                    point: LatLng(device.data.first.lat, device.data.first.lon),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point:
+                        LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
                     builder: (context) {
-                      return Icon(
-                        Icons.location_on,
-                        color: HexColor(device.color),
+                      return const Icon(
+                        Icons.circle,
+                        color: gdMapLocationPointColor,
                         size: 30,
                       );
                     },
                   ),
-                )
-                .toList()
-          ],
-        ),
-      ],
-    );
+                  ...widget.devices
+                      .map(
+                        (device) => Marker(
+                          point: LatLng(device.data.first.lat, device.data.first.lon),
+                          builder: (context) {
+                            return Icon(
+                              Icons.location_on,
+                              color: HexColor(device.color),
+                              size: 30,
+                            );
+                          },
+                        ),
+                      )
+                      .toList()
+                ],
+              ),
+            ],
+          );
   }
 }

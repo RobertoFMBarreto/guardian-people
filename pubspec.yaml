@@ -67,6 +67,7 @@ flutter:
   assets:
     - assets/data/users.json
     - assets/data/devices.json
+    - assets/data/fences.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

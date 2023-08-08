@@ -45,7 +45,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
         if (testPolygon.points.length > 2 && isCircle) {
           polyEditor.remove(testPolygon.points.length - 2);
         }
-        print(polyEditor.points);
         setState(() {});
       },
     );

@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/device_data.dart';
+import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/user.dart';
+import 'package:latlong2/latlong.dart';
 
 Future<List<User>> loadUsers() async {
   String usersInput = await rootBundle.loadString('assets/data/users.json');
@@ -62,4 +64,37 @@ Future<List<Device>> loadUserDevices(int uid) async {
     }
   }
   return devices;
+}
+
+Future<List<Fence>> loadUserFences(int uid) async {
+  String devicesInput = await rootBundle.loadString('assets/data/fences.json');
+  Map fencesMap = await json.decode(devicesInput);
+  List<dynamic> fencesMapList = fencesMap['fences'];
+  List<Fence> fences = [];
+  for (var fence in fencesMapList) {
+    if (fence['uid'] == uid) {
+      // load fence points
+      List<LatLng> points = [];
+      for (var point in fence['points']) {
+        points.add(
+          LatLng(
+            point['lat'],
+            point['lon'],
+          ),
+        );
+      }
+
+      // load fences and their points
+      fences.add(
+        Fence(
+          name: fence["name"],
+          points: points,
+          devices: [],
+          borderColor: fence["borderColor"],
+          fillColor: fence["fillColor"],
+        ),
+      );
+    }
+  }
+  return fences;
 }

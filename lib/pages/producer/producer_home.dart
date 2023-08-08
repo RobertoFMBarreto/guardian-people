@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
@@ -19,12 +21,14 @@ class ProducerHome extends StatefulWidget {
 class _ProducerHomeState extends State<ProducerHome> {
   Position? _currentPosition;
   List<Device> devices = [];
+  List<Fence> fences = [];
 
   @override
   void initState() {
     super.initState();
     _getCurrentPosition();
     _loadDevices();
+    _loadFences();
   }
 
   Future<void> _getCurrentPosition() async {
@@ -43,16 +47,9 @@ class _ProducerHomeState extends State<ProducerHome> {
     loadUserDevices(1).then((allDevices) => setState(() => devices.addAll(allDevices)));
   }
 
-  List<LatLng> fencePoints = [
-    LatLng(41.83441, -8.420382),
-    LatLng(41.834345, -8.419684),
-    LatLng(41.834146, -8.419552),
-    LatLng(41.833845, -8.419567),
-    LatLng(41.833193, -8.419692),
-    LatLng(41.832051, -8.420436),
-    LatLng(41.832422, -8.421278),
-    LatLng(41.833453, -8.420611)
-  ];
+  Future<void> _loadFences() async {
+    loadUserFences(1).then((allFences) => setState(() => fences.addAll(allFences)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +63,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                 ),
               )
             : CustomScrollView(
+                physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverPersistentHeader(
                     delegate: SliverMainAppBar(
@@ -176,7 +174,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                         child: DevicesLocationsMap(
                           currentPosition: _currentPosition!,
                           devices: devices,
-                          fencePoints: fencePoints,
+                          fences: fences,
                         ),
                       ),
                     ),
