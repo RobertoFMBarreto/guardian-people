@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
+import 'package:guardian/pages/producer/device_page.dart';
 import 'package:guardian/pages/producer/fences_page.dart';
 import 'package:guardian/pages/producer/geofencing_page.dart';
 import 'package:guardian/pages/producer/manage_fence_page.dart';
@@ -124,15 +125,7 @@ class MyApp extends StatelessWidget {
             return const ProducerDevicesPage();
           }
         },
-        '/producer/device': (context) {
-          if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
-            return const ProducerDevicesPage(
-              isSelect: true,
-            );
-          } else {
-            return const ProducerDevicesPage();
-          }
-        },
+        '/producer/device': (context) => const DevicePage(),
       },
     );
   }

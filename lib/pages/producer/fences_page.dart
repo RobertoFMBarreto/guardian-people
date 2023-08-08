@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/device.dart';
-import 'package:guardian/models/devices.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/fences.dart';
 import 'package:guardian/models/focus_manager.dart';
@@ -8,8 +6,6 @@ import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
-import 'package:guardian/widgets/inputs/search_filter_input.dart';
-import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';
 
 class FencesPage extends StatefulWidget {
   const FencesPage({super.key});

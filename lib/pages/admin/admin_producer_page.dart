@@ -7,7 +7,6 @@ import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
-import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/add_device_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';

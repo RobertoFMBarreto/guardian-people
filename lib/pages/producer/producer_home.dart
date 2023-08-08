@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
@@ -9,7 +8,6 @@ import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
-import 'package:latlong2/latlong.dart';
 
 class ProducerHome extends StatefulWidget {
   const ProducerHome({super.key});

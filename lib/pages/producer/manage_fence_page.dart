@@ -4,10 +4,8 @@ import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
-import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
-import 'package:guardian/pages/producer/producer_devices_page.dart';
 
 class ManageFencePage extends StatefulWidget {
   final Fence fence;
