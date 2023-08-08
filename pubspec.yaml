@@ -41,6 +41,7 @@ dependencies:
   flutter_map_marker_cluster: any
   flutter_map_line_editor: ^5.0.0
   geolocator: ^9.0.2
+  flutter_expandable_fab: ^2.0.0
 
 dev_dependencies:
   flutter_test:

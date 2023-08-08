@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/devices.dart';
+import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/focus_manager.dart';
+import 'package:guardian/models/providers/hex_color.dart';
+import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
@@ -28,11 +31,18 @@ class _FencesPageState extends State<FencesPage> {
 
   List<Device> backupDevices = [];
   List<Device> devices = [];
+  List<Fence> fences = [];
+  bool isLoading = true;
   @override
   void initState() {
     // backup all devices
     backupDevices.addAll(devices);
+    _loadFences().then((value) => setState(() => isLoading = false));
     super.initState();
+  }
+
+  Future<void> _loadFences() async {
+    loadUserFences(1).then((allFences) => setState(() => fences.addAll(allFences)));
   }
 
   @override
@@ -46,7 +56,7 @@ class _FencesPageState extends State<FencesPage> {
         appBar: AppBar(
           title: Text(
             'Cercas',
-            style: theme.textTheme.headlineSmall,
+            style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
         ),
@@ -108,45 +118,54 @@ class _FencesPageState extends State<FencesPage> {
             },
           ),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: SearchWithFilterInput(
-                  onFilter: () {
-                    _scaffoldKey.currentState!.openEndDrawer();
-                  },
-                  onSearchChanged: (value) {
-                    setState(() {
-                      searchString = value;
-                      devices = Devices.searchDevice(value, backupDevices);
-                    });
-                  },
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: theme.colorScheme.secondary,
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  itemCount: 10,
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/producer/fence/manage');
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0),
-                      child: FenceItem(
-                        onRemove: () {
-                          //!TODO remove item from list
+              )
+            : SafeArea(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SearchWithFilterInput(
+                        onFilter: () {
+                          _scaffoldKey.currentState!.openEndDrawer();
+                        },
+                        onSearchChanged: (value) {
+                          setState(() {
+                            searchString = value;
+                            devices = Devices.searchDevice(value, backupDevices);
+                          });
                         },
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        itemCount: fences.length,
+                        itemBuilder: (context, index) => GestureDetector(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed('/producer/fence/manage', arguments: fences[index]);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: FenceItem(
+                              name: fences[index].name,
+                              color: HexColor(fences[index].fillColor),
+                              onRemove: () {
+                                //!TODO remove item from list
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
+              ),
       ),
     );
   }

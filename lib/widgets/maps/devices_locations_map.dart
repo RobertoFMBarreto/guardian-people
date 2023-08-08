@@ -12,11 +12,13 @@ class DevicesLocationsMap extends StatefulWidget {
   final Position currentPosition;
   final List<Device> devices;
   final List<Fence>? fences;
+  final bool centerOnPoly;
   const DevicesLocationsMap({
     super.key,
     required this.currentPosition,
     required this.devices,
     this.fences,
+    this.centerOnPoly = false,
   });
 
   @override
@@ -28,6 +30,11 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   final circles = <Polygon>[];
   @override
   void initState() {
+    if (widget.fences == null) {
+      if (widget.fences!.length > 1 && widget.centerOnPoly) {
+        throw ErrorDescription("Can only center on poly with one poly");
+      }
+    }
     _loadFences();
 
     super.initState();
@@ -76,7 +83,15 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
           )
         : FlutterMap(
             options: MapOptions(
-              center: LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
+              center: !widget.centerOnPoly
+                  ? LatLng(
+                      widget.currentPosition.latitude,
+                      widget.currentPosition.longitude,
+                    )
+                  : LatLng(
+                      widget.fences!.first.points.first.latitude,
+                      widget.fences!.first.points.first.longitude,
+                    ),
               zoom: 17,
               minZoom: 3,
               maxZoom: 18,

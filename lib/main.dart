@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:guardian/models/fence.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
@@ -99,8 +100,20 @@ class MyApp extends StatelessWidget {
         '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
         '/producer': (context) => const ProducerHome(),
         '/producer/fences': (context) => const FencesPage(),
-        '/producer/fence/manage': (context) => const ManageFencePage(),
-        '/producer/geofencing': (context) => const GeofencingPage(),
+        '/producer/fence/manage': (context) {
+          return ManageFencePage(
+            fence: ModalRoute.of(context)!.settings.arguments as Fence,
+          );
+        },
+        '/producer/geofencing': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Fence) {
+            return GeofencingPage(
+              fence: ModalRoute.of(context)!.settings.arguments as Fence,
+            );
+          } else {
+            return const GeofencingPage();
+          }
+        },
       },
     );
   }

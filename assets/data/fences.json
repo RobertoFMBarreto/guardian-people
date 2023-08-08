@@ -19,9 +19,9 @@
     },
     {
       "uid": 1,
-      "fillColor": "#f542ef",
-      "borderColor": "#f542ef",
-      "name": "teste",
+      "fillColor": "#3238a8",
+      "borderColor": "#3238a8",
+      "name": "teste1",
       "devices": [],
       "points": [
         { "lat": 41.835624, "lon": -8.418568 },

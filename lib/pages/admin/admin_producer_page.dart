@@ -215,11 +215,17 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               ),
               SliverList.builder(
                 itemCount: devices.length,
-                itemBuilder: (context, index) => DeviceItem(
-                  deviceImei: devices[index].imei,
-                  deviceData: devices[index].data.first.dataUsage,
-                  deviceBattery: devices[index].data.first.battery,
-                  isRemoveMode: isRemoveMode,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 8.0,
+                  ),
+                  child: DeviceItem(
+                    deviceImei: devices[index].imei,
+                    deviceData: devices[index].data.first.dataUsage,
+                    deviceBattery: devices[index].data.first.battery,
+                    isRemoveMode: isRemoveMode,
+                  ),
                 ),
               ),
               SliverToBoxAdapter(

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:guardian/widgets/color_circle.dart';
 
 class FenceItem extends StatelessWidget {
+  final String name;
+  final Color color;
   final Function() onRemove;
-  const FenceItem({super.key, required this.onRemove});
+  const FenceItem({super.key, required this.onRemove, required this.name, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class FenceItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4.0),
               child: Text(
-                'Nome cerca',
+                name,
                 style: theme.textTheme.bodyLarge!.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -38,8 +40,8 @@ class FenceItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const ColorCircle(
-                    color: Colors.red,
+                  ColorCircle(
+                    color: color,
                   ),
                 ],
               ),
