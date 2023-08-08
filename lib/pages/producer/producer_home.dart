@@ -7,6 +7,7 @@ import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+import 'package:latlong2/latlong.dart';
 
 class ProducerHome extends StatefulWidget {
   const ProducerHome({super.key});
@@ -23,7 +24,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   void initState() {
     super.initState();
     _getCurrentPosition();
-    _loadDEvices();
+    _loadDevices();
   }
 
   Future<void> _getCurrentPosition() async {
@@ -38,9 +39,20 @@ class _ProducerHomeState extends State<ProducerHome> {
     });
   }
 
-  Future<void> _loadDEvices() async {
+  Future<void> _loadDevices() async {
     loadUserDevices(1).then((allDevices) => setState(() => devices.addAll(allDevices)));
   }
+
+  List<LatLng> fencePoints = [
+    LatLng(41.83441, -8.420382),
+    LatLng(41.834345, -8.419684),
+    LatLng(41.834146, -8.419552),
+    LatLng(41.833845, -8.419567),
+    LatLng(41.833193, -8.419692),
+    LatLng(41.832051, -8.420436),
+    LatLng(41.832422, -8.421278),
+    LatLng(41.833453, -8.420611)
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +172,13 @@ class _ProducerHomeState extends State<ProducerHome> {
                       padding:
                           const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 20.0),
                       child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: DevicesLocationsMap(
-                              currentPosition: _currentPosition!, devices: devices)),
+                        borderRadius: BorderRadius.circular(20),
+                        child: DevicesLocationsMap(
+                          currentPosition: _currentPosition!,
+                          devices: devices,
+                          fencePoints: fencePoints,
+                        ),
+                      ),
                     ),
                   )
                 ],
