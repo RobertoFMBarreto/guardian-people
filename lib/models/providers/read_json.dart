@@ -31,39 +31,35 @@ Future<List<Device>> loadUserDevices(int uid) async {
   Map devicesMap = await json.decode(devicesInput);
   List<Map> devicesMapList = devicesMap['devices'];
   List<Device> devices = [];
-  devicesMapList.forEach(
-    (device) {
-      if (device['uid'] == 1) {
-        // load device packages
-        List<DeviceData> data = [];
-        (device['data'] as List<Map>).forEach(
-          (deviceData) {
-            data.add(
-              DeviceData(
-                dataUsage: 7,
-                battery: deviceData['battery'],
-                elevation: deviceData['altitude'],
-                temperature: 24,
-                lat: deviceData['lat'],
-                lon: deviceData['lon'],
-                accuracy: deviceData['accuracy'],
-                dateTime: deviceData['lteTime'],
-              ),
-            );
-          },
-        );
-
-        // load devices and their data
-        devices.add(
-          Device(
-            imei: device['imei'],
-            color: device['color'],
-            isBlocked: device['isBlocked'],
-            data: data,
+  for (var device in devicesMapList) {
+    if (device['uid'] == 1) {
+      // load device packages
+      List<DeviceData> data = [];
+      for (var deviceData in (device['data'] as List<Map>)) {
+        data.add(
+          DeviceData(
+            dataUsage: 7,
+            battery: deviceData['battery'],
+            elevation: deviceData['altitude'],
+            temperature: 24,
+            lat: deviceData['lat'],
+            lon: deviceData['lon'],
+            accuracy: deviceData['accuracy'],
+            dateTime: deviceData['lteTime'],
           ),
         );
       }
-    },
-  );
+
+      // load devices and their data
+      devices.add(
+        Device(
+          imei: device['imei'],
+          color: device['color'],
+          isBlocked: device['isBlocked'],
+          data: data,
+        ),
+      );
+    }
+  }
   return devices;
 }

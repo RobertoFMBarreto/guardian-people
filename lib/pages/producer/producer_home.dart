@@ -127,18 +127,6 @@ class ProducerHome extends StatelessWidget {
                         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.linovt.guardian',
                       ),
-                      CircleLayer(
-                        circles: [
-                          CircleMarker(
-                            color: Color.fromRGBO(167, 90, 90, 0.498),
-                            borderColor: Color.fromRGBO(255, 0, 0, 1),
-                            borderStrokeWidth: 2,
-                            point: LatLng(41.694569, -8.830160),
-                            radius: 1000,
-                            useRadiusInMeter: true,
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),

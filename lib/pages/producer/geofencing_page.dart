@@ -5,6 +5,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 
 class GeofencingPage extends StatefulWidget {
@@ -143,7 +144,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
         children: [
           FloatingActionButton(
             heroTag: 'polygon',
-            backgroundColor: isCircle ? Colors.white : Color.fromRGBO(182, 255, 199, 1),
+            backgroundColor: isCircle ? Colors.white : const Color.fromRGBO(182, 255, 199, 1),
             onPressed: () {
               setState(() {
                 testPolygon.points.clear();
@@ -156,7 +157,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: FloatingActionButton(
               heroTag: 'circle',
-              backgroundColor: isCircle ? Color.fromRGBO(182, 255, 199, 1) : Colors.white,
+              backgroundColor: isCircle ? const Color.fromRGBO(182, 255, 199, 1) : Colors.white,
               onPressed: () {
                 setState(() {
                   testPolygon.points.clear();
