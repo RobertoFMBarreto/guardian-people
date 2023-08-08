@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/models/device.dart';
-import 'package:guardian/models/device_data.dart';
-import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
-import 'package:latlong2/latlong.dart';
-
-import '../../colors.dart';
 
 class ProducerHome extends StatefulWidget {
   const ProducerHome({super.key});
@@ -165,50 +160,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                       padding:
                           const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 20.0),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: FlutterMap(
-                          options: MapOptions(
-                            center: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                            zoom: 10,
-                            minZoom: 3,
-                          ),
-                          children: [
-                            TileLayer(
-                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              userAgentPackageName: 'com.linovt.guardian',
-                            ),
-                            MarkerLayer(
-                              markers: [
-                                Marker(
-                                  point: LatLng(
-                                      _currentPosition!.latitude, _currentPosition!.longitude),
-                                  builder: (context) {
-                                    return const Icon(
-                                      Icons.circle,
-                                      color: gdMapLocationPointColor,
-                                      size: 30,
-                                    );
-                                  },
-                                ),
-                                ...devices
-                                    .map(
-                                      (device) => Marker(
-                                        point: LatLng(device.data.first.lat, device.data.first.lon),
-                                        builder: (context) {
-                                          return Icon(
-                                            Icons.location_on,
-                                            color: HexColor(device.color),
-                                            size: 30,
-                                          );
-                                        },
-                                      ),
-                                    )
-                                    .toList()
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(20),
+                          child: DevicesLocationsMap(
+                              currentPosition: _currentPosition!, devices: devices)),
                     ),
                   )
                 ],
