@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,8 +23,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
 
   final polygons = <Polygon>[];
   final testPolygon = Polygon(
-    color: Colors.orange.withOpacity(0.5),
-    borderColor: Colors.deepOrange,
+    color: gdMapGeofenceFillColor,
+    borderColor: gdMapGeofenceBorderColor,
     borderStrokeWidth: 2,
     isFilled: true,
     points: [],
@@ -78,8 +79,14 @@ class _GeofencingPageState extends State<GeofencingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text('Editar cerca'),
+        title: Text(
+          'Editar cerca',
+          style: theme.textTheme.headlineSmall!.copyWith(
+            color: theme.colorScheme.onSecondary,
+          ),
+        ),
+        foregroundColor: theme.colorScheme.onSecondary,
+        backgroundColor: theme.colorScheme.secondary,
         centerTitle: true,
       ),
       body: _currentPosition == null
@@ -105,8 +112,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
                     circles: [
                       CircleMarker(
                         useRadiusInMeter: true,
-                        color: Colors.orange.withOpacity(0.5),
-                        borderColor: Colors.deepOrange,
+                        color: gdMapGeofenceFillColor,
+                        borderColor: gdMapGeofenceBorderColor,
                         borderStrokeWidth: 2,
                         point: LatLng(
                           polyEditor.points.first.latitude,
@@ -132,7 +139,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                       builder: (context) {
                         return const Icon(
                           Icons.circle,
-                          color: Colors.blue,
+                          color: gdMapLocationPointColor,
                           size: 30,
                         );
                       },
@@ -169,13 +176,24 @@ class _GeofencingPageState extends State<GeofencingPage> {
               child: const Icon(Icons.circle_outlined),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: FloatingActionButton(
+              heroTag: 'reset',
+              child: const Icon(Icons.delete_forever),
+              onPressed: () {
+                setState(() {
+                  testPolygon.points.clear();
+                });
+              },
+            ),
+          ),
           FloatingActionButton(
-            heroTag: 'reset',
-            child: const Icon(Icons.delete_forever),
+            heroTag: 'done',
+            child: const Icon(Icons.done),
             onPressed: () {
-              setState(() {
-                testPolygon.points.clear();
-              });
+              //!TODO: Code for storing the geofence
+              Navigator.of(context).pop();
             },
           ),
         ],

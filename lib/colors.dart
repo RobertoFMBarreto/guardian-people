@@ -16,3 +16,7 @@ const gdSecondaryTextColor = Colors.grey;
 
 const gdCancelTextColor = Colors.blueAccent;
 const gdCancelBtnColor = Colors.grey;
+
+const gdMapLocationPointColor = Colors.blue;
+const gdMapGeofenceFillColor = Color.fromRGBO(255, 153, 0, 0.5);
+const gdMapGeofenceBorderColor = Colors.deepOrange;

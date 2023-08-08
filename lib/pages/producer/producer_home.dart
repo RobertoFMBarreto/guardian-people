@@ -107,7 +107,7 @@ class ProducerHome extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).pushNamed('/producer/geofencing');
                           },
-                          child: Text('Cerca'),
+                          child: const Text('Cerca'),
                         ),
                       ],
                     ),
