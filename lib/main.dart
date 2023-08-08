@@ -8,6 +8,7 @@ import 'package:guardian/pages/login_page.dart';
 import 'package:guardian/pages/producer/fences_page.dart';
 import 'package:guardian/pages/producer/geofencing_page.dart';
 import 'package:guardian/pages/producer/manage_fence_page.dart';
+import 'package:guardian/pages/producer/producer_devices_page.dart';
 import 'package:guardian/pages/producer/producer_home.dart';
 import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';
@@ -114,6 +115,7 @@ class MyApp extends StatelessWidget {
             return const GeofencingPage();
           }
         },
+        '/producer/devices': (context) => const ProducerDevicesPage(),
       },
     );
   }

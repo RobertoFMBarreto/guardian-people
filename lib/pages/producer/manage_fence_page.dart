@@ -6,6 +6,7 @@ import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device_item.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
+import 'package:guardian/pages/producer/producer_devices_page.dart';
 
 class ManageFencePage extends StatefulWidget {
   final Fence fence;
@@ -88,6 +89,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         IconButton(
                           onPressed: () {
                             //!TODO: search and select devices
+                            Navigator.of(context).pushNamed('/producer/devices');
                           },
                           icon: const Icon(Icons.add),
                         ),
