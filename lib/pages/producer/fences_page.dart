@@ -68,7 +68,7 @@ class _FencesPageState extends State<FencesPage> {
                         onChanged: (value) {
                           setState(() {
                             searchString = value;
-                            fences = Fences.searchFences(value, fences);
+                            fences = Fences.searchFences(value, backupFences);
                           });
                         },
                       ),
