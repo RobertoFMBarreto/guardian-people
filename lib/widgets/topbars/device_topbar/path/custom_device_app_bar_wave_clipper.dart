@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomDeviceTopBarWaveClipper extends CustomClipper<Path> {
+class CustomDeviceAppBarWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();
@@ -10,13 +10,13 @@ class CustomDeviceTopBarWaveClipper extends CustomClipper<Path> {
 
     path.lineTo(0.0, p0);
     if (p0 != minSize) {
-      final p1Middle = Offset(size.width * 0.001, size.height * 0.85);
-      final p1 = Offset(size.width * 0.15, size.height * 0.85);
+      final p1Middle = Offset(size.width * 0.001, size.height * 0.9);
+      final p1 = Offset(size.width * 0.15, size.height * 0.9);
 
       path.quadraticBezierTo(p1Middle.dx, p1Middle.dy, p1.dx, p1.dy);
 
-      final p2 = Offset(size.width * 0.85, size.height * 0.85);
-      final p2Middle = Offset(size.width, size.height * 0.85);
+      final p2 = Offset(size.width * 0.85, size.height * 0.9);
+      final p2Middle = Offset(size.width, size.height * 0.9);
       final p3 = Offset(size.width, size.height);
       path.lineTo(p2.dx, p2.dy);
       path.quadraticBezierTo(p2Middle.dx, p2Middle.dy, p3.dx, p3.dy);
