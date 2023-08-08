@@ -70,43 +70,62 @@ class ProducerHome extends StatelessWidget {
               ),
               pinned: true,
             ),
-            const SliverToBoxAdapter(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 20, right: 8),
-                      child: SquareDevicesInfo(
-                        title: 'Dispositivos',
-                        description: '10',
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20, right: 8),
+                          child: SquareDevicesInfo(
+                            title: 'Dispositivos',
+                            description: '10',
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 20, left: 8),
-                      child: SquareDevicesInfo(
-                        title: 'Alertas',
-                        description: '2',
-                        isAlert: true,
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 20, left: 8),
+                          child: SquareDevicesInfo(
+                            title: 'Alertas',
+                            description: '2',
+                            isAlert: true,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0, top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('/producer/geofencing');
+                          },
+                          child: Text('Cerca'),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
             SliverFillRemaining(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 20.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: FlutterMap(
-                    options: MapOptions(center: LatLng(51.5, -0.09), zoom: 5, minZoom: 3),
+                    options: MapOptions(center: LatLng(51.5, -0.09), zoom: 10, minZoom: 3),
                     children: [
                       TileLayer(
                         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                        userAgentPackageName: 'com.linovt.guardian',
                       ),
                       CircleLayer(
                         circles: [

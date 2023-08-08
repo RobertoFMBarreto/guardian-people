@@ -38,7 +38,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
       addClosePathMarker: true,
       points: testPolygon.points,
       pointIcon: const Icon(Icons.circle, size: 23),
-      intermediateIcon: const Icon(Icons.square_rounded, size: 23),
+      intermediateIcon: isCircle ? null : const Icon(Icons.square_rounded, size: 23),
+      intermediateIconSize: const Size(50, 50),
+      pointIconSize: const Size(50, 50),
       callbackRefresh: () {
         if (testPolygon.points.length > 2 && isCircle) {
           polyEditor.remove(testPolygon.points.length - 2);
@@ -50,36 +52,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
     polygons.add(testPolygon);
   }
 
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Location services are disabled. Please enable the services')));
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Location permissions are denied')));
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text('Location permissions are permanently denied, we cannot request permissions.')));
-      return false;
-    }
-    return true;
-  }
-
   Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
+    final hasPermission = await handleLocationPermission(context);
 
     if (!hasPermission) return;
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
@@ -103,6 +77,11 @@ class _GeofencingPageState extends State<GeofencingPage> {
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text('Editar cerca'),
+        centerTitle: true,
+      ),
       body: _currentPosition == null
           ? Center(
               child: CircularProgressIndicator(
@@ -146,37 +125,56 @@ class _GeofencingPageState extends State<GeofencingPage> {
                 DragMarkers(
                   markers: polyEditor.edit(),
                 ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      builder: (context) {
+                        return const Icon(
+                          Icons.circle,
+                          color: Colors.blue,
+                          size: 30,
+                        );
+                      },
+                    )
+                  ],
+                )
               ],
             ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            child: const Icon(Icons.restart_alt),
+            heroTag: 'polygon',
+            backgroundColor: isCircle ? Colors.white : Color.fromRGBO(182, 255, 199, 1),
             onPressed: () {
               setState(() {
                 testPolygon.points.clear();
+                isCircle = false;
               });
             },
+            child: const Icon(Icons.square_outlined),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: FloatingActionButton(
-              child: const Icon(Icons.square_outlined),
+              heroTag: 'circle',
+              backgroundColor: isCircle ? Color.fromRGBO(182, 255, 199, 1) : Colors.white,
               onPressed: () {
                 setState(() {
                   testPolygon.points.clear();
-                  isCircle = false;
+                  isCircle = true;
                 });
               },
+              child: const Icon(Icons.circle_outlined),
             ),
           ),
           FloatingActionButton(
-            child: const Icon(Icons.circle_outlined),
+            heroTag: 'reset',
+            child: const Icon(Icons.delete_forever),
             onPressed: () {
               setState(() {
                 testPolygon.points.clear();
-                isCircle = true;
               });
             },
           ),
