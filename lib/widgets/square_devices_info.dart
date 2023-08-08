@@ -22,12 +22,12 @@ class SquareDevicesInfo extends StatelessWidget {
           end: Alignment.topRight,
           colors: isAlert
               ? [
-                  Color.fromRGBO(231, 75, 75, 1),
-                  Color.fromRGBO(231, 130, 130, 1),
+                  const Color.fromRGBO(231, 75, 75, 1),
+                  const Color.fromRGBO(231, 130, 130, 1),
                 ]
               : [
-                  Color.fromRGBO(88, 200, 160, 1),
-                  Color.fromRGBO(147, 215, 166, 1),
+                  const Color.fromRGBO(88, 200, 160, 1),
+                  const Color.fromRGBO(147, 215, 166, 1),
                 ],
         ),
       ),
