@@ -124,25 +124,29 @@ class _ProducerHomeState extends State<ProducerHome> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(left: 20, right: 8),
+                                padding: const EdgeInsets.only(left: 20, right: 8),
                                 child: SquareDevicesInfo(
                                   title: 'Dispositivos',
                                   description: '10',
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed('/producer/devices');
+                                  },
                                 ),
                               ),
                             ),
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(right: 20, left: 8),
+                                padding: const EdgeInsets.only(right: 20, left: 8),
                                 child: SquareDevicesInfo(
                                   title: 'Alertas',
                                   description: '2',
                                   isAlert: true,
+                                  onTap: () {},
                                 ),
                               ),
                             ),
