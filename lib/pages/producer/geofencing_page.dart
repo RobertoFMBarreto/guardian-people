@@ -106,12 +106,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
       appBar: AppBar(
         title: Text(
           'Editar cerca',
-          style: theme.textTheme.headlineSmall!.copyWith(
-            color: theme.colorScheme.onSecondary,
-          ),
+          style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
-        foregroundColor: theme.colorScheme.onSecondary,
-        backgroundColor: theme.colorScheme.secondary,
         centerTitle: true,
       ),
       body: _currentPosition == null
