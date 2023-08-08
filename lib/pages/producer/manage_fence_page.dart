@@ -4,7 +4,8 @@ import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
-import 'package:guardian/widgets/device_item.dart';
+import 'package:guardian/widgets/device/device_item.dart';
+import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/pages/producer/producer_devices_page.dart';
 
@@ -89,7 +90,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         IconButton(
                           onPressed: () {
                             //!TODO: search and select devices
-                            Navigator.of(context).pushNamed('/producer/devices');
+                            Navigator.of(context).pushNamed('/producer/devices', arguments: true);
                           },
                           icon: const Icon(Icons.add),
                         ),
@@ -107,11 +108,10 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           padding: const EdgeInsets.symmetric(
                             vertical: 8.0,
                           ),
-                          child: DeviceItem(
+                          child: DeviceItemRemovable(
                             deviceImei: devices[index].imei,
                             deviceData: devices[index].data.first.dataUsage,
                             deviceBattery: devices[index].data.first.battery,
-                            isRemoveMode: true,
                             onRemoveDevice: () {
                               //!TODO: On remove device
                             },

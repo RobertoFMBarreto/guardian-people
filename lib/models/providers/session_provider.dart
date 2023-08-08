@@ -24,3 +24,10 @@ Future<int?> hasUserSession() async {
   int? role = prefs.getInt('role');
   return role;
 }
+
+Future<int?> getSessionRole() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  int? role = prefs.getInt('role');
+  return role;
+}

@@ -3,13 +3,15 @@ import 'package:guardian/models/device.dart';
 import 'package:guardian/models/devices.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/widgets/device/device_item_selectable.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 
-import '../../widgets/device_item.dart';
+import '../../widgets/device/device_item.dart';
 import '../../widgets/pages/admin/producer_page/producer_page_drawer.dart';
 
 class ProducerDevicesPage extends StatefulWidget {
-  const ProducerDevicesPage({super.key});
+  final bool isSelect;
+  const ProducerDevicesPage({super.key, this.isSelect = false});
 
   @override
   State<ProducerDevicesPage> createState() => _ProducerDevicesPageState();
@@ -143,11 +145,31 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                       padding: const EdgeInsets.symmetric(
                         vertical: 8.0,
                       ),
-                      child: DeviceItem(
-                        deviceImei: devices[index].imei,
-                        deviceData: devices[index].data.first.dataUsage,
-                        deviceBattery: devices[index].data.first.battery,
-                      ),
+                      child: widget.isSelect
+                          ? DeviceItemSelectable(
+                              deviceImei: devices[index].imei,
+                              deviceData: devices[index].data.first.dataUsage,
+                              deviceBattery: devices[index].data.first.battery,
+                              isSelected: selectedDevices
+                                  .where((element) => element.imei == devices[index].imei)
+                                  .isNotEmpty,
+                              onSelected: () {
+                                int i = selectedDevices
+                                    .indexWhere((element) => element.imei == devices[index].imei);
+                                setState(() {
+                                  if (i >= 0) {
+                                    selectedDevices.removeAt(i);
+                                  } else {
+                                    selectedDevices.add(devices[index]);
+                                  }
+                                });
+                              },
+                            )
+                          : DeviceItem(
+                              deviceImei: devices[index].imei,
+                              deviceData: devices[index].data.first.dataUsage,
+                              deviceBattery: devices[index].data.first.battery,
+                            ),
                     ),
                   ),
                 ),

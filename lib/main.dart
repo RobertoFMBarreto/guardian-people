@@ -115,7 +115,24 @@ class MyApp extends StatelessWidget {
             return const GeofencingPage();
           }
         },
-        '/producer/devices': (context) => const ProducerDevicesPage(),
+        '/producer/devices': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
+            return const ProducerDevicesPage(
+              isSelect: true,
+            );
+          } else {
+            return const ProducerDevicesPage();
+          }
+        },
+        '/producer/device': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
+            return const ProducerDevicesPage(
+              isSelect: true,
+            );
+          } else {
+            return const ProducerDevicesPage();
+          }
+        },
       },
     );
   }

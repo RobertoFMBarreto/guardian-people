@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 
-class DeviceItem extends StatelessWidget {
+class DeviceItemSelectable extends StatelessWidget {
   final String deviceImei;
   final int deviceData;
   final int deviceBattery;
-  final bool isBlocked;
-  final bool isRemoveMode;
-  final Function()? onRemoveDevice;
+  final bool isSelected;
+  final Function() onSelected;
   final bool isPopPush;
 
-  const DeviceItem({
+  const DeviceItemSelectable({
     super.key,
     required this.deviceImei,
     required this.deviceData,
     required this.deviceBattery,
-    this.isRemoveMode = false,
-    this.isBlocked = false,
-    this.onRemoveDevice,
+    required this.onSelected,
     this.isPopPush = false,
+    this.isSelected = false,
   });
 
   @override
@@ -27,26 +25,17 @@ class DeviceItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () {
-        if (isPopPush) {
-          Navigator.of(context).popAndPushNamed('/admin/producer/device');
-        } else {
-          Navigator.of(context).pushNamed('/admin/producer/device');
-        }
-      },
+      onTap: onSelected,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             flex: 2,
-            child: GestureDetector(
-              onTap: isRemoveMode ? onRemoveDevice : null,
-              child: Icon(
-                isRemoveMode ? Icons.delete_forever : Icons.sensors,
-                size: 35,
-                color: isRemoveMode ? gdErrorColor : gdSecondaryColor,
-              ),
+            child: Icon(
+              isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+              size: 35,
+              color: gdSecondaryColor,
             ),
           ),
           Expanded(
