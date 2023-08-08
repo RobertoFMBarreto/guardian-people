@@ -1,7 +1,7 @@
 import 'package:guardian/models/device_data.dart';
 
 class Device {
-  final int imei;
+  final String imei;
   final String color;
   final bool isBlocked;
   final List<DeviceData> data;

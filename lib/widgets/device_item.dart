@@ -3,7 +3,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 
 class DeviceItem extends StatelessWidget {
-  final int deviceImei;
+  final String deviceImei;
   final int deviceData;
   final int deviceBattery;
   final bool isBlocked;

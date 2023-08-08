@@ -29,13 +29,13 @@ Future<List<User>> loadUsers() async {
 Future<List<Device>> loadUserDevices(int uid) async {
   String devicesInput = await rootBundle.loadString('assets/data/devices.json');
   Map devicesMap = await json.decode(devicesInput);
-  List<Map> devicesMapList = devicesMap['devices'];
+  List<dynamic> devicesMapList = devicesMap['devices'];
   List<Device> devices = [];
   for (var device in devicesMapList) {
     if (device['uid'] == 1) {
       // load device packages
       List<DeviceData> data = [];
-      for (var deviceData in (device['data'] as List<Map>)) {
+      for (var deviceData in device['data']) {
         data.add(
           DeviceData(
             dataUsage: 7,
