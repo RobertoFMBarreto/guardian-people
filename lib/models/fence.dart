@@ -4,14 +4,12 @@ import 'device.dart';
 
 class Fence {
   final String name;
-  final String fillColor;
-  final String borderColor;
+  String color;
   final List<Device> devices;
   final List<LatLng> points;
-  const Fence({
+  Fence({
     required this.name,
-    required this.fillColor,
-    required this.borderColor,
+    required this.color,
     required this.devices,
     required this.points,
   });

@@ -2,8 +2,7 @@
   "fences": [
     {
       "uid": 1,
-      "fillColor": "#f542ef",
-      "borderColor": "#f542ef",
+      "color": "#f542ef",
       "name": "teste",
       "devices": [],
       "points": [
@@ -19,8 +18,7 @@
     },
     {
       "uid": 1,
-      "fillColor": "#3238a8",
-      "borderColor": "#3238a8",
+      "color": "#3238a8",
       "name": "teste1",
       "devices": [],
       "points": [

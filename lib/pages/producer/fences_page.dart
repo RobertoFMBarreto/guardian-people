@@ -82,7 +82,7 @@ class _FencesPageState extends State<FencesPage> {
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             child: FenceItem(
                               name: fences[index].name,
-                              color: HexColor(fences[index].fillColor),
+                              color: HexColor(fences[index].color),
                               onRemove: () {
                                 //!TODO remove item from list
                               },

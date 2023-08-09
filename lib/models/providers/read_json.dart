@@ -85,13 +85,13 @@ Future<List<Fence>> loadUserFences(int uid) async {
       }
 
       // load fences and their points
+      print(fence);
       fences.add(
         Fence(
           name: fence["name"],
           points: points,
           devices: [],
-          borderColor: fence["borderColor"],
-          fillColor: fence["fillColor"],
+          color: fence["color"],
         ),
       );
     }

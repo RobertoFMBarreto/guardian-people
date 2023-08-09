@@ -48,8 +48,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
             polygons.add(
               Polygon(
                 points: fence.points,
-                color: HexColor(fence.fillColor).withOpacity(0.5),
-                borderColor: HexColor(fence.borderColor),
+                color: HexColor(fence.color).withOpacity(0.5),
+                borderColor: HexColor(fence.color),
                 borderStrokeWidth: 2,
                 isFilled: true,
               ),
@@ -58,8 +58,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
             circles.add(
               Polygon(
                 points: fence.points,
-                color: HexColor(fence.fillColor).withOpacity(0.5),
-                borderColor: HexColor(fence.borderColor),
+                color: HexColor(fence.color).withOpacity(0.5),
+                borderColor: HexColor(fence.color),
                 borderStrokeWidth: 2,
                 isFilled: true,
               ),

@@ -36,9 +36,7 @@ Future<void> getCurrentPosition(
     Function(Position position) onGetPosition, BuildContext context) async {
   final hasPermission = await handleLocationPermission(context);
   if (!hasPermission) return;
-  await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-      .then(onGetPosition)
-      .catchError(
+  await Geolocator.getCurrentPosition().then(onGetPosition).catchError(
     (e) {
       debugPrint(e);
     },

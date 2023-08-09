@@ -43,10 +43,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
   void _initPolygon() {
     editingPolygon = Polygon(
       color: widget.fence != null
-          ? HexColor(widget.fence!.fillColor).withOpacity(0.5)
+          ? HexColor(widget.fence!.color).withOpacity(0.5)
           : gdMapGeofenceFillColor,
-      borderColor:
-          widget.fence != null ? HexColor(widget.fence!.borderColor) : gdMapGeofenceBorderColor,
+      borderColor: widget.fence != null ? HexColor(widget.fence!.color) : gdMapGeofenceBorderColor,
       borderStrokeWidth: 2,
       isFilled: true,
       points: [],
@@ -77,8 +76,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
     final hasPermission = await handleLocationPermission(context);
 
     if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
+    await Geolocator.getCurrentPosition().then((Position position) {
       setState(() => _currentPosition = position);
     }).catchError((e) {
       debugPrint(e);
@@ -137,10 +135,10 @@ class _GeofencingPageState extends State<GeofencingPage> {
                       CircleMarker(
                         useRadiusInMeter: true,
                         color: widget.fence != null
-                            ? HexColor(widget.fence!.fillColor).withOpacity(0.5)
+                            ? HexColor(widget.fence!.color).withOpacity(0.5)
                             : gdMapGeofenceFillColor,
                         borderColor: widget.fence != null
-                            ? HexColor(widget.fence!.borderColor)
+                            ? HexColor(widget.fence!.color)
                             : gdMapGeofenceBorderColor,
                         borderStrokeWidth: 2,
                         point: LatLng(

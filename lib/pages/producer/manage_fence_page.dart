@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
+import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 
 class ManageFencePage extends StatefulWidget {
@@ -21,15 +23,13 @@ class _ManageFencePageState extends State<ManageFencePage> {
   Position? _currentPosition;
   List<Device> devices = [];
   // color picker values
-  Color pickerColor = Color(0xff443a49);
-  Color currentColor = Color(0xff443a49);
-  String hexColor = '';
+  Color fenceColor = gdMapGeofenceFillColor;
+  String fenceHexColor = '';
   @override
   void initState() {
     super.initState();
-    pickerColor = HexColor(widget.fence.fillColor);
-    currentColor = HexColor(widget.fence.fillColor);
-    hexColor = widget.fence.fillColor;
+    fenceColor = HexColor(widget.fence.color);
+    fenceHexColor = widget.fence.color;
     _loadDevices().then((value) => _getCurrentPosition());
   }
 
@@ -37,19 +37,11 @@ class _ManageFencePageState extends State<ManageFencePage> {
     final hasPermission = await handleLocationPermission(context);
 
     if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
+    await Geolocator.getCurrentPosition().then((Position position) {
       setState(() => _currentPosition = position);
     }).catchError((e) {
       debugPrint(e);
     });
-  }
-
-  // color changed callback
-  void changeColor(Color color) {
-    //!TODO: Store hex color
-    hexColor = '#${(pickerColor.value & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}';
-    setState(() => pickerColor = color);
   }
 
   Future<void> _loadDevices() async {
@@ -76,13 +68,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
               )
             : Column(
                 children: [
-                  ColorPicker(
-                    pickerColor: pickerColor,
-                    onColorChanged: changeColor,
-                    showLabel: false,
-                    enableAlpha: false,
-                  ),
-                  Text(hexColor),
                   Expanded(
                     flex: 2,
                     child: Padding(
@@ -90,6 +75,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: DevicesLocationsMap(
+                          key: Key(widget.fence.color),
                           currentPosition: _currentPosition!,
                           devices: devices,
                           centerOnPoly: true,
@@ -101,11 +87,43 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            'Cor da cerca:',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => CustomColorPickerInput(
+                                pickerColor: fenceColor,
+                                onSave: (color) {
+                                  setState(() {
+                                    fenceColor = color;
+                                    widget.fence.color = HexColor.toHex(color: fenceColor);
+                                  });
+                                },
+                                hexColor: HexColor.toHex(color: fenceColor),
+                              ),
+                            );
+                          },
+                          child: ColorCircle(color: fenceColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Dispositivos Associados:',
-                          style: theme.textTheme.bodyLarge,
+                          style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
                         IconButton(
                           onPressed: () {
