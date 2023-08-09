@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,15 @@ class MyApp extends StatelessWidget {
             return const ProducerDevicesPage();
           }
         },
-        '/producer/device': (context) => const DevicePage(),
+        '/producer/device': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+            return DevicePage(
+              device: ModalRoute.of(context)!.settings.arguments as Device,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        }
       },
     );
   }

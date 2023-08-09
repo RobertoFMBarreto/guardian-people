@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/device.dart';
+import 'package:guardian/widgets/pages/producer/device_page/device_time_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
-class DevicePage extends StatelessWidget {
-  const DevicePage({super.key});
+class DevicePage extends StatefulWidget {
+  final Device device;
+  const DevicePage({super.key, required this.device});
+
+  @override
+  State<DevicePage> createState() => _DevicePageState();
+}
+
+class _DevicePageState extends State<DevicePage> {
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +37,11 @@ class DevicePage extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.calendar_month)),
                     ],
                   ),
                 ),
+                device: widget.device,
                 leadingWidget: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
@@ -52,8 +65,23 @@ class DevicePage extends StatelessWidget {
               ),
             ),
             SliverFillRemaining(
-              child: Column(
-                children: [],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          DeviceTimeWidget(
+                            startDate: startDate,
+                            endDate: endDate,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
           ],

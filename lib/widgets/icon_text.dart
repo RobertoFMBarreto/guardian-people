@@ -7,6 +7,7 @@ class IconText extends StatelessWidget {
   final double fontSize;
   final String text;
   final bool isInverted;
+  final Color textColor;
   const IconText({
     super.key,
     required this.icon,
@@ -14,6 +15,7 @@ class IconText extends StatelessWidget {
     required this.text,
     required this.iconSize,
     required this.fontSize,
+    this.textColor = Colors.black,
     this.isInverted = false,
   });
 
@@ -28,6 +30,7 @@ class IconText extends StatelessWidget {
                 style: theme.textTheme.bodyLarge!.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize,
+                  color: textColor,
                 ),
               ),
               Icon(
@@ -49,6 +52,7 @@ class IconText extends StatelessWidget {
                 style: theme.textTheme.bodyLarge!.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize,
+                  color: textColor,
                 ),
               ),
             ],

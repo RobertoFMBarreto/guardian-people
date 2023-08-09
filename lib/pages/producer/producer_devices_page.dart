@@ -166,9 +166,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                               },
                             )
                           : DeviceItem(
-                              deviceImei: devices[index].imei,
-                              deviceData: devices[index].data.first.dataUsage,
-                              deviceBattery: devices[index].data.first.battery,
+                              device: devices[index],
                             ),
                     ),
                   ),

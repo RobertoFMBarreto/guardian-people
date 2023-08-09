@@ -2,11 +2,11 @@ import 'package:guardian/models/device_data.dart';
 
 class Device {
   final String imei;
-  final String color;
-  final bool isBlocked;
+  String color;
+  bool isBlocked;
   final List<DeviceData> data;
 
-  const Device({
+  Device({
     required this.imei,
     required this.color,
     required this.isBlocked,

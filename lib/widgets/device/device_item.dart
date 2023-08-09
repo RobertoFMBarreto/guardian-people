@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/device.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
 class DeviceItem extends StatelessWidget {
-  final String deviceImei;
-  final int deviceData;
-  final int deviceBattery;
+  final Device device;
   final bool isBlocked;
   final bool isPopPush;
 
   const DeviceItem({
     super.key,
-    required this.deviceImei,
-    required this.deviceData,
-    required this.deviceBattery,
     this.isBlocked = false,
     this.isPopPush = false,
+    required this.device,
   });
 
   @override
@@ -27,11 +24,13 @@ class DeviceItem extends StatelessWidget {
       onTap: () {
         getSessionRole().then((role) {
           if (isPopPush) {
-            Navigator.of(context)
-                .popAndPushNamed(role == 0 ? '/admin/producer/device' : '/producer/device');
+            Navigator.of(context).popAndPushNamed(
+                role == 0 ? '/admin/producer/device' : '/producer/device',
+                arguments: device);
           } else {
-            Navigator.of(context)
-                .pushNamed(role == 0 ? '/admin/producer/device' : '/producer/device');
+            Navigator.of(context).pushNamed(
+                role == 0 ? '/admin/producer/device' : '/producer/device',
+                arguments: device);
           }
         });
       },
@@ -56,14 +55,14 @@ class DeviceItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    deviceImei.toString(),
+                    device.imei.toString(),
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: 18,
                     ),
                   ),
                   Text(
-                    '${deviceData.toString()}/10MB',
+                    '${device.data.first.dataUsage.toString()}/10MB',
                     style: theme.textTheme.bodyMedium!.copyWith(),
                   ),
                 ],
@@ -77,11 +76,11 @@ class DeviceItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 DeviceWidgetProvider.getBatteryWidget(
-                  deviceBattery: deviceBattery,
+                  deviceBattery: device.data.first.battery,
                   color: theme.colorScheme.secondary,
                 ),
                 Text(
-                  '${deviceBattery.toString()}%',
+                  '${device.data.first.battery.toString()}%',
                   style: theme.textTheme.bodyMedium!.copyWith(
                     fontWeight: FontWeight.w500,
                   ),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class ColorCircle extends StatelessWidget {
   final Color color;
-  const ColorCircle({super.key, required this.color});
+  final double radius;
+  const ColorCircle({super.key, required this.color, this.radius = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +18,14 @@ class ColorCircle extends StatelessWidget {
               BoxShadow(blurRadius: 1, color: Colors.grey, spreadRadius: 1, offset: Offset(.5, 1)),
             ],
           ),
-          child: const CircleAvatar(
+          child: CircleAvatar(
             backgroundColor: Colors.white,
-            radius: 10,
+            radius: radius,
           ),
         ),
         CircleAvatar(
           backgroundColor: color,
-          radius: 7,
+          radius: radius - 3,
         ),
       ],
     );

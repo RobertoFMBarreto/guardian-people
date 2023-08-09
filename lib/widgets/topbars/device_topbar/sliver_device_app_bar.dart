@@ -1,3 +1,5 @@
+import 'package:guardian/models/device.dart';
+import 'package:guardian/widgets/topbars/device_topbar/no_background_device_top_bar.dart';
 import 'package:guardian/widgets/topbars/device_topbar/path/custom_device_app_bar_wave_clipper.dart';
 import 'package:guardian/widgets/topbars/main_topbar/device_info_body_top_bar.dart';
 import 'package:guardian/widgets/topbars/main_topbar/path/custom_device_top_bar_wave_clipper.dart';
@@ -8,17 +10,19 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;
   Widget? title;
+  Device device;
   SliverDeviceAppBar({
     this.leadingWidget,
     this.tailWidget,
     this.title,
+    required this.device,
   });
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     var adjustedShrinkOffset = shrinkOffset > minExtent ? minExtent : shrinkOffset;
 
     return SizedBox(
-      height: 400,
+      height: 350,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -29,14 +33,19 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
               child: title ?? const SizedBox(),
             ),
           ),
-          ClipPath(clipper: CustomDeviceAppBarWaveClipper(), child: const DeviceInfoBodyTopBar()),
+          ClipPath(
+            clipper: CustomDeviceAppBarWaveClipper(),
+            child: NoBackgroundDeviceTopBar(
+              device: device,
+            ),
+          ),
         ],
       ),
     );
   }
 
   @override
-  double get maxExtent => 400;
+  double get maxExtent => 350;
 
   @override
   double get minExtent => 70;

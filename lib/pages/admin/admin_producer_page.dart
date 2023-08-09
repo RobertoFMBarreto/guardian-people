@@ -229,9 +229,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                           onRemoveDevice: () {},
                         )
                       : DeviceItem(
-                          deviceImei: devices[index].imei,
-                          deviceData: devices[index].data.first.dataUsage,
-                          deviceBattery: devices[index].data.first.battery,
+                          device: devices[index],
                         ),
                 ),
               ),
