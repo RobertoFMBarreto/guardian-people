@@ -177,6 +177,23 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
             ],
           ),
         ),
+        floatingActionButton: widget.isSelect && selectedDevices.isNotEmpty
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.of(context).pop(selectedDevices);
+                },
+                label: Text(
+                  'Concluído',
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                icon: const Icon(Icons.add),
+                backgroundColor: theme.colorScheme.secondary,
+                foregroundColor: theme.colorScheme.onSecondary,
+              )
+            : null,
       ),
     );
   }

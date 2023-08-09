@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
@@ -126,9 +127,11 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
                         IconButton(
-                          onPressed: () {
+                          onPressed: () async {
                             //!TODO: search and select devices
-                            Navigator.of(context).pushNamed('/producer/devices', arguments: true);
+                            final selectedDevices = await Navigator.of(context)
+                                .pushNamed('/producer/devices', arguments: true);
+                            print(selectedDevices);
                           },
                           icon: const Icon(Icons.add),
                         ),
@@ -161,9 +164,9 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 ],
               ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        distance: 80,
         children: [
           FloatingActionButton.extended(
             heroTag: 'Remover Cerca',
