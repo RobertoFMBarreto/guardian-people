@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/models/providers/hex_color.dart';
+import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/icon_text.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
-
-import '../../color_circle.dart';
 
 class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Device device;

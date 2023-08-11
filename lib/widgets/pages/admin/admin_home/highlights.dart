@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/user.dart';
 
 import '../../../producer.dart';
 
 class Highlights extends StatelessWidget {
-  const Highlights({super.key});
+  final List<User> users;
+  const Highlights({super.key, required this.users});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,12 @@ class Highlights extends StatelessWidget {
           height: deviceHeight * 0.23,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 10,
-            itemBuilder: (context, index) => const Producer(
-              producerName: 'Nome Produtor',
+            itemCount: users.length,
+            itemBuilder: (context, index) => Producer(
+              producerName: users[index].name,
               devicesInfo: '2 dispositivos em alerta vermelho',
               imageUrl: '',
+              uid: users[index].uid,
             ),
           ),
         ),

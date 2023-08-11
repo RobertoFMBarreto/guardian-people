@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/user.dart';
 
 import '../../../producer.dart';
 
 class Producers extends StatelessWidget {
-  const Producers({super.key});
+  final List<User> producers;
+  const Producers({super.key, required this.producers});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +17,12 @@ class Producers extends StatelessWidget {
         mainAxisSpacing: 0,
         mainAxisExtent: deviceHeight * 0.23,
       ),
-      itemCount: 10,
-      itemBuilder: (context, index) => const Producer(
-        producerName: 'Nome Produtor',
+      itemCount: producers.length,
+      itemBuilder: (context, index) => Producer(
+        producerName: producers[index].name,
         devicesInfo: '10 dispositivos',
         imageUrl: '',
+        uid: producers[index].uid,
       ),
     );
   }

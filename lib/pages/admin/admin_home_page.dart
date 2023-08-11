@@ -1,92 +1,124 @@
+import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/user.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
+
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
+  List<User> users = [];
+  bool isLoading = true;
+  @override
+  void initState() {
+    _loadUser();
+    super.initState();
+  }
+
+  Future<void> _loadUser() async {
+    loadUsersRole(1).then((allUsers) {
+      setState(() {
+        users.addAll(allUsers);
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              delegate: SliverMainAppBar(
-                imageUrl: '',
-                name: 'Admin',
-                isHomeShape: true,
-                title: Text(
-                  'Destaques',
-                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
+        child: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: theme.colorScheme.secondary,
                 ),
-                tailWidget: PopupMenuButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  color: theme.colorScheme.onSecondary,
-                  icon: const Icon(Icons.menu),
-                  onSelected: (item) {
-                    switch (item) {
-                      case 0:
-                        Navigator.of(context).pushNamed('/profile');
-                        break;
-                      case 1:
-                        //! Logout code
-                        clearUserSession().then(
-                          (value) => Navigator.of(context).popAndPushNamed('/login'),
-                        );
+              )
+            : CustomScrollView(
+                slivers: [
+                  SliverPersistentHeader(
+                    delegate: SliverMainAppBar(
+                      imageUrl: '',
+                      name: 'Admin',
+                      isHomeShape: true,
+                      title: Text(
+                        'Destaques',
+                        style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
+                      ),
+                      tailWidget: PopupMenuButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        color: theme.colorScheme.onSecondary,
+                        icon: const Icon(Icons.menu),
+                        onSelected: (item) {
+                          switch (item) {
+                            case 0:
+                              Navigator.of(context).pushNamed('/profile');
+                              break;
+                            case 1:
+                              //! Logout code
+                              clearUserSession().then(
+                                (value) => Navigator.of(context).popAndPushNamed('/login'),
+                              );
 
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    const PopupMenuItem(
-                      value: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text('Perfil'),
-                          Icon(
-                            Icons.person,
-                            size: 15,
+                              break;
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem(
+                            value: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text('Perfil'),
+                                Icon(
+                                  Icons.person,
+                                  size: 15,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 1,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text('Sair'),
+                                Icon(
+                                  Icons.logout,
+                                  size: 15,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
-                      value: 1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text('Sair'),
-                          Icon(
-                            Icons.logout,
-                            size: 15,
-                          ),
-                        ],
+                    pinned: true,
+                  ),
+                  Highlights(users: users.sublist(0, 2)),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        'Produtores',
+                        style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Producers(
+                    producers: users,
+                  ),
+                ],
               ),
-              pinned: true,
-            ),
-            const Highlights(),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Text(
-                  'Produtores',
-                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
-                ),
-              ),
-            ),
-            const Producers(),
-          ],
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

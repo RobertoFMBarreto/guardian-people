@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
-import 'package:guardian/widgets/topbars/device_topbar/device_min_top_bar.dart';
-import 'package:guardian/widgets/topbars/device_topbar/no_background_device_top_bar.dart';
+import 'package:guardian/widgets/topbars/device_topbar/topbar_body/device_min_top_bar.dart';
+import 'package:guardian/widgets/topbars/device_topbar/topbar_body/no_background_device_top_bar.dart';
 
 class DeviceTopBar extends StatelessWidget {
   final double extent;

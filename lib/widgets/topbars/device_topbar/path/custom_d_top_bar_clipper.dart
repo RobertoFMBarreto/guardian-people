@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomDeviceTopBarWaveClipper extends CustomClipper<Path> {
+class CustomDTopBarClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();

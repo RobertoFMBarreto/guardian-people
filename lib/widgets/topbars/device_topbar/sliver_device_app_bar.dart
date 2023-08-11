@@ -1,17 +1,21 @@
 import 'package:guardian/models/device.dart';
-import 'package:guardian/widgets/topbars/device_topbar/device_top_bar.dart';
-import 'package:guardian/widgets/topbars/device_topbar/path/custom_device_app_bar_wave_clipper.dart';
+import 'package:guardian/widgets/topbars/device_topbar/path/custom_d_top_bar_clipper.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/widgets/topbars/device_topbar/path/custom_inverted_d_top_bar_clipper.dart';
+import 'package:guardian/widgets/topbars/device_topbar/topbar_body/device_rounded_white_body_info.dart';
+import 'package:guardian/widgets/topbars/device_topbar/topbar_body/device_top_bar.dart';
 
 class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;
   Widget? title;
   Device device;
+  bool isWhiteBody;
   SliverDeviceAppBar({
     this.leadingWidget,
     this.tailWidget,
     this.title,
+    this.isWhiteBody = false,
     required this.device,
   });
   @override
@@ -19,7 +23,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
     var adjustedShrinkOffset = shrinkOffset > minExtent ? minExtent : shrinkOffset;
 
     return SizedBox(
-      height: 350,
+      height: isWhiteBody ? 300 : 350,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -31,11 +35,15 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
             ),
           ),
           ClipPath(
-            clipper: CustomDeviceAppBarWaveClipper(),
-            child: DeviceTopBar(
-              device: device,
-              extent: adjustedShrinkOffset,
-            ),
+            clipper: isWhiteBody ? CustomInvertedDTopBarClipper() : CustomDTopBarClipper(),
+            child: isWhiteBody
+                ? DeviceRoundedWhiteBodyInfo(
+                    device: device,
+                  )
+                : DeviceTopBar(
+                    device: device,
+                    extent: adjustedShrinkOffset,
+                  ),
           ),
         ],
       ),
@@ -43,7 +51,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 350;
+  double get maxExtent => isWhiteBody ? 300 : 350;
 
   @override
   double get minExtent => 70;

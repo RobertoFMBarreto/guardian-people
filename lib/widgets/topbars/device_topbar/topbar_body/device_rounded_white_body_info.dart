@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/device.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/widgets/icon_text.dart';
 
-class ProducerDeviceInfoTopBar extends StatelessWidget {
-  const ProducerDeviceInfoTopBar({super.key});
+class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
+  final Device device;
+  const DeviceRoundedWhiteBodyInfo({super.key, required this.device});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,7 @@ class ProducerDeviceInfoTopBar extends StatelessWidget {
                         IconText(
                           icon: Icons.sim_card,
                           iconColor: theme.colorScheme.secondary,
-                          text: '10/10MB',
+                          text: '${device.data.first.dataUsage}/10MB',
                           fontSize: 23,
                           iconSize: 25,
                         ),
@@ -76,7 +78,7 @@ class ProducerDeviceInfoTopBar extends StatelessWidget {
                           isInverted: true,
                           icon: Icons.landscape,
                           iconColor: theme.colorScheme.secondary,
-                          text: '400m',
+                          text: '${device.data.first.elevation}m',
                           fontSize: 23,
                           iconSize: 30,
                         ),
@@ -88,7 +90,7 @@ class ProducerDeviceInfoTopBar extends StatelessWidget {
                         IconText(
                           icon: Icons.device_thermostat,
                           iconColor: theme.colorScheme.secondary,
-                          text: '24ºC',
+                          text: '${device.data.first.temperature}ºC',
                           fontSize: 23,
                           iconSize: 30,
                         ),
@@ -99,7 +101,7 @@ class ProducerDeviceInfoTopBar extends StatelessWidget {
                           ),
                           isInverted: true,
                           iconColor: theme.colorScheme.secondary,
-                          text: '80%',
+                          text: '${device.data.first.battery}%',
                           fontSize: 23,
                           iconSize: 30,
                         ),

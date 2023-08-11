@@ -28,6 +28,29 @@ Future<List<User>> loadUsers() async {
   return users;
 }
 
+Future<List<User>> loadUsersRole(int role) async {
+  String usersInput = await rootBundle.loadString('assets/data/users.json');
+  Map<String, dynamic> usersMap = await json.decode(usersInput);
+  List<User> users = [];
+  usersMap['users']!.forEach(
+    (user) {
+      if (user['role'] == role) {
+        users.add(
+          User(
+            uid: user['id'],
+            name: user['name'],
+            imageUrl: user['imageUrl'],
+            email: user['email'],
+            password: user['password'],
+            role: user['role'],
+          ),
+        );
+      }
+    },
+  );
+  return users;
+}
+
 Future<List<Device>> loadUserDevices(int uid) async {
   String devicesInput = await rootBundle.loadString('assets/data/devices.json');
   Map devicesMap = await json.decode(devicesInput);

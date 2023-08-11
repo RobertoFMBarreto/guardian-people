@@ -107,7 +107,15 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfilePage(),
         '/admin': (context) => const AdminHomePage(),
         '/admin/producer': (context) => const AdminProducerPage(),
-        '/admin/producer/device': (context) => const AdminDeviceManagementPage(),
+        '/admin/producer/device': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+            return AdminDeviceManagementPage(
+              device: ModalRoute.of(context)!.settings.arguments as Device,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        },
         '/producer': (context) => const ProducerHome(),
         '/producer/fences': (context) => const FencesPage(),
         '/producer/fence/manage': (context) {

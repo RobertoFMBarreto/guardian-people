@@ -4,6 +4,7 @@ import 'package:guardian/colors.dart';
 import 'circle_avatar_border.dart';
 
 class Producer extends StatelessWidget {
+  final String uid;
   final String producerName;
   final String devicesInfo;
   final String imageUrl;
@@ -12,6 +13,7 @@ class Producer extends StatelessWidget {
     required this.producerName,
     required this.devicesInfo,
     required this.imageUrl,
+    required this.uid,
   });
 
   @override
@@ -19,7 +21,7 @@ class Producer extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed('/admin/producer'),
+      onTap: () => Navigator.of(context).pushNamed('/admin/producer', arguments: uid),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Stack(

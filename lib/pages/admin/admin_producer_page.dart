@@ -4,6 +4,7 @@ import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/devices.dart';
 import 'package:guardian/models/focus_manager.dart';
+import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
@@ -36,10 +37,14 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
   List<Device> devices = [];
   @override
   void initState() {
-    //!TODO: Backup devices
-    // backup all devices
-    backupDevices.addAll(devices);
+    _loadDevices();
     super.initState();
+  }
+
+  Future<void> _loadDevices() async {
+    loadUserDevices(1).then((allDevices) {
+      setState(() => devices.addAll(allDevices));
+    });
   }
 
   @override

@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 0,
+      "id": "0",
       "name": "Admin",
       "role": 0,
       "imageUrl": "",
@@ -9,8 +9,32 @@
       "password": "admin"
     },
     {
-      "id": 1,
+      "id": "1",
       "name": "João Gonçalves",
+      "role": 1,
+      "imageUrl": "",
+      "email": "joao.goncalves@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "2",
+      "name": "Ricardo Martins",
+      "role": 1,
+      "imageUrl": "",
+      "email": "joao.goncalves@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "3",
+      "name": "José Alberto",
+      "role": 1,
+      "imageUrl": "",
+      "email": "joao.goncalves@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "4",
+      "name": "Henrique Simões",
       "role": 1,
       "imageUrl": "",
       "email": "joao.goncalves@teste.com",
