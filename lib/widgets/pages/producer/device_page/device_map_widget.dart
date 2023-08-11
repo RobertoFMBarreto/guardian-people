@@ -125,7 +125,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       DropdownButton(
                         isDense: true,
                         borderRadius: BorderRadius.circular(20),
-                        underline: SizedBox(),
+                        underline: const SizedBox(),
                         value: dropDownValue,
                         items: const [
                           DropdownMenuItem(

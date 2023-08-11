@@ -82,7 +82,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
     List<DeviceData> deviceData = widget.isInterval
         ? widget.device.getDataBetweenDates(widget.startDate, widget.endDate)
         : widget.device.data;
-    print(deviceData.length);
     return isLoading
         ? Center(
             child: CircularProgressIndicator(

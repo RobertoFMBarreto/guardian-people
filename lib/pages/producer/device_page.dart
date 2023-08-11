@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/providers/device/device_widgets_provider.dart';
+import 'package:guardian/widgets/icon_text.dart';
+import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -88,13 +91,24 @@ class _DevicePageState extends State<DevicePage> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
                 child: DeviceMapWidget(
                   device: widget.device,
                   isInterval: isInterval,
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+                child: DeviceDataInfoList(
+              device: widget.device,
+            )),
+            // SliverList.builder(
+            //   itemCount: 10,
+            //   itemBuilder: (context, index) => Padding(
+            //     padding: const EdgeInsets.only(left: 20.0),
+            //     child: DeviceDataInfoListItem(),
+            //   ),
+            // ),
           ],
         ),
       ),
