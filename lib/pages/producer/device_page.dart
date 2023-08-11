@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
-import 'package:guardian/widgets/inputs/date_time_input.dart';
-import 'package:guardian/widgets/inputs/date_time_input/date_selector_input.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_time_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
-import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class DevicePage extends StatefulWidget {

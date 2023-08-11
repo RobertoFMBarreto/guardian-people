@@ -1,10 +1,7 @@
 import 'package:guardian/models/device.dart';
-import 'package:guardian/widgets/topbars/device_topbar/no_background_device_top_bar.dart';
+import 'package:guardian/widgets/topbars/device_topbar/device_top_bar.dart';
 import 'package:guardian/widgets/topbars/device_topbar/path/custom_device_app_bar_wave_clipper.dart';
-import 'package:guardian/widgets/topbars/main_topbar/device_info_body_top_bar.dart';
-import 'package:guardian/widgets/topbars/main_topbar/path/custom_device_top_bar_wave_clipper.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/widgets/topbars/main_topbar/path/custom_main_top_bar_wave_clipper.dart';
 
 class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
@@ -35,8 +32,9 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
           ),
           ClipPath(
             clipper: CustomDeviceAppBarWaveClipper(),
-            child: NoBackgroundDeviceTopBar(
+            child: DeviceTopBar(
               device: device,
+              extent: adjustedShrinkOffset,
             ),
           ),
         ],
