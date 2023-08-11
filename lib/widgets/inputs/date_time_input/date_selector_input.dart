@@ -26,6 +26,7 @@ class _DateSelectorInputState extends State<DateSelectorInput> {
     return SizedBox(
       height: 300,
       child: SfDateRangePicker(
+        initialDisplayDate: widget.initialDate,
         onSelectionChanged: widget.onSelectionChanged,
         selectionMode: DateRangePickerSelectionMode.single,
         rangeSelectionColor: theme.colorScheme.secondary.withOpacity(0.5),

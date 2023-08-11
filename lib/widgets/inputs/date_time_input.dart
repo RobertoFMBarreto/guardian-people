@@ -37,6 +37,7 @@ class _DateTimeInputState extends State<DateTimeInput> {
         TimeSelectorInput(
           onTimeChange: widget.onTimeChange,
           time: widget.date,
+          key: Key('${widget.date}'),
         ),
       ],
     );
