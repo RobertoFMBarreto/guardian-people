@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
@@ -19,6 +20,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final bool isInterval;
+  final bool showHeatMap;
   const SingleDeviceLocationMap({
     super.key,
     required this.currentPosition,
@@ -29,6 +31,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     required this.isInterval,
+    this.showHeatMap = false,
   });
 
   @override
@@ -41,6 +44,12 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   bool isLoading = true;
   bool showFence = true;
   final MapController _mapController = MapController();
+
+  List<Map<double, MaterialColor>> gradients = [
+    HeatMapOptions.defaultGradient,
+    {0.25: Colors.blue, 0.55: Colors.red, 0.85: Colors.pink, 1.0: Colors.purple}
+  ];
+
   @override
   void initState() {
     _loadDeviceFences();
@@ -73,7 +82,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
     List<DeviceData> deviceData = widget.isInterval
         ? widget.device.getDataBetweenDates(widget.startDate, widget.endDate)
         : widget.device.data;
-    print(deviceData);
+    print(deviceData.length);
     return isLoading
         ? Center(
             child: CircularProgressIndicator(
@@ -131,7 +140,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 PolygonLayer(
                   polygons: polygons,
                 ),
-              if (widget.isInterval)
+              if (widget.isInterval && !widget.showHeatMap)
                 PolylineLayer(
                   polylines: [
                     Polyline(
@@ -145,22 +154,50 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     ),
                   ],
                 ),
-              MarkerLayer(
-                markers: [
-                  // Marker(
-                  //   point:
-                  //       LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
-                  //   builder: (context) {
-                  //     return const Icon(
-                  //       Icons.circle,
-                  //       color: gdMapLocationPointColor,
-                  //       size: 30,
-                  //     );
-                  //   },
-                  // ),
-                  if (deviceData.isNotEmpty)
+              if (deviceData.isNotEmpty && widget.showHeatMap)
+                HeatMapLayer(
+                  heatMapDataSource: InMemoryHeatMapDataSource(
+                    data: deviceData
+                        .map(
+                          (e) => WeightedLatLng(LatLng(e.lat, e.lon), 1),
+                        )
+                        .toList(),
+                  ),
+                )
+              else
+                MarkerLayer(
+                  markers: [
+                    if (deviceData.isNotEmpty)
+                      Marker(
+                        point: widget.isInterval
+                            ? LatLng(deviceData.first.lat, deviceData.first.lon)
+                            : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
+                        builder: (context) {
+                          return Icon(
+                            Icons.location_on,
+                            color: HexColor(widget.device.color),
+                            size: 30,
+                          );
+                        },
+                      ),
+                    if (widget.isInterval && deviceData.isNotEmpty)
+                      ...deviceData
+                          .sublist(1)
+                          .map(
+                            (e) => Marker(
+                              point: LatLng(e.lat, e.lon),
+                              builder: (context) {
+                                return const Icon(
+                                  Icons.circle,
+                                  color: gdErrorColor,
+                                  size: 15,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
                     Marker(
-                      point: widget.isInterval
+                      point: widget.isInterval && deviceData.isNotEmpty
                           ? LatLng(deviceData.first.lat, deviceData.first.lon)
                           : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
                       builder: (context) {
@@ -171,36 +208,8 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         );
                       },
                     ),
-                  if (widget.isInterval && deviceData.isNotEmpty)
-                    ...deviceData
-                        .sublist(1)
-                        .map(
-                          (e) => Marker(
-                            point: LatLng(e.lat, e.lon),
-                            builder: (context) {
-                              return const Icon(
-                                Icons.circle,
-                                color: gdErrorColor,
-                                size: 15,
-                              );
-                            },
-                          ),
-                        )
-                        .toList(),
-                  Marker(
-                    point: widget.isInterval && deviceData.isNotEmpty
-                        ? LatLng(deviceData.first.lat, deviceData.first.lon)
-                        : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
-                    builder: (context) {
-                      return Icon(
-                        Icons.location_on,
-                        color: HexColor(widget.device.color),
-                        size: 30,
-                      );
-                    },
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           );
   }

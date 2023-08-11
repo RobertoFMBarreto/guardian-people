@@ -28,6 +28,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   double currentZoom = 17;
 
+  bool showHeatMap = false;
+  int dropDownValue = 0;
+
   @override
   void initState() {
     _loadFences().then((value) => _getCurrentPosition());
@@ -60,6 +63,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
+    dropDownValue = !widget.isInterval ? 0 : dropDownValue;
+    showHeatMap = !widget.isInterval ? false : showHeatMap;
     return _currentPosition == null
         ? Center(
             child: CircularProgressIndicator(
@@ -70,52 +75,99 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (widget.isInterval)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: DeviceTimeWidget(
-                    startDate: startDate,
-                    endDate: endDate,
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: RangeDateTimeInput(
-                                  startDate: startDate,
-                                  endDate: endDate,
-                                  onConfirm: (newStartDate, newEndDate) {
-                                    setState(() {
-                                      startDate = newStartDate;
-                                      endDate = newEndDate;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: RangeDateTimeInput(
+                                startDate: startDate,
+                                endDate: endDate,
+                                onConfirm: (newStartDate, newEndDate) {
+                                  setState(() {
+                                    startDate = newStartDate;
+                                    endDate = newEndDate;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                            );
-                          });
-                    },
+                            ),
+                          );
+                        });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DeviceTimeWidget(
+                          startDate: startDate,
+                          endDate: endDate,
+                        ),
+                        Icon(
+                          Icons.calendar_month,
+                          size: 50,
+                          color: theme.colorScheme.secondary,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.only(right: 10.0, top: 10.0),
+                padding: const EdgeInsets.only(top: 10.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Mostrar cerca:",
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    Switch(
-                        activeTrackColor: theme.colorScheme.secondary,
-                        value: showFence,
+                    if (widget.isInterval)
+                      DropdownButton(
+                        isDense: true,
+                        borderRadius: BorderRadius.circular(20),
+                        underline: SizedBox(),
+                        value: dropDownValue,
+                        items: const [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text(
+                              'Mapa Normal',
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Text(
+                              'Mapa de Calor',
+                            ),
+                          ),
+                        ],
                         onChanged: (value) {
                           setState(() {
-                            showFence = value;
+                            if (value != null) {
+                              showHeatMap = value == 1;
+                              dropDownValue = value;
+                              showFence = false;
+                            }
                           });
-                        }),
+                        },
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Mostrar cerca:",
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        Switch(
+                            activeTrackColor: theme.colorScheme.secondary,
+                            value: showFence,
+                            onChanged: (value) {
+                              setState(() {
+                                showFence = value;
+                              });
+                            }),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -124,7 +176,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: SingleDeviceLocationMap(
-                    key: Key('$showFence'),
+                    key: Key('${showFence}_$showHeatMap'),
                     currentPosition: _currentPosition!,
                     device: widget.device,
                     showFence: showFence,
@@ -137,6 +189,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       currentZoom = newZoom;
                     },
                     startingZoom: currentZoom,
+                    showHeatMap: showHeatMap,
                   ),
                 ),
               ),
