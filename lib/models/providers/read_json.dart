@@ -108,7 +108,6 @@ Future<List<Fence>> loadUserFences(int uid) async {
       }
 
       // load fences and their points
-      print(fence);
       fences.add(
         Fence(
           name: fence["name"],
@@ -129,7 +128,7 @@ Future<List<Fence>> loadDeviceFences(String deviceId) async {
   List<Fence> fences = [];
   for (var fence in fencesMapList) {
     if ((fence['devices'] as List<dynamic>)
-        .where((element) => element['deviceId'] == deviceId)
+        .where((element) => element['imei'] == deviceId)
         .isNotEmpty) {
       // load fence points
       List<LatLng> points = [];

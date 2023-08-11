@@ -22,3 +22,5 @@ const gdMapGeofenceFillColor = Color.fromRGBO(255, 153, 0, 0.5);
 const gdMapGeofenceBorderColor = Colors.deepOrange;
 
 const gdToggleGreyArea = Color.fromRGBO(215, 215, 215, 1);
+
+const gdSuccessColor = Color.fromRGBO(112, 198, 136, 1);

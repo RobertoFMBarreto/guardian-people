@@ -41,6 +41,19 @@ class _FencesPageState extends State<FencesPage> {
         CustomFocusManager.unfocus(context);
       },
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(),
+          backgroundColor: theme.colorScheme.secondary,
+          onPressed: () {
+            //!TODO:code to add a new fence
+            Navigator.of(context).pushNamed('/producer/geofencing');
+          },
+          child: Icon(
+            Icons.add,
+            size: 30,
+            color: theme.colorScheme.onSecondary,
+          ),
+        ),
         appBar: AppBar(
           title: Text(
             'Cercas',

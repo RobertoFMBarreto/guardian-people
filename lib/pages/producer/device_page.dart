@@ -27,8 +27,11 @@ class _DevicePageState extends State<DevicePage> {
   DateTime startDateBackup = DateTime.now();
   DateTime endDateBackup = DateTime.now();
   bool isInterval = false;
+  bool showFence = true;
   Position? _currentPosition;
   List<Fence> fences = [];
+
+  double currentZoom = 17;
 
   @override
   void initState() {
@@ -172,15 +175,40 @@ class _DevicePageState extends State<DevicePage> {
                               ),
                             ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: SizedBox(
-                              height: deviceHeight * 0.3,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: SingleDeviceLocationMap(
-                                  currentPosition: _currentPosition!,
-                                  device: widget.device,
+                            padding: const EdgeInsets.only(right: 10.0, top: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Mostrar cerca:",
+                                  style: theme.textTheme.bodyLarge,
                                 ),
+                                Switch(
+                                    activeTrackColor: gdSuccessColor,
+                                    value: showFence,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        showFence = value;
+                                      });
+                                    }),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: deviceHeight * 0.3,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: SingleDeviceLocationMap(
+                                key: Key('$showFence'),
+                                currentPosition: _currentPosition!,
+                                device: widget.device,
+                                showFence: showFence,
+                                onZoomChange: (newZoom) {
+                                  // No need to setstate because we dont need to update the screen
+                                  // just need to store the value in case the map restarts to keep zoom
+                                  currentZoom = newZoom;
+                                },
+                                startingZoom: currentZoom,
                               ),
                             ),
                           ),

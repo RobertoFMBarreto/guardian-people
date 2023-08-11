@@ -12,10 +12,16 @@ import 'package:latlong2/latlong.dart';
 class SingleDeviceLocationMap extends StatefulWidget {
   final Position currentPosition;
   final Device device;
+  final bool showFence;
+  final Function(double) onZoomChange;
+  final double startingZoom;
   const SingleDeviceLocationMap({
     super.key,
     required this.currentPosition,
     required this.device,
+    this.showFence = true,
+    required this.onZoomChange,
+    required this.startingZoom,
   });
 
   @override
@@ -26,15 +32,18 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   final polygons = <Polygon>[];
   final circles = <Polygon>[];
   bool isLoading = true;
+  bool showFence = true;
+  final MapController _mapController = MapController();
   @override
   void initState() {
     _loadDeviceFences();
-
+    showFence = widget.showFence;
     super.initState();
   }
 
   void _loadDeviceFences() {
     loadDeviceFences(widget.device.imei).then((fences) {
+      print("Found Fences: ${fences}");
       setState(() {
         for (Fence fence in fences) {
           polygons.add(
@@ -62,12 +71,20 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
             ),
           )
         : FlutterMap(
+            mapController: _mapController,
             options: MapOptions(
               center: LatLng(
                 widget.device.data.first.lat,
                 widget.device.data.first.lon,
               ),
-              zoom: 17,
+              onMapReady: () {
+                _mapController.mapEventStream.listen((evt) {
+                  print('Current zoom: ${_mapController.zoom}');
+                  widget.onZoomChange(_mapController.zoom);
+                });
+                // And any other `MapController` dependent non-movement methods
+              },
+              zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
             ),
@@ -76,33 +93,35 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.linovt.guardian',
               ),
-              CircleLayer(
-                circles: [
-                  ...circles
-                      .map(
-                        (circle) => CircleMarker(
-                          useRadiusInMeter: true,
-                          color: circle.color,
-                          borderColor: circle.borderColor,
-                          borderStrokeWidth: 2,
-                          point: LatLng(
-                            polygons.first.points.first.latitude,
-                            polygons.first.points.first.longitude,
+              if (showFence)
+                CircleLayer(
+                  circles: [
+                    ...circles
+                        .map(
+                          (circle) => CircleMarker(
+                            useRadiusInMeter: true,
+                            color: circle.color,
+                            borderColor: circle.borderColor,
+                            borderStrokeWidth: 2,
+                            point: LatLng(
+                              polygons.first.points.first.latitude,
+                              polygons.first.points.first.longitude,
+                            ),
+                            radius: calculateDistance(
+                              polygons.first.points.first.latitude,
+                              polygons.first.points.first.longitude,
+                              polygons.first.points.last.latitude,
+                              polygons.first.points.last.longitude,
+                            ),
                           ),
-                          radius: calculateDistance(
-                            polygons.first.points.first.latitude,
-                            polygons.first.points.first.longitude,
-                            polygons.first.points.last.latitude,
-                            polygons.first.points.last.longitude,
-                          ),
-                        ),
-                      )
-                      .toList()
-                ],
-              ),
-              PolygonLayer(
-                polygons: polygons,
-              ),
+                        )
+                        .toList()
+                  ],
+                ),
+              if (showFence)
+                PolygonLayer(
+                  polygons: polygons,
+                ),
               MarkerLayer(
                 markers: [
                   Marker(

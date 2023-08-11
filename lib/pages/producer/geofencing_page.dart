@@ -50,7 +50,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
       isFilled: true,
       points: [],
     );
-    editingPolygon.points.addAll(widget.fence!.points);
+    if (widget.fence != null) {
+      editingPolygon.points.addAll(widget.fence!.points);
+    }
   }
 
   void _initPolyEditor() {
@@ -215,6 +217,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
             onPressed: () {
               //!TODO: Code for storing the geofence
               Navigator.of(context).pop();
+              print(editingPolygon.points);
             },
           ),
         ],

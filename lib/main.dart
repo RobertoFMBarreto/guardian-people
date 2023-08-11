@@ -80,6 +80,11 @@ class MyApp extends StatelessWidget {
             backgroundColor: MaterialStatePropertyAll(gdSecondaryColor),
           ),
         ),
+        switchTheme: const SwitchThemeData(
+          thumbColor: MaterialStatePropertyAll(Colors.white),
+          trackColor: MaterialStatePropertyAll(gdToggleGreyArea),
+          trackOutlineColor: MaterialStatePropertyAll(Colors.transparent),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
