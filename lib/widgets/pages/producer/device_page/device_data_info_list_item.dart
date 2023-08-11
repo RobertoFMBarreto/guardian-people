@@ -32,7 +32,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
         });
       },
       children: List.generate(
-          widget.device.data.length,
+          widget.device.data.sublist(0, 10).length,
           (index) => ExpansionPanel(
                 isExpanded: devicesDataInfo[index],
                 canTapOnHeader: true,
