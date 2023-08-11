@@ -3,21 +3,19 @@ import 'package:flutter/material.dart';
 class DeviceTimeWidget extends StatelessWidget {
   final DateTime startDate;
   final DateTime endDate;
-  final Function() onStartDateTap;
-  final Function() onEndDateTap;
+  final Function() onTap;
   const DeviceTimeWidget({
     super.key,
     required this.startDate,
     required this.endDate,
-    required this.onStartDateTap,
-    required this.onEndDateTap,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return GestureDetector(
-      onTap: onStartDateTap,
+      onTap: onTap,
       child: Column(
         children: [
           Row(

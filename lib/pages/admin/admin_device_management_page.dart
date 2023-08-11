@@ -44,6 +44,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                 ),
               )
             : CustomScrollView(
+                physics: NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverPersistentHeader(
                     pinned: true,

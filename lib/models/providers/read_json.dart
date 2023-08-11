@@ -121,3 +121,37 @@ Future<List<Fence>> loadUserFences(int uid) async {
   }
   return fences;
 }
+
+Future<List<Fence>> loadDeviceFences(String deviceId) async {
+  String devicesInput = await rootBundle.loadString('assets/data/fences.json');
+  Map fencesMap = await json.decode(devicesInput);
+  List<dynamic> fencesMapList = fencesMap['fences'];
+  List<Fence> fences = [];
+  for (var fence in fencesMapList) {
+    if ((fence['devices'] as List<dynamic>)
+        .where((element) => element['deviceId'] == deviceId)
+        .isNotEmpty) {
+      // load fence points
+      List<LatLng> points = [];
+      for (var point in fence['points']) {
+        points.add(
+          LatLng(
+            point['lat'],
+            point['lon'],
+          ),
+        );
+      }
+
+      // load fences and their points
+      fences.add(
+        Fence(
+          name: fence["name"],
+          points: points,
+          devices: [],
+          color: fence["color"],
+        ),
+      );
+    }
+  }
+  return fences;
+}
