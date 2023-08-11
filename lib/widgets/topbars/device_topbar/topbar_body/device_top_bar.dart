@@ -10,7 +10,6 @@ class DeviceTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Extent: $extent");
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 350,

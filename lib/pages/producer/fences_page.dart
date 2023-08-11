@@ -42,7 +42,7 @@ class _FencesPageState extends State<FencesPage> {
       },
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           backgroundColor: theme.colorScheme.secondary,
           onPressed: () {
             //!TODO:code to add a new fence

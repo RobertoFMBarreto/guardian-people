@@ -217,7 +217,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
             onPressed: () {
               //!TODO: Code for storing the geofence
               Navigator.of(context).pop();
-              print(editingPolygon.points);
             },
           ),
         ],

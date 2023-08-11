@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/device_data.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
@@ -15,6 +16,9 @@ class SingleDeviceLocationMap extends StatefulWidget {
   final bool showFence;
   final Function(double) onZoomChange;
   final double startingZoom;
+  final DateTime startDate;
+  final DateTime endDate;
+  final bool isInterval;
   const SingleDeviceLocationMap({
     super.key,
     required this.currentPosition,
@@ -22,6 +26,9 @@ class SingleDeviceLocationMap extends StatefulWidget {
     this.showFence = true,
     required this.onZoomChange,
     required this.startingZoom,
+    required this.startDate,
+    required this.endDate,
+    required this.isInterval,
   });
 
   @override
@@ -43,7 +50,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   void _loadDeviceFences() {
     loadDeviceFences(widget.device.imei).then((fences) {
-      print("Found Fences: ${fences}");
       setState(() {
         for (Fence fence in fences) {
           polygons.add(
@@ -64,6 +70,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    List<DeviceData> deviceData = widget.isInterval
+        ? widget.device.getDataBetweenDates(widget.startDate, widget.endDate)
+        : widget.device.data;
+    print(deviceData);
     return isLoading
         ? Center(
             child: CircularProgressIndicator(
@@ -79,7 +89,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               ),
               onMapReady: () {
                 _mapController.mapEventStream.listen((evt) {
-                  print('Current zoom: ${_mapController.zoom}');
                   widget.onZoomChange(_mapController.zoom);
                 });
                 // And any other `MapController` dependent non-movement methods
@@ -122,21 +131,66 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 PolygonLayer(
                   polygons: polygons,
                 ),
+              if (widget.isInterval)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      color: gdErrorColor,
+                      strokeWidth: 5,
+                      points: deviceData
+                          .map(
+                            (e) => LatLng(e.lat, e.lon),
+                          )
+                          .toList(),
+                    ),
+                  ],
+                ),
               MarkerLayer(
                 markers: [
+                  // Marker(
+                  //   point:
+                  //       LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
+                  //   builder: (context) {
+                  //     return const Icon(
+                  //       Icons.circle,
+                  //       color: gdMapLocationPointColor,
+                  //       size: 30,
+                  //     );
+                  //   },
+                  // ),
+                  if (deviceData.isNotEmpty)
+                    Marker(
+                      point: widget.isInterval
+                          ? LatLng(deviceData.first.lat, deviceData.first.lon)
+                          : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
+                      builder: (context) {
+                        return Icon(
+                          Icons.location_on,
+                          color: HexColor(widget.device.color),
+                          size: 30,
+                        );
+                      },
+                    ),
+                  if (widget.isInterval && deviceData.isNotEmpty)
+                    ...deviceData
+                        .sublist(1)
+                        .map(
+                          (e) => Marker(
+                            point: LatLng(e.lat, e.lon),
+                            builder: (context) {
+                              return const Icon(
+                                Icons.circle,
+                                color: gdErrorColor,
+                                size: 15,
+                              );
+                            },
+                          ),
+                        )
+                        .toList(),
                   Marker(
-                    point:
-                        LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
-                    builder: (context) {
-                      return const Icon(
-                        Icons.circle,
-                        color: gdMapLocationPointColor,
-                        size: 30,
-                      );
-                    },
-                  ),
-                  Marker(
-                    point: LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
+                    point: widget.isInterval && deviceData.isNotEmpty
+                        ? LatLng(deviceData.first.lat, deviceData.first.lon)
+                        : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
                     builder: (context) {
                       return Icon(
                         Icons.location_on,

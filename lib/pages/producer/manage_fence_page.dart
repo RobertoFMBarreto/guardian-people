@@ -132,7 +132,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             //!TODO: search and select devices
                             final selectedDevices = await Navigator.of(context)
                                 .pushNamed('/producer/devices', arguments: true);
-                            print(selectedDevices);
                           },
                           icon: const Icon(Icons.add),
                         ),

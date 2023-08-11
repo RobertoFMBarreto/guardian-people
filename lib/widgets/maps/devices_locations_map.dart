@@ -44,7 +44,6 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   }
 
   void _loadFences() {
-    print("Received Fences: ${widget.fences}");
     setState(() {
       if (widget.fences != null) {
         for (Fence fence in widget.fences!) {
@@ -75,7 +74,6 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    print("Fences: ${widget.fences}");
     return isLoading
         ? Center(
             child: CircularProgressIndicator(

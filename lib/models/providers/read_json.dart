@@ -70,7 +70,7 @@ Future<List<Device>> loadUserDevices(int uid) async {
             lat: deviceData['lat'],
             lon: deviceData['lon'],
             accuracy: deviceData['accuracy'],
-            dateTime: deviceData['lteTime'],
+            dateTime: DateTime.parse(deviceData['lteTime']),
           ),
         );
       }

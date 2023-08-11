@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(color: gdTextColor),
           bodyMedium: TextStyle(color: gdSecondaryTextColor),
           bodySmall: TextStyle(color: gdTextColor),

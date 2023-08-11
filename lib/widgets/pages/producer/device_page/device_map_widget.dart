@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
@@ -110,7 +109,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       style: theme.textTheme.bodyLarge,
                     ),
                     Switch(
-                        activeTrackColor: gdSuccessColor,
+                        activeTrackColor: theme.colorScheme.secondary,
                         value: showFence,
                         onChanged: (value) {
                           setState(() {
@@ -129,6 +128,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                     currentPosition: _currentPosition!,
                     device: widget.device,
                     showFence: showFence,
+                    isInterval: widget.isInterval,
+                    endDate: endDate,
+                    startDate: startDate,
                     onZoomChange: (newZoom) {
                       // No need to setstate because we dont need to update the screen
                       // just need to store the value in case the map restarts to keep zoom

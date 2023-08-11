@@ -12,4 +12,16 @@ class Device {
     required this.isBlocked,
     required this.data,
   });
+
+  List<DeviceData> getDataBetweenDates(DateTime startDate, DateTime endDate) {
+    List<DeviceData> gottenData = [];
+
+    gottenData.addAll(
+      data.where(
+        (dataItem) => dataItem.dateTime.isAfter(startDate) && dataItem.dateTime.isBefore(endDate),
+      ),
+    );
+
+    return gottenData;
+  }
 }

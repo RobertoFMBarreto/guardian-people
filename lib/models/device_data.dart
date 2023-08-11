@@ -6,7 +6,7 @@ class DeviceData {
   final double lon;
   final double elevation;
   final double accuracy;
-  final String dateTime;
+  final DateTime dateTime;
 
   const DeviceData({
     required this.dataUsage,
