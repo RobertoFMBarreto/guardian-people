@@ -90,18 +90,11 @@ class _DevicePageState extends State<DevicePage> {
               ),
             ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
-                child: DeviceMapWidget(
-                  device: widget.device,
-                  isInterval: isInterval,
-                ),
+              child: DeviceMapWidget(
+                device: widget.device,
+                isInterval: isInterval,
               ),
             ),
-            SliverToBoxAdapter(
-                child: DeviceDataInfoList(
-              device: widget.device,
-            )),
             // SliverList.builder(
             //   itemCount: 10,
             //   itemBuilder: (context, index) => Padding(

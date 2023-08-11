@@ -13,7 +13,9 @@ import 'package:latlong2/latlong.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
   final Position currentPosition;
-  final Device device;
+  final List<DeviceData> deviceData;
+  final String imei;
+  final String deviceColor;
   final bool showFence;
   final Function(double) onZoomChange;
   final double startingZoom;
@@ -24,7 +26,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
   const SingleDeviceLocationMap({
     super.key,
     required this.currentPosition,
-    required this.device,
+    required this.deviceData,
     this.showFence = true,
     required this.onZoomChange,
     required this.startingZoom,
@@ -32,6 +34,8 @@ class SingleDeviceLocationMap extends StatefulWidget {
     required this.endDate,
     required this.isInterval,
     this.showHeatMap = false,
+    required this.imei,
+    required this.deviceColor,
   });
 
   @override
@@ -58,7 +62,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   }
 
   void _loadDeviceFences() {
-    loadDeviceFences(widget.device.imei).then((fences) {
+    loadDeviceFences(widget.imei).then((fences) {
       setState(() {
         for (Fence fence in fences) {
           polygons.add(
@@ -79,9 +83,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    List<DeviceData> deviceData = widget.isInterval
-        ? widget.device.getDataBetweenDates(widget.startDate, widget.endDate)
-        : widget.device.data;
     return isLoading
         ? Center(
             child: CircularProgressIndicator(
@@ -91,10 +92,12 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
         : FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: LatLng(
-                widget.device.data.first.lat,
-                widget.device.data.first.lon,
-              ),
+              center: widget.deviceData.isNotEmpty
+                  ? LatLng(
+                      widget.deviceData.first.lat,
+                      widget.deviceData.first.lon,
+                    )
+                  : null,
               onMapReady: () {
                 _mapController.mapEventStream.listen((evt) {
                   widget.onZoomChange(_mapController.zoom);
@@ -145,7 +148,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     Polyline(
                       color: gdErrorColor,
                       strokeWidth: 5,
-                      points: deviceData
+                      points: widget.deviceData
                           .map(
                             (e) => LatLng(e.lat, e.lon),
                           )
@@ -153,10 +156,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     ),
                   ],
                 ),
-              if (deviceData.isNotEmpty && widget.showHeatMap)
+              if (widget.deviceData.isNotEmpty && widget.showHeatMap)
                 HeatMapLayer(
                   heatMapDataSource: InMemoryHeatMapDataSource(
-                    data: deviceData
+                    data: widget.deviceData
                         .map(
                           (e) => WeightedLatLng(LatLng(e.lat, e.lon), 1),
                         )
@@ -166,21 +169,19 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               else
                 MarkerLayer(
                   markers: [
-                    if (deviceData.isNotEmpty)
+                    if (widget.deviceData.isNotEmpty)
                       Marker(
-                        point: widget.isInterval
-                            ? LatLng(deviceData.first.lat, deviceData.first.lon)
-                            : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
+                        point: LatLng(widget.deviceData.first.lat, widget.deviceData.first.lon),
                         builder: (context) {
                           return Icon(
                             Icons.location_on,
-                            color: HexColor(widget.device.color),
+                            color: HexColor(widget.deviceColor),
                             size: 30,
                           );
                         },
                       ),
-                    if (widget.isInterval && deviceData.isNotEmpty)
-                      ...deviceData
+                    if (widget.isInterval && widget.deviceData.isNotEmpty)
+                      ...widget.deviceData
                           .sublist(1)
                           .map(
                             (e) => Marker(
@@ -195,18 +196,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                             ),
                           )
                           .toList(),
-                    Marker(
-                      point: widget.isInterval && deviceData.isNotEmpty
-                          ? LatLng(deviceData.first.lat, deviceData.first.lon)
-                          : LatLng(widget.device.data.first.lat, widget.device.data.first.lon),
-                      builder: (context) {
-                        return Icon(
-                          Icons.location_on,
-                          color: HexColor(widget.device.color),
-                          size: 30,
-                        );
-                      },
-                    ),
                   ],
                 ),
             ],

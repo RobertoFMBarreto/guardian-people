@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/device.dart';
+import 'package:guardian/models/device_data.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/widgets/icon_text.dart';
 
 class DeviceDataInfoList extends StatefulWidget {
-  final Device device;
-  const DeviceDataInfoList({super.key, required this.device});
+  final List<DeviceData> deviceData;
+  const DeviceDataInfoList({super.key, required this.deviceData});
 
   @override
   State<DeviceDataInfoList> createState() => _DeviceDataInfoListState();
@@ -15,7 +15,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
   List<bool> devicesDataInfo = [];
   @override
   void initState() {
-    for (var _ in widget.device.data) {
+    for (var _ in widget.deviceData) {
       devicesDataInfo.add(false);
     }
     super.initState();
@@ -32,7 +32,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
         });
       },
       children: List.generate(
-          widget.device.data.sublist(0, 10).length,
+          widget.deviceData.sublist(0, 10).length,
           (index) => ExpansionPanel(
                 isExpanded: devicesDataInfo[index],
                 canTapOnHeader: true,
@@ -91,7 +91,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                               ),
                             ),
                             Text(
-                              widget.device.data[index].dateTime.toString(),
+                              widget.deviceData[index].dateTime.toString(),
                               style: theme.textTheme.bodyMedium,
                             ),
                           ],
@@ -112,7 +112,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                           child: IconText(
                             icon: Icons.sim_card,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${widget.device.data.first.dataUsage}/10MB',
+                            text: '${widget.deviceData.first.dataUsage}/10MB',
                             fontSize: 15,
                             iconSize: 25,
                           ),
@@ -120,7 +120,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                         IconText(
                           icon: Icons.device_thermostat,
                           iconColor: theme.colorScheme.secondary,
-                          text: '${widget.device.data.first.temperature}ºC',
+                          text: '${widget.deviceData.first.temperature}ºC',
                           fontSize: 15,
                           iconSize: 30,
                         ),
@@ -136,7 +136,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                             isInverted: true,
                             icon: Icons.landscape,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${widget.device.data.first.elevation}m',
+                            text: '${widget.deviceData.first.elevation}m',
                             fontSize: 15,
                             iconSize: 30,
                           ),
@@ -148,7 +148,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                           ),
                           isInverted: true,
                           iconColor: theme.colorScheme.secondary,
-                          text: '${widget.device.data.first.battery}%',
+                          text: '${widget.deviceData.first.battery}%',
                           fontSize: 15,
                           iconSize: 30,
                         ),

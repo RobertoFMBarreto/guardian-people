@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/device_data.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/maps/single_device_location_map.dart';
+import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_time_widget.dart';
 
 class DeviceMapWidget extends StatefulWidget {
@@ -65,6 +67,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     double deviceHeight = MediaQuery.of(context).size.height;
     dropDownValue = !widget.isInterval ? 0 : dropDownValue;
     showHeatMap = !widget.isInterval ? false : showHeatMap;
+
+    List<DeviceData> deviceData = widget.isInterval
+        ? widget.device.getDataBetweenDates(startDate, endDate)
+        : widget.device.data;
+
     return _currentPosition == null
         ? Center(
             child: CircularProgressIndicator(
@@ -72,127 +79,144 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
             ),
           )
         : Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (widget.isInterval)
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: RangeDateTimeInput(
-                                startDate: startDate,
-                                endDate: endDate,
-                                onConfirm: (newStartDate, newEndDate) {
-                                  setState(() {
-                                    startDate = newStartDate;
-                                    endDate = newEndDate;
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                          );
-                        });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DeviceTimeWidget(
-                          startDate: startDate,
-                          endDate: endDate,
-                        ),
-                        Icon(
-                          Icons.calendar_month,
-                          size: 50,
-                          color: theme.colorScheme.secondary,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
               Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     if (widget.isInterval)
-                      DropdownButton(
-                        isDense: true,
-                        borderRadius: BorderRadius.circular(20),
-                        underline: const SizedBox(),
-                        value: dropDownValue,
-                        items: const [
-                          DropdownMenuItem(
-                            value: 0,
-                            child: Text(
-                              'Mapa Normal',
-                            ),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: RangeDateTimeInput(
+                                      startDate: startDate,
+                                      endDate: endDate,
+                                      onConfirm: (newStartDate, newEndDate) {
+                                        setState(() {
+                                          startDate = newStartDate;
+                                          endDate = newEndDate;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                );
+                              });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DeviceTimeWidget(
+                                startDate: startDate,
+                                endDate: endDate,
+                              ),
+                              Icon(
+                                Icons.calendar_month,
+                                size: 50,
+                                color: theme.colorScheme.secondary,
+                              )
+                            ],
                           ),
-                          DropdownMenuItem(
-                            value: 1,
-                            child: Text(
-                              'Mapa de Calor',
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (widget.isInterval)
+                            DropdownButton(
+                              isDense: true,
+                              borderRadius: BorderRadius.circular(20),
+                              underline: const SizedBox(),
+                              value: dropDownValue,
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 0,
+                                  child: Text(
+                                    'Mapa Normal',
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 1,
+                                  child: Text(
+                                    'Mapa de Calor',
+                                  ),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value != null) {
+                                    showHeatMap = value == 1;
+                                    dropDownValue = value;
+                                    showFence = false;
+                                  }
+                                });
+                              },
                             ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Mostrar cerca:",
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                              Switch(
+                                  activeTrackColor: theme.colorScheme.secondary,
+                                  value: showFence,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      showFence = value;
+                                    });
+                                  }),
+                            ],
                           ),
                         ],
-                        onChanged: (value) {
-                          setState(() {
-                            if (value != null) {
-                              showHeatMap = value == 1;
-                              dropDownValue = value;
-                              showFence = false;
-                            }
-                          });
-                        },
                       ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "Mostrar cerca:",
-                          style: theme.textTheme.bodyLarge,
+                    ),
+                    SizedBox(
+                      height: deviceHeight * 0.3,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: SingleDeviceLocationMap(
+                          key: Key('${showFence}_$showHeatMap'),
+                          currentPosition: _currentPosition!,
+                          deviceData: deviceData,
+                          imei: widget.device.imei,
+                          deviceColor: widget.device.color,
+                          showFence: showFence,
+                          isInterval: widget.isInterval,
+                          endDate: endDate,
+                          startDate: startDate,
+                          onZoomChange: (newZoom) {
+                            // No need to setstate because we dont need to update the screen
+                            // just need to store the value in case the map restarts to keep zoom
+                            currentZoom = newZoom;
+                          },
+                          startingZoom: currentZoom,
+                          showHeatMap: showHeatMap,
                         ),
-                        Switch(
-                            activeTrackColor: theme.colorScheme.secondary,
-                            value: showFence,
-                            onChanged: (value) {
-                              setState(() {
-                                showFence = value;
-                              });
-                            }),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: deviceHeight * 0.3,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: SingleDeviceLocationMap(
-                    key: Key('${showFence}_$showHeatMap'),
-                    currentPosition: _currentPosition!,
-                    device: widget.device,
-                    showFence: showFence,
-                    isInterval: widget.isInterval,
-                    endDate: endDate,
-                    startDate: startDate,
-                    onZoomChange: (newZoom) {
-                      // No need to setstate because we dont need to update the screen
-                      // just need to store the value in case the map restarts to keep zoom
-                      currentZoom = newZoom;
-                    },
-                    startingZoom: currentZoom,
-                    showHeatMap: showHeatMap,
-                  ),
-                ),
-              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: deviceData.isNotEmpty
+                    ? DeviceDataInfoList(
+                        deviceData: deviceData,
+                      )
+                    : SizedBox(),
+              )
             ],
           );
   }
