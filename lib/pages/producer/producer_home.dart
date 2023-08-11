@@ -33,7 +33,8 @@ class _ProducerHomeState extends State<ProducerHome> {
     final hasPermission = await handleLocationPermission(context);
 
     if (!hasPermission) return;
-    await Geolocator.getCurrentPosition().then((Position position) {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
+        .then((Position position) {
       setState(() => _currentPosition = position);
     }).catchError((e) {
       debugPrint(e);

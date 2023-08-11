@@ -18,6 +18,7 @@ import 'colors.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,
-        textTheme: const TextTheme(
+        textTheme: TextTheme(
           bodyLarge: TextStyle(color: gdTextColor),
           bodyMedium: TextStyle(color: gdSecondaryTextColor),
           bodySmall: TextStyle(color: gdTextColor),
@@ -48,6 +49,12 @@ class MyApp extends StatelessWidget {
           labelLarge: TextStyle(color: gdTextColor),
           labelMedium: TextStyle(color: gdTextColor),
           labelSmall: TextStyle(color: gdTextColor),
+          displayLarge: TextStyle(color: gdTextColor),
+          displayMedium: TextStyle(color: gdTextColor),
+          displaySmall: TextStyle(color: gdTextColor),
+          titleLarge: TextStyle(color: gdTextColor),
+          titleMedium: TextStyle(color: gdTextColor),
+          titleSmall: TextStyle(color: gdTextColor),
         ),
         scaffoldBackgroundColor: gdBackgroundColor,
         textSelectionTheme: const TextSelectionThemeData(
