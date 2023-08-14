@@ -94,6 +94,7 @@ class MyApp extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
           ),
+          focusColor: gdTextColor,
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide: const BorderSide(color: gdErrorColor),

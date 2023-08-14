@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 class DefaultBottomSheet extends StatelessWidget {
   final String title;
   final List<Widget> body;
-  const DefaultBottomSheet({super.key, required this.title, required this.body});
+  final CrossAxisAlignment bodyCrossAxisAlignment;
+  const DefaultBottomSheet({
+    super.key,
+    required this.title,
+    required this.body,
+    this.bodyCrossAxisAlignment = CrossAxisAlignment.center,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,13 @@ class DefaultBottomSheet extends StatelessWidget {
                   style: theme.textTheme.headlineMedium,
                 ),
               ),
-              ...body
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: bodyCrossAxisAlignment,
+                  children: [...body],
+                ),
+              )
             ],
           ),
         ],

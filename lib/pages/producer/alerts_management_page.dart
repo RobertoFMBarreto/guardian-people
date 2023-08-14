@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
+import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet.dart';
 
 class AlertsManagementPage extends StatefulWidget {
   const AlertsManagementPage({super.key});
@@ -47,46 +48,32 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                   color: theme.colorScheme.secondary,
                 ),
               )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          //!TODO: on remove all alerts
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.delete_forever,
-                              color: theme.colorScheme.error,
-                            ),
-                            Text(
-                              'Remover Todos',
-                              style: theme.textTheme.bodyLarge!.copyWith(
-                                color: theme.colorScheme.error,
-                              ),
-                            ),
-                          ],
+            : Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+                child: ListView.builder(
+                  itemCount: alerts.length,
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => AddAlertBottomSheet(
+                          comparisson: alerts[index].comparisson,
+                          hasNotification: alerts[index].hasNotification,
+                          parameter: alerts[index].parameter,
+                          value: alerts[index].value,
+                          onConfirm: (parameter, comparisson, value, hasNotification) {
+                            //TODO: edit alert code
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: ListView.builder(
-                        itemCount: alerts.length,
-                        itemBuilder: (context, index) => AlertManagementItem(
-                          alert: alerts[index],
-                        ),
-                      ),
+                      );
+                    },
+                    child: AlertManagementItem(
+                      alert: alerts[index],
                     ),
                   ),
-                ],
+                ),
               ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -95,17 +82,25 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         ),
         backgroundColor: theme.colorScheme.secondary,
         onPressed: () {
-          Navigator.of(context).pushNamed('/producer/alert/management');
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => AddAlertBottomSheet(
+              onConfirm: (parameter, comparisson, value, hasNotification) {
+                //TODO: Add alert code
+              },
+            ),
+          );
         },
         label: Text(
-          'Gerir avisos',
+          'Adicionar Alerta',
           style: theme.textTheme.bodyLarge!.copyWith(
             color: theme.colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
         icon: Icon(
-          Icons.edit,
+          Icons.add,
           color: theme.colorScheme.onSecondary,
         ),
       ),

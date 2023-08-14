@@ -38,41 +38,41 @@ class _AlertsPageState extends State<AlertsPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                ),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    //!TODO: on remove all alerts
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          //!TODO: on remove all alerts
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.delete_forever,
-                              color: theme.colorScheme.error,
-                            ),
-                            Text(
-                              'Remover Todos',
-                              style: theme.textTheme.bodyLarge!.copyWith(
-                                color: theme.colorScheme.error,
-                              ),
-                            ),
-                          ],
+                      Icon(
+                        Icons.delete_forever,
+                        color: theme.colorScheme.error,
+                      ),
+                      Text(
+                        'Remover Todos',
+                        style: theme.textTheme.bodyLarge!.copyWith(
+                          color: theme.colorScheme.error,
                         ),
                       ),
                     ],
                   ),
-                  Expanded(
+                ),
+              ],
+            ),
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: theme.colorScheme.secondary,
+                    ),
+                  )
+                : Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: ListView.builder(
@@ -83,8 +83,8 @@ class _AlertsPageState extends State<AlertsPage> {
                       ),
                     ),
                   ),
-                ],
-              ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         shape: RoundedRectangleBorder(

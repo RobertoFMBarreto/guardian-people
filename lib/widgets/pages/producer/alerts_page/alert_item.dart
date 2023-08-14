@@ -25,7 +25,8 @@ class AlertItem extends StatelessWidget {
             color: theme.colorScheme.secondary,
           ),
           title: Text(alert.device.imei),
-          subtitle: Text('Quando ${alert.parameter} ${alert.comparisson} a ${alert.value}'),
+          subtitle: Text(
+              '${alert.parameter.toShortString()} ${alert.comparisson.toShortString()} a ${alert.value}'),
           trailing: IconButton(
             onPressed: () {
               //!TODO: Delete code for alert

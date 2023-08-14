@@ -17,52 +17,45 @@ class AlertManagementItem extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RichText(
-              text: TextSpan(
-                text: 'Quando ',
-                style: theme.textTheme.bodyLarge,
-                children: [
-                  TextSpan(
-                    text: '${alert.parameter} ${alert.comparisson} ',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text: 'a ',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                RichText(
+                  maxLines: 2,
+                  text: TextSpan(
+                    text: 'Quando ',
                     style: theme.textTheme.bodyLarge,
-                  ),
-                  TextSpan(
-                    text: alert.value,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Text(
-                          'Cor:',
-                          style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      ColorCircle(
-                        color: HexColor(alert.color),
+                      TextSpan(
+                        text:
+                            '${alert.parameter.toShortString()} ${alert.comparisson.toShortString()} ',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
-                  Text(
-                    "Notificação: ${alert.hasNotification ? 'Sim' : 'Não'}",
-                    style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                ),
+                RichText(
+                  maxLines: 2,
+                  text: TextSpan(
+                    text: 'a ',
+                    style: theme.textTheme.bodyLarge,
+                    children: [
+                      TextSpan(
+                        text: alert.value.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                "Notificação: ${alert.hasNotification ? 'Sim' : 'Não'}",
+                style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -73,7 +66,6 @@ class AlertManagementItem extends StatelessWidget {
           },
           icon: Icon(
             Icons.delete_forever,
-            size: 30,
             color: theme.colorScheme.error,
           ),
         ),

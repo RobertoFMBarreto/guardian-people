@@ -134,13 +134,32 @@ Future<List<Alert>> loadAlerts() async {
   List<Alert> alerts = [];
   for (var alert in alertsMapList) {
     // load alerts
+    AlertParameter parameter;
+    if (alert['parameter'] == 'tmp') {
+      parameter = AlertParameter.temperature;
+    } else if (alert['parameter'] == 'bat') {
+      parameter = AlertParameter.battery;
+    } else {
+      parameter = AlertParameter.dataUsage;
+    }
+    AlertComparissons comparisson;
+    if (alert['parameter'] == '=') {
+      comparisson = AlertComparissons.equal;
+    } else if (alert['parameter'] == '>') {
+      comparisson = AlertComparissons.more;
+    } else if (alert['parameter'] == '<') {
+      comparisson = AlertComparissons.less;
+    } else if (alert['parameter'] == '>=') {
+      comparisson = AlertComparissons.moreOrEqual;
+    } else {
+      comparisson = AlertComparissons.lessOrEqual;
+    }
     alerts.add(
       Alert(
         device: (await loadDevice(alert['device']))!,
-        color: alert['color'],
         hasNotification: alert['hasNotification'],
-        parameter: alert['parameter'],
-        comparisson: alert['comparisson'],
+        parameter: parameter,
+        comparisson: comparisson,
         value: alert['value'],
       ),
     );

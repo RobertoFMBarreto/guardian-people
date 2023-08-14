@@ -1,11 +1,10 @@
 {
   "alerts": [
     {
-      "color": "#32a852",
       "hasNotification": true,
-      "parameter": "Temperatura",
-      "comparisson": "igual",
-      "value": "20",
+      "parameter": "tmp",
+      "comparisson": "=",
+      "value": 20.0,
       "device": "350457790679797"
     }
   ]

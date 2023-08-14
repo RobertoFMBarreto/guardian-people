@@ -1,16 +1,40 @@
 import 'package:guardian/models/device.dart';
 
+enum AlertComparissons {
+  equal,
+  more,
+  less,
+  moreOrEqual,
+  lessOrEqual,
+}
+
+enum AlertParameter {
+  temperature,
+  dataUsage,
+  battery,
+}
+
+extension ParseCmpToString on AlertComparissons {
+  String toShortString() {
+    return this.toString().split('.').last;
+  }
+}
+
+extension ParseParToString on AlertParameter {
+  String toShortString() {
+    return this.toString().split('.').last;
+  }
+}
+
 class Alert {
-  final String color;
   final bool hasNotification;
-  final String parameter;
-  final String comparisson;
-  final String value;
+  final AlertParameter parameter;
+  final AlertComparissons comparisson;
+  final double value;
   final Device device;
 
   const Alert({
     required this.device,
-    required this.color,
     required this.hasNotification,
     required this.parameter,
     required this.comparisson,
