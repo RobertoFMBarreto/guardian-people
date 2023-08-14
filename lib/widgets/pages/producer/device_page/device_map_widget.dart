@@ -35,7 +35,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   @override
   void initState() {
-    _loadFences().then((value) => _getCurrentPosition());
+    _getCurrentPosition().then((value) => _loadFences());
     super.initState();
   }
 
@@ -188,7 +188,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                         borderRadius: BorderRadius.circular(20),
                         child: SingleDeviceLocationMap(
                           key: Key('${showFence}_$showHeatMap'),
-                          currentPosition: _currentPosition!,
+                          showCurrentPosition: true,
                           deviceData: deviceData,
                           imei: widget.device.imei,
                           deviceColor: widget.device.color,

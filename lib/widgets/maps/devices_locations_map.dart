@@ -9,14 +9,14 @@ import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
 
 class DevicesLocationsMap extends StatefulWidget {
-  final Position currentPosition;
+  final bool showCurrentPosition;
   final List<Device> devices;
   final List<Fence>? fences;
   final bool centerOnPoly;
   final bool centerOnDevice;
   const DevicesLocationsMap({
     super.key,
-    required this.currentPosition,
+    required this.showCurrentPosition,
     required this.devices,
     this.fences,
     this.centerOnPoly = false,
@@ -31,16 +31,32 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   final polygons = <Polygon>[];
   final circles = <Polygon>[];
   bool isLoading = true;
+  Position? _currentPosition;
+
   @override
   void initState() {
-    if (widget.fences != null) {
-      if (widget.fences!.length > 1 && widget.centerOnPoly) {
-        throw ErrorDescription("Can only center on poly with one poly");
+    _getCurrentPosition().then((value) {
+      if (widget.fences != null) {
+        if (widget.fences!.length > 1 && widget.centerOnPoly) {
+          throw ErrorDescription("Can only center on poly with one poly");
+        }
       }
-    }
-    _loadFences();
+      _loadFences();
+    });
 
     super.initState();
+  }
+
+  Future<void> _getCurrentPosition() async {
+    final hasPermission = await handleLocationPermission(context);
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
+        .then((Position position) {
+      setState(() => _currentPosition = position);
+    }).catchError((e) {
+      debugPrint(e);
+    });
   }
 
   void _loadFences() {
@@ -84,8 +100,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
             options: MapOptions(
               center: !widget.centerOnPoly
                   ? LatLng(
-                      widget.currentPosition.latitude,
-                      widget.currentPosition.longitude,
+                      _currentPosition!.latitude,
+                      _currentPosition!.longitude,
                     )
                   : LatLng(
                       polygons.first.points.first.latitude,
@@ -129,17 +145,17 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
               ),
               MarkerLayer(
                 markers: [
-                  Marker(
-                    point:
-                        LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude),
-                    builder: (context) {
-                      return const Icon(
-                        Icons.circle,
-                        color: gdMapLocationPointColor,
-                        size: 30,
-                      );
-                    },
-                  ),
+                  if (widget.showCurrentPosition)
+                    Marker(
+                      point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      builder: (context) {
+                        return const Icon(
+                          Icons.circle,
+                          color: gdMapLocationPointColor,
+                          size: 30,
+                        );
+                      },
+                    ),
                   ...widget.devices
                       .map(
                         (device) => Marker(

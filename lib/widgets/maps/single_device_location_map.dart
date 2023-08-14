@@ -12,7 +12,7 @@ import 'package:guardian/models/providers/read_json.dart';
 import 'package:latlong2/latlong.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
-  final Position currentPosition;
+  final bool showCurrentPosition;
   final List<DeviceData> deviceData;
   final String imei;
   final String deviceColor;
@@ -25,7 +25,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
   final bool showHeatMap;
   const SingleDeviceLocationMap({
     super.key,
-    required this.currentPosition,
+    required this.showCurrentPosition,
     required this.deviceData,
     this.showFence = true,
     required this.onZoomChange,

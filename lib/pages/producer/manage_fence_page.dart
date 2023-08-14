@@ -21,7 +21,6 @@ class ManageFencePage extends StatefulWidget {
 }
 
 class _ManageFencePageState extends State<ManageFencePage> {
-  Position? _currentPosition;
   List<Device> devices = [];
   // color picker values
   Color fenceColor = gdMapGeofenceFillColor;
@@ -31,19 +30,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
     super.initState();
     fenceColor = HexColor(widget.fence.color);
     fenceHexColor = widget.fence.color;
-    _loadDevices().then((value) => _getCurrentPosition());
-  }
-
-  Future<void> _getCurrentPosition() async {
-    final hasPermission = await handleLocationPermission(context);
-
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
-    }).catchError((e) {
-      debugPrint(e);
-    });
+    _loadDevices();
   }
 
   Future<void> _loadDevices() async {
@@ -62,107 +49,101 @@ class _ManageFencePageState extends State<ManageFencePage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: _currentPosition == null
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
+        child: Column(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: DevicesLocationsMap(
+                    key: Key(widget.fence.color),
+                    showCurrentPosition: true,
+                    devices: devices,
+                    centerOnPoly: true,
+                    fences: [widget.fence],
+                  ),
                 ),
-              )
-            : Column(
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
                 children: [
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: DevicesLocationsMap(
-                          key: Key(widget.fence.color),
-                          currentPosition: _currentPosition!,
-                          devices: devices,
-                          centerOnPoly: true,
-                          fences: [widget.fence],
-                        ),
-                      ),
-                    ),
-                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Text(
-                            'Cor da cerca:',
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => CustomColorPickerInput(
-                                pickerColor: fenceColor,
-                                onSave: (color) {
-                                  setState(() {
-                                    fenceColor = color;
-                                    widget.fence.color = HexColor.toHex(color: fenceColor);
-                                  });
-                                },
-                                hexColor: HexColor.toHex(color: fenceColor),
-                              ),
-                            );
-                          },
-                          child: ColorCircle(color: fenceColor),
-                        ),
-                      ],
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text(
+                      'Cor da cerca:',
+                      style: theme.textTheme.bodyLarge,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Dispositivos Associados:',
-                          style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            //!TODO: search and select devices
-                            final selectedDevices = await Navigator.of(context)
-                                .pushNamed('/producer/devices', arguments: true);
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => CustomColorPickerInput(
+                          pickerColor: fenceColor,
+                          onSave: (color) {
+                            setState(() {
+                              fenceColor = color;
+                              widget.fence.color = HexColor.toHex(color: fenceColor);
+                            });
                           },
-                          icon: const Icon(Icons.add),
+                          hexColor: HexColor.toHex(color: fenceColor),
                         ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      //!TODO: get devices from fence data
-                      child: ListView.builder(
-                        itemCount: devices.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                          ),
-                          child: DeviceItemRemovable(
-                            deviceImei: devices[index].imei,
-                            deviceData: devices[index].data.first.dataUsage,
-                            deviceBattery: devices[index].data.first.battery,
-                            onRemoveDevice: () {
-                              //!TODO: On remove device
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
+                      );
+                    },
+                    child: ColorCircle(color: fenceColor),
                   ),
                 ],
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Dispositivos Associados:',
+                    style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      //!TODO: search and select devices
+                      final selectedDevices = await Navigator.of(context)
+                          .pushNamed('/producer/devices', arguments: true);
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                //!TODO: get devices from fence data
+                child: ListView.builder(
+                  itemCount: devices.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                    ),
+                    child: DeviceItemRemovable(
+                      deviceImei: devices[index].imei,
+                      deviceData: devices[index].data.first.dataUsage,
+                      deviceBattery: devices[index].data.first.battery,
+                      onRemoveDevice: () {
+                        //!TODO: On remove device
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
