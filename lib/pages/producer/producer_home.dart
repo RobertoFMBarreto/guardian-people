@@ -122,7 +122,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                             title: 'Alertas',
                             description: '2',
                             isAlert: true,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).pushNamed('/producer/alerts');
+                            },
                           ),
                         ),
                       ),

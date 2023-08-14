@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
+import 'package:guardian/pages/producer/alerts_management_page.dart';
+import 'package:guardian/pages/producer/alerts_page.dart';
 import 'package:guardian/pages/producer/device_page.dart';
 import 'package:guardian/pages/producer/fences_page.dart';
 import 'package:guardian/pages/producer/geofencing_page.dart';
@@ -154,7 +156,9 @@ class MyApp extends StatelessWidget {
           } else {
             throw ErrorDescription('Device not provided');
           }
-        }
+        },
+        '/producer/alerts': (context) => const AlertsPage(),
+        '/producer/alert/management': (context) => const AlertsManagementPage(),
       },
     );
   }

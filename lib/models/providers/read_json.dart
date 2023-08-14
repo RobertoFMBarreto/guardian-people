@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:guardian/models/alert.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/device_data.dart';
 import 'package:guardian/models/fence.dart';
@@ -87,6 +88,64 @@ Future<List<Device>> loadUserDevices(int uid) async {
     }
   }
   return devices;
+}
+
+Future<Device?> loadDevice(String deviceImei) async {
+  String devicesInput = await rootBundle.loadString('assets/data/devices.json');
+  Map devicesMap = await json.decode(devicesInput);
+  List<dynamic> devicesMapList = devicesMap['devices'];
+  Device device;
+  for (var device in devicesMapList) {
+    if (device['imei'] == deviceImei) {
+      // load device packages
+      List<DeviceData> data = [];
+      for (var deviceData in device['data']) {
+        data.add(
+          DeviceData(
+            dataUsage: 7,
+            battery: deviceData['battery'],
+            elevation: deviceData['altitude'],
+            temperature: 24,
+            lat: deviceData['lat'],
+            lon: deviceData['lon'],
+            accuracy: deviceData['accuracy'],
+            dateTime: DateTime.parse(deviceData['lteTime']),
+          ),
+        );
+      }
+
+      // load device and his data
+      device = Device(
+        imei: device['imei'],
+        color: device['color'],
+        isBlocked: device['isBlocked'],
+        data: data,
+      );
+      return device;
+    }
+  }
+  return null;
+}
+
+Future<List<Alert>> loadAlerts() async {
+  String alertsInput = await rootBundle.loadString('assets/data/alerts.json');
+  Map alertsMap = await json.decode(alertsInput);
+  List<dynamic> alertsMapList = alertsMap['alerts'];
+  List<Alert> alerts = [];
+  for (var alert in alertsMapList) {
+    // load alerts
+    alerts.add(
+      Alert(
+        device: (await loadDevice(alert['device']))!,
+        color: alert['color'],
+        hasNotification: alert['hasNotification'],
+        parameter: alert['parameter'],
+        comparisson: alert['comparisson'],
+        value: alert['value'],
+      ),
+    );
+  }
+  return alerts;
 }
 
 Future<List<Fence>> loadUserFences(int uid) async {
