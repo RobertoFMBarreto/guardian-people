@@ -16,13 +16,13 @@ enum AlertParameter {
 
 extension ParseCmpToString on AlertComparissons {
   String toShortString() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 }
 
 extension ParseParToString on AlertParameter {
   String toShortString() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 }
 

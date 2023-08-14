@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
-import 'package:guardian/models/device.dart';
 
 class AlertItem extends StatelessWidget {
   final Alert alert;

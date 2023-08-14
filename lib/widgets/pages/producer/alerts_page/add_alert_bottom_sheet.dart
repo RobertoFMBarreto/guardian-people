@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/alert.dart';
 import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
-import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_comparisson_dropdown.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_parameter_dropdown.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class AddAlertBottomSheet extends StatefulWidget {
   final Function(
@@ -230,6 +226,5 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
         ),
       ],
     );
-    ;
   }
 }

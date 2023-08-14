@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
-import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/widgets/color_circle.dart';
 
 class AlertManagementItem extends StatelessWidget {
   final Alert alert;
