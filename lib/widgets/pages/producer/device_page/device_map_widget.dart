@@ -215,7 +215,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                     ? DeviceDataInfoList(
                         deviceData: deviceData,
                       )
-                    : SizedBox(),
+                    : const SizedBox(),
               )
             ],
           );

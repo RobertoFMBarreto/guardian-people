@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
-import 'package:guardian/models/providers/device/device_widgets_provider.dart';
-import 'package:guardian/widgets/icon_text.dart';
-import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
