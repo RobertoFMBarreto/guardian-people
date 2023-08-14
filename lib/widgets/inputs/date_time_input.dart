@@ -22,7 +22,11 @@ class DateTimeInput extends StatefulWidget {
   State<DateTimeInput> createState() => _DateTimeInputState();
 }
 
-class _DateTimeInputState extends State<DateTimeInput> {
+class _DateTimeInputState extends State<DateTimeInput> with AutomaticKeepAliveClientMixin {
+  // Prevent widget from rebuilding on tab swap
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
     return Column(
