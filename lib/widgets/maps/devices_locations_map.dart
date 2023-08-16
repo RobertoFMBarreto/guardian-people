@@ -99,14 +99,13 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
         : FlutterMap(
             options: MapOptions(
               center: !widget.centerOnPoly
-                  ? LatLng(
-                      _currentPosition!.latitude,
-                      _currentPosition!.longitude,
-                    )
-                  : LatLng(
-                      polygons.first.points.first.latitude,
-                      polygons.first.points.first.longitude,
-                    ),
+                  ? _currentPosition != null
+                      ? LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        )
+                      : null
+                  : Fence.getFenceCenter(polygons.first.points),
               zoom: 17,
               minZoom: 3,
               maxZoom: 18,
@@ -145,7 +144,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
               ),
               MarkerLayer(
                 markers: [
-                  if (widget.showCurrentPosition)
+                  if (widget.showCurrentPosition && _currentPosition != null)
                     Marker(
                       point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
                       builder: (context) {
