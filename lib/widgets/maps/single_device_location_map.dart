@@ -102,6 +102,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               onMapReady: () {
                 _mapController.mapEventStream.listen((evt) {
                   widget.onZoomChange(_mapController.zoom);
+                  print(_mapController.rotation);
                 });
                 // And any other `MapController` dependent non-movement methods
               },
@@ -184,10 +185,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                           (e) => Marker(
                             point: LatLng(e.lat, e.lon),
                             builder: (context) {
-                              return Icon(
-                                Icons.location_on,
-                                color: HexColor(widget.deviceColor),
-                                size: 30,
+                              return Transform.rotate(
+                                angle: _mapController.rotation * -pi / 180,
+                                child: Icon(
+                                  Icons.location_on,
+                                  color: HexColor(widget.deviceColor),
+                                  size: 30,
+                                ),
                               );
                             },
                           ),
