@@ -111,7 +111,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                               });
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          padding: const EdgeInsets.only(top: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

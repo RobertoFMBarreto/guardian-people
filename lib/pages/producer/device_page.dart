@@ -92,13 +92,6 @@ class _DevicePageState extends State<DevicePage> {
                 isInterval: isInterval,
               ),
             ),
-            // SliverList.builder(
-            //   itemCount: 10,
-            //   itemBuilder: (context, index) => Padding(
-            //     padding: const EdgeInsets.only(left: 20.0),
-            //     child: DeviceDataInfoListItem(),
-            //   ),
-            // ),
           ],
         ),
       ),
