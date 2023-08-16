@@ -5,7 +5,8 @@ import 'package:guardian/widgets/icon_text.dart';
 
 class DeviceDataInfoList extends StatefulWidget {
   final List<DeviceData> deviceData;
-  const DeviceDataInfoList({super.key, required this.deviceData});
+  final GlobalKey mapKey;
+  const DeviceDataInfoList({super.key, required this.deviceData, required this.mapKey});
 
   @override
   State<DeviceDataInfoList> createState() => _DeviceDataInfoListState();
@@ -15,6 +16,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
   int _currentTopicExtent = 10;
   List<bool> devicesDataInfo = [];
   List<bool> currentDevicesDataInfo = [];
+
   @override
   void initState() {
     if (widget.deviceData.length == 1) {
@@ -189,6 +191,9 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                 TextButton.icon(
                     onPressed: () {
                       showLessInfo();
+
+                      Scrollable.ensureVisible(widget.mapKey.currentContext!,
+                          duration: Duration(seconds: 1));
                     },
                     icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
                     label: Text(

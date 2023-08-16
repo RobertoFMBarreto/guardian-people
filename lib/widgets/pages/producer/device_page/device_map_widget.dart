@@ -34,6 +34,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   bool showHeatMap = false;
   int dropDownValue = 0;
 
+  final firstItemDataKey = new GlobalKey();
+
   @override
   void initState() {
     _getCurrentPosition().then((value) => _loadFences());
@@ -202,6 +204,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       ),
                     ),
                     SizedBox(
+                      key: firstItemDataKey,
                       height: deviceHeight * 0.3,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
@@ -229,14 +232,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: deviceData.isNotEmpty
-                    ? DeviceDataInfoList(
-                        deviceData: deviceData,
-                      )
-                    : const SizedBox(),
-              )
+              if (deviceData.isNotEmpty)
+                DeviceDataInfoList(
+                  mapKey: firstItemDataKey,
+                  deviceData: deviceData,
+                )
             ],
           );
   }
