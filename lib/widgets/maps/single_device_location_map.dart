@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device_data.dart';
 import 'package:guardian/models/fence.dart';
@@ -15,6 +16,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
   final String imei;
   final String deviceColor;
   final bool showFence;
+  final bool showRoute;
   final Function(double) onZoomChange;
   final double startingZoom;
   final DateTime startDate;
@@ -34,6 +36,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
     this.showHeatMap = false,
     required this.imei,
     required this.deviceColor,
+    required this.showRoute,
   });
 
   @override
@@ -140,7 +143,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 PolygonLayer(
                   polygons: polygons,
                 ),
-              if (widget.isInterval && !widget.showHeatMap)
+              if (widget.isInterval && !widget.showHeatMap && widget.showRoute)
                 PolylineLayer(
                   polylines: [
                     Polyline(
@@ -165,37 +168,69 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                   ),
                 )
               else
-                MarkerLayer(
-                  markers: [
-                    if (widget.deviceData.isNotEmpty)
-                      Marker(
-                        point: LatLng(widget.deviceData.first.lat, widget.deviceData.first.lon),
-                        builder: (context) {
-                          return Icon(
-                            Icons.location_on,
-                            color: HexColor(widget.deviceColor),
-                            size: 30,
-                          );
-                        },
-                      ),
-                    if (widget.isInterval && widget.deviceData.isNotEmpty)
-                      ...widget.deviceData
-                          .sublist(1)
-                          .map(
-                            (e) => Marker(
-                              point: LatLng(e.lat, e.lon),
-                              builder: (context) {
-                                return const Icon(
-                                  Icons.circle,
-                                  color: gdErrorColor,
-                                  size: 15,
-                                );
-                              },
-                            ),
-                          )
-                          .toList(),
-                  ],
+                MarkerClusterLayerWidget(
+                  options: MarkerClusterLayerOptions(
+                    maxClusterRadius: 45,
+                    size: const Size(40, 40),
+                    anchor: AnchorPos.align(AnchorAlign.center),
+                    fitBoundsOptions: const FitBoundsOptions(
+                      padding: EdgeInsets.all(50),
+                      maxZoom: 15,
+                    ),
+                    markers: widget.deviceData
+                        .map(
+                          (e) => Marker(
+                            point: LatLng(e.lat, e.lon),
+                            builder: (context) {
+                              return Icon(
+                                Icons.location_on,
+                                color: HexColor(widget.deviceColor),
+                                size: 30,
+                              );
+                            },
+                          ),
+                        )
+                        .toList(),
+                    builder: (context, markers) {
+                      return Icon(
+                        Icons.location_on,
+                        color: HexColor(widget.deviceColor),
+                        size: 30,
+                      );
+                    },
+                  ),
                 ),
+              // MarkerLayer(
+              //   markers: [
+              //     if (widget.deviceData.isNotEmpty)
+              //       Marker(
+              //         point: LatLng(widget.deviceData.first.lat, widget.deviceData.first.lon),
+              //         builder: (context) {
+              //           return Icon(
+              //             Icons.location_on,
+              //             color: HexColor(widget.deviceColor),
+              //             size: 30,
+              //           );
+              //         },
+              //       ),
+              //     if (widget.isInterval && widget.deviceData.isNotEmpty)
+              //       ...widget.deviceData
+              //           .sublist(1)
+              //           .map(
+              //             (e) => Marker(
+              //               point: LatLng(e.lat, e.lon),
+              //               builder: (context) {
+              //                 return const Icon(
+              //                   Icons.circle,
+              //                   color: gdErrorColor,
+              //                   size: 15,
+              //                 );
+              //               },
+              //             ),
+              //           )
+              //           .toList(),
+              //   ],
+              // ),
             ],
           );
   }

@@ -25,6 +25,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   DateTime startDateBackup = DateTime.now();
   DateTime endDateBackup = DateTime.now();
   bool showFence = true;
+  bool showRoute = false;
   Position? _currentPosition;
   List<Fence> fences = [];
 
@@ -70,7 +71,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
     List<DeviceData> deviceData = widget.isInterval
         ? widget.device.getDataBetweenDates(startDate, endDate)
-        : widget.device.data;
+        : [widget.device.data.first];
 
     return _currentPosition == null
         ? Center(
@@ -127,6 +128,23 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           ),
                         ),
                       ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Mostrar percurso:",
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        Switch(
+                            activeTrackColor: theme.colorScheme.secondary,
+                            value: showRoute,
+                            onChanged: (value) {
+                              setState(() {
+                                showRoute = value;
+                              });
+                            }),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Row(
@@ -196,6 +214,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           isInterval: widget.isInterval,
                           endDate: endDate,
                           startDate: startDate,
+                          showRoute: showRoute,
                           onZoomChange: (newZoom) {
                             // No need to setstate because we dont need to update the screen
                             // just need to store the value in case the map restarts to keep zoom
