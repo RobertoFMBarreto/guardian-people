@@ -108,6 +108,8 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
+              bounds: LatLngBounds.fromPoints(
+                  polygons.isEmpty ? circles.first.points : polygons.first.points),
             ),
             children: [
               TileLayer(
@@ -200,37 +202,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     },
                   ),
                 ),
-              // MarkerLayer(
-              //   markers: [
-              //     if (widget.deviceData.isNotEmpty)
-              //       Marker(
-              //         point: LatLng(widget.deviceData.first.lat, widget.deviceData.first.lon),
-              //         builder: (context) {
-              //           return Icon(
-              //             Icons.location_on,
-              //             color: HexColor(widget.deviceColor),
-              //             size: 30,
-              //           );
-              //         },
-              //       ),
-              //     if (widget.isInterval && widget.deviceData.isNotEmpty)
-              //       ...widget.deviceData
-              //           .sublist(1)
-              //           .map(
-              //             (e) => Marker(
-              //               point: LatLng(e.lat, e.lon),
-              //               builder: (context) {
-              //                 return const Icon(
-              //                   Icons.circle,
-              //                   color: gdErrorColor,
-              //                   size: 15,
-              //                 );
-              //               },
-              //             ),
-              //           )
-              //           .toList(),
-              //   ],
-              // ),
             ],
           );
   }

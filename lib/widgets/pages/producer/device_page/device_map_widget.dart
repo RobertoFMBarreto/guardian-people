@@ -128,23 +128,24 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           ),
                         ),
                       ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Mostrar percurso:",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        Switch(
-                            activeTrackColor: theme.colorScheme.secondary,
-                            value: showRoute,
-                            onChanged: (value) {
-                              setState(() {
-                                showRoute = value;
-                              });
-                            }),
-                      ],
-                    ),
+                    if (widget.isInterval)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Mostrar percurso:",
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          Switch(
+                              activeTrackColor: theme.colorScheme.secondary,
+                              value: showRoute,
+                              onChanged: (value) {
+                                setState(() {
+                                  showRoute = value;
+                                });
+                              }),
+                        ],
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Row(
