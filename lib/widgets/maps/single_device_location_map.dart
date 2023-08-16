@@ -184,9 +184,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         .map(
                           (e) => Marker(
                             point: LatLng(e.lat, e.lon),
+                            anchorPos: AnchorPos.align(AnchorAlign.top),
                             builder: (context) {
                               return Transform.rotate(
                                 angle: _mapController.rotation * -pi / 180,
+                                alignment: Alignment.bottomCenter,
                                 child: Icon(
                                   Icons.location_on,
                                   color: HexColor(widget.deviceColor),
@@ -198,10 +200,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         )
                         .toList(),
                     builder: (context, markers) {
-                      return Icon(
-                        Icons.location_on,
-                        color: HexColor(widget.deviceColor),
-                        size: 30,
+                      return Transform.rotate(
+                        angle: _mapController.rotation * -pi / 180,
+                        child: Icon(
+                          Icons.location_on,
+                          color: HexColor(widget.deviceColor),
+                          size: 30,
+                        ),
                       );
                     },
                   ),
