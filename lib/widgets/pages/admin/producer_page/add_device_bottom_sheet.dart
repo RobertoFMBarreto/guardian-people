@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddDeviceBottomSheet extends StatefulWidget {
   final Function()? onAddDevice;
@@ -17,8 +21,9 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return DefaultBottomSheet(
-      title: 'Adicionar Dispositivo',
+      title: '${localizations.add.capitalize()} ${localizations.device.capitalize()}',
       body: [
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
@@ -45,7 +50,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
                   backgroundColor: MaterialStatePropertyAll(gdCancelBtnColor),
                 ),
                 child: Text(
-                  'Cancelar',
+                  localizations.cancel.capitalize(),
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),
@@ -57,7 +62,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
               ElevatedButton(
                 onPressed: widget.onAddDevice,
                 child: Text(
-                  'Adicionar',
+                  localizations.add.capitalize(),
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),

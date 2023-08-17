@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/user.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../producer.dart';
 
 class Highlights extends StatelessWidget {
@@ -12,6 +14,7 @@ class Highlights extends StatelessWidget {
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -25,7 +28,7 @@ class Highlights extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Text(
-                  'Destaques',
+                  localizations.highlights.capitalize(),
                   style: theme.textTheme.headlineMedium!.copyWith(fontSize: 42),
                 ),
               ),
@@ -39,7 +42,7 @@ class Highlights extends StatelessWidget {
                   itemCount: users.length,
                   itemBuilder: (context, index) => Producer(
                     producerName: users[index].name,
-                    devicesInfo: '2 dispositivos em alerta vermelho',
+                    devicesInfo: '2 ${localizations.devices_alert}',
                     imageUrl: '',
                     uid: users[index].uid,
                   ),

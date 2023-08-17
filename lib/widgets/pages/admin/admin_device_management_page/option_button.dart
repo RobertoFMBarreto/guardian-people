@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 
 class OptionButton extends StatelessWidget {
   const OptionButton({super.key});
@@ -6,6 +9,7 @@ class OptionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return SliverToBoxAdapter(
       child: Row(
         children: [
@@ -26,7 +30,7 @@ class OptionButton extends StatelessWidget {
                   color: theme.colorScheme.error,
                 ),
                 label: Text(
-                  'Remover Dispositivo',
+                  '${localizations.remove.capitalize()} ${localizations.device.capitalize()}',
                   style: theme.textTheme.bodyLarge!.copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -49,7 +53,7 @@ class OptionButton extends StatelessWidget {
                   color: theme.colorScheme.error,
                 ),
                 label: Text(
-                  'Bloquear Dispositivo',
+                  '${localizations.block.capitalize()} ${localizations.device.capitalize()}',
                   style: theme.textTheme.bodyLarge!.copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),

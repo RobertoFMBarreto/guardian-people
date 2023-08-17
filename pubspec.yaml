@@ -45,11 +45,13 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   toggle_switch: ^2.1.0
   syncfusion_flutter_datepicker: ^22.2.8
-  intl: ^0.18.1
+  intl: any
   omni_datetime_picker: ^1.0.8
   time_picker_spinner: ^0.0.1
   flutter_map_heatmap: ^0.0.4+2
   file_picker: ^5.3.3
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +81,8 @@ flutter:
     - assets/data/fences.json
     - assets/data/alerts.json
 
+  # for translations
+  generate: true
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

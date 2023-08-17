@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/widgets/icon_text.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
   final Device device;
@@ -11,6 +14,7 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Container(
       width: deviceWidth,
       height: 300,
@@ -61,7 +65,7 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      'Dados do dispositivo',
+                      localizations.device_data.capitalize(),
                       style: theme.textTheme.headlineMedium,
                     ),
                     Row(

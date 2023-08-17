@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/icon_text.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Device device;
@@ -27,6 +30,8 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
+
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Container(
       width: deviceWidth,
       height: 350,
@@ -161,7 +166,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text(
-                              'Cor do dispositivo',
+                              localizations.device_color.capitalize(),
                               style: theme.textTheme.bodyLarge!.copyWith(
                                 color: theme.colorScheme.onSecondary,
                                 fontSize: 20,

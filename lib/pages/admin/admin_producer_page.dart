@@ -3,6 +3,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/devices.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item.dart';
@@ -13,6 +14,9 @@ import 'package:guardian/widgets/pages/admin/producer_page/add_device_bottom_she
 import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';
 
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
   const AdminProducerPage({super.key});
@@ -51,6 +55,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
+
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
@@ -117,7 +123,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
         floatingActionButton: CustomFloatingActionButton(
           options: [
             CustomFloatingActionButtonOption(
-              title: 'Adicionar Dispositivo',
+              title: '${localizations.add.capitalize()} ${localizations.device.capitalize()}',
               icon: Icons.add,
               onTap: () {
                 showModalBottomSheet(
@@ -132,7 +138,9 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               },
             ),
             CustomFloatingActionButtonOption(
-              title: isRemoveMode ? 'Cancelar' : 'Remover Dispositivo',
+              title: isRemoveMode
+                  ? localizations.cancel.capitalize()
+                  : '${localizations.remove.capitalize()} ${localizations.device.capitalize()}',
               icon: isRemoveMode ? Icons.cancel : Icons.remove,
               onTap: () {
                 setState(() {
@@ -157,7 +165,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Dispositivos',
+                          localizations.devices.capitalize(),
                           style: theme.textTheme.headlineSmall!.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -170,7 +178,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                   });
                                 },
                                 child: Text(
-                                  'Cancelar',
+                                  localizations.cancel.capitalize(),
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: gdCancelTextColor,
                                   ),

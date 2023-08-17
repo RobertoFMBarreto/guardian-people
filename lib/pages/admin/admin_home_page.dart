@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/user.dart';
@@ -7,6 +8,9 @@ import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -36,6 +40,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: isLoading
@@ -54,7 +59,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           name: 'Admin',
                           isHomeShape: true,
                           title: Text(
-                            'Destaques',
+                            localizations.highlights.capitalize(),
                             style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                           ),
                           tailWidget: PopupMenuButton(
@@ -76,26 +81,26 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               }
                             },
                             itemBuilder: (BuildContext context) => [
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 0,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    Text('Perfil'),
-                                    Icon(
+                                    Text(localizations.profile.capitalize()),
+                                    const Icon(
                                       Icons.person,
                                       size: 15,
                                     ),
                                   ],
                                 ),
                               ),
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 1,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    Text('Sair'),
-                                    Icon(
+                                    Text(localizations.logout.capitalize()),
+                                    const Icon(
                                       Icons.logout,
                                       size: 15,
                                     ),
@@ -112,7 +117,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20.0),
                         child: Text(
-                          'Produtores',
+                          localizations.producers.capitalize(),
                           style:
                               theme.textTheme.headlineMedium!.copyWith(fontSize: kIsWeb ? 42 : 22),
                         ),

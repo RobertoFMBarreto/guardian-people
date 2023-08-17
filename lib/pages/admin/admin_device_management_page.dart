@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {
   final Device device;
@@ -35,6 +38,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: isLoading
@@ -68,9 +72,11 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                       child: Text(
-                        'Outros dispositivos do produtor',
-                        style: theme.textTheme.headlineSmall!
-                            .copyWith(fontSize: 18, fontWeight: FontWeight.w500),
+                        '${localizations.other_producer_devices.capitalize()}:',
+                        style: theme.textTheme.headlineSmall!.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

@@ -1,4 +1,6 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
@@ -38,6 +40,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Guardian',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,

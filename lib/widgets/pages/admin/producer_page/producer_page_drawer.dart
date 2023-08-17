@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/range_input.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerPageDrawer extends StatelessWidget {
   final RangeValues batteryRangeValues;
@@ -30,6 +33,7 @@ class ProducerPageDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Drawer(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -39,7 +43,7 @@ class ProducerPageDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
-                'Filtrar resultados',
+                '${localizations.filter.capitalize()} ${localizations.results}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
@@ -47,7 +51,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: batteryRangeValues,
               max: 100,
               min: 0,
-              title: 'Bateria',
+              title: localizations.battery.capitalize(),
               label: '${batteryRangeValues.start.round()}% - ${batteryRangeValues.end.round()}%',
               onChanged: onChangedBat,
             ),
@@ -55,7 +59,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: dtUsageRangeValues,
               max: 10,
               min: 0,
-              title: 'Dados usados',
+              title: localizations.data_used.capitalize(),
               label: '${dtUsageRangeValues.start.round()}MB - ${dtUsageRangeValues.end.round()}MB',
               onChanged: onChangedDtUsg,
             ),
@@ -63,7 +67,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: tmpRangeValues,
               max: 35, //TODO: Get biggest tmp of all devices
               min: 0, //TODO: Get lowest tmp of all devices
-              title: 'Temperatura do animal',
+              title: localizations.temperature.capitalize(),
               label: '${tmpRangeValues.start.round()}ºC - ${tmpRangeValues.end.round()}ºC',
               onChanged: onChangedTmp,
             ),
@@ -71,19 +75,20 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: elevationRangeValues,
               max: 1500, //TODO: Get biggest elevation of all devices
               min: 0, //TODO: Get lowest elevation of all devices
-              title: 'Elevação',
+              title: localizations.elevation.capitalize(),
               label:
                   '${elevationRangeValues.start.round()}m - ${elevationRangeValues.end.round()}m',
               onChanged: onChangedElev,
             ),
             ElevatedButton(
               onPressed: onConfirm,
-              child: const Text('Aplicar Filtros'),
+              child:
+                  Text('${localizations.apply.capitalize()} ${localizations.filters.capitalize()}'),
             ),
             TextButton(
               onPressed: onResetFilters,
               child: Text(
-                'Limpar Filtros',
+                '${localizations.clean.capitalize()} ${localizations.filters.capitalize()}',
                 style: theme.textTheme.bodyMedium!.copyWith(
                   color: gdSecondaryColor,
                   fontWeight: FontWeight.w500,
