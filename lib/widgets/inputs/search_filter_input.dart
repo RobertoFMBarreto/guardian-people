@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchWithFilterInput extends StatelessWidget {

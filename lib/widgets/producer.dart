@@ -19,7 +19,6 @@ class Producer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    double deviceWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed('/admin/producer', arguments: uid),
       child: Container(

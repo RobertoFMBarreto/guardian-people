@@ -5,7 +5,6 @@ import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {

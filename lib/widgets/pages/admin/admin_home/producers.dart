@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/user.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../producer.dart';
 
@@ -11,7 +10,6 @@ class Producers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return SliverFillRemaining(
       hasScrollBody: true,

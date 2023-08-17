@@ -6,7 +6,6 @@ import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/icon_text.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NoBackgroundDeviceTopBar extends StatefulWidget {

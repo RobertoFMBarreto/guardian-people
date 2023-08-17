@@ -9,7 +9,6 @@ import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminHomePage extends StatefulWidget {

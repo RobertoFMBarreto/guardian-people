@@ -34,7 +34,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   bool showHeatMap = false;
   int dropDownValue = 0;
 
-  final firstItemDataKey = new GlobalKey();
+  final firstItemDataKey = GlobalKey();
 
   @override
   void initState() {

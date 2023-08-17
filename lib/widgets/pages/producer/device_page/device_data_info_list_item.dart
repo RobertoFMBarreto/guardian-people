@@ -193,7 +193,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                       showLessInfo();
 
                       Scrollable.ensureVisible(widget.mapKey.currentContext!,
-                          duration: Duration(seconds: 1));
+                          duration: const Duration(seconds: 1));
                     },
                     icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
                     label: Text(

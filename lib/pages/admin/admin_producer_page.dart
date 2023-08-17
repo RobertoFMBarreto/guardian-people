@@ -15,7 +15,6 @@ import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.
 
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
