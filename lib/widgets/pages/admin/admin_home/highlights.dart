@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/user.dart';
 
@@ -10,26 +11,42 @@ class Highlights extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
+    ThemeData theme = Theme.of(context);
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(
-          bottom: 8.0,
-          top: 8.0,
-          left: 10.0,
-          right: 10.0,
+        padding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 10.0,
         ),
-        child: SizedBox(
-          height: deviceHeight * 0.23,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: users.length,
-            itemBuilder: (context, index) => Producer(
-              producerName: users[index].name,
-              devicesInfo: '2 dispositivos em alerta vermelho',
-              imageUrl: '',
-              uid: users[index].uid,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (kIsWeb)
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'Destaques',
+                  style: theme.textTheme.headlineMedium!.copyWith(fontSize: 42),
+                ),
+              ),
+            Padding(
+              padding:
+                  kIsWeb ? const EdgeInsets.symmetric(horizontal: 30.0) : const EdgeInsets.all(0),
+              child: SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: users.length,
+                  itemBuilder: (context, index) => Producer(
+                    producerName: users[index].name,
+                    devicesInfo: '2 dispositivos em alerta vermelho',
+                    imageUrl: '',
+                    uid: users[index].uid,
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

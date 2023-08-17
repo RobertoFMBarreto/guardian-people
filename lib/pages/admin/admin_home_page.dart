@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/user.dart';
@@ -43,81 +44,85 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   color: theme.colorScheme.secondary,
                 ),
               )
-            : CustomScrollView(
-                slivers: [
-                  SliverPersistentHeader(
-                    delegate: SliverMainAppBar(
-                      imageUrl: '',
-                      name: 'Admin',
-                      isHomeShape: true,
-                      title: Text(
-                        'Destaques',
-                        style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
-                      ),
-                      tailWidget: PopupMenuButton(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        color: theme.colorScheme.onSecondary,
-                        icon: const Icon(Icons.menu),
-                        onSelected: (item) {
-                          switch (item) {
-                            case 0:
-                              Navigator.of(context).pushNamed('/profile');
-                              break;
-                            case 1:
-                              //! Logout code
-                              clearUserSession().then(
-                                (value) => Navigator.of(context).popAndPushNamed('/login'),
-                              );
+            : Expanded(
+                child: CustomScrollView(
+                  slivers: [
+                    if (!kIsWeb)
+                      SliverPersistentHeader(
+                        delegate: SliverMainAppBar(
+                          imageUrl: '',
+                          name: 'Admin',
+                          isHomeShape: true,
+                          title: Text(
+                            'Destaques',
+                            style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
+                          ),
+                          tailWidget: PopupMenuButton(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            color: theme.colorScheme.onSecondary,
+                            icon: const Icon(Icons.menu),
+                            onSelected: (item) {
+                              switch (item) {
+                                case 0:
+                                  Navigator.of(context).pushNamed('/profile');
+                                  break;
+                                case 1:
+                                  //! Logout code
+                                  clearUserSession().then(
+                                    (value) => Navigator.of(context).popAndPushNamed('/login'),
+                                  );
 
-                              break;
-                          }
-                        },
-                        itemBuilder: (BuildContext context) => [
-                          const PopupMenuItem(
-                            value: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text('Perfil'),
-                                Icon(
-                                  Icons.person,
-                                  size: 15,
+                                  break;
+                              }
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              const PopupMenuItem(
+                                value: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text('Perfil'),
+                                    Icon(
+                                      Icons.person,
+                                      size: 15,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 1,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text('Sair'),
-                                Icon(
-                                  Icons.logout,
-                                  size: 15,
+                              ),
+                              const PopupMenuItem(
+                                value: 1,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text('Sair'),
+                                    Icon(
+                                      Icons.logout,
+                                      size: 15,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+                        pinned: true,
+                      ),
+                    Highlights(users: users.sublist(0, 2)),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Text(
+                          'Produtores',
+                          style:
+                              theme.textTheme.headlineMedium!.copyWith(fontSize: kIsWeb ? 42 : 22),
+                        ),
                       ),
                     ),
-                    pinned: true,
-                  ),
-                  Highlights(users: users.sublist(0, 2)),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        'Produtores',
-                        style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
-                      ),
+                    Producers(
+                      producers: users,
                     ),
-                  ),
-                  Producers(
-                    producers: users,
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
       floatingActionButton: FloatingActionButton(

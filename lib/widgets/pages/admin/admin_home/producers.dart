@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/user.dart';
 
@@ -10,19 +11,41 @@ class Producers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
-    return SliverGrid.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 0,
-        mainAxisSpacing: 0,
-        mainAxisExtent: deviceHeight * 0.23,
-      ),
-      itemCount: producers.length,
-      itemBuilder: (context, index) => Producer(
-        producerName: producers[index].name,
-        devicesInfo: '10 dispositivos',
-        imageUrl: '',
-        uid: producers[index].uid,
+    return SliverFillRemaining(
+      hasScrollBody: true,
+      child: Padding(
+        padding: kIsWeb ? const EdgeInsets.symmetric(horizontal: 40.0) : const EdgeInsets.all(0),
+        child: GridView.extent(
+          physics: const NeverScrollableScrollPhysics(),
+          // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //   crossAxisCount: 7,
+          //   crossAxisSpacing: 0,
+          //   mainAxisSpacing: 0,
+          //   childAspectRatio: 1.35,
+          // ),
+          // itemCount: producers.length,
+          childAspectRatio: 1,
+
+          maxCrossAxisExtent: 200,
+          children: producers
+              .map(
+                (e) => Container(
+                  constraints: const BoxConstraints(
+                    minWidth: 200,
+                    maxWidth: 200,
+                    minHeight: 150,
+                    maxHeight: 150,
+                  ),
+                  child: Producer(
+                    producerName: e.name,
+                    devicesInfo: '10 dispositivos',
+                    imageUrl: '',
+                    uid: e.uid,
+                  ),
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }
