@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/services.dart';
 import 'package:guardian/models/alert.dart';
 import 'package:guardian/models/device.dart';
@@ -9,7 +8,9 @@ import 'package:guardian/models/user.dart';
 import 'package:latlong2/latlong.dart';
 
 Future<List<User>> loadUsers() async {
-  String usersInput = await rootBundle.loadString('assets/data/users.json');
+  String usersInput = '';
+  usersInput = await rootBundle.loadString('assets/data/users.json');
+
   Map<String, dynamic> usersMap = await json.decode(usersInput);
   List<User> users = [];
   usersMap['users']!.forEach(

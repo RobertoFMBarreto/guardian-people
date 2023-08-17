@@ -49,6 +49,7 @@ dependencies:
   omni_datetime_picker: ^1.0.8
   time_picker_spinner: ^0.0.1
   flutter_map_heatmap: ^0.0.4+2
+  file_picker: ^5.3.3
 
 dev_dependencies:
   flutter_test:
