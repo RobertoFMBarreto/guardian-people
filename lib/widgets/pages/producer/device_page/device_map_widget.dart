@@ -47,9 +47,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   Future<void> _loadFences() async {
     loadUserFences(1).then(
       (allFences) {
-        setState(() {
-          fences.addAll(allFences);
-        });
+        if (mounted) {
+          setState(() {
+            fences.addAll(allFences);
+          });
+        }
       },
     );
   }
@@ -58,11 +60,16 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     final hasPermission = await handleLocationPermission(context);
 
     if (!hasPermission) return;
+
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
+        .then((dynamic position) {
+      if (mounted) {
+        if (position is Position) {
+          setState(() => _currentPosition = position);
+        }
+      }
     }).catchError((e) {
-      debugPrint(e);
+      debugPrint(e.toString());
     });
   }
 

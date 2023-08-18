@@ -10,7 +10,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Device device;
-  const NoBackgroundDeviceTopBar({super.key, required this.device});
+  final Widget? tailWidget;
+  const NoBackgroundDeviceTopBar({super.key, required this.device, required this.tailWidget});
 
   @override
   State<NoBackgroundDeviceTopBar> createState() => _NoBackgroundDeviceTopBarState();
@@ -47,12 +48,13 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
       child: FittedBox(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               width: deviceWidth,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   IconButton(
                     icon: Icon(
@@ -64,6 +66,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                       Navigator.of(context).pop();
                     },
                   ),
+                  widget.tailWidget ?? const SizedBox()
                 ],
               ),
             ),

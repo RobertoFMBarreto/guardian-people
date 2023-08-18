@@ -43,6 +43,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
                 : DeviceTopBar(
                     device: device,
                     extent: adjustedShrinkOffset,
+                    tailWidget: tailWidget,
                   ),
           ),
         ],

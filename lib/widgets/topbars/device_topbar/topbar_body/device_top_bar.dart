@@ -6,7 +6,9 @@ import 'package:guardian/widgets/topbars/device_topbar/topbar_body/no_background
 class DeviceTopBar extends StatelessWidget {
   final double extent;
   final Device device;
-  const DeviceTopBar({super.key, required this.device, required this.extent});
+  final Widget? tailWidget;
+  const DeviceTopBar(
+      {super.key, required this.device, required this.extent, required this.tailWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +29,7 @@ class DeviceTopBar extends StatelessWidget {
           ? DeviceMinTopBar(
               device: device,
             )
-          : NoBackgroundDeviceTopBar(
-              device: device,
-            ),
+          : NoBackgroundDeviceTopBar(device: device, tailWidget: tailWidget),
     );
   }
 }
