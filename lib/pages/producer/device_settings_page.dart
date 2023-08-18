@@ -5,7 +5,6 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
-import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
 
 class DeviceSettingsPage extends StatefulWidget {
   final Device device;

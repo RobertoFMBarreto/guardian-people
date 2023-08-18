@@ -14,7 +14,6 @@ extension ParseCmpToString on DeviceDataState {
   String toShortString(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     String value = toString().split('.').last;
-    print(value);
     switch (value) {
       case 'ruminating':
         return localizations.ruminating;

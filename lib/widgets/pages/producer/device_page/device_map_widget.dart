@@ -207,7 +207,6 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                                     setState(() {
                                       showFence = value;
                                     });
-                                    print(currentZoom);
                                   }),
                             ],
                           ),
