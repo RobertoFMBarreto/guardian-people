@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 
 class DeviceTimeWidget extends StatelessWidget {
   final DateTime startDate;
@@ -12,6 +14,7 @@ class DeviceTimeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -19,7 +22,7 @@ class DeviceTimeWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'De ',
+              '${localizations.from.capitalize()} ',
               style: theme.textTheme.bodyLarge,
             ),
             Text(
@@ -29,7 +32,7 @@ class DeviceTimeWidget extends StatelessWidget {
               ),
             ),
             Text(
-              ' até ',
+              ' ${localizations.until} ',
               style: theme.textTheme.bodyLarge,
             ),
             Text(
@@ -44,7 +47,7 @@ class DeviceTimeWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Das ',
+              '${localizations.from_time.capitalize()} ',
               style: theme.textTheme.bodyLarge,
             ),
             Text(
@@ -54,7 +57,7 @@ class DeviceTimeWidget extends StatelessWidget {
               ),
             ),
             Text(
-              ' às ',
+              ' ${localizations.until_time} ',
               style: theme.textTheme.bodyLarge,
             ),
             Text(

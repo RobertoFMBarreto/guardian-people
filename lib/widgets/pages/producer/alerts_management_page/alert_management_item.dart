@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
+
 class AlertManagementItem extends StatelessWidget {
   final Alert alert;
   const AlertManagementItem({super.key, required this.alert});
@@ -8,6 +11,7 @@ class AlertManagementItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -21,12 +25,12 @@ class AlertManagementItem extends StatelessWidget {
                 RichText(
                   maxLines: 2,
                   text: TextSpan(
-                    text: 'Quando ',
+                    text: '${localizations.when.capitalize()} ',
                     style: theme.textTheme.bodyLarge,
                     children: [
                       TextSpan(
                         text:
-                            '${alert.parameter.toShortString()} ${alert.comparisson.toShortString()} ',
+                            '${alert.parameter.toShortString(context).capitalize()} ${alert.comparisson.toShortString(context)} ',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -35,7 +39,7 @@ class AlertManagementItem extends StatelessWidget {
                 RichText(
                   maxLines: 2,
                   text: TextSpan(
-                    text: 'a ',
+                    text: '${localizations.to} ',
                     style: theme.textTheme.bodyLarge,
                     children: [
                       TextSpan(
@@ -52,7 +56,7 @@ class AlertManagementItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Text(
-                "Notificação: ${alert.hasNotification ? 'Sim' : 'Não'}",
+                "${localizations.notification.capitalize()}: ${alert.hasNotification ? localizations.yes.capitalize() : localizations.no.capitalize()}",
                 style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
               ),
             ),

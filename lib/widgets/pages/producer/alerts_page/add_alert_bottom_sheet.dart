@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_comparisson_dropdown.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_parameter_dropdown.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddAlertBottomSheet extends StatefulWidget {
   final Function(
@@ -17,6 +20,7 @@ class AddAlertBottomSheet extends StatefulWidget {
   final AlertComparissons? comparisson;
   final double? value;
   final bool? hasNotification;
+  final bool? isEdit;
   const AddAlertBottomSheet({
     super.key,
     required this.onConfirm,
@@ -24,6 +28,7 @@ class AddAlertBottomSheet extends StatefulWidget {
     this.comparisson,
     this.value,
     this.hasNotification,
+    this.isEdit = false,
   });
 
   @override
@@ -51,8 +56,10 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return DefaultBottomSheet(
-      title: 'Adicionar Alerta',
+      title:
+          '${widget.isEdit! ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.warnings.capitalize()}',
       bodyCrossAxisAlignment: CrossAxisAlignment.start,
       body: [
         Form(
@@ -61,7 +68,7 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Quando',
+                localizations.when.capitalize(),
                 style: theme.textTheme.bodyLarge!.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: 18,
@@ -96,7 +103,7 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'a',
+                      localizations.to,
                       style: theme.textTheme.bodyLarge!.copyWith(
                         fontWeight: FontWeight.w500,
                         fontSize: 18,
@@ -105,32 +112,32 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      decoration: const InputDecoration(
-                        label: Text('Valor'),
+                      decoration: InputDecoration(
+                        label: Text(localizations.value.capitalize()),
                       ),
                       initialValue: comparissonValue.toString(),
                       validator: (value) {
                         if (value == null) {
-                          return 'Inserir valor';
+                          return localizations.insert_value.capitalize();
                         } else {
                           double? inputValue = double.tryParse(value);
                           if (inputValue != null) {
                             switch (alertParameter) {
                               case AlertParameter.battery:
                                 if (inputValue < 0 || inputValue > 100) {
-                                  return 'Valor inválido';
+                                  return localizations.invalid_value.capitalize();
                                 }
                                 break;
                               case AlertParameter.dataUsage:
                                 if (inputValue < 0 || inputValue > 10) {
-                                  return 'Valor inválido';
+                                  return localizations.invalid_value.capitalize();
                                 }
                                 break;
                               case AlertParameter.temperature:
                                 break;
                             }
                           } else {
-                            return 'Valor inválido';
+                            return localizations.invalid_value.capitalize();
                           }
                           return null;
                         }
@@ -148,7 +155,7 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
-                  'Fazer',
+                  localizations.what_to_do.capitalize(),
                   style: theme.textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 18,
@@ -160,7 +167,7 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
                 child: Row(
                   children: [
                     Text(
-                      'Enviar Notificação:',
+                      '${localizations.send.capitalize()} ${localizations.notification.capitalize()}:',
                       style: theme.textTheme.bodyLarge,
                     ),
                     Padding(
@@ -191,7 +198,7 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
                         backgroundColor: MaterialStatePropertyAll(gdCancelBtnColor),
                       ),
                       child: Text(
-                        'Cancelar',
+                        localizations.cancel.capitalize(),
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
@@ -212,7 +219,7 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
                         }
                       },
                       child: Text(
-                        'Adicionar',
+                        localizations.add.capitalize(),
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),

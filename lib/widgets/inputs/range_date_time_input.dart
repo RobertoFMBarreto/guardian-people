@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/date_time_input.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RangeDateTimeInput extends StatefulWidget {
   final DateTime startDate;
@@ -35,7 +37,7 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
     _tabController = TabController(
       initialIndex: 0,
       vsync: this,
-      length: myTabs.length,
+      length: 2,
     );
   }
 
@@ -48,13 +50,17 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         TabBar(
           indicatorColor: Colors.green,
           controller: _tabController,
-          tabs: myTabs,
+          tabs: [
+            Tab(text: localizations.start_date.capitalize()),
+            Tab(text: localizations.end_date.capitalize()),
+          ],
           labelColor: Colors.black,
         ),
         SizedBox(
@@ -129,7 +135,7 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Cancelar',
+                localizations.cancel.capitalize(),
                 style: theme.textTheme.bodyLarge!.copyWith(
                   color: gdCancelBtnColor,
                 ),
@@ -140,7 +146,7 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
                 widget.onConfirm(startDate, endDate);
               },
               child: Text(
-                'Confirmar',
+                localizations.confirm.capitalize(),
                 style: theme.textTheme.bodyLarge!.copyWith(
                   color: theme.colorScheme.secondary,
                 ),

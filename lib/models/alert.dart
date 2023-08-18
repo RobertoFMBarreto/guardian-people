@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum AlertComparissons {
   equal,
-  more,
+  greater,
   less,
-  moreOrEqual,
+  greaterOrEqual,
   lessOrEqual,
 }
 
@@ -15,14 +17,48 @@ enum AlertParameter {
 }
 
 extension ParseCmpToString on AlertComparissons {
-  String toShortString() {
-    return toString().split('.').last;
+  String toShortString(BuildContext context) {
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+    String value = toString().split('.').last;
+    switch (value) {
+      case 'equal':
+        return localizations.equal;
+
+      case 'greater':
+        return localizations.greater;
+
+      case 'less':
+        return localizations.less;
+
+      case 'greaterOrEqual':
+        return localizations.greaterOrEqual;
+
+      case 'lessOrEqual':
+        return localizations.lessOrEqual;
+
+      default:
+        return value;
+    }
   }
 }
 
 extension ParseParToString on AlertParameter {
-  String toShortString() {
-    return toString().split('.').last;
+  String toShortString(BuildContext context) {
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+    String value = toString().split('.').last;
+    switch (value) {
+      case 'temperature':
+        return localizations.temperature;
+
+      case 'dataUsage':
+        return localizations.data_used;
+
+      case 'battery':
+        return localizations.battery;
+
+      default:
+        return value;
+    }
   }
 }
 

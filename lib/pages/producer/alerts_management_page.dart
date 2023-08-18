@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlertsManagementPage extends StatefulWidget {
   const AlertsManagementPage({super.key});
@@ -33,10 +35,11 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Gestão de Alertas',
+          localizations.warnings_managment.capitalize(),
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -63,6 +66,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                           hasNotification: alerts[index].hasNotification,
                           parameter: alerts[index].parameter,
                           value: alerts[index].value,
+                          isEdit: true,
                           onConfirm: (parameter, comparisson, value, hasNotification) {
                             //TODO: edit alert code
                           },
@@ -93,7 +97,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
           );
         },
         label: Text(
-          'Adicionar Alerta',
+          '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
           style: theme.textTheme.bodyLarge!.copyWith(
             color: theme.colorScheme.onSecondary,
             fontWeight: FontWeight.bold,

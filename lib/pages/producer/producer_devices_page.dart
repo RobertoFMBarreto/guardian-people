@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/devices.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item_selectable.dart';
@@ -8,6 +9,7 @@ import 'package:guardian/widgets/inputs/search_filter_input.dart';
 
 import '../../widgets/device/device_item.dart';
 import '../../widgets/pages/admin/producer_page/producer_page_drawer.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
@@ -48,6 +50,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
@@ -56,7 +59,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
-            'Dispositivos',
+            localizations.devices.capitalize(),
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,

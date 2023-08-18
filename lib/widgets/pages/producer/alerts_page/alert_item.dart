@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 
 class AlertItem extends StatelessWidget {
   final Alert alert;
@@ -25,7 +26,7 @@ class AlertItem extends StatelessWidget {
           ),
           title: Text(alert.device.imei),
           subtitle: Text(
-              '${alert.parameter.toShortString()} ${alert.comparisson.toShortString()} a ${alert.value}'),
+              '${alert.parameter.toShortString(context).capitalize()} ${alert.comparisson.toShortString(context)} a ${alert.value}'),
           trailing: IconButton(
             onPressed: () {
               //!TODO: Delete code for alert

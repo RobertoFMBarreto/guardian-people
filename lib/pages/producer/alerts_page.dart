@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlertsPage extends StatefulWidget {
   const AlertsPage({super.key});
@@ -29,10 +31,11 @@ class _AlertsPageState extends State<AlertsPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Alertas',
+          localizations.alerts,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -56,7 +59,7 @@ class _AlertsPageState extends State<AlertsPage> {
                         color: theme.colorScheme.error,
                       ),
                       Text(
-                        'Remover Todos',
+                        '${localizations.remove.capitalize()} ${localizations.all.capitalize()}',
                         style: theme.textTheme.bodyLarge!.copyWith(
                           color: theme.colorScheme.error,
                         ),
@@ -95,7 +98,7 @@ class _AlertsPageState extends State<AlertsPage> {
           Navigator.of(context).pushNamed('/producer/alert/management');
         },
         label: Text(
-          'Gerir avisos',
+          '${localizations.manage.capitalize()} ${localizations.warnings.capitalize()}',
           style: theme.textTheme.bodyLarge!.copyWith(
             color: theme.colorScheme.onSecondary,
             fontWeight: FontWeight.bold,

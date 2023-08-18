@@ -12,7 +12,8 @@
           "lon": -8.209422255013058,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 77,
@@ -20,7 +21,8 @@
           "lon": -8.205104190820505,
           "altitude": 1013.5688,
           "accuracy": 8.547402,
-          "lteTime": "2023-06-07 16:56:47"
+          "lteTime": "2023-06-07 16:56:47",
+          "state": "ruminating"
         },
         {
           "battery": 78,
@@ -28,7 +30,8 @@
           "lon": -8.206734751557708,
           "altitude": 894.76483,
           "accuracy": 36.92056,
-          "lteTime": "2023-06-07 15:55:29"
+          "lteTime": "2023-06-07 15:55:29",
+          "state": "ruminating"
         }
       ]
     },
@@ -44,7 +47,8 @@
           "lon": -8.3,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 77,
@@ -52,7 +56,8 @@
           "lon": -8.205104190820505,
           "altitude": 1013.5688,
           "accuracy": 8.547402,
-          "lteTime": "2023-06-07 16:56:47"
+          "lteTime": "2023-06-07 16:56:47",
+          "state": "ruminating"
         },
         {
           "battery": 78,
@@ -60,7 +65,8 @@
           "lon": -8.206734751557708,
           "altitude": 894.76483,
           "accuracy": 36.92056,
-          "lteTime": "2023-06-07 15:55:29"
+          "lteTime": "2023-06-07 15:55:29",
+          "state": "ruminating"
         }
       ]
     },
@@ -76,7 +82,8 @@
           "lon": -8.1,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 77,
@@ -84,7 +91,8 @@
           "lon": -8.205104190820505,
           "altitude": 1013.5688,
           "accuracy": 8.547402,
-          "lteTime": "2023-06-07 16:56:47"
+          "lteTime": "2023-06-07 16:56:47",
+          "state": "ruminating"
         },
         {
           "battery": 78,
@@ -92,7 +100,8 @@
           "lon": -8.206734751557708,
           "altitude": 894.76483,
           "accuracy": 36.92056,
-          "lteTime": "2023-06-07 15:55:29"
+          "lteTime": "2023-06-07 15:55:29",
+          "state": "ruminating"
         },
         {
           "battery": 78,
@@ -100,7 +109,8 @@
           "lon": -8.419925613919892,
           "altitude": 134.28778,
           "accuracy": 22.427956,
-          "lteTime": "2023-06-07 14:55:35"
+          "lteTime": "2023-06-07 14:55:35",
+          "state": "ruminating"
         }
       ]
     },
@@ -117,7 +127,8 @@
           "lon": -8.205500592022439,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:39:22"
+          "lteTime": "2023-06-07 16:39:22",
+          "state": "ruminating"
         },
         {
           "battery": 19,
@@ -125,7 +136,8 @@
           "lon": -8.206814416723287,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:49:22"
+          "lteTime": "2023-06-07 16:49:22",
+          "state": "ruminating"
         },
         {
           "battery": 31,
@@ -133,7 +145,8 @@
           "lon": -8.205515939155305,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:55:22"
+          "lteTime": "2023-06-07 16:55:22",
+          "state": "ruminating"
         },
         {
           "battery": 83,
@@ -141,7 +154,8 @@
           "lon": -8.207833668794978,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 10,
@@ -149,7 +163,8 @@
           "lon": -8.205301939011804,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 46,
@@ -157,7 +172,8 @@
           "lon": -8.20938206689817,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 93,
@@ -165,7 +181,8 @@
           "lon": -8.20790190001107,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 82,
@@ -173,7 +190,8 @@
           "lon": -8.20779591517775,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 20,
@@ -181,7 +199,8 @@
           "lon": -8.207874269263543,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 90,
@@ -189,7 +208,8 @@
           "lon": -8.208091158228395,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 100,
@@ -197,7 +217,8 @@
           "lon": -8.208118613731262,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 71,
@@ -205,7 +226,8 @@
           "lon": -8.208170974144775,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 46,
@@ -213,7 +235,8 @@
           "lon": -8.208485602734138,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 28,
@@ -221,7 +244,8 @@
           "lon": -8.20638255072339,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 15,
@@ -229,7 +253,8 @@
           "lon": -8.206669185390416,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 63,
@@ -237,7 +262,8 @@
           "lon": -8.205943507111257,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 41,
@@ -245,7 +271,8 @@
           "lon": -8.206863950367492,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 1,
@@ -253,7 +280,8 @@
           "lon": -8.207211228681725,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 63,
@@ -261,7 +289,8 @@
           "lon": -8.208111747924548,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 6,
@@ -269,7 +298,8 @@
           "lon": -8.207030827995368,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 14,
@@ -277,7 +307,8 @@
           "lon": -8.209036461114882,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 73,
@@ -285,7 +316,8 @@
           "lon": -8.205364927663748,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 26,
@@ -293,7 +325,8 @@
           "lon": -8.207354588097463,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 45,
@@ -301,7 +334,8 @@
           "lon": -8.206035409279913,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 67,
@@ -309,7 +343,8 @@
           "lon": -8.206216318346147,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 74,
@@ -317,7 +352,8 @@
           "lon": -8.207952457275907,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 38,
@@ -325,7 +361,8 @@
           "lon": -8.205627738099965,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 78,
@@ -333,7 +370,8 @@
           "lon": -8.208890860943862,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 1,
@@ -341,7 +379,8 @@
           "lon": -8.209035189436362,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 52,
@@ -349,7 +388,8 @@
           "lon": -8.206251696265669,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 75,
@@ -357,7 +397,8 @@
           "lon": -8.205392900280772,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 89,
@@ -365,7 +406,8 @@
           "lon": -8.208798901804828,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 32,
@@ -373,7 +415,8 @@
           "lon": -8.208874524269591,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 83,
@@ -381,7 +424,8 @@
           "lon": -8.208830805674598,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 35,
@@ -389,7 +433,8 @@
           "lon": -8.205173882331207,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 91,
@@ -397,7 +442,8 @@
           "lon": -8.207179543048099,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 96,
@@ -405,7 +451,8 @@
           "lon": -8.206953034110565,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 67,
@@ -413,7 +460,8 @@
           "lon": -8.208565788426256,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 63,
@@ -421,7 +469,8 @@
           "lon": -8.206675455593228,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 85,
@@ -429,7 +478,8 @@
           "lon": -8.205787261215093,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 31,
@@ -437,7 +487,8 @@
           "lon": -8.20659727671817,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 25,
@@ -445,7 +496,8 @@
           "lon": -8.207799397021459,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 85,
@@ -453,7 +505,8 @@
           "lon": -8.20575988432073,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 35,
@@ -461,7 +514,8 @@
           "lon": -8.208051815649712,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 19,
@@ -469,7 +523,8 @@
           "lon": -8.206596615323111,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 96,
@@ -477,7 +532,8 @@
           "lon": -8.206093511772181,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 79,
@@ -485,7 +541,8 @@
           "lon": -8.205354824649957,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 36,
@@ -493,7 +550,8 @@
           "lon": -8.20751047028806,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 26,
@@ -501,7 +559,8 @@
           "lon": -8.207124493581112,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 17,
@@ -509,7 +568,8 @@
           "lon": -8.20901149785036,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 89,
@@ -517,7 +577,8 @@
           "lon": -8.207584502533894,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 58,
@@ -525,7 +586,8 @@
           "lon": -8.206844445205245,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 23,
@@ -533,7 +595,8 @@
           "lon": -8.209107331025574,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 31,
@@ -541,7 +604,8 @@
           "lon": -8.207602442115151,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 87,
@@ -549,7 +613,8 @@
           "lon": -8.205420823758631,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 49,
@@ -557,7 +622,8 @@
           "lon": -8.20696666829159,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 51,
@@ -565,7 +631,8 @@
           "lon": -8.205690061357057,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 79,
@@ -573,7 +640,8 @@
           "lon": -8.20793904659634,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 89,
@@ -581,7 +649,8 @@
           "lon": -8.207587393705127,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 21,
@@ -589,7 +658,8 @@
           "lon": -8.207893877925988,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 82,
@@ -597,7 +667,8 @@
           "lon": -8.205644195344219,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 66,
@@ -605,7 +676,8 @@
           "lon": -8.208425389645026,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 34,
@@ -613,7 +685,8 @@
           "lon": -8.20698025750023,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         },
         {
           "battery": 18,
@@ -621,7 +694,8 @@
           "lon": -8.20597568064068,
           "altitude": 417.42828,
           "accuracy": 7.627816,
-          "lteTime": "2023-06-07 16:59:22"
+          "lteTime": "2023-06-07 16:59:22",
+          "state": "ruminating"
         }
       ]
     }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device_data.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/widgets/icon_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceDataInfoList extends StatefulWidget {
   final List<DeviceData> deviceData;
@@ -47,6 +49,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Column(
       children: [
         ExpansionPanelList(
@@ -92,21 +95,23 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                               children: [
                                 RichText(
                                   text: TextSpan(
-                                    text: 'Das ',
+                                    text: '${localizations.from_time.capitalize()} ',
                                     style: theme.textTheme.bodyLarge,
                                     children: [
                                       const TextSpan(
                                         text: '13:00 ',
                                         style: TextStyle(fontWeight: FontWeight.bold),
                                       ),
-                                      const TextSpan(text: 'às '),
+                                      TextSpan(text: '${localizations.until_time} '),
                                       const TextSpan(
                                         text: '14:00 ',
                                         style: TextStyle(fontWeight: FontWeight.bold),
                                       ),
-                                      const TextSpan(text: 'esteve a '),
+                                      TextSpan(text: '${localizations.was} '),
                                       TextSpan(
-                                        text: 'Ruminar',
+                                        text: widget.deviceData[index].state
+                                            .toShortString(context)
+                                            .capitalize(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: theme.colorScheme.secondary,
@@ -197,7 +202,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                     },
                     icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
                     label: Text(
-                      'Esconder',
+                      localizations.hide.capitalize(),
                       style:
                           theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.secondary),
                     )),
@@ -207,7 +212,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                   },
                   icon: Icon(Icons.add, color: theme.colorScheme.secondary),
                   label: Text(
-                    'Carregar mais ${(widget.deviceData.length - _currentTopicExtent) >= 10 ? 10 : widget.deviceData.length - _currentTopicExtent}',
+                    '${localizations.load.capitalize()} ${localizations.more} ${(widget.deviceData.length - _currentTopicExtent) >= 10 ? 10 : widget.deviceData.length - _currentTopicExtent}',
                     style: theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.secondary),
                   )),
             ],

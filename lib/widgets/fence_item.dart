@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/color_circle.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FenceItem extends StatelessWidget {
   final String name;
@@ -10,6 +12,7 @@ class FenceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,7 +37,7 @@ class FenceItem extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
                     child: Text(
-                      'Cor:',
+                      '${localizations.color.capitalize()}:',
                       style: theme.textTheme.bodyLarge!.copyWith(
                         fontSize: 16,
                       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/read_json.dart';
@@ -9,6 +10,7 @@ import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ManageFencePage extends StatefulWidget {
   final Fence fence;
@@ -38,10 +40,11 @@ class _ManageFencePageState extends State<ManageFencePage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Cerca ${widget.fence.name}',
+          '${localizations.fence.capitalize()} ${widget.fence.name}',
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -72,7 +75,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Text(
-                      'Cor da cerca:',
+                      localizations.fence_color.capitalize(),
                       style: theme.textTheme.bodyLarge,
                     ),
                   ),
@@ -103,7 +106,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Dispositivos Associados:',
+                    '${localizations.associated_devices.capitalize()}:',
                     style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                   ),
                   IconButton(
@@ -148,7 +151,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
         distance: 80,
         children: [
           FloatingActionButton.extended(
-            heroTag: 'Remover Cerca',
+            heroTag: '${localizations.remove.capitalize()} ${localizations.fence}',
             extendedPadding: const EdgeInsets.symmetric(horizontal: 10),
             icon: const Icon(Icons.delete_forever),
             shape: RoundedRectangleBorder(
@@ -160,7 +163,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
             label: Padding(
               padding: const EdgeInsets.only(left: 4.0),
               child: Text(
-                'Remover Cerca',
+                '${localizations.remove.capitalize()} ${localizations.fence}',
                 style: theme.textTheme.bodyMedium!.copyWith(color: Colors.black),
               ),
             ),
@@ -168,7 +171,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: FloatingActionButton.extended(
-              heroTag: 'Editar Cerca',
+              heroTag: '${localizations.edit.capitalize()} ${localizations.fence}',
               extendedPadding: const EdgeInsets.symmetric(horizontal: 10),
               icon: const Icon(Icons.edit),
               shape: RoundedRectangleBorder(
@@ -180,7 +183,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
               label: Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(
-                  'Editar Cerca',
+                  '${localizations.edit.capitalize()} ${localizations.fence}',
                   style: theme.textTheme.bodyMedium!.copyWith(color: Colors.black),
                 ),
               ),

@@ -63,6 +63,20 @@ Future<List<Device>> loadUserDevices(int uid) async {
       // load device packages
       List<DeviceData> data = [];
       for (var deviceData in device['data']) {
+        DeviceDataState state;
+        if (deviceData['state'] == '=') {
+          state = DeviceDataState.eating;
+        } else if (deviceData['state'] == 'fighting') {
+          state = DeviceDataState.fighting;
+        } else if (deviceData['state'] == 'ruminating') {
+          state = DeviceDataState.ruminating;
+        } else if (deviceData['state'] == 'running') {
+          state = DeviceDataState.running;
+        } else if (deviceData['state'] == 'stopped') {
+          state = DeviceDataState.stoped;
+        } else {
+          state = DeviceDataState.walking;
+        }
         data.add(
           DeviceData(
             dataUsage: 7,
@@ -73,6 +87,7 @@ Future<List<Device>> loadUserDevices(int uid) async {
             lon: deviceData['lon'],
             accuracy: deviceData['accuracy'],
             dateTime: DateTime.parse(deviceData['lteTime']),
+            state: state,
           ),
         );
       }
@@ -101,6 +116,20 @@ Future<Device?> loadDevice(String deviceImei) async {
       // load device packages
       List<DeviceData> data = [];
       for (var deviceData in device['data']) {
+        DeviceDataState state;
+        if (deviceData['state'] == '=') {
+          state = DeviceDataState.eating;
+        } else if (deviceData['state'] == 'fighting') {
+          state = DeviceDataState.fighting;
+        } else if (deviceData['state'] == 'ruminating') {
+          state = DeviceDataState.ruminating;
+        } else if (deviceData['state'] == 'running') {
+          state = DeviceDataState.running;
+        } else if (deviceData['state'] == 'stopped') {
+          state = DeviceDataState.stoped;
+        } else {
+          state = DeviceDataState.walking;
+        }
         data.add(
           DeviceData(
             dataUsage: 7,
@@ -111,6 +140,7 @@ Future<Device?> loadDevice(String deviceImei) async {
             lon: deviceData['lon'],
             accuracy: deviceData['accuracy'],
             dateTime: DateTime.parse(deviceData['lteTime']),
+            state: state,
           ),
         );
       }
@@ -147,11 +177,11 @@ Future<List<Alert>> loadAlerts() async {
     if (alert['parameter'] == '=') {
       comparisson = AlertComparissons.equal;
     } else if (alert['parameter'] == '>') {
-      comparisson = AlertComparissons.more;
+      comparisson = AlertComparissons.greater;
     } else if (alert['parameter'] == '<') {
       comparisson = AlertComparissons.less;
     } else if (alert['parameter'] == '>=') {
-      comparisson = AlertComparissons.moreOrEqual;
+      comparisson = AlertComparissons.greaterOrEqual;
     } else {
       comparisson = AlertComparissons.lessOrEqual;
     }

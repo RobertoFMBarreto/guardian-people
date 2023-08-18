@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/models/device.dart';
 import 'package:guardian/models/device_data.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
@@ -9,6 +10,7 @@ import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/maps/single_device_location_map.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_time_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceMapWidget extends StatefulWidget {
   final Device device;
@@ -70,6 +72,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     double deviceHeight = MediaQuery.of(context).size.height;
     dropDownValue = !widget.isInterval ? 0 : dropDownValue;
     showHeatMap = !widget.isInterval ? false : showHeatMap;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
 
     List<DeviceData> deviceData = widget.isInterval
         ? widget.device.getDataBetweenDates(startDate, endDate)
@@ -135,7 +138,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            "Mostrar percurso:",
+                            "${localizations.show.capitalize()} ${localizations.route}",
                             style: theme.textTheme.bodyLarge,
                           ),
                           Switch(
@@ -159,17 +162,17 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                               borderRadius: BorderRadius.circular(20),
                               underline: const SizedBox(),
                               value: dropDownValue,
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
                                   value: 0,
                                   child: Text(
-                                    'Mapa Normal',
+                                    localizations.normal_map.capitalize(),
                                   ),
                                 ),
                                 DropdownMenuItem(
                                   value: 1,
                                   child: Text(
-                                    'Mapa de Calor',
+                                    localizations.heatmap.capitalize(),
                                   ),
                                 ),
                               ],
@@ -187,7 +190,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "Mostrar cerca:",
+                                "${localizations.show.capitalize()} ${localizations.fence.capitalize()}:",
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Switch(

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerHome extends StatefulWidget {
   const ProducerHome({super.key});
@@ -36,6 +38,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -65,26 +68,26 @@ class _ProducerHomeState extends State<ProducerHome> {
                     }
                   },
                   itemBuilder: (BuildContext context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text('Perfil'),
-                          Icon(
+                          Text(localizations.profile.capitalize()),
+                          const Icon(
                             Icons.person,
                             size: 15,
                           ),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 1,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text('Sair'),
-                          Icon(
+                          Text(localizations.logout.capitalize()),
+                          const Icon(
                             Icons.logout,
                             size: 15,
                           ),
@@ -107,7 +110,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 20, right: 8),
                           child: SquareDevicesInfo(
-                            title: 'Dispositivos',
+                            title: localizations.devices.capitalize(),
                             description: '10',
                             onTap: () {
                               Navigator.of(context).pushNamed('/producer/devices');
@@ -119,7 +122,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 20, left: 8),
                           child: SquareDevicesInfo(
-                            title: 'Alertas',
+                            title: localizations.alerts.capitalize(),
                             description: '2',
                             isAlert: true,
                             onTap: () {
@@ -139,7 +142,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                           onPressed: () {
                             Navigator.of(context).pushNamed('/producer/fences');
                           },
-                          child: const Text('Cercas'),
+                          child: Text(localizations.fences.capitalize()),
                         ),
                       ],
                     ),

@@ -3,6 +3,7 @@ import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
@@ -10,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GeofencingPage extends StatefulWidget {
   final Fence? fence;
@@ -102,11 +104,12 @@ class _GeofencingPageState extends State<GeofencingPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Editar cerca',
+          '${widget.fence != null ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.fence.capitalize()}',
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,

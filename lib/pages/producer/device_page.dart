@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/device.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DevicePage extends StatefulWidget {
   final Device device;
@@ -19,6 +21,7 @@ class _DevicePageState extends State<DevicePage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -32,7 +35,7 @@ class _DevicePageState extends State<DevicePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Localização',
+                        localizations.localization.capitalize(),
                         style: theme.textTheme.headlineSmall!.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -50,9 +53,9 @@ class _DevicePageState extends State<DevicePage> {
                           TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
                         ],
                         totalSwitches: 2,
-                        labels: const [
-                          'Atual',
-                          'Intervalo',
+                        labels: [
+                          localizations.current.capitalize(),
+                          localizations.range.capitalize(),
                         ],
                         onToggle: (index) {
                           setState(() {

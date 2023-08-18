@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/fences.dart';
 import 'package:guardian/models/focus_manager.dart';
@@ -6,6 +7,7 @@ import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FencesPage extends StatefulWidget {
   const FencesPage({super.key});
@@ -36,6 +38,7 @@ class _FencesPageState extends State<FencesPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
@@ -56,7 +59,7 @@ class _FencesPageState extends State<FencesPage> {
         ),
         appBar: AppBar(
           title: Text(
-            'Cercas',
+            localizations.fences.capitalize(),
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -73,7 +76,7 @@ class _FencesPageState extends State<FencesPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: SearchFieldInput(
-                        label: 'Pesquisar',
+                        label: localizations.search.capitalize(),
                         onChanged: (value) {
                           setState(() {
                             searchString = value;

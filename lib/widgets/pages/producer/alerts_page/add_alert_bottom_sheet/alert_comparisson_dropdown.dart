@@ -28,7 +28,7 @@ class AlertComparissonDropdown extends StatelessWidget {
                 ),
               ),
               DropdownMenuItem(
-                value: AlertComparissons.more,
+                value: AlertComparissons.greater,
                 child: Text(
                   'Maior',
                 ),
@@ -40,7 +40,7 @@ class AlertComparissonDropdown extends StatelessWidget {
                 ),
               ),
               DropdownMenuItem(
-                value: AlertComparissons.moreOrEqual,
+                value: AlertComparissons.greaterOrEqual,
                 child: Text(
                   'Maior ou igual',
                 ),

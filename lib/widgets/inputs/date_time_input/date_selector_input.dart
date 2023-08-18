@@ -36,7 +36,6 @@ class _DateSelectorInputState extends State<DateSelectorInput> {
         todayHighlightColor: Colors.black,
         selectionTextStyle: theme.textTheme.bodyLarge,
         yearCellStyle: const DateRangePickerYearCellStyle(
-          leadingDatesDecoration: BoxDecoration(color: Colors.green),
           todayTextStyle: TextStyle(color: Colors.black),
           todayCellDecoration: BoxDecoration(
             border: Border(
@@ -45,7 +44,6 @@ class _DateSelectorInputState extends State<DateSelectorInput> {
           ),
         ),
         monthCellStyle: const DateRangePickerMonthCellStyle(
-          leadingDatesDecoration: BoxDecoration(color: Colors.green),
           todayTextStyle: TextStyle(color: Colors.black),
           todayCellDecoration: BoxDecoration(
             border: Border(
