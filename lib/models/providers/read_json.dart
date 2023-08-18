@@ -110,7 +110,6 @@ Future<Device?> loadDevice(String deviceImei) async {
   String devicesInput = await rootBundle.loadString('assets/data/devices.json');
   Map devicesMap = await json.decode(devicesInput);
   List<dynamic> devicesMapList = devicesMap['devices'];
-  Device device;
   for (var device in devicesMapList) {
     if (device['imei'] == deviceImei) {
       // load device packages
@@ -146,13 +145,12 @@ Future<Device?> loadDevice(String deviceImei) async {
       }
 
       // load device and his data
-      device = Device(
+      return Device(
         imei: device['imei'],
         color: device['color'],
         isBlocked: device['isBlocked'],
         data: data,
       );
-      return device;
     }
   }
   return null;
