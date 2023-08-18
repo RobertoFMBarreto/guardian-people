@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/device.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';

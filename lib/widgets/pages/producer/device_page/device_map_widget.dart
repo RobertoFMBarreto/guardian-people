@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:guardian/models/device.dart';
-import 'package:guardian/models/device_data.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';

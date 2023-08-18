@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/device.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';

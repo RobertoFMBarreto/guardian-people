@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,19 +22,20 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Future<void> getToken(BuildContext context) async {
     await hasUserSession().then(
-      (role) async {
-        if (role != null) {
-          // get user language
-          switch (role) {
-            case 0:
-              Navigator.of(context).popAndPushNamed('/admin');
-              break;
-            case 1:
-              Navigator.of(context).popAndPushNamed('/producer');
-              break;
+      (hasSession) async {
+        if (hasSession) {
+          // get user data
+          User? user = await getUser();
+          // if there is stored data use it for getting his role
+          if (user != null) {
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).popAndPushNamed(user.isAdmin ? '/admin' : '/producer');
+          } else {
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pushReplacementNamed('/login');
           }
         } else {
-          Navigator.pushReplacementNamed(context, '/login');
+          Navigator.of(context).pushReplacementNamed('/login');
         }
       },
     );

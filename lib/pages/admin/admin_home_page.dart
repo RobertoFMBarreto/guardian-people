@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/user.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
@@ -28,9 +28,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   Future<void> _loadUser() async {
-    loadUsersRole(1).then((allUsers) {
+    getProducers().then((usersData) {
+      //!TODO: get users and update db
       setState(() {
-        users.addAll(allUsers);
+        users.addAll(usersData);
         isLoading = false;
       });
     });

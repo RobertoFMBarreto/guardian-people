@@ -4,7 +4,7 @@
       "imei": "635260278163510",
       "color": "#f54260",
       "isBlocked": false,
-      "uid": 1,
+      "uid": "1",
       "alerts": [
         {
           "hasNotification": true,
@@ -48,7 +48,7 @@
       "imei": "982337712123886",
       "color": "#f542ef",
       "isBlocked": false,
-      "uid": 1,
+      "uid": "1",
       "alerts": [
         {
           "hasNotification": true,
@@ -92,7 +92,7 @@
       "imei": "382258845572484",
       "color": "#4287f5",
       "isBlocked": false,
-      "uid": 1,
+      "uid": "1",
       "alerts": [
         {
           "hasNotification": true,
@@ -145,7 +145,7 @@
       "imei": "350457790679797",
       "color": "#32a852",
       "isBlocked": false,
-      "uid": 1,
+      "uid": "1",
       "alerts": [
         {
           "hasNotification": true,

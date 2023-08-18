@@ -1,31 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/user.dart';
-import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/login/login_form.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  late List<User> users;
-  @override
-  void initState() {
-    getUsers();
-    super.initState();
-  }
-
-  Future<void> getUsers() async {
-    loadUsers().then((value) {
-      setState(() {
-        users = value;
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

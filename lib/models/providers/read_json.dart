@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/alert.dart';
-import 'package:guardian/models/device.dart';
-import 'package:guardian/models/device_data.dart';
-import 'package:guardian/models/fence.dart';
-import 'package:guardian/models/user.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/data_models/user.dart';
 import 'package:latlong2/latlong.dart';
 
 Future<List<User>> loadUsers() async {
@@ -19,10 +20,9 @@ Future<List<User>> loadUsers() async {
         User(
           uid: user['id'],
           name: user['name'],
-          imageUrl: user['imageUrl'],
           email: user['email'],
-          password: user['password'],
-          role: user['role'],
+          isAdmin: user['role'] == 0,
+          phone: 999999999,
         ),
       );
     },
@@ -30,30 +30,30 @@ Future<List<User>> loadUsers() async {
   return users;
 }
 
-Future<List<User>> loadUsersRole(int role) async {
-  String usersInput = await rootBundle.loadString('assets/data/users.json');
-  Map<String, dynamic> usersMap = await json.decode(usersInput);
-  List<User> users = [];
-  usersMap['users']!.forEach(
-    (user) {
-      if (user['role'] == role) {
-        users.add(
-          User(
-            uid: user['id'],
-            name: user['name'],
-            imageUrl: user['imageUrl'],
-            email: user['email'],
-            password: user['password'],
-            role: user['role'],
-          ),
-        );
-      }
-    },
-  );
-  return users;
-}
+// Future<List<User>> loadUsersRole(int role) async {
+//   String usersInput = await rootBundle.loadString('assets/data/users.json');
+//   Map<String, dynamic> usersMap = await json.decode(usersInput);
+//   List<User> users = [];
+//   usersMap['users']!.forEach(
+//     (user) {
+//       if (user['role'] == role) {
+//         users.add(
+//           User(
+//             uid: user['id'],
+//             name: user['name'],
+//             imageUrl: user['imageUrl'],
+//             email: user['email'],
+//             password: user['password'],
+//             role: user['role'],
+//           ),
+//         );
+//       }
+//     },
+//   );
+//   return users;
+// }
 
-Future<List<Device>> loadUserDevices(int uid) async {
+Future<List<Device>> loadUserDevices(String uid) async {
   String devicesInput = await rootBundle.loadString('assets/data/devices.json');
   Map devicesMap = await json.decode(devicesInput);
   List<dynamic> devicesMapList = devicesMap['devices'];
@@ -79,6 +79,7 @@ Future<List<Device>> loadUserDevices(int uid) async {
         }
         data.add(
           DeviceData(
+            deviceId: device['imei'],
             dataUsage: 7,
             battery: deviceData['battery'],
             elevation: deviceData['altitude'],
@@ -97,10 +98,9 @@ Future<List<Device>> loadUserDevices(int uid) async {
         Device(
           imei: device['imei'],
           color: device['color'],
-          isBlocked: device['isBlocked'],
-          data: data,
-          alerts: (await loadAlerts()),
-          fences: (await loadDeviceFences('350457790679797')),
+          isActive: device['isBlocked'],
+          deviceId: device['imei'],
+          name: device['name'],
         ),
       );
     }
@@ -133,6 +133,7 @@ Future<Device?> loadDevice(String deviceImei) async {
         }
         data.add(
           DeviceData(
+            deviceId: device['imei'],
             dataUsage: 7,
             battery: deviceData['battery'],
             elevation: deviceData['altitude'],
@@ -150,21 +151,20 @@ Future<Device?> loadDevice(String deviceImei) async {
       return Device(
         imei: device['imei'],
         color: device['color'],
-        isBlocked: device['isBlocked'],
-        data: data,
-        alerts: [],
-        fences: [],
+        isActive: device['isBlocked'],
+        deviceId: device['imei'],
+        name: device['name'],
       );
     }
   }
   return null;
 }
 
-Future<List<Alert>> loadAlerts() async {
+Future<List<UserAlert>> loadAlerts() async {
   String alertsInput = await rootBundle.loadString('assets/data/alerts.json');
   Map alertsMap = await json.decode(alertsInput);
   List<dynamic> alertsMapList = alertsMap['alerts'];
-  List<Alert> alerts = [];
+  List<UserAlert> alerts = [];
   for (var alert in alertsMapList) {
     // load alerts
     AlertParameter parameter;
@@ -188,19 +188,19 @@ Future<List<Alert>> loadAlerts() async {
       comparisson = AlertComparissons.lessOrEqual;
     }
     alerts.add(
-      Alert(
-        device: (await loadDevice(alert['device']))!,
+      UserAlert(
         hasNotification: alert['hasNotification'],
         parameter: parameter,
         comparisson: comparisson,
         value: alert['value'],
+        alertId: '',
       ),
     );
   }
   return alerts;
 }
 
-Future<List<Fence>> loadUserFences(int uid) async {
+Future<List<Fence>> loadUserFences(String uid) async {
   String devicesInput = await rootBundle.loadString('assets/data/fences.json');
   Map fencesMap = await json.decode(devicesInput);
   List<dynamic> fencesMapList = fencesMap['fences'];
@@ -222,9 +222,8 @@ Future<List<Fence>> loadUserFences(int uid) async {
       fences.add(
         Fence(
           name: fence["name"],
-          points: points,
-          devices: [],
           color: fence["color"],
+          fenceId: fence["id"],
         ),
       );
     }
@@ -256,9 +255,8 @@ Future<List<Fence>> loadDeviceFences(String deviceId) async {
       fences.add(
         Fence(
           name: fence["name"],
-          points: points,
-          devices: [],
           color: fence["color"],
+          fenceId: fence["id"],
         ),
       );
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/device.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/read_json.dart';
@@ -19,20 +20,30 @@ class ProducerHome extends StatefulWidget {
 class _ProducerHomeState extends State<ProducerHome> {
   List<Device> devices = [];
   List<Fence> fences = [];
+  late User user;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadDevices();
-    _loadFences();
+    User.getUserData().then((userData) {
+      if (userData != null) {
+        user = userData;
+        _loadDevices(user).then(
+          (_) => _loadFences(user).then(
+            (_) => isLoading = false,
+          ),
+        );
+      }
+    });
   }
 
-  Future<void> _loadDevices() async {
-    loadUserDevices(1).then((allDevices) => setState(() => devices.addAll(allDevices)));
+  Future<void> _loadDevices(User user) async {
+    loadUserDevices(user.uid).then((allDevices) => setState(() => devices.addAll(allDevices)));
   }
 
-  Future<void> _loadFences() async {
-    loadUserFences(1).then((allFences) => setState(() => fences.addAll(allFences)));
+  Future<void> _loadFences(User user) async {
+    loadUserFences(user.uid).then((allFences) => setState(() => fences.addAll(allFences)));
   }
 
   @override
@@ -47,7 +58,7 @@ class _ProducerHomeState extends State<ProducerHome> {
             SliverPersistentHeader(
               delegate: SliverMainAppBar(
                 imageUrl: '',
-                name: 'João Gonçalves',
+                name: user.name,
                 isHomeShape: true,
                 tailWidget: PopupMenuButton(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

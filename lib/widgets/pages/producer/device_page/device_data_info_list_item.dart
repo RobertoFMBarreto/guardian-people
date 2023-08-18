@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/device_data.dart';
+import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 import 'package:guardian/widgets/icon_text.dart';
