@@ -29,6 +29,7 @@ class _DateTimeInputState extends State<DateTimeInput> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
