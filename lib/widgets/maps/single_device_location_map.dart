@@ -102,15 +102,16 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               onMapReady: () {
                 _mapController.mapEventStream.listen((evt) {
                   widget.onZoomChange(_mapController.zoom);
-                  print(_mapController.rotation);
                 });
                 // And any other `MapController` dependent non-movement methods
               },
               zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
-              bounds: LatLngBounds.fromPoints(
-                  polygons.isEmpty ? circles.first.points : polygons.first.points),
+              bounds: widget.startingZoom == 17
+                  ? LatLngBounds.fromPoints(
+                      polygons.isEmpty ? circles.first.points : polygons.first.points)
+                  : null,
             ),
             children: [
               TileLayer(
