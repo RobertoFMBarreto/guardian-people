@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
@@ -15,6 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
@@ -57,8 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  decoration: const InputDecoration(
-                                    label: Text('Nome'),
+                                  decoration: InputDecoration(
+                                    label: Text(localizations.name.capitalize()),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -85,8 +88,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  decoration: const InputDecoration(
-                                    label: Text('Password'),
+                                  decoration: InputDecoration(
+                                    label: Text(localizations.password.capitalize()),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -99,8 +102,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  decoration: const InputDecoration(
-                                    label: Text('Confirmação Password'),
+                                  decoration: InputDecoration(
+                                    label: Text(localizations.password_confirmation.capitalize()),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -126,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: const ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll(Colors.grey),
                                   ),
-                                  child: const Text('Cancelar'),
+                                  child: Text(localizations.cancel.capitalize()),
                                 ),
                                 const SizedBox(
                                   width: 20,
@@ -140,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       );
                                     }
                                   },
-                                  child: const Text('Guardar'),
+                                  child: Text(localizations.confirm.capitalize()),
                                 ),
                               ],
                             ),

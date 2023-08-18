@@ -73,5 +73,11 @@
   "was": "was",
   "hide": "hide",
   "load": "load",
-  "more": "more"
+  "more": "more",
+  "password": "password",
+  "password_confirmation": "password confirmation",
+  "name": "name",
+  "empty_field": "empty field",
+  "login_error": "wrong email or password",
+  "loading": "loading"
 }

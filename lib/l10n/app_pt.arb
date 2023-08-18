@@ -73,5 +73,11 @@
   "was": "esteve a",
   "hide": "esconder",
   "load": "carregar",
-  "more": "mais"
+  "more": "mais",
+  "password": "password",
+  "password_confirmation": "confirmação password",
+  "name": "nome",
+  "empty_field": "campo vazio",
+  "login_error": "email ou password incorretos",
+  "loading": "a carregar"
 }

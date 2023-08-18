@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -39,6 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -86,7 +89,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Loading...",
+                          "${localizations.loading.capitalize()}...",
                           style: theme.textTheme.bodyLarge!.copyWith(
                             color: theme.colorScheme.onSecondary,
                             shadows: <Shadow>[

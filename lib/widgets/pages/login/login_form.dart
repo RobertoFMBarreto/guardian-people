@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/user.dart';
 import 'package:guardian/models/providers/loading_dialog_provider.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -21,6 +23,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Container(
       constraints: const BoxConstraints(maxWidth: 400),
       child: Card(
@@ -73,7 +76,7 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Campo vazio';
+                        return localizations.empty_field.capitalize();
                       }
                       return null;
                     },
@@ -90,7 +93,7 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Campo vazio';
+                        return localizations.empty_field.capitalize();
                       }
                       return null;
                     },
@@ -120,7 +123,7 @@ class _LoginFormState extends State<LoginForm> {
                             if (user.isEmpty) {
                               Navigator.of(context).pop();
                               setState(() {
-                                errorString = 'Email ou password incorretos';
+                                errorString = localizations.login_error.capitalize();
                               });
                             } else {
                               // pop loading dialog
