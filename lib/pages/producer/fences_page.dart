@@ -8,9 +8,11 @@ import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/widgets/selectable_fence_item.dart';
 
 class FencesPage extends StatefulWidget {
-  const FencesPage({super.key});
+  final bool isSelect;
+  const FencesPage({super.key, this.isSelect = false});
 
   @override
   State<FencesPage> createState() => _FencesPageState();
@@ -20,6 +22,7 @@ class _FencesPageState extends State<FencesPage> {
   String searchString = '';
   List<Fence> backupFences = [];
   List<Fence> fences = [];
+  List<Fence> selectedFences = [];
   bool isLoading = true;
   @override
   void initState() {
@@ -96,13 +99,30 @@ class _FencesPageState extends State<FencesPage> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: FenceItem(
-                              name: fences[index].name,
-                              color: HexColor(fences[index].color),
-                              onRemove: () {
-                                //!TODO remove item from list
-                              },
-                            ),
+                            child: widget.isSelect
+                                ? SelectableFenceItem(
+                                    name: fences[index].name,
+                                    color: HexColor(fences[index].color),
+                                    isSelected: selectedFences.contains(fences[index]),
+                                    onSelected: () {
+                                      //!TODO: select code
+                                      if (selectedFences.contains(fences[index])) {
+                                        setState(() {
+                                          selectedFences.remove(fences[index]);
+                                        });
+                                      } else {
+                                        setState(() {
+                                          selectedFences.add(fences[index]);
+                                        });
+                                      }
+                                    })
+                                : FenceItem(
+                                    name: fences[index].name,
+                                    color: HexColor(fences[index].color),
+                                    onRemove: () {
+                                      //!TODO remove item from list
+                                    },
+                                  ),
                           ),
                         ),
                       ),

@@ -5,6 +5,15 @@
       "color": "#f54260",
       "isBlocked": false,
       "uid": 1,
+      "alerts": [
+        {
+          "hasNotification": true,
+          "parameter": "tmp",
+          "comparisson": "=",
+          "value": 20.0,
+          "device": "350457790679797"
+        }
+      ],
       "data": [
         {
           "battery": 78,
@@ -40,6 +49,15 @@
       "color": "#f542ef",
       "isBlocked": false,
       "uid": 1,
+      "alerts": [
+        {
+          "hasNotification": true,
+          "parameter": "tmp",
+          "comparisson": "=",
+          "value": 20.0,
+          "device": "350457790679797"
+        }
+      ],
       "data": [
         {
           "battery": 78,
@@ -75,6 +93,15 @@
       "color": "#4287f5",
       "isBlocked": false,
       "uid": 1,
+      "alerts": [
+        {
+          "hasNotification": true,
+          "parameter": "tmp",
+          "comparisson": "=",
+          "value": 20.0,
+          "device": "350457790679797"
+        }
+      ],
       "data": [
         {
           "battery": 78,
@@ -119,6 +146,15 @@
       "color": "#32a852",
       "isBlocked": false,
       "uid": 1,
+      "alerts": [
+        {
+          "hasNotification": true,
+          "parameter": "tmp",
+          "comparisson": "=",
+          "value": 20.0,
+          "device": "350457790679797"
+        }
+      ],
 
       "data": [
         {

@@ -79,5 +79,8 @@
   "name": "name",
   "empty_field": "empty field",
   "login_error": "wrong email or password",
-  "loading": "loading"
+  "loading": "loading",
+  "device_settings": "device settings",
+  "device_warnings": "device warnings",
+  "device_fences": "device fences"
 }

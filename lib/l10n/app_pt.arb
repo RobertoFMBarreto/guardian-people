@@ -79,5 +79,8 @@
   "name": "nome",
   "empty_field": "campo vazio",
   "login_error": "email ou password incorretos",
-  "loading": "a carregar"
+  "loading": "a carregar",
+  "device_settings": "definições do dispositivo",
+  "device_warnings": "avisos do dispositivo",
+  "device_fences": "cercas do dispositivo"
 }

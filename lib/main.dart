@@ -10,6 +10,7 @@ import 'package:guardian/pages/login_page.dart';
 import 'package:guardian/pages/producer/alerts_management_page.dart';
 import 'package:guardian/pages/producer/alerts_page.dart';
 import 'package:guardian/pages/producer/device_page.dart';
+import 'package:guardian/pages/producer/device_settings_page.dart';
 import 'package:guardian/pages/producer/fences_page.dart';
 import 'package:guardian/pages/producer/geofencing_page.dart';
 import 'package:guardian/pages/producer/manage_fence_page.dart';
@@ -128,7 +129,15 @@ class MyApp extends StatelessWidget {
           }
         },
         '/producer': (context) => const ProducerHome(),
-        '/producer/fences': (context) => const FencesPage(),
+        '/producer/fences': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
+            return FencesPage(
+              isSelect: ModalRoute.of(context)!.settings.arguments as bool,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        },
         '/producer/fence/manage': (context) {
           return ManageFencePage(
             fence: ModalRoute.of(context)!.settings.arguments as Fence,
@@ -161,8 +170,25 @@ class MyApp extends StatelessWidget {
             throw ErrorDescription('Device not provided');
           }
         },
+        '/producer/device/settings': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+            return DeviceSettingsPage(
+              device: ModalRoute.of(context)!.settings.arguments as Device,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        },
         '/producer/alerts': (context) => const AlertsPage(),
-        '/producer/alert/management': (context) => const AlertsManagementPage(),
+        '/producer/alert/management': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
+            return AlertsManagementPage(
+              isSelect: ModalRoute.of(context)!.settings.arguments as bool,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        },
       },
     );
   }

@@ -99,6 +99,8 @@ Future<List<Device>> loadUserDevices(int uid) async {
           color: device['color'],
           isBlocked: device['isBlocked'],
           data: data,
+          alerts: (await loadAlerts()),
+          fences: (await loadDeviceFences('350457790679797')),
         ),
       );
     }
@@ -150,6 +152,8 @@ Future<Device?> loadDevice(String deviceImei) async {
         color: device['color'],
         isBlocked: device['isBlocked'],
         data: data,
+        alerts: [],
+        fences: [],
       );
     }
   }

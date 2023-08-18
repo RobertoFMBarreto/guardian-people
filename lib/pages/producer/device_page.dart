@@ -85,6 +85,10 @@ class _DevicePageState extends State<DevicePage> {
                   ),
                   onPressed: () {
                     //TODO: Code for settings of device
+                    Navigator.of(context).pushNamed(
+                      '/producer/device/settings',
+                      arguments: widget.device,
+                    );
                   },
                 ),
               ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddProducerBottomSheet extends StatefulWidget {
   final Function()? onAddProducer;
@@ -17,14 +19,15 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return DefaultBottomSheet(
       title: 'Adicionar Produtor',
       body: [
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
           child: TextField(
-            decoration: const InputDecoration(
-              label: Text('Nome'),
+            decoration: InputDecoration(
+              label: Text(localizations.name.capitalize()),
             ),
             onChanged: (value) {
               producerName = value;
@@ -45,7 +48,7 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
                   backgroundColor: MaterialStatePropertyAll(gdCancelBtnColor),
                 ),
                 child: Text(
-                  'Cancelar',
+                  localizations.cancel.capitalize(),
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),
@@ -57,7 +60,7 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
               ElevatedButton(
                 onPressed: widget.onAddProducer,
                 child: Text(
-                  'Adicionar',
+                  localizations.add.capitalize(),
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),

@@ -5,9 +5,11 @@ import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/widgets/selectable_alert_management_item.dart';
 
 class AlertsManagementPage extends StatefulWidget {
-  const AlertsManagementPage({super.key});
+  final bool isSelect;
+  const AlertsManagementPage({super.key, this.isSelect = false});
 
   @override
   State<AlertsManagementPage> createState() => _AlertsManagementPageState();
@@ -16,6 +18,7 @@ class AlertsManagementPage extends StatefulWidget {
 class _AlertsManagementPageState extends State<AlertsManagementPage> {
   List<Alert> alerts = [];
   bool isLoading = true;
+  List<Alert> selectedAlerts = [];
 
   @override
   void initState() {
@@ -56,27 +59,43 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                 child: ListView.builder(
                   itemCount: alerts.length,
                   padding: const EdgeInsets.only(bottom: 20.0),
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => AddAlertBottomSheet(
-                          comparisson: alerts[index].comparisson,
-                          hasNotification: alerts[index].hasNotification,
-                          parameter: alerts[index].parameter,
-                          value: alerts[index].value,
-                          isEdit: true,
-                          onConfirm: (parameter, comparisson, value, hasNotification) {
-                            //TODO: edit alert code
+                  itemBuilder: (context, index) => widget.isSelect
+                      ? SelectableAlertManagementItem(
+                          alert: alerts[index],
+                          isSelected: selectedAlerts.contains(alerts[index]),
+                          onSelected: () {
+                            //!TODO: select code
+                            if (selectedAlerts.contains(alerts[index])) {
+                              setState(() {
+                                selectedAlerts.remove(alerts[index]);
+                              });
+                            } else {
+                              setState(() {
+                                selectedAlerts.add(alerts[index]);
+                              });
+                            }
+                          })
+                      : GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (context) => AddAlertBottomSheet(
+                                comparisson: alerts[index].comparisson,
+                                hasNotification: alerts[index].hasNotification,
+                                parameter: alerts[index].parameter,
+                                value: alerts[index].value,
+                                isEdit: true,
+                                onConfirm: (parameter, comparisson, value, hasNotification) {
+                                  //TODO: edit alert code
+                                },
+                              ),
+                            );
                           },
+                          child: AlertManagementItem(
+                            alert: alerts[index],
+                          ),
                         ),
-                      );
-                    },
-                    child: AlertManagementItem(
-                      alert: alerts[index],
-                    ),
-                  ),
                 ),
               ),
       ),
