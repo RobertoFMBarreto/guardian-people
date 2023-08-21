@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
@@ -18,7 +17,8 @@ import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
-  const AdminProducerPage({super.key});
+  final String producerId;
+  const AdminProducerPage({super.key, required this.producerId});
 
   @override
   State<AdminProducerPage> createState() => _AdminProducerPageState();
@@ -36,17 +36,36 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
 
   bool isRemoveMode = false;
 
-  List<Device> backupDevices = [];
   List<Device> devices = [];
+
   @override
   void initState() {
-    _loadDevices();
+    _filterDevices().then(
+      (filteredDevices) => setState(() {
+        devices = [];
+        devices.addAll(filteredDevices);
+      }),
+    );
     super.initState();
   }
 
-  Future<void> _loadDevices() async {
-    loadUserDevices(1).then((allDevices) {
-      setState(() => devices.addAll(allDevices));
+  Future<List<Device>> _filterDevices() async {
+    return await getUserDevicesFiltered(
+      batteryRangeValues: _batteryRangeValues,
+      elevationRangeValues: _elevationRangeValues,
+      dtUsageRangeValues: _dtUsageRangeValues,
+      searchString: searchString,
+      tmpRangeValues: _tmpRangeValues,
+      uid: widget.producerId,
+    );
+  }
+
+  Future<void> _resetFilters() async {
+    setState(() {
+      _batteryRangeValues = const RangeValues(0, 100);
+      _dtUsageRangeValues = const RangeValues(0, 10);
+      _elevationRangeValues = const RangeValues(0, 1500);
+      _tmpRangeValues = const RangeValues(0, 35);
     });
   }
 
@@ -89,33 +108,23 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               });
             },
             onConfirm: () {
-              setState(() {
-                devices = Devices.filterByAll(
-                  batteryRangeValues: _batteryRangeValues,
-                  dtUsageRangeValues: _dtUsageRangeValues,
-                  tmpRangeValues: _tmpRangeValues,
-                  elevationRangeValues: _elevationRangeValues,
-                  searchString: searchString,
-                  devicesList: backupDevices,
-                );
-              });
+              _filterDevices().then(
+                (filteredDevices) => setState(() {
+                  devices = [];
+                  devices.addAll(filteredDevices);
+                }),
+              );
+
               _scaffoldKey.currentState!.closeEndDrawer();
             },
             onResetFilters: () {
-              setState(() {
-                _batteryRangeValues = const RangeValues(0, 100);
-                _dtUsageRangeValues = const RangeValues(0, 10);
-                _elevationRangeValues = const RangeValues(0, 1500);
-                _tmpRangeValues = const RangeValues(0, 35);
-                devices = Devices.filterByAll(
-                  batteryRangeValues: _batteryRangeValues,
-                  dtUsageRangeValues: _dtUsageRangeValues,
-                  tmpRangeValues: _tmpRangeValues,
-                  elevationRangeValues: _elevationRangeValues,
-                  searchString: searchString,
-                  devicesList: backupDevices,
-                );
-              });
+              _resetFilters();
+              _filterDevices().then(
+                (filteredDevices) => setState(() {
+                  devices = [];
+                  devices.addAll(filteredDevices);
+                }),
+              );
             },
           ),
         ),
@@ -220,7 +229,12 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                     onSearchChanged: (value) {
                       setState(() {
                         searchString = value;
-                        devices = Devices.searchDevice(value, backupDevices);
+                        _filterDevices().then(
+                          (filteredDevices) => setState(() {
+                            devices = [];
+                            devices.addAll(filteredDevices);
+                          }),
+                        );
                       });
                     },
                   ),
@@ -236,8 +250,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                   child: isRemoveMode
                       ? DeviceItemRemovable(
                           deviceImei: devices[index].imei,
-                          deviceData: devices[index].data.first.dataUsage,
-                          deviceBattery: devices[index].data.first.battery,
+                          deviceData: devices[index].data!.first.dataUsage,
+                          deviceBattery: devices[index].data!.first.battery,
                           onRemoveDevice: () {},
                         )
                       : DeviceItem(

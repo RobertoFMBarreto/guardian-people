@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> setUserSession(String uid) async {
@@ -22,4 +23,17 @@ Future<bool> hasUserSession() async {
 
   String? uid = prefs.getString('uid');
   return uid != null;
+}
+
+Future<String?> getUid(BuildContext context) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  String? uid = prefs.getString('uid');
+  if (uid != null) {
+    return uid;
+  } else {
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushReplacementNamed('/login');
+  }
+  return null;
 }

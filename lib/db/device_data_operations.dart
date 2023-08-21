@@ -8,7 +8,7 @@ Future<DeviceData> createDeviceData(DeviceData deviceData) async {
   return deviceData.copy(id: id);
 }
 
-Future<List<DeviceData>?> getDeviceData(String deviceId) async {
+Future<List<DeviceData>?> getAllDeviceData(String deviceId) async {
   final db = await GuardianDatabase.instance.database;
   final data = await db.query(
     tableDeviceData,
@@ -18,6 +18,23 @@ Future<List<DeviceData>?> getDeviceData(String deviceId) async {
 
   if (data.isNotEmpty) {
     return data.map((e) => DeviceData.fromJson(e)).toList();
+  }
+  return null;
+}
+
+Future<DeviceData?> getLastDeviceData(String deviceId) async {
+  final db = await GuardianDatabase.instance.database;
+  final data = await db.query(
+    tableDeviceData,
+    where: '${DeviceDataFields.deviceId} = ?',
+    whereArgs: [deviceId],
+    orderBy: '${DeviceDataFields.dateTime} DESC',
+  );
+  if (data.isNotEmpty) {
+    final deviceData = data.map((e) => DeviceData.fromJson(e)).toList();
+    if (deviceData.isNotEmpty) {
+      return deviceData.first;
+    }
   }
   return null;
 }

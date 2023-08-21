@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
@@ -9,7 +9,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {
   final Device device;
-  const AdminDeviceManagementPage({super.key, required this.device});
+  final String producerId;
+  const AdminDeviceManagementPage({super.key, required this.device, required this.producerId});
 
   @override
   State<AdminDeviceManagementPage> createState() => _AdminDeviceManagementPageState();
@@ -26,7 +27,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   }
 
   Future<void> _loadDevices() async {
-    loadUserDevices(1).then((allDevices) {
+    getUserDevices(widget.producerId).then((allDevices) {
       setState(() {
         devices.addAll(allDevices);
         isLoading = false;
