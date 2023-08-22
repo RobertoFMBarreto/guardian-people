@@ -4,6 +4,7 @@
       "imei": "635260278163510",
       "color": "#f54260",
       "isBlocked": false,
+      "name": "Dispositivo 1",
       "uid": "1",
       "alerts": [
         {
@@ -48,6 +49,7 @@
       "imei": "982337712123886",
       "color": "#f542ef",
       "isBlocked": false,
+      "name": "Dispositivo 2",
       "uid": "1",
       "alerts": [
         {
@@ -92,6 +94,7 @@
       "imei": "382258845572484",
       "color": "#4287f5",
       "isBlocked": false,
+      "name": "Dispositivo 3",
       "uid": "1",
       "alerts": [
         {
@@ -145,6 +148,7 @@
       "imei": "350457790679797",
       "color": "#32a852",
       "isBlocked": false,
+      "name": "Dispositivo 4",
       "uid": "1",
       "alerts": [
         {

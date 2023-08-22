@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
 
 enum AlertComparissons {
   equal,
@@ -65,7 +64,6 @@ extension ParseParToString on AlertParameter {
 const String tableUserAlerts = 'user_alerts';
 
 class UserAlertFields {
-  static const String id = '_id';
   static const String alertId = 'alert_id';
   static const String uid = 'uid';
   static const String hasNotification = 'has_notification';
@@ -76,7 +74,6 @@ class UserAlertFields {
 }
 
 class UserAlert {
-  final int? id;
   final String alertId;
   final String deviceId;
   final String uid;
@@ -86,7 +83,6 @@ class UserAlert {
   final double value;
 
   UserAlert({
-    this.id,
     required this.alertId,
     required this.deviceId,
     required this.uid,
@@ -97,7 +93,6 @@ class UserAlert {
   });
 
   UserAlert copy({
-    int? id,
     String? alertId,
     String? deviceId,
     String? uid,
@@ -107,7 +102,6 @@ class UserAlert {
     double? value,
   }) =>
       UserAlert(
-        id: id ?? this.id,
         alertId: alertId ?? this.alertId,
         deviceId: deviceId ?? this.deviceId,
         uid: uid ?? this.uid,
@@ -118,7 +112,6 @@ class UserAlert {
       );
 
   Map<String, Object?> toJson() => {
-        UserAlertFields.id: id,
         UserAlertFields.alertId: alertId,
         UserAlertFields.deviceId: deviceId,
         UserAlertFields.uid: uid,
@@ -129,7 +122,6 @@ class UserAlert {
       };
 
   static UserAlert fromJson(Map<String, Object?> json) => UserAlert(
-        id: json[UserAlertFields.id] as int,
         alertId: json[UserAlertFields.alertId] as String,
         deviceId: json[UserAlertFields.deviceId] as String,
         uid: json[UserAlertFields.uid] as String,

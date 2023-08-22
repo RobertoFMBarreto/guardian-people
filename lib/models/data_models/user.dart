@@ -43,7 +43,6 @@ class User {
       );
 
   Map<String, Object?> toJson() => {
-        UserFields.id: id,
         UserFields.uid: uid,
         UserFields.name: name,
         UserFields.email: email,
@@ -52,7 +51,6 @@ class User {
       };
 
   static User fromJson(Map<String, Object?> json) => User(
-        id: json[UserFields.id] as int,
         uid: json[UserFields.uid] as String,
         name: json[UserFields.name] as String,
         email: json[UserFields.email] as String,

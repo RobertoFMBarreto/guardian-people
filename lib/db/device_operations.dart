@@ -3,38 +3,43 @@ import 'package:guardian/db/device_data_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:sqflite/sqflite.dart';
 
-Future<Device> createDevice(Device user) async {
-  final db = await GuardianDatabase.instance.database;
-  final id = await db.insert(tableDevices, user.toJson());
+Future<Device> createDevice(Device device) async {
+  final db = await GuardianDatabase().database;
+  final id = await db.insert(
+    tableDevices,
+    device.toJson(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
 
-  return user.copy(id: id);
+  return device.copy(id: id);
 }
 
 Future<int> deleteDevice(int id) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
 
   return db.delete(
     tableDevices,
-    where: '${DeviceFields.id} = ?',
+    where: '${DeviceFields.deviceId} = ?',
     whereArgs: [id],
   );
 }
 
 Future<Device> updateDevice(Device device) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final id = await db.update(
     tableDevices,
     device.toJson(),
-    where: '${DeviceFields.id} = ?',
-    whereArgs: [device.id],
+    where: '${DeviceFields.deviceId} = ?',
+    whereArgs: [device.deviceId],
   );
 
   return device.copy(id: id);
 }
 
 Future<Device?> getDevice(String deviceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDevices,
     where: '${DeviceFields.deviceId} = ?',
@@ -48,7 +53,7 @@ Future<Device?> getDevice(String deviceId) async {
 }
 
 Future<List<Device>> getUserDevices(String uid) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDevices,
     where: '${DeviceFields.uid} = ?',
@@ -58,15 +63,17 @@ Future<List<Device>> getUserDevices(String uid) async {
   List<Device> devices = [];
 
   if (data.isNotEmpty) {
-    data.forEach((device) {
-      devices.add(Device.fromJson(device));
+    data.map((device) async {
+      Device finalDevice = Device.fromJson(device);
+      finalDevice.data = await getDeviceData(finalDevice.deviceId);
+      devices.add(finalDevice);
     });
   }
   return devices;
 }
 
 Future<List<Device>> getUserDevicesWithData(String uid) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDevices,
     where: '${DeviceFields.uid} = ?',
@@ -76,11 +83,11 @@ Future<List<Device>> getUserDevicesWithData(String uid) async {
   List<Device> devices = [];
 
   if (data.isNotEmpty) {
-    devices.addAll(data.map((deviceData) async {
+    for (var deviceData in data) {
       Device device = Device.fromJson(deviceData);
-      device.data = (await getLastDeviceData(device.deviceId)) as List<DeviceData>?;
-      devices.add(device);
-    }) as Iterable<Device>);
+      device.data = [(await getLastDeviceData(device.deviceId)) as DeviceData];
+      if (device.data!.isNotEmpty) devices.add(device);
+    }
   }
 
   return devices;
@@ -94,20 +101,21 @@ Future<List<Device>> getUserDevicesFiltered({
   required RangeValues elevationRangeValues,
   required String searchString,
 }) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
 
   final data = await db.rawQuery(
     '''
-      SELECT ${DeviceFields.id},
+      SELECT 
           ${DeviceFields.uid},
-          ${DeviceFields.deviceId},
+          $tableDevices.${DeviceFields.deviceId},
           ${DeviceFields.imei},
           ${DeviceFields.color},
           ${DeviceFields.name},
-          ${DeviceFields.isActive},
+          ${DeviceFields.isActive}
         FROM $tableDevices 
         JOIN (
-            SELECT $tableDevices.${DeviceDataFields.id} as device_data_id,
+            SELECT 
+              ${DeviceDataFields.deviceId},
               ${DeviceDataFields.dataUsage},
               ${DeviceDataFields.temperature},
               ${DeviceDataFields.battery},
@@ -118,8 +126,6 @@ Future<List<Device>> getUserDevicesFiltered({
               ${DeviceDataFields.dateTime},
               ${DeviceDataFields.state}
             FROM $tableDeviceData
-            WHERE 
-              ${DeviceDataFields.deviceId} = $tableDevices.${DeviceFields.deviceId}
             ORDER BY ${DeviceDataFields.dateTime} DESC
             LIMIT 1
           ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}

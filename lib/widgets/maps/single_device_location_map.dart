@@ -3,12 +3,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
-import 'package:guardian/models/providers/read_json.dart';
 import 'package:latlong2/latlong.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
@@ -65,7 +65,8 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   void _loadDeviceFences() {
     List<Polygon> allFences = [];
-    loadDeviceFences(widget.imei).then((fences) async {
+    print('Here');
+    getDeviceFences(widget.imei).then((fences) async {
       for (Fence fence in fences) {
         List<LatLng> fencePoints = [];
         fencePoints.addAll(await getFencePoints(fence.fenceId));

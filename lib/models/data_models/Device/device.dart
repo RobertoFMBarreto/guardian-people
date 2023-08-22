@@ -4,7 +4,6 @@ import 'package:guardian/models/data_models/Device/device_data.dart';
 const String tableDevices = 'devices';
 
 class DeviceFields {
-  static const String id = '_id';
   static const String uid = 'uid';
   static const String deviceId = 'device_id';
   static const String imei = 'imei';
@@ -14,7 +13,6 @@ class DeviceFields {
 }
 
 class Device {
-  final int? id;
   final String uid;
   final String deviceId;
   final String imei;
@@ -24,7 +22,6 @@ class Device {
   List<DeviceData>? data = [];
 
   Device({
-    this.id,
     required this.uid,
     required this.deviceId,
     required this.imei,
@@ -65,8 +62,8 @@ class Device {
       );
 
   Map<String, Object?> toJson() => {
-        DeviceFields.id: id,
         DeviceFields.deviceId: deviceId,
+        DeviceFields.uid: uid,
         DeviceFields.imei: imei,
         DeviceFields.color: color,
         DeviceFields.name: name,
@@ -74,7 +71,6 @@ class Device {
       };
 
   static Device fromJson(Map<String, Object?> json) => Device(
-        id: json[DeviceFields.id] as int,
         uid: json[DeviceFields.uid] as String,
         deviceId: json[DeviceFields.deviceId] as String,
         imei: json[DeviceFields.imei] as String,

@@ -1,15 +1,17 @@
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<DeviceData> createDeviceData(DeviceData deviceData) async {
-  final db = await GuardianDatabase.instance.database;
-  final id = await db.insert(tableDeviceData, deviceData.toJson());
+  final db = await GuardianDatabase().database;
+  await db.insert(tableDeviceData, deviceData.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace);
 
-  return deviceData.copy(id: id);
+  return deviceData;
 }
 
 Future<List<DeviceData>?> getAllDeviceData(String deviceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDeviceData,
     where: '${DeviceDataFields.deviceId} = ?',
@@ -23,7 +25,7 @@ Future<List<DeviceData>?> getAllDeviceData(String deviceId) async {
 }
 
 Future<DeviceData?> getLastDeviceData(String deviceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDeviceData,
     where: '${DeviceDataFields.deviceId} = ?',
@@ -40,7 +42,7 @@ Future<DeviceData?> getLastDeviceData(String deviceId) async {
 }
 
 Future<List<DeviceData>> getDeviceData(String deviceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDeviceData,
     where: '${DeviceDataFields.deviceId} = ?',

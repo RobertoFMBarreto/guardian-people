@@ -7,7 +7,7 @@ import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 
 Future<List<UserAlertNotification>> getUserNotifications(String uid) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertNotification,
     where: '${AlertNotificationFields.uid} = ?',

@@ -1,16 +1,21 @@
 import 'package:guardian/db/guardian_database.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../models/data_models/user.dart';
 
 Future<User> createUser(User user) async {
-  final db = await GuardianDatabase.instance.database;
-  final id = await db.insert(tableUser, user.toJson());
+  final db = await GuardianDatabase().database;
+  final id = await db.insert(
+    tableUser,
+    user.toJson(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
 
   return user.copy(id: id);
 }
 
 Future<int> deleteUser(int id) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
 
   return db.delete(
     tableUser,
@@ -20,7 +25,7 @@ Future<int> deleteUser(int id) async {
 }
 
 Future<User> updateUser(User user) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final id = await db.update(
     tableUser,
     user.toJson(),
@@ -32,7 +37,7 @@ Future<User> updateUser(User user) async {
 }
 
 Future<User?> getUser(String uid) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUser,
     where: '${UserFields.uid} = ?',
@@ -48,7 +53,7 @@ Future<User?> getUser(String uid) async {
 }
 
 Future<List<User>> getProducers() async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUser,
     where: '${UserFields.isAdmin} = ?',
@@ -59,7 +64,7 @@ Future<List<User>> getProducers() async {
 }
 
 Future<bool> userIsAdmin(String uid) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUser,
     where: '${UserFields.uid} = ?',

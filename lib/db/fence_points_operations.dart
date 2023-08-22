@@ -1,16 +1,21 @@
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Fences/fence_points.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<FencePoints> createFencePoint(FencePoints point) async {
-  final db = await GuardianDatabase.instance.database;
-  final id = await db.insert(tableFencePoints, point.toJson());
+  final db = await GuardianDatabase().database;
+  await db.insert(
+    tableFencePoints,
+    point.toJson(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
 
-  return point.copy(id: id);
+  return point;
 }
 
 Future<List<LatLng>> getFencePoints(String fenceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFencePoints,
     where: '${FencePointsFields.fenceId} = ?',

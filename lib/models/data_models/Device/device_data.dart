@@ -7,7 +7,7 @@ enum DeviceDataState {
   walking,
   running,
   fighting,
-  stoped,
+  stopped,
 }
 
 extension ParseCmpToString on DeviceDataState {
@@ -39,10 +39,36 @@ extension ParseCmpToString on DeviceDataState {
   }
 }
 
+DeviceDataState parseStateFromString(String text) {
+  String value = text.toString().split('.').last;
+  switch (value) {
+    case 'ruminating':
+      return DeviceDataState.ruminating;
+
+    case 'eating':
+      return DeviceDataState.eating;
+
+    case 'walking':
+      return DeviceDataState.walking;
+
+    case 'running':
+      return DeviceDataState.running;
+
+    case 'fighting':
+      return DeviceDataState.fighting;
+
+    case 'stopped':
+      return DeviceDataState.stopped;
+
+    default:
+      throw Exception('Invalide state');
+  }
+}
+
 const String tableDeviceData = 'devices_data';
 
 class DeviceDataFields {
-  static const String id = '_id';
+  static const String deviceDataId = 'device_data_id';
   static const String deviceId = 'device_id';
   static const String dataUsage = 'data_usage';
   static const String temperature = 'temperature';
@@ -56,7 +82,6 @@ class DeviceDataFields {
 }
 
 class DeviceData {
-  final int? id;
   final String deviceId;
   final int dataUsage;
   final double temperature;
@@ -69,7 +94,6 @@ class DeviceData {
   final DeviceDataState state;
 
   const DeviceData({
-    this.id,
     required this.deviceId,
     required this.dataUsage,
     required this.battery,
@@ -83,7 +107,6 @@ class DeviceData {
   });
 
   DeviceData copy({
-    int? id,
     String? deviceId,
     int? dataUsage,
     double? temperature,
@@ -96,7 +119,6 @@ class DeviceData {
     DeviceDataState? state,
   }) =>
       DeviceData(
-        id: id ?? this.id,
         deviceId: deviceId ?? this.deviceId,
         dataUsage: dataUsage ?? this.dataUsage,
         battery: battery ?? this.battery,
@@ -110,7 +132,6 @@ class DeviceData {
       );
 
   Map<String, Object?> toJson() => {
-        DeviceDataFields.id: id,
         DeviceDataFields.deviceId: deviceId,
         DeviceDataFields.dataUsage: dataUsage,
         DeviceDataFields.temperature: temperature,
@@ -123,17 +144,21 @@ class DeviceData {
         DeviceDataFields.state: state.toString(),
       };
 
-  static DeviceData fromJson(Map<String, Object?> json) => DeviceData(
-        id: json[DeviceDataFields.id] as int,
-        deviceId: json[DeviceDataFields.deviceId] as String,
-        dataUsage: json[DeviceDataFields.dataUsage] as int,
-        battery: json[DeviceDataFields.battery] as int,
-        elevation: json[DeviceDataFields.elevation] as double,
-        temperature: json[DeviceDataFields.temperature] as double,
-        lat: json[DeviceDataFields.lat] as double,
-        lon: json[DeviceDataFields.lon] as double,
-        accuracy: json[DeviceDataFields.accuracy] as double,
-        dateTime: DateTime.parse(json[DeviceDataFields.dateTime] as String),
-        state: json[DeviceDataFields.state] as DeviceDataState,
-      );
+  static DeviceData fromJson(Map<String, Object?> json) {
+    print('Json: $json');
+    final state = parseStateFromString(json[DeviceDataFields.state] as String);
+
+    return DeviceData(
+      deviceId: json[DeviceDataFields.deviceId] as String,
+      dataUsage: json[DeviceDataFields.dataUsage] as int,
+      battery: json[DeviceDataFields.battery] as int,
+      elevation: json[DeviceDataFields.elevation] as double,
+      temperature: json[DeviceDataFields.temperature] as double,
+      lat: json[DeviceDataFields.lat] as double,
+      lon: json[DeviceDataFields.lon] as double,
+      accuracy: json[DeviceDataFields.accuracy] as double,
+      dateTime: DateTime.parse(json[DeviceDataFields.dateTime] as String),
+      state: state,
+    );
+  }
 }

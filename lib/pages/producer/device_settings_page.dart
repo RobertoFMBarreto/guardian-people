@@ -36,7 +36,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _getDeviceFences() async {
-    getDevicesFence(widget.device.deviceId).then(
+    getDeviceFences(widget.device.deviceId).then(
       (allFences) => setState(() => fences.addAll(allFences)),
     );
   }

@@ -37,6 +37,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
 
   @override
   void initState() {
+    print('Map devices: ${widget.devices}');
     _getCurrentPosition().then((value) {
       if (widget.fences != null) {
         if (widget.fences!.length > 1 && widget.centerOnPoly) {

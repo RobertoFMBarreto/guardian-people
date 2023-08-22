@@ -11,11 +11,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class GuardianDatabase {
-  static final GuardianDatabase instance = GuardianDatabase._init();
-
-  static Database? _database;
-
-  GuardianDatabase._init();
+  Database? _database;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -28,9 +24,9 @@ class GuardianDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return openDatabase(
+    return await openDatabase(
       path,
-      version: 2,
+      version: 10,
       onCreate: (Database database, int version) async {
         await _createDB(database, version);
       },
@@ -39,6 +35,7 @@ class GuardianDatabase {
 
   static Future<void> _createDB(Database db, int version) async {
     const idType = 'TEXT PRIMARY KEY NOT NULL';
+    const idIncrementType = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL';
     const textType = 'TEXT NOT NULL';
     const intType = 'INTEGER NOT NULL';
     const boolType = 'BOOLEAN NOT NULL';
@@ -46,7 +43,7 @@ class GuardianDatabase {
 
     // Create user table
     await db.execute("""
-      CREATE TABLE $tableUser(
+      CREATE TABLE IF NOT EXISTS $tableUser(
         ${UserFields.uid} $idType,
         ${UserFields.name} $textType,
         ${UserFields.email} $textType,
@@ -56,9 +53,9 @@ class GuardianDatabase {
 
     // Create devices table
     await db.execute("""
-      CREATE TABLE $tableDevices (
-        ${DeviceFields.id} $idType,
-        ${DeviceFields.deviceId} $textType,
+      CREATE TABLE IF NOT EXISTS $tableDevices (
+        ${DeviceFields.deviceId} $idType,
+        ${DeviceFields.uid} $textType,
         ${DeviceFields.imei} $textType,
         ${DeviceFields.color} $textType,
         ${DeviceFields.name} $textType,
@@ -67,8 +64,8 @@ class GuardianDatabase {
 
     // Create device data table
     await db.execute("""
-      CREATE TABLE $tableDeviceData (
-        ${DeviceDataFields.id} $idType,
+      CREATE TABLE IF NOT EXISTS $tableDeviceData (
+        ${DeviceDataFields.deviceDataId} $idIncrementType,
         ${DeviceDataFields.deviceId} $textType,
         ${DeviceDataFields.dataUsage} $intType,
         ${DeviceDataFields.temperature} $doubleType,
@@ -83,9 +80,9 @@ class GuardianDatabase {
 
     // Create user alerts table
     await db.execute("""
-      CREATE TABLE $tableUserAlerts (
-        ${UserAlertFields.id} $idType,
-        ${UserAlertFields.alertId} $textType,
+      CREATE TABLE IF NOT EXISTS $tableUserAlerts (
+        ${UserAlertFields.alertId} $idType,
+        ${UserAlertFields.uid} $textType,
         ${UserAlertFields.hasNotification} $boolType,
         ${UserAlertFields.parameter} $textType,
         ${UserAlertFields.comparisson} $textType,
@@ -94,49 +91,50 @@ class GuardianDatabase {
 
     // Create alert devices table
     await db.execute("""
-      CREATE TABLE $tableAlertDevices (
-        ${AlertDevicesFields.id} $idType,
+      CREATE TABLE IF NOT EXISTS $tableAlertDevices (
+        ${AlertDevicesFields.alertDevicesId} $idIncrementType,
         ${AlertDevicesFields.alertId} $textType,
         ${AlertDevicesFields.deviceId} $textType
       )""");
 
     // Create alert notifications table
     await db.execute("""
-      CREATE TABLE $tableAlertNotification (
-        ${AlertNotificationFields.id} $idType,
+      CREATE TABLE IF NOT EXISTS $tableAlertNotification (
+        ${AlertNotificationFields.notificationId} $idIncrementType,
         ${AlertNotificationFields.alertId} $textType,
-        ${AlertNotificationFields.deviceId} $textType,
+        ${AlertNotificationFields.uid} $textType,
+        ${AlertNotificationFields.deviceId} $textType
       )""");
 
     // Create fences table
     await db.execute("""
-      CREATE TABLE $tableFence (
-        ${FenceFields.id} $idType,
-        ${FenceFields.fenceId} $textType,
+      CREATE TABLE IF NOT EXISTS $tableFence (
+        ${FenceFields.fenceId} $idType,
+        ${FenceFields.uid} $textType,
         ${FenceFields.name} $textType,
         ${FenceFields.color} $textType
       )""");
 
     // Create fence devices table
     await db.execute("""
-      CREATE TABLE $tableFenceDevices (
-        ${FenceDevicesFields.id} $idType,
+      CREATE TABLE IF NOT EXISTS $tableFenceDevices (
+        ${FenceDevicesFields.fenceDevicesId} $idIncrementType,
         ${FenceDevicesFields.fenceId} $textType,
         ${FenceDevicesFields.deviceId} $textType
       )""");
 
     // Create fence points table
     await db.execute("""
-      CREATE TABLE $tableFencePoints (
-        ${FencePointsFields.id} $idType,
+      CREATE TABLE IF NOT EXISTS $tableFencePoints (
+        ${FencePointsFields.fencePointsId} $idIncrementType,
         ${FencePointsFields.fenceId} $textType,
-        ${FencePointsFields.lat} $doubleType
+        ${FencePointsFields.lat} $doubleType,
         ${FencePointsFields.lon} $doubleType
       )""");
   }
 
   Future close() async {
-    final db = await instance.database;
+    final db = await database;
 
     db.close();
   }

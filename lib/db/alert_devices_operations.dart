@@ -4,16 +4,21 @@ import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<AlertDevices> addAlertDevice(AlertDevices device) async {
-  final db = await GuardianDatabase.instance.database;
-  final id = await db.insert(tableAlertDevices, device.toJson());
+  final db = await GuardianDatabase().database;
+  await db.insert(
+    tableAlertDevices,
+    device.toJson(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
 
-  return device.copy(id: id);
+  return device;
 }
 
 Future<Device?> getAlertDevice(String alertId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
     where: '${UserAlertFields.alertId} = ?',
@@ -28,7 +33,7 @@ Future<Device?> getAlertDevice(String alertId) async {
 }
 
 Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
     where: '${UserAlertFields.deviceId} = ?',

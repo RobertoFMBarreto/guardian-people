@@ -1,24 +1,29 @@
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<UserAlert> createAlert(UserAlert alert) async {
-  final db = await GuardianDatabase.instance.database;
-  final id = await db.insert(tableUserAlerts, alert.toJson());
+  final db = await GuardianDatabase().database;
+  await db.insert(
+    tableUserAlerts,
+    alert.toJson(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
 
-  return alert.copy(id: id);
+  return alert;
 }
 
 Future<int> deleteAlert(String alertId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   return db.delete(
     tableUserAlerts,
-    where: '${UserAlertFields.id} = ?',
+    where: '${UserAlertFields.alertId} = ?',
     whereArgs: [alertId],
   );
 }
 
 Future<UserAlert?> getAlert(String alertId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUserAlerts,
     where: '${UserAlertFields.alertId} = ?',
@@ -32,7 +37,7 @@ Future<UserAlert?> getAlert(String alertId) async {
 }
 
 Future<UserAlert?> getUserAlerts(String uid) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUserAlerts,
     where: '${UserAlertFields.uid} = ?',
@@ -46,7 +51,7 @@ Future<UserAlert?> getUserAlerts(String uid) async {
 }
 
 Future<List<UserAlert>> getUserDeviceAlerts(String deviceId) async {
-  final db = await GuardianDatabase.instance.database;
+  final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUserAlerts,
     where: '${UserAlertFields.deviceId} = ?',

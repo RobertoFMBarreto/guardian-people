@@ -2,10 +2,9 @@ import 'dart:math';
 
 import 'package:latlong2/latlong.dart';
 
-const String tableFence = 'devices';
+const String tableFence = 'fences';
 
 class FenceFields {
-  static const String id = '_id';
   static const String fenceId = 'fence_id';
   static const String uid = 'uid';
   static const String name = 'name';
@@ -13,13 +12,11 @@ class FenceFields {
 }
 
 class Fence {
-  final int? id;
   final String fenceId;
   final String uid;
   final String name;
   String color;
   Fence({
-    this.id,
     required this.fenceId,
     required this.uid,
     required this.name,
@@ -27,14 +24,12 @@ class Fence {
   });
 
   Fence copy({
-    int? id,
     String? fenceId,
     String? uid,
     String? name,
     String? color,
   }) =>
       Fence(
-        id: id ?? this.id,
         fenceId: fenceId ?? this.fenceId,
         uid: uid ?? this.uid,
         name: name ?? this.name,
@@ -42,7 +37,6 @@ class Fence {
       );
 
   Map<String, Object?> toJson() => {
-        FenceFields.id: id,
         FenceFields.uid: uid,
         FenceFields.fenceId: fenceId,
         FenceFields.color: color,
@@ -50,7 +44,6 @@ class Fence {
       };
 
   static Fence fromJson(Map<String, Object?> json) => Fence(
-        id: json[FenceFields.id] as int,
         uid: json[FenceFields.uid] as String,
         fenceId: json[FenceFields.fenceId] as String,
         color: json[FenceFields.color] as String,
