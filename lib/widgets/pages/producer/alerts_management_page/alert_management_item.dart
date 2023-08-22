@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/alert.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 class AlertManagementItem extends StatelessWidget {
-  final Alert alert;
+  final UserAlert alert;
   const AlertManagementItem({super.key, required this.alert});
 
   @override

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/fence_operations.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/fence.dart';
-import 'package:guardian/models/fences.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,10 +20,12 @@ class FencesPage extends StatefulWidget {
 
 class _FencesPageState extends State<FencesPage> {
   String searchString = '';
-  List<Fence> backupFences = [];
   List<Fence> fences = [];
   List<Fence> selectedFences = [];
   bool isLoading = true;
+
+  late String uid;
+
   @override
   void initState() {
     _loadFences().then((value) => setState(() => isLoading = false));
@@ -31,11 +33,22 @@ class _FencesPageState extends State<FencesPage> {
   }
 
   Future<void> _loadFences() async {
-    loadUserFences(1).then((allFences) {
-      setState(() => fences.addAll(allFences));
-      // backup all fences
-      backupFences.addAll(fences);
-    });
+    getUid(context).then(
+      (userId) {
+        if (userId != null) {
+          uid = userId;
+          getUserFences(uid).then((allFences) {
+            setState(() => fences.addAll(allFences));
+          });
+        }
+      },
+    );
+  }
+
+  void _searchFences() {
+    searchFences(searchString).then(
+      (allFences) => setState(() => fences.addAll(allFences)),
+    );
   }
 
   @override
@@ -81,10 +94,8 @@ class _FencesPageState extends State<FencesPage> {
                       child: SearchFieldInput(
                         label: localizations.search.capitalize(),
                         onChanged: (value) {
-                          setState(() {
-                            searchString = value;
-                            fences = Fences.searchFences(value, backupFences);
-                          });
+                          searchString = value;
+                          _searchFences();
                         },
                       ),
                     ),

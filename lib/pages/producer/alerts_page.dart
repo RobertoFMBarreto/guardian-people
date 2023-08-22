@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/alert.dart';
+import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -13,7 +14,8 @@ class AlertsPage extends StatefulWidget {
 }
 
 class _AlertsPageState extends State<AlertsPage> {
-  List<Alert> alerts = [];
+  List<UserAlertNotification> alerts = [];
+  late String uid;
   bool isLoading = true;
 
   @override
@@ -23,9 +25,14 @@ class _AlertsPageState extends State<AlertsPage> {
   }
 
   Future<void> _loadAlerts() async {
-    loadAlerts().then(
-      (allAlerts) => alerts.addAll(allAlerts),
-    );
+    getUid(context).then((userId) {
+      if (userId != null) {
+        getUserNotifications(userId).then(
+          (allAlerts) => alerts.addAll(allAlerts),
+        );
+        setState(() => isLoading = false);
+      }
+    });
   }
 
   @override
@@ -81,7 +88,7 @@ class _AlertsPageState extends State<AlertsPage> {
                       child: ListView.builder(
                         itemCount: alerts.length,
                         itemBuilder: (context, index) => AlertItem(
-                          alert: alerts[index],
+                          alertNotification: alerts[index],
                         ),
                       ),
                     ),

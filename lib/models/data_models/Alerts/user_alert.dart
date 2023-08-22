@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
 
 enum AlertComparissons {
   equal,
@@ -66,15 +67,19 @@ const String tableUserAlerts = 'user_alerts';
 class UserAlertFields {
   static const String id = '_id';
   static const String alertId = 'alert_id';
+  static const String uid = 'uid';
   static const String hasNotification = 'has_notification';
   static const String parameter = 'parameter';
   static const String comparisson = 'comparisson';
   static const String value = 'value';
+  static const String deviceId = 'device_id';
 }
 
 class UserAlert {
   final int? id;
   final String alertId;
+  final String deviceId;
+  final String uid;
   final bool hasNotification;
   final AlertParameter parameter;
   final AlertComparissons comparisson;
@@ -83,6 +88,8 @@ class UserAlert {
   UserAlert({
     this.id,
     required this.alertId,
+    required this.deviceId,
+    required this.uid,
     required this.hasNotification,
     required this.parameter,
     required this.comparisson,
@@ -92,15 +99,18 @@ class UserAlert {
   UserAlert copy({
     int? id,
     String? alertId,
+    String? deviceId,
+    String? uid,
     bool? hasNotification,
     AlertParameter? parameter,
     AlertComparissons? comparisson,
     double? value,
-    String? deviceId,
   }) =>
       UserAlert(
         id: id ?? this.id,
         alertId: alertId ?? this.alertId,
+        deviceId: deviceId ?? this.deviceId,
+        uid: uid ?? this.uid,
         hasNotification: hasNotification ?? this.hasNotification,
         parameter: parameter ?? this.parameter,
         comparisson: comparisson ?? this.comparisson,
@@ -110,6 +120,8 @@ class UserAlert {
   Map<String, Object?> toJson() => {
         UserAlertFields.id: id,
         UserAlertFields.alertId: alertId,
+        UserAlertFields.deviceId: deviceId,
+        UserAlertFields.uid: uid,
         UserAlertFields.hasNotification: hasNotification,
         UserAlertFields.parameter: parameter,
         UserAlertFields.comparisson: comparisson,
@@ -119,6 +131,8 @@ class UserAlert {
   static UserAlert fromJson(Map<String, Object?> json) => UserAlert(
         id: json[UserAlertFields.id] as int,
         alertId: json[UserAlertFields.alertId] as String,
+        deviceId: json[UserAlertFields.deviceId] as String,
+        uid: json[UserAlertFields.uid] as String,
         hasNotification: json[UserAlertFields.hasNotification] == 1,
         parameter: json[UserAlertFields.parameter] as AlertParameter,
         comparisson: json[UserAlertFields.comparisson] as AlertComparissons,

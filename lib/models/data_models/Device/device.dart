@@ -1,3 +1,4 @@
+import 'package:guardian/db/device_data_operations.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 
 const String tableDevices = 'devices';
@@ -33,14 +34,11 @@ class Device {
     this.data,
   });
 
-  List<DeviceData> getDataBetweenDates(
-      List<DeviceData> data, DateTime startDate, DateTime endDate) {
-    List<DeviceData> gottenData = [];
+  Future<List<DeviceData>> getDataBetweenDates(DateTime startDate, DateTime endDate) async {
+    List<DeviceData> gottenData = await getDeviceData(deviceId);
 
-    gottenData.addAll(
-      data.where(
-        (dataItem) => dataItem.dateTime.isAfter(startDate) && dataItem.dateTime.isBefore(endDate),
-      ),
+    gottenData.where(
+      (dataItem) => dataItem.dateTime.isAfter(startDate) && dataItem.dateTime.isBefore(endDate),
     );
 
     return gottenData;

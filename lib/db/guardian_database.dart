@@ -1,4 +1,5 @@
 import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
+import 'package:guardian/models/data_models/Alerts/alert_notifications.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
@@ -97,6 +98,14 @@ class GuardianDatabase {
         ${AlertDevicesFields.id} $idType,
         ${AlertDevicesFields.alertId} $textType,
         ${AlertDevicesFields.deviceId} $textType
+      )""");
+
+    // Create alert notifications table
+    await db.execute("""
+      CREATE TABLE $tableAlertNotification (
+        ${AlertNotificationFields.id} $idType,
+        ${AlertNotificationFields.alertId} $textType,
+        ${AlertNotificationFields.deviceId} $textType,
       )""");
 
     // Create fences table

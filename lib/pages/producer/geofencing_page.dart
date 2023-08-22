@@ -3,8 +3,9 @@ import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/fence_points_operations.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
@@ -30,12 +31,16 @@ class _GeofencingPageState extends State<GeofencingPage> {
   late Polygon editingPolygon;
   late Polygon backupPolygon;
 
+  List<LatLng> fencePoints = [];
+
   @override
   void initState() {
     super.initState();
     if (widget.fence != null) {
-      // if there are only 2 points then its a circle
-      isCircle = widget.fence!.points.length == 2;
+      _loadFencePoints().then((_) {
+        // if there are only 2 points then its a circle
+        isCircle = fencePoints.length == 2;
+      });
     }
     _initPolygon();
     _getCurrentPosition();
@@ -53,7 +58,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
       points: [],
     );
     if (widget.fence != null) {
-      editingPolygon.points.addAll(widget.fence!.points);
+      editingPolygon.points.addAll(fencePoints);
     }
   }
 
@@ -88,17 +93,21 @@ class _GeofencingPageState extends State<GeofencingPage> {
     });
   }
 
-  void resetPolygon() {
+  void _resetPolygon() {
     editingPolygon.points.clear();
     if (widget.fence != null) {
-      if (widget.fence!.points.length == 2 && isCircle) {
-        editingPolygon.points.addAll(widget.fence!.points);
-      } else if (widget.fence!.points.length > 2 && !isCircle) {
-        editingPolygon.points.addAll(widget.fence!.points);
+      if (fencePoints.length == 2 && isCircle) {
+        editingPolygon.points.addAll(fencePoints);
+      } else if (fencePoints.length > 2 && !isCircle) {
+        editingPolygon.points.addAll(fencePoints);
       } else {
         editingPolygon.points.clear();
       }
     }
+  }
+
+  Future<void> _loadFencePoints() async {
+    await getFencePoints(widget.fence!.fenceId).then((allPoints) => fencePoints.addAll(allPoints));
   }
 
   @override
@@ -126,8 +135,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                   polyEditor.add(editingPolygon.points, ll);
                 },
                 center: widget.fence != null
-                    ? LatLng(
-                        widget.fence!.points.first.latitude, widget.fence!.points.first.longitude)
+                    ? LatLng(fencePoints.first.latitude, fencePoints.first.longitude)
                     : LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
                 zoom: widget.fence != null ? 17 : 10,
               ),
@@ -189,7 +197,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
             onPressed: () {
               setState(() {
                 isCircle = false;
-                resetPolygon();
+                _resetPolygon();
               });
             },
             child: const Icon(Icons.square_outlined),
@@ -200,7 +208,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
             onPressed: () {
               setState(() {
                 isCircle = true;
-                resetPolygon();
+                _resetPolygon();
               });
             },
             child: const Icon(Icons.circle_outlined),
@@ -210,7 +218,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
             child: const Icon(Icons.replay),
             onPressed: () {
               setState(() {
-                resetPolygon();
+                _resetPolygon();
               });
             },
           ),

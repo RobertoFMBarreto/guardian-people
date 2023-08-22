@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/fence.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
@@ -118,11 +118,21 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/profile': (context) => const ProfilePage(),
         '/admin': (context) => const AdminHomePage(),
-        '/admin/producer': (context) => const AdminProducerPage(),
+        '/admin/producer': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == String) {
+            return AdminProducerPage(
+              producerId: ModalRoute.of(context)!.settings.arguments as String,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        },
         '/admin/producer/device': (context) {
-          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Map<String, dynamic>) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return AdminDeviceManagementPage(
-              device: ModalRoute.of(context)!.settings.arguments as Device,
+              device: args['device'] as Device,
+              producerId: args['producerId'] as String,
             );
           } else {
             throw ErrorDescription('Device not provided');

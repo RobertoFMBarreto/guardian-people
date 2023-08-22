@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/location_provider.dart';
-import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/maps/single_device_location_map.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
@@ -38,6 +39,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   final firstItemDataKey = GlobalKey();
 
+  late String uid;
+
   @override
   void initState() {
     _getCurrentPosition().then((value) => _loadFences());
@@ -45,15 +48,16 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   }
 
   Future<void> _loadFences() async {
-    loadUserFences(1).then(
-      (allFences) {
-        if (mounted) {
-          setState(() {
-            fences.addAll(allFences);
+    getUid(context).then((userId) {
+      if (mounted) {
+        if (userId != null) {
+          uid = userId;
+          getUserFences(uid).then((allFences) {
+            setState(() => fences.addAll(allFences));
           });
         }
-      },
-    );
+      }
+    });
   }
 
   Future<void> _getCurrentPosition() async {
@@ -81,9 +85,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     showHeatMap = !widget.isInterval ? false : showHeatMap;
     AppLocalizations localizations = AppLocalizations.of(context)!;
 
-    List<DeviceData> deviceData = widget.isInterval
+    List<DeviceData> deviceData = (widget.isInterval
         ? widget.device.getDataBetweenDates(startDate, endDate)
-        : [widget.device.data.first];
+        : [widget.device.data!.first]) as List<DeviceData>;
 
     return _currentPosition == null
         ? Center(

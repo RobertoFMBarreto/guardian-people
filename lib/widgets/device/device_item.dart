@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 
 class DeviceItem extends StatelessWidget {
   final Device device;
@@ -21,15 +23,19 @@ class DeviceItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        getSessionRole().then((role) {
-          if (isPopPush) {
-            Navigator.of(context).popAndPushNamed(
-                role == 0 ? '/admin/producer/device' : '/producer/device',
-                arguments: device);
-          } else {
-            Navigator.of(context).pushNamed(
-                role == 0 ? '/admin/producer/device' : '/producer/device',
-                arguments: device);
+        getUid(context).then((uid) {
+          if (uid != null) {
+            userIsAdmin(uid).then((isAdmin) {
+              if (isPopPush) {
+                Navigator.of(context).popAndPushNamed(
+                    isAdmin ? '/admin/producer/device' : '/producer/device',
+                    arguments: device);
+              } else {
+                Navigator.of(context).pushNamed(
+                    isAdmin ? '/admin/producer/device' : '/producer/device',
+                    arguments: device);
+              }
+            });
           }
         });
       },
@@ -61,7 +67,7 @@ class DeviceItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${device.data.first.dataUsage.toString()}/10MB',
+                    '${device.data!.first.dataUsage.toString()}/10MB',
                     style: theme.textTheme.bodyMedium!.copyWith(),
                   ),
                 ],
@@ -75,11 +81,11 @@ class DeviceItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 DeviceWidgetProvider.getBatteryWidget(
-                  deviceBattery: device.data.first.battery,
+                  deviceBattery: device.data!.first.battery,
                   color: theme.colorScheme.secondary,
                 ),
                 Text(
-                  '${device.data.first.battery.toString()}%',
+                  '${device.data!.first.battery.toString()}%',
                   style: theme.textTheme.bodyMedium!.copyWith(
                     fontWeight: FontWeight.w500,
                   ),

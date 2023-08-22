@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/models/user_alert_notification.dart';
 
 class AlertItem extends StatelessWidget {
-  final Alert alert;
+  final UserAlertNotification alertNotification;
   const AlertItem({
     super.key,
-    required this.alert,
+    required this.alertNotification,
   });
 
   @override
@@ -14,7 +15,7 @@ class AlertItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed('/producer/device', arguments: alert.device);
+        Navigator.of(context).pushNamed('/producer/device', arguments: alertNotification.device);
       },
       child: Card(
         elevation: 3,
@@ -24,9 +25,9 @@ class AlertItem extends StatelessWidget {
             size: 30,
             color: theme.colorScheme.secondary,
           ),
-          title: Text(alert.device.imei),
+          title: Text(alertNotification.device.imei),
           subtitle: Text(
-              '${alert.parameter.toShortString(context).capitalize()} ${alert.comparisson.toShortString(context)} a ${alert.value}'),
+              '${alertNotification.alert.parameter.toShortString(context).capitalize()} ${alertNotification.alert.comparisson.toShortString(context)} a ${alertNotification.alert.value}'),
           trailing: IconButton(
             onPressed: () {
               //!TODO: Delete code for alert

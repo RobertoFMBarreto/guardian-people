@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
@@ -16,9 +16,9 @@ class AlertsManagementPage extends StatefulWidget {
 }
 
 class _AlertsManagementPageState extends State<AlertsManagementPage> {
-  List<Alert> alerts = [];
+  List<UserAlert> alerts = [];
   bool isLoading = true;
-  List<Alert> selectedAlerts = [];
+  List<UserAlert> selectedAlerts = [];
 
   @override
   void initState() {

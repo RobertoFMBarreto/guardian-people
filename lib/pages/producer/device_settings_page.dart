@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/db/alert_devices_operations.dart';
+import 'package:guardian/db/fence_devices_operations.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/widgets/fence_item.dart';
@@ -16,10 +20,25 @@ class DeviceSettingsPage extends StatefulWidget {
 
 class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   String deviceName = '';
+  List<UserAlert> alerts = [];
+  List<Fence> fences = [];
   @override
   void initState() {
     deviceName = widget.device.imei;
+    _getDeviceAlerts();
     super.initState();
+  }
+
+  Future<void> _getDeviceAlerts() async {
+    getDeviceAlerts(widget.device.deviceId).then(
+      (allAlerts) => setState(() => alerts.addAll(allAlerts)),
+    );
+  }
+
+  Future<void> _getDeviceFences() async {
+    getDevicesFence(widget.device.deviceId).then(
+      (allFences) => setState(() => fences.addAll(allFences)),
+    );
   }
 
   @override
@@ -69,11 +88,11 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.device.alerts.length,
+                  itemCount: alerts.length,
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: AlertManagementItem(
-                      alert: widget.device.alerts[index],
+                      alert: alerts[index],
                     ),
                   ),
                 ),
@@ -99,12 +118,12 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.device.alerts.length,
+                  itemCount: fences.length,
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: FenceItem(
-                      name: widget.device.fences[index].name,
-                      color: HexColor(widget.device.fences[index].color),
+                      name: fences[index].name,
+                      color: HexColor(fences[index].color),
                       onRemove: () {
                         //!TODO remove item from list
                       },

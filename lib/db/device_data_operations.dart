@@ -38,3 +38,22 @@ Future<DeviceData?> getLastDeviceData(String deviceId) async {
   }
   return null;
 }
+
+Future<List<DeviceData>> getDeviceData(String deviceId) async {
+  final db = await GuardianDatabase.instance.database;
+  final data = await db.query(
+    tableDeviceData,
+    where: '${DeviceDataFields.deviceId} = ?',
+    whereArgs: [deviceId],
+    orderBy: '${DeviceDataFields.dateTime} DESC',
+  );
+
+  List<DeviceData> deviceData = [];
+
+  if (data.isNotEmpty) {
+    if (deviceData.isNotEmpty) {
+      deviceData.addAll(data.map((e) => DeviceData.fromJson(e)).toList());
+    }
+  }
+  return deviceData;
+}

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/alert.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 
 class AlertComparissonDropdown extends StatelessWidget {
   final AlertComparissons value;

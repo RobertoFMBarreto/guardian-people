@@ -57,3 +57,14 @@ Future<List<User>> getProducers() async {
 
   return data.map((e) => User.fromJson(e)).toList();
 }
+
+Future<bool> userIsAdmin(String uid) async {
+  final db = await GuardianDatabase.instance.database;
+  final data = await db.query(
+    tableUser,
+    where: '${UserFields.uid} = ?',
+    whereArgs: [uid],
+  );
+
+  return (data.map((e) => User.fromJson(e)).toList()).first.isAdmin;
+}

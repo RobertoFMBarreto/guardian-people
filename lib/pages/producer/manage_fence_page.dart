@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
@@ -25,6 +26,9 @@ class _ManageFencePageState extends State<ManageFencePage> {
   // color picker values
   Color fenceColor = gdMapGeofenceFillColor;
   String fenceHexColor = '';
+
+  late String uid;
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +38,14 @@ class _ManageFencePageState extends State<ManageFencePage> {
   }
 
   Future<void> _loadDevices() async {
-    loadUserDevices(1).then((allDevices) => setState(() => devices.addAll(allDevices)));
+    getUid(context).then((userId) {
+      if (userId != null) {
+        uid = userId;
+        getUserDevicesWithData(uid).then(
+          (allDevices) => setState(() => devices.addAll(allDevices)),
+        );
+      }
+    });
   }
 
   @override
@@ -133,8 +144,8 @@ class _ManageFencePageState extends State<ManageFencePage> {
                     ),
                     child: DeviceItemRemovable(
                       deviceImei: devices[index].imei,
-                      deviceData: devices[index].data.first.dataUsage,
-                      deviceBattery: devices[index].data.first.battery,
+                      deviceData: devices[index].data!.first.dataUsage,
+                      deviceBattery: devices[index].data!.first.battery,
                       onRemoveDevice: () {
                         //!TODO: On remove device
                       },

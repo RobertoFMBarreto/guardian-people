@@ -21,11 +21,11 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   Future<void> getToken(BuildContext context) async {
-    await hasUserSession().then(
-      (hasSession) async {
-        if (hasSession) {
+    await getUid(context).then(
+      (uid) async {
+        if (uid != null) {
           // get user data
-          User? user = await getUser();
+          User? user = await getUser(uid);
           // if there is stored data use it for getting his role
           if (user != null) {
             // ignore: use_build_context_synchronously

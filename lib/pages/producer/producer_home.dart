@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/fence.dart';
 import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
@@ -20,30 +21,36 @@ class ProducerHome extends StatefulWidget {
 class _ProducerHomeState extends State<ProducerHome> {
   List<Device> devices = [];
   List<Fence> fences = [];
+  late String uid;
   late User user;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    User.getUserData().then((userData) {
-      if (userData != null) {
-        user = userData;
-        _loadDevices(user).then(
-          (_) => _loadFences(user).then(
-            (_) => isLoading = false,
-          ),
-        );
+    getUid(context).then((userId) {
+      if (userId != null) {
+        uid = userId;
+        getUser(uid).then((userData) {
+          if (userData != null) {
+            user = userData;
+            return _loadDevices(uid).then(
+              (_) => _loadFences(uid).then(
+                (_) => isLoading = false,
+              ),
+            );
+          }
+        });
       }
     });
   }
 
-  Future<void> _loadDevices(User user) async {
-    loadUserDevices(user.uid).then((allDevices) => setState(() => devices.addAll(allDevices)));
+  Future<void> _loadDevices(String uid) async {
+    loadUserDevices(uid).then((allDevices) => setState(() => devices.addAll(allDevices)));
   }
 
-  Future<void> _loadFences(User user) async {
-    loadUserFences(user.uid).then((allFences) => setState(() => fences.addAll(allFences)));
+  Future<void> _loadFences(String uid) async {
+    loadUserFences(uid).then((allFences) => setState(() => fences.addAll(allFences)));
   }
 
   @override

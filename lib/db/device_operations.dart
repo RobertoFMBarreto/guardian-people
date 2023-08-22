@@ -59,9 +59,30 @@ Future<List<Device>> getUserDevices(String uid) async {
 
   if (data.isNotEmpty) {
     data.forEach((device) {
-      devices.add(Device.fromJson(data.first));
+      devices.add(Device.fromJson(device));
     });
   }
+  return devices;
+}
+
+Future<List<Device>> getUserDevicesWithData(String uid) async {
+  final db = await GuardianDatabase.instance.database;
+  final data = await db.query(
+    tableDevices,
+    where: '${DeviceFields.uid} = ?',
+    whereArgs: [uid],
+  );
+
+  List<Device> devices = [];
+
+  if (data.isNotEmpty) {
+    devices.addAll(data.map((deviceData) async {
+      Device device = Device.fromJson(deviceData);
+      device.data = (await getLastDeviceData(device.deviceId)) as List<DeviceData>?;
+      devices.add(device);
+    }) as Iterable<Device>);
+  }
+
   return devices;
 }
 

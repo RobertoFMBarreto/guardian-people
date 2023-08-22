@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/fence.dart';
+import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
@@ -32,6 +33,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   final circles = <Polygon>[];
   bool isLoading = true;
   Position? _currentPosition;
+  List<LatLng> fencePoints = [];
 
   @override
   void initState() {
@@ -59,31 +61,25 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     });
   }
 
-  void _loadFences() {
-    setState(() {
-      if (widget.fences != null) {
-        for (Fence fence in widget.fences!) {
-          polygons.add(
-            Polygon(
-              points: fence.points,
-              color: HexColor(fence.color).withOpacity(0.5),
-              borderColor: HexColor(fence.color),
-              borderStrokeWidth: 2,
-              isFilled: true,
-            ),
-          );
-          // circles.add(
-          //   Polygon(
-          //     points: fence.points,
-          //     color: HexColor(fence.color).withOpacity(0.5),
-          //     borderColor: HexColor(fence.color),
-          //     borderStrokeWidth: 2,
-          //     isFilled: true,
-          //   ),
-          // );
-        }
+  Future<void> _loadFences() async {
+    List<Polygon> allPoints = [];
+
+    if (widget.fences != null) {
+      for (Fence fence in widget.fences!) {
+        allPoints.add(
+          Polygon(
+            points: await getFencePoints(fence.fenceId),
+            color: HexColor(fence.color).withOpacity(0.5),
+            borderColor: HexColor(fence.color),
+            borderStrokeWidth: 2,
+            isFilled: true,
+          ),
+        );
       }
-      isLoading = false;
+    }
+    isLoading = false;
+    setState(() {
+      polygons.addAll(allPoints);
     });
   }
 
@@ -105,7 +101,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                           _currentPosition!.longitude,
                         )
                       : null
-                  : Fence.getFenceCenter(polygons.first.points),
+                  : getFenceCenter(polygons.first.points),
               zoom: 17,
               minZoom: 3,
               maxZoom: 18,
@@ -158,7 +154,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                   ...widget.devices
                       .map(
                         (device) => Marker(
-                          point: LatLng(device.data.first.lat, device.data.first.lon),
+                          point: LatLng(device.data!.first.lat, device.data!.first.lon),
                           builder: (context) {
                             return Icon(
                               Icons.location_on,

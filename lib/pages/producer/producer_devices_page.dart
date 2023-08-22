@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/user.dart';
-import 'package:guardian/models/devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/device/device_item_selectable.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 
@@ -33,26 +34,44 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   bool isRemoveMode = false;
 
   List<Device> selectedDevices = [];
-  List<Device> backupDevices = [];
   List<Device> devices = [];
 
-  late User user;
+  late String uid;
 
   @override
   void initState() {
-    _loadDevices();
+    getUid(context).then((userId) {
+      if (userId != null) {
+        uid = userId;
+        _filterDevices().then(
+          (filteredDevices) => setState(() {
+            devices = [];
+            devices.addAll(filteredDevices);
+          }),
+        );
+      }
+    });
+
     super.initState();
   }
 
-  Future<void> _loadDevices() async {
-    User.getUserData().then((userData) {
-      if (userData != null) {
-        user = userData;
-        loadUserDevices(user.uid).then((allDevices) {
-          setState(() => devices.addAll(allDevices));
-          backupDevices.addAll(allDevices);
-        });
-      }
+  Future<List<Device>> _filterDevices() async {
+    return await getUserDevicesFiltered(
+      batteryRangeValues: _batteryRangeValues,
+      elevationRangeValues: _elevationRangeValues,
+      dtUsageRangeValues: _dtUsageRangeValues,
+      searchString: searchString,
+      tmpRangeValues: _tmpRangeValues,
+      uid: uid,
+    );
+  }
+
+  Future<void> _resetFilters() async {
+    setState(() {
+      _batteryRangeValues = const RangeValues(0, 100);
+      _dtUsageRangeValues = const RangeValues(0, 10);
+      _elevationRangeValues = const RangeValues(0, 1500);
+      _tmpRangeValues = const RangeValues(0, 35);
     });
   }
 
@@ -100,33 +119,12 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
               });
             },
             onConfirm: () {
-              setState(() {
-                devices = Devices.filterByAll(
-                  batteryRangeValues: _batteryRangeValues,
-                  dtUsageRangeValues: _dtUsageRangeValues,
-                  tmpRangeValues: _tmpRangeValues,
-                  elevationRangeValues: _elevationRangeValues,
-                  searchString: searchString,
-                  devicesList: backupDevices,
-                );
-              });
+              _filterDevices();
               _scaffoldKey.currentState!.closeEndDrawer();
             },
             onResetFilters: () {
-              setState(() {
-                _batteryRangeValues = const RangeValues(0, 100);
-                _dtUsageRangeValues = const RangeValues(0, 10);
-                _elevationRangeValues = const RangeValues(0, 1500);
-                _tmpRangeValues = const RangeValues(0, 35);
-                devices = Devices.filterByAll(
-                  batteryRangeValues: _batteryRangeValues,
-                  dtUsageRangeValues: _dtUsageRangeValues,
-                  tmpRangeValues: _tmpRangeValues,
-                  elevationRangeValues: _elevationRangeValues,
-                  searchString: searchString,
-                  devicesList: backupDevices,
-                );
-              });
+              _resetFilters();
+              _filterDevices();
             },
           ),
         ),
@@ -140,10 +138,8 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                     _scaffoldKey.currentState!.openEndDrawer();
                   },
                   onSearchChanged: (value) {
-                    setState(() {
-                      searchString = value;
-                      devices = Devices.searchDevice(value, backupDevices);
-                    });
+                    searchString = value;
+                    _filterDevices();
                   },
                 ),
               ),
@@ -160,8 +156,8 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                       child: widget.isSelect
                           ? DeviceItemSelectable(
                               deviceImei: devices[index].imei,
-                              deviceData: devices[index].data.first.dataUsage,
-                              deviceBattery: devices[index].data.first.battery,
+                              deviceData: devices[index].data!.first.dataUsage,
+                              deviceBattery: devices[index].data!.first.battery,
                               isSelected: selectedDevices
                                   .where((element) => element.imei == devices[index].imei)
                                   .isNotEmpty,

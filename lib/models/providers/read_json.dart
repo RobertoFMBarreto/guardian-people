@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:guardian/db/device_data_operations.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/alert.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
@@ -77,7 +79,7 @@ Future<List<Device>> loadUserDevices(String uid) async {
         } else {
           state = DeviceDataState.walking;
         }
-        data.add(
+        createDeviceData(
           DeviceData(
             deviceId: device['imei'],
             dataUsage: 7,
@@ -94,13 +96,14 @@ Future<List<Device>> loadUserDevices(String uid) async {
       }
 
       // load devices and their data
-      devices.add(
+      createDevice(
         Device(
           imei: device['imei'],
           color: device['color'],
           isActive: device['isBlocked'],
           deviceId: device['imei'],
           name: device['name'],
+          uid: device['uid'],
         ),
       );
     }
@@ -154,6 +157,7 @@ Future<Device?> loadDevice(String deviceImei) async {
         isActive: device['isBlocked'],
         deviceId: device['imei'],
         name: device['name'],
+        uid: device['uid'],
       );
     }
   }
