@@ -1,6 +1,13 @@
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 
+Future<Fence> createFence(Fence fence) async {
+  final db = await GuardianDatabase.instance.database;
+  final id = await db.insert(tableFence, fence.toJson());
+
+  return fence.copy(id: id);
+}
+
 Future<Fence?> getFence(String fenceId) async {
   final db = await GuardianDatabase.instance.database;
   final data = await db.query(

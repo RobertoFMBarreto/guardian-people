@@ -13,7 +13,7 @@ class FencePoints {
   final double lat;
   final double lon;
   FencePoints({
-    required this.id,
+    this.id,
     required this.fenceId,
     required this.lat,
     required this.lon,

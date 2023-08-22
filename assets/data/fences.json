@@ -2,6 +2,7 @@
   "fences": [
     {
       "uid": "1",
+      "id": "1",
       "color": "#f542ef",
       "name": "teste",
       "devices": [
@@ -22,6 +23,7 @@
     },
     {
       "uid": "1",
+      "id": "2",
       "color": "#3238a8",
       "name": "teste1",
       "devices": [
@@ -39,6 +41,7 @@
     },
     {
       "uid": "1",
+      "id": "3",
       "color": "#3238a8",
       "name": "teste1",
       "devices": [{ "imei": "350457790679797" }],
