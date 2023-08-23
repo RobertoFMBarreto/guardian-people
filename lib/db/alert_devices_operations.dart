@@ -6,15 +6,35 @@ import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future<AlertDevices> addAlertDevice(AlertDevices device) async {
+Future<AlertDevices> addAlertDevice(AlertDevices alertDevice) async {
   final db = await GuardianDatabase().database;
-  await db.insert(
+  final data = await db.query(
     tableAlertDevices,
-    device.toJson(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
+    where: '''${AlertDevicesFields.deviceId} = ? AND 
+              ${AlertDevicesFields.alertId} = ? ''',
+    whereArgs: [
+      alertDevice.deviceId,
+      alertDevice.deviceId,
+    ],
   );
+  if (data.isEmpty) {
+    await db.insert(
+      tableAlertDevices,
+      alertDevice.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
-  return device;
+  return alertDevice;
+}
+
+Future<void> removeAlertDevice(String alertId, String deviceId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableAlertDevices,
+    where: '${AlertDevicesFields.alertId} = ? AND ${AlertDevicesFields.deviceId} = ?',
+    whereArgs: [alertId, deviceId],
+  );
 }
 
 Future<Device?> getAlertDevice(String alertId) async {

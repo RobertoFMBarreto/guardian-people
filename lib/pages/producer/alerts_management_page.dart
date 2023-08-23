@@ -100,6 +100,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                           },
                           child: AlertManagementItem(
                             alert: alerts[index],
+                            onDelete: (alert) {
+                              //!TODO: Remove code
+                            },
                           ),
                         ),
                 ),
@@ -111,25 +114,31 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         ),
         backgroundColor: theme.colorScheme.secondary,
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => AddAlertBottomSheet(
-              onConfirm: (parameter, comparisson, value, hasNotification) {
-                //TODO: Add alert code
-              },
-            ),
-          );
+          if (!widget.isSelect) {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => AddAlertBottomSheet(
+                onConfirm: (parameter, comparisson, value, hasNotification) {
+                  //TODO: Add alert code
+                },
+              ),
+            );
+          } else {
+            Navigator.of(context).pop(selectedAlerts);
+          }
         },
         label: Text(
-          '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
+          widget.isSelect
+              ? localizations.confirm.capitalize()
+              : '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
           style: theme.textTheme.bodyLarge!.copyWith(
             color: theme.colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
         icon: Icon(
-          Icons.add,
+          widget.isSelect ? Icons.done : Icons.add,
           color: theme.colorScheme.onSecondary,
         ),
       ),

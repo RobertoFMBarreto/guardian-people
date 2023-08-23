@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
+import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
@@ -74,9 +75,26 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: GestureDetector(
                   onTap: () {
-                    //TODO: select alerts
-
-                    Navigator.of(context).pushNamed('/producer/alert/management', arguments: true);
+                    Navigator.of(context)
+                        .pushNamed(
+                      '/producer/alert/management',
+                      arguments: true,
+                    )
+                        .then(
+                      (gottenAlerts) {
+                        if (gottenAlerts.runtimeType == List<UserAlert>) {
+                          final selectedAlerts = gottenAlerts as List<UserAlert>;
+                          setState(() {
+                            alerts.addAll(selectedAlerts);
+                          });
+                          selectedAlerts.map((e) async {
+                            await addAlertDevice(
+                                AlertDevices(deviceId: widget.device.deviceId, alertId: e.alertId));
+                          });
+                          //!TODO: add service call
+                        }
+                      },
+                    );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,6 +115,17 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: AlertManagementItem(
                       alert: alerts[index],
+                      onDelete: (alert) {
+                        //!TODO: Delete code for alert
+                        removeAlertDevice(alert.alertId, widget.device.deviceId);
+                        setState(() {
+                          alerts.removeWhere(
+                            (element) =>
+                                element.alertId == alert.alertId &&
+                                element.deviceId == widget.device.deviceId,
+                          );
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -115,8 +144,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         localizations.device_fences.capitalize(),
                         style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                       ),
-                      //!TODO: se poder ter várias cercas voltar a colocar
-                      //const Icon(Icons.add)
+                      //!TODO: se poder ter várias cercas trocar
+                      fences.isEmpty ? const Icon(Icons.add) : const SizedBox()
                     ],
                   ),
                 ),

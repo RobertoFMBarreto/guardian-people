@@ -5,7 +5,8 @@ import 'package:guardian/models/extensions/string_extension.dart';
 
 class AlertManagementItem extends StatelessWidget {
   final UserAlert alert;
-  const AlertManagementItem({super.key, required this.alert});
+  final Function(UserAlert) onDelete;
+  const AlertManagementItem({super.key, required this.alert, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,7 @@ class AlertManagementItem extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {
-            //!TODO: Delete code for alert
+            onDelete(alert);
           },
           icon: Icon(
             Icons.delete_forever,
