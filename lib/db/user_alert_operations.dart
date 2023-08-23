@@ -4,11 +4,34 @@ import 'package:sqflite/sqflite.dart';
 
 Future<UserAlert> createAlert(UserAlert alert) async {
   final db = await GuardianDatabase().database;
-  await db.insert(
+  final data = await db.query(
     tableUserAlerts,
-    alert.toJson(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
+    where: '''${UserAlertFields.deviceId} = ? AND 
+              ${UserAlertFields.alertId} = ? AND 
+              ${UserAlertFields.comparisson} = ? AND 
+              ${UserAlertFields.hasNotification} = ? AND 
+              ${UserAlertFields.parameter} = ? AND 
+              ${UserAlertFields.uid} = ? AND 
+              ${UserAlertFields.value} = ? 
+          ''',
+    whereArgs: [
+      alert.deviceId,
+      alert.alertId,
+      alert.comparisson.toString(),
+      alert.hasNotification ? 1 : 0,
+      alert.parameter.toString(),
+      alert.uid,
+      alert.value,
+    ],
   );
+
+  if (data.isEmpty) {
+    await db.insert(
+      tableUserAlerts,
+      alert.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
   return alert;
 }
@@ -36,18 +59,18 @@ Future<UserAlert?> getAlert(String alertId) async {
   return null;
 }
 
-Future<UserAlert?> getUserAlerts(String uid) async {
+Future<List<UserAlert>> getUserAlerts(String uid) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUserAlerts,
     where: '${UserAlertFields.uid} = ?',
     whereArgs: [uid],
   );
-
+  List<UserAlert> alerts = [];
   if (data.isNotEmpty) {
-    return UserAlert.fromJson(data.first);
+    alerts.addAll(data.map((e) => UserAlert.fromJson(e)).toList());
   }
-  return null;
+  return alerts;
 }
 
 Future<List<UserAlert>> getUserDeviceAlerts(String deviceId) async {

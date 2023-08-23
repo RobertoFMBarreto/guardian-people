@@ -31,8 +31,8 @@
   "edit": "editar",
   "all": "todos",
   "manage": "gerir",
-  "warnings": "avisos",
-  "warnings_managment": "gestão de avisos",
+  "warnings": "alertas",
+  "warnings_managment": "gestão de alertas",
   "when": "quando",
   "value": "valor",
   "insert_value": "inserir valor",
@@ -81,6 +81,6 @@
   "login_error": "email ou password incorretos",
   "loading": "a carregar",
   "device_settings": "definições do dispositivo",
-  "device_warnings": "avisos do dispositivo",
+  "device_warnings": "alertas do dispositivo",
   "device_fences": "cercas do dispositivo"
 }

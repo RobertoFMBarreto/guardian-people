@@ -82,6 +82,7 @@ class GuardianDatabase {
     await db.execute("""
       CREATE TABLE IF NOT EXISTS $tableUserAlerts (
         ${UserAlertFields.alertId} $idType,
+        ${UserAlertFields.deviceId} $textType,
         ${UserAlertFields.uid} $textType,
         ${UserAlertFields.hasNotification} $boolType,
         ${UserAlertFields.parameter} $textType,

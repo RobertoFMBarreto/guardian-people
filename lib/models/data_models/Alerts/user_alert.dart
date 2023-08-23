@@ -61,6 +61,47 @@ extension ParseParToString on AlertParameter {
   }
 }
 
+AlertParameter parseAlertParameterFromString(String text) {
+  String value = text.toString().split('.').last;
+  switch (value) {
+    case 'temperature':
+      return AlertParameter.temperature;
+
+    case 'dataUsage':
+      return AlertParameter.dataUsage;
+
+    case 'battery':
+      return AlertParameter.battery;
+
+    default:
+      throw Exception('Invalid alert parameter');
+  }
+}
+
+AlertComparissons parseComparissonFromString(String text) {
+  String value = text.toString().split('.').last;
+
+  switch (value) {
+    case 'equal':
+      return AlertComparissons.equal;
+
+    case 'greater':
+      return AlertComparissons.greater;
+
+    case 'less':
+      return AlertComparissons.less;
+
+    case 'greaterOrEqual':
+      return AlertComparissons.greaterOrEqual;
+
+    case 'lessOrEqual':
+      return AlertComparissons.lessOrEqual;
+
+    default:
+      throw Exception('Invalid alert comparisson');
+  }
+}
+
 const String tableUserAlerts = 'user_alerts';
 
 class UserAlertFields {
@@ -116,18 +157,22 @@ class UserAlert {
         UserAlertFields.deviceId: deviceId,
         UserAlertFields.uid: uid,
         UserAlertFields.hasNotification: hasNotification ? 1 : 0,
-        UserAlertFields.parameter: parameter,
-        UserAlertFields.comparisson: comparisson,
+        UserAlertFields.parameter: parameter.toString(),
+        UserAlertFields.comparisson: comparisson.toString(),
         UserAlertFields.value: value,
       };
 
-  static UserAlert fromJson(Map<String, Object?> json) => UserAlert(
-        alertId: json[UserAlertFields.alertId] as String,
-        deviceId: json[UserAlertFields.deviceId] as String,
-        uid: json[UserAlertFields.uid] as String,
-        hasNotification: json[UserAlertFields.hasNotification] == 1,
-        parameter: json[UserAlertFields.parameter] as AlertParameter,
-        comparisson: json[UserAlertFields.comparisson] as AlertComparissons,
-        value: json[UserAlertFields.value] as double,
-      );
+  static UserAlert fromJson(Map<String, Object?> json) {
+    final parameter = parseAlertParameterFromString(json[UserAlertFields.parameter] as String);
+    final comparisson = parseComparissonFromString(json[UserAlertFields.comparisson] as String);
+    return UserAlert(
+      alertId: json[UserAlertFields.alertId] as String,
+      deviceId: json[UserAlertFields.deviceId] as String,
+      uid: json[UserAlertFields.uid] as String,
+      hasNotification: json[UserAlertFields.hasNotification] == 1,
+      parameter: parameter,
+      comparisson: comparisson,
+      value: json[UserAlertFields.value] as double,
+    );
+  }
 }

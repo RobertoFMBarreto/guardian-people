@@ -115,7 +115,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         localizations.device_fences.capitalize(),
                         style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                       ),
-                      const Icon(Icons.add)
+                      //!TODO: se poder ter várias cercas voltar a colocar
+                      //const Icon(Icons.add)
                     ],
                   ),
                 ),

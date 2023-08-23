@@ -2,8 +2,8 @@ const String tableAlertDevices = 'alert_devices';
 
 class AlertDevicesFields {
   static const String alertDevicesId = 'alert_devices_id';
-  static const String deviceId = 'deviceId';
-  static const String alertId = 'alertId';
+  static const String deviceId = 'device_id';
+  static const String alertId = 'alert_id';
 }
 
 class AlertDevices {

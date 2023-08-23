@@ -21,7 +21,7 @@ Future<Device?> getAlertDevice(String alertId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
-    where: '${UserAlertFields.alertId} = ?',
+    where: '${AlertDevicesFields.alertId} = ?',
     whereArgs: [alertId],
   );
 
@@ -36,7 +36,7 @@ Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
-    where: '${UserAlertFields.deviceId} = ?',
+    where: '${AlertDevicesFields.deviceId} = ?',
     whereArgs: [deviceId],
   );
 

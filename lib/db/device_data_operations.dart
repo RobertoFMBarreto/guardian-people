@@ -1,5 +1,4 @@
 import 'package:guardian/db/guardian_database.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:sqflite/sqflite.dart';
 

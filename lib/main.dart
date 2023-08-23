@@ -144,7 +144,7 @@ class MyApp extends StatelessWidget {
               isSelect: ModalRoute.of(context)!.settings.arguments as bool,
             );
           } else {
-            throw ErrorDescription('Device not provided');
+            throw ErrorDescription('isSelect not provided');
           }
         },
         '/producer/fence/manage': (context) {
@@ -195,7 +195,7 @@ class MyApp extends StatelessWidget {
               isSelect: ModalRoute.of(context)!.settings.arguments as bool,
             );
           } else {
-            throw ErrorDescription('Device not provided');
+            throw ErrorDescription('isSelect not provided');
           }
         },
       },

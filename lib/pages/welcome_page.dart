@@ -31,7 +31,7 @@ class _WelcomePageState extends State<WelcomePage> {
           //!TODO: To Remove it
           loadUserDevices(uid);
           loadUserFences(uid);
-          //loadAlerts();
+          loadAlerts();
 
           // if there is stored data use it for getting his role
           if (user != null) {

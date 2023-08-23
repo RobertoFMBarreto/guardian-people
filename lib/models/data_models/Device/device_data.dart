@@ -61,7 +61,7 @@ DeviceDataState parseStateFromString(String text) {
       return DeviceDataState.stopped;
 
     default:
-      throw Exception('Invalide state');
+      throw Exception('Invalid state');
   }
 }
 

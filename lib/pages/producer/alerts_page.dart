@@ -42,7 +42,7 @@ class _AlertsPageState extends State<AlertsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.alerts,
+          localizations.alerts.capitalize(),
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -102,7 +102,10 @@ class _AlertsPageState extends State<AlertsPage> {
         ),
         backgroundColor: theme.colorScheme.secondary,
         onPressed: () {
-          Navigator.of(context).pushNamed('/producer/alert/management');
+          Navigator.of(context).pushNamed(
+            '/producer/alert/management',
+            arguments: false,
+          );
         },
         label: Text(
           '${localizations.manage.capitalize()} ${localizations.warnings.capitalize()}',

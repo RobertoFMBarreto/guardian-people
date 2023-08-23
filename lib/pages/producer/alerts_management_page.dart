@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,12 +29,16 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   }
 
   Future<void> _loadAlerts() async {
-    loadAlerts().then(
-      (allAlerts) {
-        alerts.addAll(allAlerts);
-        isLoading = false;
-      },
-    );
+    getUid(context).then((userId) {
+      if (userId != null) {
+        getUserAlerts(userId).then(
+          (allAlerts) {
+            alerts.addAll(allAlerts);
+            isLoading = false;
+          },
+        );
+      }
+    });
   }
 
   @override
