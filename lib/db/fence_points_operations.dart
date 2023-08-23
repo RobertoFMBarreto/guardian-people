@@ -5,11 +5,19 @@ import 'package:sqflite/sqflite.dart';
 
 Future<FencePoints> createFencePoint(FencePoints point) async {
   final db = await GuardianDatabase().database;
-  await db.insert(
+  final data = await db.query(
     tableFencePoints,
-    point.toJson(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
+    where:
+        '${FencePointsFields.fenceId} = ? AND ${FencePointsFields.lat} = ? AND ${FencePointsFields.lon} = ?',
+    whereArgs: [point.fenceId, point.lat, point.lon],
   );
+  if (data.isEmpty) {
+    await db.insert(
+      tableFencePoints,
+      point.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
   return point;
 }
@@ -21,7 +29,6 @@ Future<List<LatLng>> getFencePoints(String fenceId) async {
     where: '${FencePointsFields.fenceId} = ?',
     whereArgs: [fenceId],
   );
-
   List<LatLng> fencePoints = [];
   if (data.isNotEmpty) {
     fencePoints.addAll(

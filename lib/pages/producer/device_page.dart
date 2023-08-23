@@ -41,7 +41,8 @@ class _DevicePageState extends State<DevicePage> {
                         ),
                       ),
                       ToggleSwitch(
-                        initialLabelIndex: 0,
+                        //!TODO: Widget está a ser rebuilded quando acontece scroll o que leva a que volte ao indice inicial
+                        initialLabelIndex: isInterval ? 1 : 0,
                         cornerRadius: 50,
                         radiusStyle: true,
                         activeBgColor: [theme.colorScheme.secondary],

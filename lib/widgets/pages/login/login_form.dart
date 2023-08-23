@@ -127,6 +127,11 @@ class _LoginFormState extends State<LoginForm> {
                                 errorString = localizations.login_error.capitalize();
                               });
                             } else {
+                              //!TODO: To Remove it
+                              loadUserDevices(user.first.uid);
+                              loadUserFences(user.first.uid);
+                              //loadAlerts();
+
                               // pop loading dialog
                               Navigator.of(context).pop();
                               // store session data

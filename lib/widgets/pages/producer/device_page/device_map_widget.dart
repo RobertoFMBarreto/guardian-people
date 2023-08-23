@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:guardian/db/device_data_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
@@ -31,6 +32,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   bool showRoute = false;
   Position? _currentPosition;
   List<Fence> fences = [];
+  List<DeviceData> deviceData = [];
 
   double currentZoom = 17;
 
@@ -43,7 +45,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   @override
   void initState() {
-    _getCurrentPosition().then((value) => _loadFences());
+    _getCurrentPosition().then(
+      (_) => _loadFences().then(
+        (_) => _getDeviceData(),
+      ),
+    );
     super.initState();
   }
 
@@ -77,6 +83,22 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     });
   }
 
+  Future<void> _getDeviceData() async {
+    await getDeviceData(
+      startDate: startDate,
+      endDate: endDate,
+      deviceId: widget.device.deviceId,
+      isInterval: widget.isInterval,
+    ).then(
+      (data) async {
+        deviceData = [];
+        setState(() {
+          deviceData.addAll(data);
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -84,11 +106,6 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     dropDownValue = !widget.isInterval ? 0 : dropDownValue;
     showHeatMap = !widget.isInterval ? false : showHeatMap;
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    List<DeviceData> deviceData = (widget.isInterval
-        ? widget.device.getDataBetweenDates(startDate, endDate)
-        : [widget.device.data!.first]) as List<DeviceData>;
-
     return _currentPosition == null
         ? Center(
             child: CircularProgressIndicator(
@@ -119,6 +136,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                                           startDate = newStartDate;
                                           endDate = newEndDate;
                                         });
+                                        _getDeviceData();
                                         Navigator.of(context).pop();
                                       },
                                     ),
@@ -249,7 +267,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               if (deviceData.isNotEmpty)
                 DeviceDataInfoList(
                   mapKey: firstItemDataKey,
-                  deviceData: deviceData,
+                  deviceData: widget.isInterval ? deviceData : [deviceData.first],
                 )
             ],
           );

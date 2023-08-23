@@ -48,7 +48,6 @@ class _ProducerHomeState extends State<ProducerHome> {
 
   Future<void> _loadDevices(String uid) async {
     getUserDevicesWithData(uid).then((allDevices) {
-      print(allDevices);
       return setState(() => devices.addAll(allDevices));
     });
   }

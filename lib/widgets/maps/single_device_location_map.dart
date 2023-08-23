@@ -65,9 +65,9 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   void _loadDeviceFences() {
     List<Polygon> allFences = [];
-    print('Here');
-    getDeviceFences(widget.imei).then((fences) async {
-      for (Fence fence in fences) {
+    getDeviceFence(widget.imei).then((fence) async {
+      if (fence != null) {
+        //for (Fence fence in fences) {
         List<LatLng> fencePoints = [];
         fencePoints.addAll(await getFencePoints(fence.fenceId));
         allFences.add(
@@ -79,11 +79,12 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
             isFilled: true,
           ),
         );
+        //}
       }
       isLoading = false;
-    });
-    setState(() {
-      polygons.addAll(allFences);
+      setState(() {
+        polygons.addAll(allFences);
+      });
     });
   }
 
@@ -114,7 +115,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
-              bounds: widget.startingZoom == 17
+              bounds: widget.startingZoom == 17 && (polygons.isNotEmpty || circles.isNotEmpty)
                   ? LatLngBounds.fromPoints(
                       polygons.isEmpty ? circles.first.points : polygons.first.points)
                   : null,

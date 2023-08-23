@@ -29,8 +29,8 @@ class _WelcomePageState extends State<WelcomePage> {
           User? user = await getUser(uid);
 
           //!TODO: To Remove it
-          print('UID: $uid');
           loadUserDevices(uid);
+          loadUserFences(uid);
           //loadAlerts();
 
           // if there is stored data use it for getting his role

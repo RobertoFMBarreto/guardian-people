@@ -115,7 +115,7 @@ class UserAlert {
         UserAlertFields.alertId: alertId,
         UserAlertFields.deviceId: deviceId,
         UserAlertFields.uid: uid,
-        UserAlertFields.hasNotification: hasNotification,
+        UserAlertFields.hasNotification: hasNotification ? 1 : 0,
         UserAlertFields.parameter: parameter,
         UserAlertFields.comparisson: comparisson,
         UserAlertFields.value: value,

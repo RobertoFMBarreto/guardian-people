@@ -31,9 +31,8 @@ class Device {
     this.data,
   });
 
-  Future<List<DeviceData>> getDataBetweenDates(DateTime startDate, DateTime endDate) async {
-    List<DeviceData> gottenData = await getDeviceData(deviceId);
-
+  static List<DeviceData> getDataBetweenDates(
+      DateTime startDate, DateTime endDate, List<DeviceData> gottenData) {
     gottenData.where(
       (dataItem) => dataItem.dateTime.isAfter(startDate) && dataItem.dateTime.isBefore(endDate),
     );
@@ -67,7 +66,7 @@ class Device {
         DeviceFields.imei: imei,
         DeviceFields.color: color,
         DeviceFields.name: name,
-        DeviceFields.isActive: isActive,
+        DeviceFields.isActive: isActive ? 1 : 0,
       };
 
   static Device fromJson(Map<String, Object?> json) => Device(

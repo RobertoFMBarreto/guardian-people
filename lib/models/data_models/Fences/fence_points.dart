@@ -1,4 +1,4 @@
-const String tableFencePoints = 'fence_devices';
+const String tableFencePoints = 'fence_points';
 
 class FencePointsFields {
   static const String fencePointsId = 'fence_points_id';

@@ -145,7 +145,6 @@ class DeviceData {
       };
 
   static DeviceData fromJson(Map<String, Object?> json) {
-    print('Json: $json');
     final state = parseStateFromString(json[DeviceDataFields.state] as String);
 
     return DeviceData(

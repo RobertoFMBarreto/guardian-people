@@ -25,7 +25,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   @override
   void initState() {
     deviceName = widget.device.imei;
-    _getDeviceAlerts();
+    _getDeviceAlerts().then(
+      (_) => _getDeviceFences(),
+    );
     super.initState();
   }
 
@@ -36,9 +38,11 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _getDeviceFences() async {
-    getDeviceFences(widget.device.deviceId).then(
-      (allFences) => setState(() => fences.addAll(allFences)),
-    );
+    getDeviceFence(widget.device.deviceId).then((deviceFence) {
+      if (deviceFence != null) {
+        setState(() => fences.add(deviceFence));
+      }
+    });
   }
 
   @override

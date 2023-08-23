@@ -2,24 +2,35 @@ import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
+import 'package:sqflite/sqflite.dart';
 
-Future<List<Fence>> getDeviceFences(String deviceId) async {
+Future<FenceDevices> createFenceDevice(FenceDevices fenceDevice) async {
+  final db = await GuardianDatabase().database;
+  final data = await db.query(
+    tableFenceDevices,
+    where: '${FenceDevicesFields.deviceId} = ? AND ${FenceDevicesFields.fenceId} = ?',
+    whereArgs: [fenceDevice.deviceId, fenceDevice.fenceId],
+  );
+  if (data.isEmpty) {
+    await db.insert(
+      tableFenceDevices,
+      fenceDevice.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  return fenceDevice;
+}
+
+Future<Fence?> getDeviceFence(String deviceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFenceDevices,
     where: '${FenceDevicesFields.deviceId} = ?',
     whereArgs: [deviceId],
   );
-
-  List<Fence> fences = [];
-
   if (data.isNotEmpty) {
-    print('GetDevices: $data');
-    fences.addAll(
-      data.map(
-        (e) async => await getFence(FenceDevices.fromJson(e).deviceId),
-      ) as Iterable<Fence>,
-    );
+    return await getFence(FenceDevices.fromJson(data.first).fenceId);
   }
-  return fences;
+  return null;
 }

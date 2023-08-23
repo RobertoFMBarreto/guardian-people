@@ -66,33 +66,35 @@ class DeviceItem extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  Text(
-                    '${device.data!.first.dataUsage.toString()}/10MB',
-                    style: theme.textTheme.bodyMedium!.copyWith(),
-                  ),
+                  // Text(
+                  //   '${device.data!.first.dataUsage.toString()}/10MB',
+                  //   style: theme.textTheme.bodyMedium!.copyWith(),
+                  // ),
                 ],
               ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                DeviceWidgetProvider.getBatteryWidget(
-                  deviceBattery: device.data!.first.battery,
-                  color: theme.colorScheme.secondary,
+          if (device.data != null)
+            if (device.data!.isNotEmpty)
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DeviceWidgetProvider.getBatteryWidget(
+                      deviceBattery: device.data!.first.battery,
+                      color: theme.colorScheme.secondary,
+                    ),
+                    Text(
+                      '${device.data!.first.battery.toString()}%',
+                      style: theme.textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  '${device.data!.first.battery.toString()}%',
-                  style: theme.textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          )
+              )
         ],
       ),
     );

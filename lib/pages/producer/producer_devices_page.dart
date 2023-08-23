@@ -41,7 +41,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
-        _filterDevices().then(
+        getUserDevices(uid).then(
           (filteredDevices) => setState(() {
             devices = [];
             devices.addAll(filteredDevices);

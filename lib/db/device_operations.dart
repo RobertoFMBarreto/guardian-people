@@ -63,11 +63,11 @@ Future<List<Device>> getUserDevices(String uid) async {
   List<Device> devices = [];
 
   if (data.isNotEmpty) {
-    data.map((device) async {
+    for (var device in data) {
       Device finalDevice = Device.fromJson(device);
-      finalDevice.data = await getDeviceData(finalDevice.deviceId);
+      finalDevice.data = await getDeviceData(deviceId: finalDevice.deviceId);
       devices.add(finalDevice);
-    });
+    }
   }
   return devices;
 }
@@ -111,9 +111,18 @@ Future<List<Device>> getUserDevicesFiltered({
           ${DeviceFields.imei},
           ${DeviceFields.color},
           ${DeviceFields.name},
-          ${DeviceFields.isActive}
+          ${DeviceFields.isActive},
+          ${DeviceDataFields.dataUsage},
+          ${DeviceDataFields.temperature},
+          ${DeviceDataFields.battery},
+          ${DeviceDataFields.lat},
+          ${DeviceDataFields.lon},
+          ${DeviceDataFields.elevation},
+          ${DeviceDataFields.accuracy},
+          ${DeviceDataFields.dateTime},
+          ${DeviceDataFields.state}
         FROM $tableDevices 
-        JOIN (
+        LEFT JOIN (
             SELECT 
               ${DeviceDataFields.deviceId},
               ${DeviceDataFields.dataUsage},
@@ -154,13 +163,12 @@ Future<List<Device>> getUserDevicesFiltered({
 
   List<Device> devices = [];
   if (data.isNotEmpty) {
-    devices.addAll(
-      (data.map((e) async {
-        Device device = Device.fromJson(e);
-        DeviceData data = DeviceData.fromJson(e);
-        device.data = [data];
-      }).toList()) as Iterable<Device>,
-    );
+    for (var dt in data) {
+      Device device = Device.fromJson(dt);
+      DeviceData data = DeviceData.fromJson(dt);
+      device.data = [data];
+      devices.add(device);
+    }
   }
   return devices;
 }

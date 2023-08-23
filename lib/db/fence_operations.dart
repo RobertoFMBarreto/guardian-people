@@ -35,20 +35,16 @@ Future<List<Fence>> getUserFences(String uid) async {
     where: '${FenceFields.uid} = ?',
     whereArgs: [uid],
   );
-
   List<Fence> fences = [];
   if (data.isNotEmpty) {
-    print('Fences: $data');
     fences.addAll(
       data.map(
         (e) {
-          print('e:$e');
           return Fence.fromJson(e);
         },
       ),
     );
   }
-
   return fences;
 }
 

@@ -37,14 +37,15 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
 
   @override
   void initState() {
-    print('Map devices: ${widget.devices}');
-    _getCurrentPosition().then((value) {
+    _getCurrentPosition().then((_) {
       if (widget.fences != null) {
         if (widget.fences!.length > 1 && widget.centerOnPoly) {
           throw ErrorDescription("Can only center on poly with one poly");
         }
       }
-      _loadFences();
+      _loadFences().then(
+        (_) => setState(() => isLoading = false),
+      );
     });
 
     super.initState();
@@ -63,24 +64,38 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   }
 
   Future<void> _loadFences() async {
-    List<Polygon> allPoints = [];
+    List<Polygon> allPolygons = [];
+    List<Polygon> allCircles = [];
 
     if (widget.fences != null) {
       for (Fence fence in widget.fences!) {
-        allPoints.add(
-          Polygon(
-            points: await getFencePoints(fence.fenceId),
-            color: HexColor(fence.color).withOpacity(0.5),
-            borderColor: HexColor(fence.color),
-            borderStrokeWidth: 2,
-            isFilled: true,
-          ),
+        await getFencePoints(fence.fenceId).then(
+          (points) => points.length == 2
+              ? allCircles.add(
+                  Polygon(
+                    points: points,
+                    color: HexColor(fence.color).withOpacity(0.5),
+                    borderColor: HexColor(fence.color),
+                    borderStrokeWidth: 2,
+                    isFilled: true,
+                  ),
+                )
+              : allPolygons.add(
+                  Polygon(
+                    points: points,
+                    color: HexColor(fence.color).withOpacity(0.5),
+                    borderColor: HexColor(fence.color),
+                    borderStrokeWidth: 2,
+                    isFilled: true,
+                  ),
+                ),
         );
       }
     }
-    isLoading = false;
+
     setState(() {
-      polygons.addAll(allPoints);
+      polygons.addAll(allPolygons);
+      circles.addAll(allCircles);
     });
   }
 
@@ -112,33 +127,35 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.linovt.guardian',
               ),
-              CircleLayer(
-                circles: [
-                  ...circles
-                      .map(
-                        (circle) => CircleMarker(
-                          useRadiusInMeter: true,
-                          color: circle.color,
-                          borderColor: circle.borderColor,
-                          borderStrokeWidth: 2,
-                          point: LatLng(
-                            polygons.first.points.first.latitude,
-                            polygons.first.points.first.longitude,
+              if (circles.isNotEmpty)
+                CircleLayer(
+                  circles: [
+                    ...circles
+                        .map(
+                          (circle) => CircleMarker(
+                            useRadiusInMeter: true,
+                            color: circle.color,
+                            borderColor: circle.borderColor,
+                            borderStrokeWidth: 2,
+                            point: LatLng(
+                              circle.points.first.latitude,
+                              circle.points.first.longitude,
+                            ),
+                            radius: calculateDistance(
+                              circle.points.first.latitude,
+                              circle.points.first.longitude,
+                              circle.points.last.latitude,
+                              circle.points.last.longitude,
+                            ),
                           ),
-                          radius: calculateDistance(
-                            polygons.first.points.first.latitude,
-                            polygons.first.points.first.longitude,
-                            polygons.first.points.last.latitude,
-                            polygons.first.points.last.longitude,
-                          ),
-                        ),
-                      )
-                      .toList()
-                ],
-              ),
-              PolygonLayer(
-                polygons: polygons,
-              ),
+                        )
+                        .toList()
+                  ],
+                ),
+              if (polygons.isNotEmpty)
+                PolygonLayer(
+                  polygons: polygons,
+                ),
               MarkerLayer(
                 markers: [
                   if (widget.showCurrentPosition && _currentPosition != null)

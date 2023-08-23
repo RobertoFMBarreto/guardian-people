@@ -51,7 +51,7 @@ class Fence {
       );
 }
 
-LatLng getFenceCenter(points) {
+LatLng getFenceCenter(List<LatLng> points) {
   if (points.length == 1) {
     return points.first;
   } else {

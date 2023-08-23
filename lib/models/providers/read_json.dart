@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:guardian/db/device_data_operations.dart';
 import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
@@ -9,6 +10,7 @@ import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/data_models/Fences/fence_points.dart';
 import 'package:guardian/models/data_models/user.dart';
 
@@ -145,6 +147,15 @@ Future<List<Fence>> loadUserFences(String uid) async {
             fenceId: fence["id"],
             lat: point['lat'],
             lon: point['lon'],
+          ),
+        );
+      }
+
+      for (var device in fence['devices']) {
+        createFenceDevice(
+          FenceDevices(
+            fenceId: fence["id"],
+            deviceId: device['imei'],
           ),
         );
       }

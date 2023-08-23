@@ -37,13 +37,13 @@ class AlertNotification {
         AlertNotificationFields.uid: uid,
         AlertNotificationFields.deviceId: deviceId,
         AlertNotificationFields.alertId: alertId,
-        AlertNotificationFields.isDeleted: isDeleted,
+        AlertNotificationFields.isDeleted: isDeleted ? 1 : 0,
       };
 
   static AlertNotification fromJson(Map<String, Object?> json) => AlertNotification(
         uid: json[AlertNotificationFields.uid] as String,
         deviceId: json[AlertNotificationFields.deviceId] as String,
         alertId: json[AlertNotificationFields.alertId] as String,
-        isDeleted: json[AlertNotificationFields.isDeleted] as bool,
+        isDeleted: json[AlertNotificationFields.isDeleted] == 1,
       );
 }
