@@ -82,5 +82,6 @@
   "loading": "a carregar",
   "device_settings": "definições do dispositivo",
   "device_warnings": "alertas do dispositivo",
-  "device_fences": "cercas do dispositivo"
+  "device_fences": "cercas do dispositivo",
+  "select_all": "selecionar todos"
 }

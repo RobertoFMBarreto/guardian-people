@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -29,14 +30,23 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   }
 
   Future<void> _loadAlerts() async {
-    getUid(context).then((userId) {
+    await getUid(context).then((userId) async {
       if (userId != null) {
-        getUserAlerts(userId).then(
-          (allAlerts) {
-            alerts.addAll(allAlerts);
-            isLoading = false;
-          },
-        );
+        if (widget.isSelect) {
+          await getDeviceUnselectedAlerts(userId).then(
+            (allAlerts) {
+              alerts.addAll(allAlerts);
+              isLoading = false;
+            },
+          );
+        } else {
+          await getUserAlerts(userId).then(
+            (allAlerts) {
+              alerts.addAll(allAlerts);
+              isLoading = false;
+            },
+          );
+        }
       }
     });
   }
@@ -62,86 +72,126 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
               )
             : Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-                child: ListView.builder(
-                  itemCount: alerts.length,
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  itemBuilder: (context, index) => widget.isSelect
-                      ? SelectableAlertManagementItem(
-                          alert: alerts[index],
-                          isSelected: selectedAlerts.contains(alerts[index]),
-                          onSelected: () {
-                            //!TODO: select code
-                            if (selectedAlerts.contains(alerts[index])) {
-                              setState(() {
-                                selectedAlerts.remove(alerts[index]);
-                              });
-                            } else {
-                              setState(() {
-                                selectedAlerts.add(alerts[index]);
-                              });
-                            }
-                          })
-                      : GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (context) => AddAlertBottomSheet(
-                                comparisson: alerts[index].comparisson,
-                                hasNotification: alerts[index].hasNotification,
-                                parameter: alerts[index].parameter,
-                                value: alerts[index].value,
-                                isEdit: true,
-                                onConfirm: (parameter, comparisson, value, hasNotification) {
-                                  //TODO: edit alert code
-                                },
-                              ),
-                            );
-                          },
-                          child: AlertManagementItem(
-                            alert: alerts[index],
-                            onDelete: (alert) {
-                              //!TODO: Remove code
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () {
+                              if (selectedAlerts.length == alerts.length) {
+                                setState(() {
+                                  selectedAlerts.removeRange(0, selectedAlerts.length);
+                                });
+                              } else {
+                                setState(() {
+                                  selectedAlerts.addAll(alerts);
+                                });
+                              }
                             },
+                            icon: Icon(
+                              selectedAlerts.length == alerts.length ? Icons.close : Icons.done,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            label: Text(
+                              localizations.select_all.capitalize(),
+                              style: theme.textTheme.bodyLarge!.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 15,
+                      child: ListView.builder(
+                        itemCount: alerts.length,
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        itemBuilder: (context, index) => widget.isSelect
+                            ? SelectableAlertManagementItem(
+                                alert: alerts[index],
+                                isSelected: selectedAlerts.contains(alerts[index]),
+                                onSelected: () {
+                                  //!TODO: select code
+                                  if (selectedAlerts.contains(alerts[index])) {
+                                    setState(() {
+                                      selectedAlerts.remove(alerts[index]);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedAlerts.add(alerts[index]);
+                                    });
+                                  }
+                                })
+                            : GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) => AddAlertBottomSheet(
+                                      comparisson: alerts[index].comparisson,
+                                      hasNotification: alerts[index].hasNotification,
+                                      parameter: alerts[index].parameter,
+                                      value: alerts[index].value,
+                                      isEdit: true,
+                                      onConfirm: (parameter, comparisson, value, hasNotification) {
+                                        //TODO: edit alert code
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: AlertManagementItem(
+                                  alert: alerts[index],
+                                  onDelete: (alert) {
+                                    //!TODO: Remove code
+                                  },
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        backgroundColor: theme.colorScheme.secondary,
-        onPressed: () {
-          if (!widget.isSelect) {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => AddAlertBottomSheet(
-                onConfirm: (parameter, comparisson, value, hasNotification) {
-                  //TODO: Add alert code
-                },
+      floatingActionButton: (widget.isSelect && selectedAlerts.isNotEmpty) || !widget.isSelect
+          ? FloatingActionButton.extended(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
               ),
-            );
-          } else {
-            Navigator.of(context).pop(selectedAlerts);
-          }
-        },
-        label: Text(
-          widget.isSelect
-              ? localizations.confirm.capitalize()
-              : '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
-          style: theme.textTheme.bodyLarge!.copyWith(
-            color: theme.colorScheme.onSecondary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        icon: Icon(
-          widget.isSelect ? Icons.done : Icons.add,
-          color: theme.colorScheme.onSecondary,
-        ),
-      ),
+              backgroundColor: theme.colorScheme.secondary,
+              onPressed: () {
+                if (!widget.isSelect) {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => AddAlertBottomSheet(
+                      onConfirm: (parameter, comparisson, value, hasNotification) {
+                        //TODO: Add alert code
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.of(context).pop(selectedAlerts);
+                }
+              },
+              label: Text(
+                widget.isSelect
+                    ? localizations.confirm.capitalize()
+                    : '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
+                style: theme.textTheme.bodyLarge!.copyWith(
+                  color: theme.colorScheme.onSecondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              icon: Icon(
+                widget.isSelect ? Icons.done : Icons.add,
+                color: theme.colorScheme.onSecondary,
+              ),
+            )
+          : null,
     );
   }
 }

@@ -33,9 +33,10 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _getDeviceAlerts() async {
-    getDeviceAlerts(widget.device.deviceId).then(
-      (allAlerts) => setState(() => alerts.addAll(allAlerts)),
-    );
+    getDeviceAlerts(widget.device.deviceId).then((allAlerts) {
+      print(allAlerts);
+      setState(() => alerts.addAll(allAlerts));
+    });
   }
 
   Future<void> _getDeviceFences() async {
@@ -81,16 +82,21 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       arguments: true,
                     )
                         .then(
-                      (gottenAlerts) {
+                      (gottenAlerts) async {
                         if (gottenAlerts.runtimeType == List<UserAlert>) {
                           final selectedAlerts = gottenAlerts as List<UserAlert>;
                           setState(() {
                             alerts.addAll(selectedAlerts);
                           });
-                          selectedAlerts.map((e) async {
+
+                          print('Gotten: $gottenAlerts');
+                          print('Gotten Type: ${gottenAlerts.runtimeType}');
+                          for (var selectedAlert in selectedAlerts) {
                             await addAlertDevice(
-                                AlertDevices(deviceId: widget.device.deviceId, alertId: e.alertId));
-                          });
+                              AlertDevices(
+                                  deviceId: widget.device.deviceId, alertId: selectedAlert.alertId),
+                            );
+                          }
                           //!TODO: add service call
                         }
                       },

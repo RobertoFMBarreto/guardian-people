@@ -66,6 +66,7 @@ Future<List<UserAlert>> getUserAlerts(String uid) async {
     where: '${UserAlertFields.uid} = ?',
     whereArgs: [uid],
   );
+  print(data);
   List<UserAlert> alerts = [];
   if (data.isNotEmpty) {
     alerts.addAll(data.map((e) => UserAlert.fromJson(e)).toList());

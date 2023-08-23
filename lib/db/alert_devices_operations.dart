@@ -59,14 +59,38 @@ Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
     where: '${AlertDevicesFields.deviceId} = ?',
     whereArgs: [deviceId],
   );
+  List<UserAlert> alerts = [];
+  print('Alert Devices: $data');
 
+  if (data.isNotEmpty) {
+    for (var alertData in data) {
+      final alertId = AlertDevices.fromJson(alertData).alertId;
+      final alert = await getAlert(alertId);
+      if (alert != null) alerts.add(alert);
+    }
+  }
+  return alerts;
+}
+
+Future<List<UserAlert>> getDeviceUnselectedAlerts(String deviceId) async {
+  final db = await GuardianDatabase().database;
+  final data = await db.rawQuery(
+    '''
+      SELECT 
+        $tableUserAlerts.${AlertDevicesFields.alertId}
+      FROM $tableUserAlerts
+      LEFT JOIN $tableAlertDevices ON $tableAlertDevices.${AlertDevicesFields.alertId} = $tableUserAlerts.${AlertDevicesFields.alertId}
+      WHERE $tableAlertDevices.${AlertDevicesFields.alertId} IS NULL
+    ''',
+  );
   List<UserAlert> alerts = [];
 
   if (data.isNotEmpty) {
-    alerts.addAll(data.map((e) async {
-      final alertId = AlertDevices.fromJson(e).alertId;
-      return await getAlert(alertId);
-    }) as Iterable<UserAlert>);
+    for (var alertData in data) {
+      final alertId = alertData[AlertDevicesFields.alertId] as String;
+      final alert = await getAlert(alertId);
+      if (alert != null) alerts.add(alert);
+    }
   }
   return alerts;
 }

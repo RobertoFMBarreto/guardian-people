@@ -82,5 +82,6 @@
   "loading": "loading",
   "device_settings": "device settings",
   "device_warnings": "device warnings",
-  "device_fences": "device fences"
+  "device_fences": "device fences",
+  "select_all": "select all"
 }
