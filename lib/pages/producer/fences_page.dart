@@ -21,7 +21,7 @@ class FencesPage extends StatefulWidget {
 class _FencesPageState extends State<FencesPage> {
   String searchString = '';
   List<Fence> fences = [];
-  List<Fence> selectedFences = [];
+  Fence? selectedFence;
   bool isLoading = true;
 
   late String uid;
@@ -60,19 +60,42 @@ class _FencesPageState extends State<FencesPage> {
         CustomFocusManager.unfocus(context);
       },
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          shape: const CircleBorder(),
-          backgroundColor: theme.colorScheme.secondary,
-          onPressed: () {
-            //!TODO:code to add a new fence
-            Navigator.of(context).pushNamed('/producer/geofencing');
-          },
-          child: Icon(
-            Icons.add,
-            size: 30,
-            color: theme.colorScheme.onSecondary,
-          ),
-        ),
+        floatingActionButton: widget.isSelect && selectedFence != null
+            ? FloatingActionButton.extended(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                backgroundColor: theme.colorScheme.secondary,
+                onPressed: () {
+                  Navigator.of(context).pop(selectedFence);
+                },
+                label: Text(
+                  localizations.confirm.capitalize(),
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    color: theme.colorScheme.onSecondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.done,
+                  color: theme.colorScheme.onSecondary,
+                ),
+              )
+            : widget.isSelect
+                ? null
+                : FloatingActionButton(
+                    shape: const CircleBorder(),
+                    backgroundColor: theme.colorScheme.secondary,
+                    onPressed: () {
+                      //!TODO:code to add a new fence
+                      Navigator.of(context).pushNamed('/producer/geofencing');
+                    },
+                    child: Icon(
+                      Icons.add,
+                      size: 30,
+                      color: theme.colorScheme.onSecondary,
+                    ),
+                  ),
         appBar: AppBar(
           title: Text(
             localizations.fences.capitalize(),
@@ -114,16 +137,16 @@ class _FencesPageState extends State<FencesPage> {
                                 ? SelectableFenceItem(
                                     name: fences[index].name,
                                     color: HexColor(fences[index].color),
-                                    isSelected: selectedFences.contains(fences[index]),
+                                    isSelected: fences[index] == selectedFence,
                                     onSelected: () {
                                       //!TODO: select code
-                                      if (selectedFences.contains(fences[index])) {
+                                      if (selectedFence == fences[index]) {
                                         setState(() {
-                                          selectedFences.remove(fences[index]);
+                                          selectedFence = null;
                                         });
                                       } else {
                                         setState(() {
-                                          selectedFences.add(fences[index]);
+                                          selectedFence = fences[index];
                                         });
                                       }
                                     })

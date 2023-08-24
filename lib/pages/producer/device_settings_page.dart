@@ -6,6 +6,7 @@ import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/widgets/fence_item.dart';
@@ -34,7 +35,6 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
 
   Future<void> _getDeviceAlerts() async {
     getDeviceAlerts(widget.device.deviceId).then((allAlerts) {
-      print(allAlerts);
       setState(() => alerts.addAll(allAlerts));
     });
   }
@@ -88,9 +88,6 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                           setState(() {
                             alerts.addAll(selectedAlerts);
                           });
-
-                          print('Gotten: $gottenAlerts');
-                          print('Gotten Type: ${gottenAlerts.runtimeType}');
                           for (var selectedAlert in selectedAlerts) {
                             await addAlertDevice(
                               AlertDevices(
@@ -140,8 +137,22 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: GestureDetector(
                   onTap: () {
-                    //TODO: select fences
-                    Navigator.of(context).pushNamed('/producer/fences', arguments: true);
+                    Navigator.of(context)
+                        .pushNamed('/producer/fences', arguments: true)
+                        .then((newFenceData) {
+                      if (newFenceData != null && newFenceData.runtimeType == Fence) {
+                        final newFence = newFenceData as Fence;
+                        setState(() {
+                          fences.add(newFence);
+                        });
+                        createFenceDevice(
+                          FenceDevices(
+                            fenceId: newFence.fenceId,
+                            deviceId: widget.device.deviceId,
+                          ),
+                        );
+                      }
+                    });
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,7 +176,13 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       name: fences[index].name,
                       color: HexColor(fences[index].color),
                       onRemove: () {
-                        //!TODO remove item from list
+                        removeDeviceFence(fences[index].fenceId, widget.device.deviceId);
+                        setState(() {
+                          fences.removeWhere(
+                            (element) => element.fenceId == fences[index].fenceId,
+                          );
+                        });
+                        //!TODO remove item service call
                       },
                     ),
                   ),

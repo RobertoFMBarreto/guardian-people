@@ -34,3 +34,12 @@ Future<Fence?> getDeviceFence(String deviceId) async {
   }
   return null;
 }
+
+Future<void> removeDeviceFence(String fenceId, String deviceId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableFenceDevices,
+    where: '${FenceDevicesFields.fenceId} = ? AND ${FenceDevicesFields.deviceId} = ?',
+    whereArgs: [fenceId, deviceId],
+  );
+}
