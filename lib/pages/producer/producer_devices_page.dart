@@ -53,15 +53,20 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     super.initState();
   }
 
-  Future<List<Device>> _filterDevices() async {
-    return await getUserDevicesFiltered(
+  Future<void> _filterDevices() async {
+    await getUserDevicesFiltered(
       batteryRangeValues: _batteryRangeValues,
       elevationRangeValues: _elevationRangeValues,
       dtUsageRangeValues: _dtUsageRangeValues,
       searchString: searchString,
       tmpRangeValues: _tmpRangeValues,
       uid: uid,
-    );
+    ).then((searchDevices) {
+      setState(() {
+        devices = [];
+        devices.addAll(searchDevices);
+      });
+    });
   }
 
   Future<void> _resetFilters() async {
@@ -153,7 +158,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                       ),
                       child: widget.isSelect
                           ? DeviceItemSelectable(
-                              deviceImei: devices[index].imei,
+                              deviceImei: devices[index].name,
                               deviceData: devices[index].data!.first.dataUsage,
                               deviceBattery: devices[index].data!.first.battery,
                               isSelected: selectedDevices

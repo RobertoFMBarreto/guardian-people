@@ -102,49 +102,51 @@ Future<List<Device>> getUserDevicesFiltered({
   required String searchString,
 }) async {
   final db = await GuardianDatabase().database;
-
+  // final data = await db.rawQuery(
+  //   '''
+  //     SELECT * FROM
+  //       (
+  //         SELECT * FROM $tableDeviceData
+  //         ORDER BY ${DeviceDataFields.dateTime} DESC
+  //       ) as DeviceData
+  //     GROUP BY DeviceData.${DeviceDataFields.dateTime}
+  //   ''',
+  //   // ${DeviceFields.name} LIKE ?
+  // );
   final data = await db.rawQuery(
     '''
-      SELECT 
-          ${DeviceFields.uid},
-          $tableDevices.${DeviceFields.deviceId},
-          ${DeviceFields.imei},
-          ${DeviceFields.color},
-          ${DeviceFields.name},
-          ${DeviceFields.isActive},
-          ${DeviceDataFields.dataUsage},
-          ${DeviceDataFields.temperature},
-          ${DeviceDataFields.battery},
-          ${DeviceDataFields.lat},
-          ${DeviceDataFields.lon},
-          ${DeviceDataFields.elevation},
-          ${DeviceDataFields.accuracy},
-          ${DeviceDataFields.dateTime},
-          ${DeviceDataFields.state}
-        FROM $tableDevices 
-        LEFT JOIN (
-            SELECT 
-              ${DeviceDataFields.deviceId},
-              ${DeviceDataFields.dataUsage},
-              ${DeviceDataFields.temperature},
-              ${DeviceDataFields.battery},
-              ${DeviceDataFields.lat},
-              ${DeviceDataFields.lon},
-              ${DeviceDataFields.elevation},
-              ${DeviceDataFields.accuracy},
-              ${DeviceDataFields.dateTime},
-              ${DeviceDataFields.state}
-            FROM $tableDeviceData
-            ORDER BY ${DeviceDataFields.dateTime} DESC
-            LIMIT 1
-          ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
-        WHERE 
-          ${DeviceFields.uid} = ? AND
-          deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
-          deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
-          deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
-          deviceData.${DeviceDataFields.elevation} >= ? AND deviceData.${DeviceDataFields.elevation} <= ? AND
-          (${DeviceFields.name} LIKE ? OR ${DeviceFields.imei} LIKE ?)
+      SELECT
+        ${DeviceFields.uid},
+        ${DeviceFields.imei},
+        ${DeviceFields.color},
+        ${DeviceFields.name},
+        ${DeviceFields.isActive},
+        ${DeviceDataFields.dataUsage},
+        ${DeviceDataFields.temperature},
+        ${DeviceDataFields.battery},
+        ${DeviceDataFields.lat},
+        ${DeviceDataFields.lon},
+        ${DeviceDataFields.elevation},
+        ${DeviceDataFields.accuracy},
+        ${DeviceDataFields.dateTime},
+        ${DeviceDataFields.state},
+        $tableDevices.${DeviceFields.deviceId}
+      FROM $tableDevices
+      LEFT JOIN (
+        SELECT * FROM 
+          (
+            SELECT * FROM $tableDeviceData
+            ORDER BY ${DeviceDataFields.dateTime} DESC 
+          ) as deviceDt
+        GROUP BY deviceDt.${DeviceDataFields.deviceId}
+      ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
+      WHERE
+        ${DeviceFields.uid} = ? AND
+        deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
+        deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
+        deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
+        deviceData.${DeviceDataFields.elevation} >= ? AND deviceData.${DeviceDataFields.elevation} <= ? AND
+        ${DeviceFields.name} LIKE ?
     ''',
     [
       uid,
@@ -157,10 +159,8 @@ Future<List<Device>> getUserDevicesFiltered({
       elevationRangeValues.start,
       elevationRangeValues.end,
       '%$searchString%',
-      '%$searchString%'
     ],
   );
-
   List<Device> devices = [];
   if (data.isNotEmpty) {
     for (var dt in data) {

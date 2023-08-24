@@ -144,7 +144,7 @@ class MyApp extends StatelessWidget {
               isSelect: ModalRoute.of(context)!.settings.arguments as bool,
             );
           } else {
-            throw ErrorDescription('isSelect not provided');
+            return const FencesPage();
           }
         },
         '/producer/fence/manage': (context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
@@ -155,6 +156,12 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                       deviceColor = color;
                                       widget.device.color = HexColor.toHex(color: deviceColor);
                                     });
+
+                                    updateDevice(
+                                      widget.device.copy(
+                                        color: HexColor.toHex(color: deviceColor),
+                                      ),
+                                    );
                                   },
                                   hexColor: HexColor.toHex(color: deviceColor),
                                 ),

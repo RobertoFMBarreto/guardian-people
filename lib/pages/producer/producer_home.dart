@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/user_operations.dart';
@@ -7,6 +8,7 @@ import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
@@ -22,6 +24,7 @@ class ProducerHome extends StatefulWidget {
 class _ProducerHomeState extends State<ProducerHome> {
   List<Device> devices = [];
   List<Fence> fences = [];
+  List<UserAlertNotification> alertNotifications = [];
   late String uid;
   late User user;
   bool isLoading = true;
@@ -37,7 +40,9 @@ class _ProducerHomeState extends State<ProducerHome> {
             user = userData;
             _loadDevices(uid).then(
               (_) => _loadFences(uid).then(
-                (_) => isLoading = false,
+                (_) => _loadAlertNotifications(uid).then(
+                  (value) => isLoading = false,
+                ),
               ),
             );
           }
@@ -47,13 +52,18 @@ class _ProducerHomeState extends State<ProducerHome> {
   }
 
   Future<void> _loadDevices(String uid) async {
-    getUserDevicesWithData(uid).then((allDevices) {
+    await getUserDevicesWithData(uid).then((allDevices) {
       return setState(() => devices.addAll(allDevices));
     });
   }
 
   Future<void> _loadFences(String uid) async {
-    getUserFences(uid).then((allFences) => setState(() => fences.addAll(allFences)));
+    await getUserFences(uid).then((allFences) => setState(() => fences.addAll(allFences)));
+  }
+
+  Future<void> _loadAlertNotifications(String uid) async {
+    await getUserNotifications(uid)
+        .then((allAlerts) => setState(() => alertNotifications.addAll(allAlerts)));
   }
 
   @override
@@ -136,7 +146,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 padding: const EdgeInsets.only(left: 20, right: 8),
                                 child: SquareDevicesInfo(
                                   title: localizations.devices.capitalize(),
-                                  description: '10',
+                                  description: '${devices.length}',
                                   onTap: () {
                                     Navigator.of(context).pushNamed('/producer/devices');
                                   },
@@ -148,7 +158,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 padding: const EdgeInsets.only(right: 20, left: 8),
                                 child: SquareDevicesInfo(
                                   title: localizations.alerts.capitalize(),
-                                  description: '2',
+                                  description: '${alertNotifications.length}',
                                   isAlert: true,
                                   onTap: () {
                                     Navigator.of(context).pushNamed('/producer/alerts');

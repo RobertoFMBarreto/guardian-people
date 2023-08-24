@@ -60,7 +60,7 @@ class DeviceItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    device.imei.toString(),
+                    device.name.toString(),
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: 18,
