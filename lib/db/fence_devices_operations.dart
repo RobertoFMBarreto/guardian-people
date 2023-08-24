@@ -1,5 +1,7 @@
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:sqflite/sqflite.dart';
@@ -42,4 +44,25 @@ Future<void> removeDeviceFence(String fenceId, String deviceId) async {
     where: '${FenceDevicesFields.fenceId} = ? AND ${FenceDevicesFields.deviceId} = ?',
     whereArgs: [fenceId, deviceId],
   );
+}
+
+Future<List<Device>> getFenceDevices(String fenceId) async {
+  final db = await GuardianDatabase().database;
+  final data = await db.query(
+    tableFenceDevices,
+    where: '${FenceDevicesFields.fenceId} = ?',
+    whereArgs: [fenceId],
+  );
+
+  List<Device> fenceDevices = [];
+
+  if (data.isNotEmpty) {
+    for (var dev in data) {
+      final device = await getDeviceWithData(FenceDevices.fromJson(dev).deviceId);
+      if (device != null) {
+        fenceDevices.add(device);
+      }
+    }
+  }
+  return fenceDevices;
 }

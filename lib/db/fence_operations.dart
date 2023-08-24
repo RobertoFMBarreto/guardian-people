@@ -14,6 +14,18 @@ Future<Fence> createFence(Fence fence) async {
   return fence;
 }
 
+Future<Fence> updateFence(Fence fence) async {
+  final db = await GuardianDatabase().database;
+  await db.update(
+    tableFence,
+    fence.toJson(),
+    where: '${FenceFields.fenceId} = ?',
+    whereArgs: [fence.fenceId],
+  );
+
+  return fence;
+}
+
 Future<Fence?> getFence(String fenceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(

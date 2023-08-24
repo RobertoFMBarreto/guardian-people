@@ -26,6 +26,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
   Position? _currentPosition;
   late PolyEditor polyEditor;
   bool isCircle = false;
+  bool isLoading = true;
 
   final polygons = <Polygon>[];
   late Polygon editingPolygon;
@@ -36,15 +37,20 @@ class _GeofencingPageState extends State<GeofencingPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.fence != null) {
-      _loadFencePoints().then((_) {
+
+    _loadFencePoints().then((_) {
+      if (widget.fence != null) {
         // if there are only 2 points then its a circle
         isCircle = fencePoints.length == 2;
+      }
+      _initPolygon();
+      _getCurrentPosition().then((_) {
+        _initPolyEditor();
+        setState(() {
+          isLoading = false;
+        });
       });
-    }
-    _initPolygon();
-    _getCurrentPosition();
-    _initPolyEditor();
+    });
   }
 
   void _initPolygon() {
@@ -114,7 +120,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -123,7 +128,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
         ),
         centerTitle: true,
       ),
-      body: _currentPosition == null
+      body: _currentPosition == null && isLoading
           ? Center(
               child: CircularProgressIndicator(
                 color: theme.colorScheme.secondary,
@@ -134,9 +139,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
                 onTap: (_, ll) {
                   polyEditor.add(editingPolygon.points, ll);
                 },
-                center: widget.fence != null
-                    ? LatLng(fencePoints.first.latitude, fencePoints.first.longitude)
-                    : LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                center: widget.fence == null
+                    ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+                    : getFenceCenter(fencePoints),
                 zoom: widget.fence != null ? 17 : 10,
               ),
               children: [
@@ -227,7 +232,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
             child: const Icon(Icons.done),
             onPressed: () {
               //!TODO: Code for storing the geofence
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(editingPolygon.points);
             },
           ),
         ],

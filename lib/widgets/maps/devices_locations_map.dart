@@ -110,14 +110,13 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
           )
         : FlutterMap(
             options: MapOptions(
-              center: !widget.centerOnPoly
-                  ? _currentPosition != null
-                      ? LatLng(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                        )
-                      : null
-                  : getFenceCenter(polygons.first.points),
+              center: !widget.centerOnPoly && _currentPosition != null
+                  ? LatLng(
+                      _currentPosition!.latitude,
+                      _currentPosition!.longitude,
+                    )
+                  : null,
+              bounds: widget.centerOnPoly ? LatLngBounds.fromPoints(polygons.first.points) : null,
               zoom: 17,
               minZoom: 3,
               maxZoom: 18,

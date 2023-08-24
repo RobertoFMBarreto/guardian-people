@@ -3,7 +3,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 
 class DeviceItemRemovable extends StatelessWidget {
-  final String deviceImei;
+  final String deviceTitle;
   final int deviceData;
   final int deviceBattery;
   final Function() onRemoveDevice;
@@ -11,7 +11,7 @@ class DeviceItemRemovable extends StatelessWidget {
 
   const DeviceItemRemovable({
     super.key,
-    required this.deviceImei,
+    required this.deviceTitle,
     required this.deviceData,
     required this.deviceBattery,
     required this.onRemoveDevice,
@@ -46,7 +46,7 @@ class DeviceItemRemovable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  deviceImei.toString(),
+                  deviceTitle.toString(),
                   style: theme.textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.w600,
                     fontSize: 18,

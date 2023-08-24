@@ -13,7 +13,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
-  const ProducerDevicesPage({super.key, this.isSelect = false});
+  final String? fenceId;
+  const ProducerDevicesPage({super.key, this.isSelect = false, this.fenceId});
 
   @override
   State<ProducerDevicesPage> createState() => _ProducerDevicesPageState();
@@ -41,12 +42,31 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
-        getUserDevices(uid).then(
-          (filteredDevices) => setState(() {
-            devices = [];
-            devices.addAll(filteredDevices);
-          }),
-        );
+        print(widget.isSelect);
+        print(widget.fenceId != null);
+        if (widget.isSelect && widget.fenceId != null) {
+          getUserFenceUnselectedDevicesFiltered(
+            batteryRangeValues: _batteryRangeValues,
+            elevationRangeValues: _elevationRangeValues,
+            dtUsageRangeValues: _dtUsageRangeValues,
+            searchString: searchString,
+            tmpRangeValues: _tmpRangeValues,
+            uid: uid,
+            fenceId: widget.fenceId!,
+          ).then((searchDevices) {
+            setState(() {
+              devices = [];
+              devices.addAll(searchDevices);
+            });
+          });
+        } else {
+          getUserDevices(uid).then(
+            (filteredDevices) => setState(() {
+              devices = [];
+              devices.addAll(filteredDevices);
+            }),
+          );
+        }
       }
     });
 
@@ -54,19 +74,36 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   }
 
   Future<void> _filterDevices() async {
-    await getUserDevicesFiltered(
-      batteryRangeValues: _batteryRangeValues,
-      elevationRangeValues: _elevationRangeValues,
-      dtUsageRangeValues: _dtUsageRangeValues,
-      searchString: searchString,
-      tmpRangeValues: _tmpRangeValues,
-      uid: uid,
-    ).then((searchDevices) {
-      setState(() {
-        devices = [];
-        devices.addAll(searchDevices);
+    if (widget.isSelect && widget.fenceId != null) {
+      await getUserFenceUnselectedDevicesFiltered(
+        batteryRangeValues: _batteryRangeValues,
+        elevationRangeValues: _elevationRangeValues,
+        dtUsageRangeValues: _dtUsageRangeValues,
+        searchString: searchString,
+        tmpRangeValues: _tmpRangeValues,
+        uid: uid,
+        fenceId: widget.fenceId!,
+      ).then((searchDevices) {
+        setState(() {
+          devices = [];
+          devices.addAll(searchDevices);
+        });
       });
-    });
+    } else {
+      await getUserDevicesFiltered(
+        batteryRangeValues: _batteryRangeValues,
+        elevationRangeValues: _elevationRangeValues,
+        dtUsageRangeValues: _dtUsageRangeValues,
+        searchString: searchString,
+        tmpRangeValues: _tmpRangeValues,
+        uid: uid,
+      ).then((searchDevices) {
+        setState(() {
+          devices = [];
+          devices.addAll(searchDevices);
+        });
+      });
+    }
   }
 
   Future<void> _resetFilters() async {
@@ -162,11 +199,11 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                               deviceData: devices[index].data!.first.dataUsage,
                               deviceBattery: devices[index].data!.first.battery,
                               isSelected: selectedDevices
-                                  .where((element) => element.imei == devices[index].imei)
+                                  .where((element) => element.deviceId == devices[index].deviceId)
                                   .isNotEmpty,
                               onSelected: () {
-                                int i = selectedDevices
-                                    .indexWhere((element) => element.imei == devices[index].imei);
+                                int i = selectedDevices.indexWhere(
+                                    (element) => element.deviceId == devices[index].deviceId);
                                 setState(() {
                                   if (i >= 0) {
                                     selectedDevices.removeAt(i);
@@ -192,13 +229,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                   Navigator.of(context).pop(selectedDevices);
                 },
                 label: Text(
-                  'Concluído',
+                  localizations.confirm.capitalize(),
                   style: theme.textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.done),
                 backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: theme.colorScheme.onSecondary,
               )

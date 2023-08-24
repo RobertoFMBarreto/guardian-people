@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/db/fence_devices_operations.dart';
+import 'package:guardian/db/fence_operations.dart';
+import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/data_models/Fences/fence_devices.dart';
+import 'package:guardian/models/data_models/Fences/fence_points.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
@@ -12,6 +17,7 @@ import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:latlong2/latlong.dart';
 
 class ManageFencePage extends StatefulWidget {
   final Fence fence;
@@ -26,6 +32,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   // color picker values
   Color fenceColor = gdMapGeofenceFillColor;
   String fenceHexColor = '';
+  List<LatLng> points = [];
 
   late String uid;
 
@@ -41,7 +48,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
-        getUserDevicesWithData(uid).then(
+        getFenceDevices(widget.fence.fenceId).then(
           (allDevices) => setState(() => devices.addAll(allDevices)),
         );
       }
@@ -70,7 +77,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: DevicesLocationsMap(
-                    key: Key(widget.fence.color),
+                    key: Key('${widget.fence.color}$points'),
                     showCurrentPosition: true,
                     devices: devices,
                     centerOnPoly: true,
@@ -101,6 +108,11 @@ class _ManageFencePageState extends State<ManageFencePage> {
                               fenceColor = color;
                               widget.fence.color = HexColor.toHex(color: fenceColor);
                             });
+                            updateFence(
+                              widget.fence.copy(
+                                color: HexColor.toHex(color: fenceColor),
+                              ),
+                            );
                           },
                           hexColor: HexColor.toHex(color: fenceColor),
                         ),
@@ -123,8 +135,29 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   IconButton(
                     onPressed: () async {
                       //!TODO: search and select devices
-                      final selectedDevices = await Navigator.of(context)
-                          .pushNamed('/producer/devices', arguments: true);
+                      Navigator.of(context).pushNamed(
+                        '/producer/devices',
+                        arguments: {
+                          'isSelect': true,
+                          'fenceId': widget.fence.fenceId,
+                        },
+                      ).then((selectedDevices) async {
+                        if (selectedDevices != null &&
+                            selectedDevices.runtimeType == List<Device>) {
+                          final selected = selectedDevices as List<Device>;
+                          setState(() {
+                            devices.addAll(selected);
+                          });
+                          for (var device in selected) {
+                            await createFenceDevice(
+                              FenceDevices(
+                                fenceId: widget.fence.fenceId,
+                                deviceId: device.deviceId,
+                              ),
+                            );
+                          }
+                        }
+                      });
                     },
                     icon: const Icon(Icons.add),
                   ),
@@ -143,11 +176,21 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       vertical: 8.0,
                     ),
                     child: DeviceItemRemovable(
-                      deviceImei: devices[index].imei,
+                      key: Key(devices[index].deviceId),
+                      deviceTitle: devices[index].name,
                       deviceData: devices[index].data!.first.dataUsage,
                       deviceBattery: devices[index].data!.first.battery,
                       onRemoveDevice: () {
                         //!TODO: On remove device
+                        removeDeviceFence(widget.fence.fenceId, devices[index].deviceId).then(
+                          (_) {
+                            setState(() {
+                              devices.removeWhere(
+                                (element) => element.deviceId == devices[index].deviceId,
+                              );
+                            });
+                          },
+                        );
                       },
                     ),
                   ),
@@ -189,7 +232,19 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 borderRadius: BorderRadius.circular(50),
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed('/producer/geofencing', arguments: widget.fence);
+                Navigator.of(context)
+                    .pushNamed('/producer/geofencing', arguments: widget.fence)
+                    .then(
+                  (newPoints) async {
+                    if (newPoints != null && newPoints.runtimeType == List<LatLng>) {
+                      await createFencePointFromList(
+                        newPoints as List<LatLng>,
+                        widget.fence.fenceId,
+                      );
+                      setState(() {});
+                    }
+                  },
+                );
               },
               label: Padding(
                 padding: const EdgeInsets.only(left: 4.0),

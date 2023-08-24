@@ -162,9 +162,11 @@ class MyApp extends StatelessWidget {
           }
         },
         '/producer/devices': (context) {
-          if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
-            return const ProducerDevicesPage(
-              isSelect: true,
+          final args = ModalRoute.of(context)!.settings.arguments;
+          if (args != null) {
+            return ProducerDevicesPage(
+              isSelect: (args as Map<String, dynamic>)['isSelect'] as bool,
+              fenceId: (args as Map<String, dynamic>)['fenceId'] as String,
             );
           } else {
             return const ProducerDevicesPage();

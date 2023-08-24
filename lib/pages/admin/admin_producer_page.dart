@@ -249,7 +249,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                   ),
                   child: isRemoveMode
                       ? DeviceItemRemovable(
-                          deviceImei: devices[index].imei,
+                          deviceTitle: devices[index].imei,
                           deviceData: devices[index].data!.first.dataUsage,
                           deviceBattery: devices[index].data!.first.battery,
                           onRemoveDevice: () {},
