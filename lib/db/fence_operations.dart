@@ -1,5 +1,6 @@
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<Fence> createFence(Fence fence) async {

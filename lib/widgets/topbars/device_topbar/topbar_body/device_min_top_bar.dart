@@ -23,7 +23,7 @@ class DeviceMinTopBar extends StatelessWidget {
             icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSecondary),
           ),
           Text(
-            device.imei,
+            device.name,
             style: theme.textTheme.bodyMedium!.copyWith(color: theme.colorScheme.onSecondary),
           ),
         ],

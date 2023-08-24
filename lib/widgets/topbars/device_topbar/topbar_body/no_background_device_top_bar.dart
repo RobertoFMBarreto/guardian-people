@@ -86,7 +86,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        'Nome Dispositivo',
+                        widget.device.name,
                         style: theme.textTheme.headlineMedium!.copyWith(
                           color: theme.colorScheme.onSecondary,
                           fontSize: 40,
@@ -98,7 +98,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                           IconText(
                             icon: Icons.sim_card,
                             iconColor: theme.colorScheme.onSecondary,
-                            text: '10/10MB',
+                            text: '${widget.device.data!.first.dataUsage}/10MB',
                             fontSize: 23,
                             iconSize: 25,
                             textColor: theme.colorScheme.onSecondary,
@@ -107,7 +107,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                             isInverted: true,
                             icon: Icons.landscape,
                             iconColor: theme.colorScheme.onSecondary,
-                            text: '400m',
+                            text: '${widget.device.data!.first.elevation.round()}m',
                             fontSize: 23,
                             iconSize: 30,
                             textColor: theme.colorScheme.onSecondary,
@@ -120,7 +120,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                           IconText(
                             icon: Icons.device_thermostat,
                             iconColor: theme.colorScheme.onSecondary,
-                            text: '24ºC',
+                            text: '${widget.device.data!.first.temperature}ºC',
                             fontSize: 23,
                             iconSize: 30,
                             textColor: theme.colorScheme.onSecondary,
@@ -132,7 +132,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                             ),
                             isInverted: true,
                             iconColor: theme.colorScheme.onSecondary,
-                            text: '80%',
+                            text: '${widget.device.data!.first.battery}%',
                             fontSize: 23,
                             iconSize: 30,
                             textColor: theme.colorScheme.onSecondary,

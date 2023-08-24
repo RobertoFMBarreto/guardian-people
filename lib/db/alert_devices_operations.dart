@@ -60,7 +60,6 @@ Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
     whereArgs: [deviceId],
   );
   List<UserAlert> alerts = [];
-  print('Alert Devices: $data');
 
   if (data.isNotEmpty) {
     for (var alertData in data) {

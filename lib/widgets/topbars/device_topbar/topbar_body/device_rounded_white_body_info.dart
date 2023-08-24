@@ -81,7 +81,7 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                           isInverted: true,
                           icon: Icons.landscape,
                           iconColor: theme.colorScheme.secondary,
-                          text: '${device.data!.first.elevation}m',
+                          text: '${device.data!.first.elevation.round()}m',
                           fontSize: 23,
                           iconSize: 30,
                         ),
