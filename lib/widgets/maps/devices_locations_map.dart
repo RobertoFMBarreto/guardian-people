@@ -58,9 +58,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
         .then((Position position) {
       setState(() => _currentPosition = position);
-    }).catchError((e) {
-      debugPrint(e);
-    });
+    }).catchError((e) {});
   }
 
   Future<void> _loadFences() async {
@@ -92,11 +90,12 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
         );
       }
     }
-
-    setState(() {
-      polygons.addAll(allPolygons);
-      circles.addAll(allCircles);
-    });
+    if (mounted) {
+      setState(() {
+        polygons.addAll(allPolygons);
+        circles.addAll(allCircles);
+      });
+    }
   }
 
   @override

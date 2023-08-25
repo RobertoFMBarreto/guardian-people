@@ -83,5 +83,6 @@
   "device_settings": "device settings",
   "device_warnings": "device warnings",
   "device_fences": "device fences",
-  "select_all": "select all"
+  "select_all": "select all",
+  "fence_name": "fence name"
 }
