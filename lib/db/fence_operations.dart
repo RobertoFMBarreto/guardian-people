@@ -1,3 +1,5 @@
+import 'package:guardian/db/fence_devices_operations.dart';
+import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
@@ -19,6 +21,19 @@ Future<Fence> updateFence(Fence fence) async {
   await db.update(
     tableFence,
     fence.toJson(),
+    where: '${FenceFields.fenceId} = ?',
+    whereArgs: [fence.fenceId],
+  );
+
+  return fence;
+}
+
+Future<Fence> removeFence(Fence fence) async {
+  final db = await GuardianDatabase().database;
+  await removeAllFenceDevices(fence.fenceId);
+  await removeAllFencePoints(fence.fenceId);
+  await db.delete(
+    tableFence,
     where: '${FenceFields.fenceId} = ?',
     whereArgs: [fence.fenceId],
   );

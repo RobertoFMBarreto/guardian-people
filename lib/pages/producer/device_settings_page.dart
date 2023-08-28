@@ -225,8 +225,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          updateDevice(widget.device.copy(name: deviceName))
-                              .then((value) => Navigator.of(context).pop());
+                          final newDevice = widget.device.copy(name: deviceName);
+                          updateDevice(newDevice)
+                              .then((value) => Navigator.of(context).pop(newDevice));
                         },
                         child: Text(
                           localizations.confirm.capitalize(),

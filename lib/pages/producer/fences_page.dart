@@ -38,9 +38,7 @@ class _FencesPageState extends State<FencesPage> {
       (userId) {
         if (userId != null) {
           uid = userId;
-          getUserFences(uid).then((allFences) {
-            setState(() => fences.addAll(allFences));
-          });
+          _searchFences();
         }
       },
     );
@@ -92,7 +90,9 @@ class _FencesPageState extends State<FencesPage> {
                     backgroundColor: theme.colorScheme.secondary,
                     onPressed: () {
                       //!TODO:code to add a new fence
-                      Navigator.of(context).pushNamed('/producer/geofencing');
+                      Navigator.of(context).pushNamed('/producer/geofencing').then(
+                            (_) => _loadFences(),
+                          );
                     },
                     child: Icon(
                       Icons.add,
@@ -133,7 +133,10 @@ class _FencesPageState extends State<FencesPage> {
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () {
                             Navigator.of(context)
-                                .pushNamed('/producer/fence/manage', arguments: fences[index]);
+                                .pushNamed('/producer/fence/manage', arguments: fences[index])
+                                .then(
+                                  (_) => _loadFences(),
+                                );
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -159,6 +162,7 @@ class _FencesPageState extends State<FencesPage> {
                                     color: HexColor(fences[index].color),
                                     onRemove: () {
                                       //!TODO remove item from list
+                                      removeFence(fences[index]).then((_) => _loadFences());
                                     },
                                   ),
                           ),

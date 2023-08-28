@@ -121,7 +121,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                                   ),
                                 ),
                                 Text(
-                                  widget.deviceData[index].dateTime.toString(),
+                                  widget.deviceData[index].dateTime.toLocal().toString(),
                                   style: theme.textTheme.bodyMedium,
                                 ),
                               ],

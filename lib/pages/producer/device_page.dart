@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
@@ -17,6 +18,17 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> {
   bool isInterval = false;
+  late Device device;
+  @override
+  void initState() {
+    device = widget.device;
+
+    super.initState();
+  }
+
+  void _reloadDevice() {
+    getDevice(device.deviceId).then((deviceData) => setState(() => device = deviceData!));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +39,7 @@ class _DevicePageState extends State<DevicePage> {
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
+              key: Key(device.name),
               pinned: true,
               delegate: SliverDeviceAppBar(
                 title: Padding(
@@ -67,7 +80,7 @@ class _DevicePageState extends State<DevicePage> {
                     ],
                   ),
                 ),
-                device: widget.device,
+                device: device,
                 leadingWidget: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
@@ -86,17 +99,25 @@ class _DevicePageState extends State<DevicePage> {
                   ),
                   onPressed: () {
                     //TODO: Code for settings of device
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context)
+                        .pushNamed(
                       '/producer/device/settings',
-                      arguments: widget.device,
-                    );
+                      arguments: device,
+                    )
+                        .then((newDevice) {
+                      print(newDevice);
+                      print(newDevice != null && newDevice.runtimeType == Device);
+                      if (newDevice != null && newDevice.runtimeType == Device) {
+                        setState(() => device = (newDevice as Device));
+                      }
+                    });
                   },
                 ),
               ),
             ),
             SliverToBoxAdapter(
               child: DeviceMapWidget(
-                device: widget.device,
+                device: device,
                 isInterval: isInterval,
               ),
             ),

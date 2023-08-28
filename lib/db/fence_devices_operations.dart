@@ -46,6 +46,15 @@ Future<void> removeDeviceFence(String fenceId, String deviceId) async {
   );
 }
 
+Future<void> removeAllFenceDevices(String fenceId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableFenceDevices,
+    where: '${FenceDevicesFields.fenceId} = ?',
+    whereArgs: [fenceId],
+  );
+}
+
 Future<List<Device>> getFenceDevices(String fenceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(

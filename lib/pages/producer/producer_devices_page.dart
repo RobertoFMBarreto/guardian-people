@@ -215,6 +215,9 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                             )
                           : DeviceItem(
                               device: devices[index],
+                              onBackFromDeviceScreen: () {
+                                _filterDevices();
+                              },
                             ),
                     ),
                   ),

@@ -9,12 +9,14 @@ class DeviceItem extends StatelessWidget {
   final Device device;
   final bool isBlocked;
   final bool isPopPush;
+  final Function? onBackFromDeviceScreen;
 
   const DeviceItem({
     super.key,
     this.isBlocked = false,
     this.isPopPush = false,
     required this.device,
+    this.onBackFromDeviceScreen,
   });
 
   @override
@@ -27,13 +29,19 @@ class DeviceItem extends StatelessWidget {
           if (uid != null) {
             userIsAdmin(uid).then((isAdmin) {
               if (isPopPush) {
-                Navigator.of(context).popAndPushNamed(
-                    isAdmin ? '/admin/producer/device' : '/producer/device',
-                    arguments: device);
+                Navigator.of(context)
+                    .popAndPushNamed(isAdmin ? '/admin/producer/device' : '/producer/device',
+                        arguments: device)
+                    .then((_) {
+                  if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
+                });
               } else {
-                Navigator.of(context).pushNamed(
-                    isAdmin ? '/admin/producer/device' : '/producer/device',
-                    arguments: device);
+                Navigator.of(context)
+                    .pushNamed(isAdmin ? '/admin/producer/device' : '/producer/device',
+                        arguments: device)
+                    .then((_) {
+                  if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
+                });
               }
             });
           }

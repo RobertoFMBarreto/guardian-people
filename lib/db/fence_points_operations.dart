@@ -60,3 +60,12 @@ Future<List<LatLng>> getFencePoints(String fenceId) async {
 
   return fencePoints;
 }
+
+Future<void> removeAllFencePoints(String fenceId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableFencePoints,
+    where: '${FencePointsFields.fenceId} = ?',
+    whereArgs: [fenceId],
+  );
+}

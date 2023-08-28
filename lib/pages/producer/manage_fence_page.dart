@@ -79,7 +79,10 @@ class _ManageFencePageState extends State<ManageFencePage> {
               centerTitle: true,
               actions: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    //!TODO call service to delete fence
+                    removeFence(fence).then((_) => Navigator.of(context).pop());
+                  },
                   child: Text(
                     localizations.remove.capitalize(),
                     style: theme.textTheme.bodyLarge!
@@ -151,7 +154,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            //!TODO: search and select devices
                             Navigator.of(context).pushNamed(
                               '/producer/devices',
                               arguments: {
@@ -185,7 +187,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      //!TODO: get devices from fence data
                       child: ListView.builder(
                         itemCount: devices.length,
                         itemBuilder: (context, index) => Padding(
