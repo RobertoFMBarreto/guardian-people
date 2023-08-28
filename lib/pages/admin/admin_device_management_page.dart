@@ -27,7 +27,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   }
 
   Future<void> _loadDevices() async {
-    getUserDevices(widget.producerId).then((allDevices) {
+    getUserDevices(uid: widget.producerId).then((allDevices) {
       setState(() {
         devices.addAll(allDevices);
         isLoading = false;

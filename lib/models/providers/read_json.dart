@@ -164,7 +164,6 @@ Future<List<Fence>> loadUserFences(String uid) async {
           name: fence["name"],
           color: fence["color"],
           fenceId: fence["id"],
-          uid: fence["uid"],
         ),
       );
     }

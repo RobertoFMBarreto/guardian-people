@@ -109,7 +109,6 @@ class GuardianDatabase {
     await db.execute("""
       CREATE TABLE IF NOT EXISTS $tableFence (
         ${FenceFields.fenceId} $idType,
-        ${FenceFields.uid} $textType,
         ${FenceFields.name} $textType,
         ${FenceFields.color} $textType
       )""");

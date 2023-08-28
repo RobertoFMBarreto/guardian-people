@@ -1,9 +1,11 @@
+import 'package:guardian/db/device_data_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<AlertDevices> addAlertDevice(AlertDevices alertDevice) async {
@@ -28,6 +30,15 @@ Future<AlertDevices> addAlertDevice(AlertDevices alertDevice) async {
   return alertDevice;
 }
 
+Future<void> removeAllAlertDevices(String alertId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableAlertDevices,
+    where: '${AlertDevicesFields.alertId} = ? ',
+    whereArgs: [alertId],
+  );
+}
+
 Future<void> removeAlertDevice(String alertId, String deviceId) async {
   final db = await GuardianDatabase().database;
   await db.delete(
@@ -37,7 +48,7 @@ Future<void> removeAlertDevice(String alertId, String deviceId) async {
   );
 }
 
-Future<Device?> getAlertDevice(String alertId) async {
+Future<List<Device>> getAlertDevices(String alertId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
@@ -45,11 +56,21 @@ Future<Device?> getAlertDevice(String alertId) async {
     whereArgs: [alertId],
   );
 
+  List<Device> devices = [];
+
   if (data.isNotEmpty) {
-    final deviceId = AlertDevices.fromJson(data.first).deviceId;
-    return await getDevice(deviceId);
+    for (var alertData in data) {
+      final deviceId = AlertDevices.fromJson(alertData).deviceId;
+      Device? device = await getDevice(deviceId);
+      if (device != null) {
+        final lastDeviceData = await getLastDeviceData(deviceId);
+        List<DeviceData> deviceData = lastDeviceData != null ? [lastDeviceData] : [];
+        device.data = deviceData;
+        devices.add(device);
+      }
+    }
   }
-  return null;
+  return devices;
 }
 
 Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {

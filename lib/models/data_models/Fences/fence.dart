@@ -6,19 +6,16 @@ const String tableFence = 'fences';
 
 class FenceFields {
   static const String fenceId = 'fence_id';
-  static const String uid = 'uid';
   static const String name = 'name';
   static const String color = 'color';
 }
 
 class Fence {
   final String fenceId;
-  final String uid;
   final String name;
   String color;
   Fence({
     required this.fenceId,
-    required this.uid,
     required this.name,
     required this.color,
   });
@@ -31,20 +28,17 @@ class Fence {
   }) =>
       Fence(
         fenceId: fenceId ?? this.fenceId,
-        uid: uid ?? this.uid,
         name: name ?? this.name,
         color: color ?? this.color,
       );
 
   Map<String, Object?> toJson() => {
-        FenceFields.uid: uid,
         FenceFields.fenceId: fenceId,
         FenceFields.color: color,
         FenceFields.name: name,
       };
 
   static Fence fromJson(Map<String, Object?> json) => Fence(
-        uid: json[FenceFields.uid] as String,
         fenceId: json[FenceFields.fenceId] as String,
         color: json[FenceFields.color] as String,
         name: json[FenceFields.name] as String,

@@ -106,12 +106,10 @@ const String tableUserAlerts = 'user_alerts';
 
 class UserAlertFields {
   static const String alertId = 'alert_id';
-  static const String uid = 'uid';
   static const String hasNotification = 'has_notification';
   static const String parameter = 'parameter';
   static const String comparisson = 'comparisson';
   static const String value = 'value';
-  static const String deviceId = 'device_id';
 }
 
 class UserAlert {

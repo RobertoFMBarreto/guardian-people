@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/key_value_pair.dart';
 
-class AlertComparissonDropdown extends StatelessWidget {
-  final AlertComparissons value;
+class CustomDropdown extends StatelessWidget {
+  final Object value;
   final List<KeyValuePair> values;
   final Function(Object?) onChanged;
-  const AlertComparissonDropdown({
+  const CustomDropdown({
     super.key,
     required this.value,
     required this.values,

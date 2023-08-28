@@ -61,8 +61,8 @@ class Device {
       );
 
   Map<String, Object?> toJson() => {
-        DeviceFields.deviceId: deviceId,
         DeviceFields.uid: uid,
+        DeviceFields.deviceId: deviceId,
         DeviceFields.imei: imei,
         DeviceFields.color: color,
         DeviceFields.name: name,

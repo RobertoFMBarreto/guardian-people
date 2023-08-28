@@ -80,6 +80,7 @@ Future<List<UserAlert>> getUserAlerts(String uid) async {
   final data = await db.query(
     tableUserAlerts,
   );
+  print(data);
   List<UserAlert> alerts = [];
   if (data.isNotEmpty) {
     alerts.addAll(data.map((e) => UserAlert.fromJson(e)).toList());
@@ -87,12 +88,10 @@ Future<List<UserAlert>> getUserAlerts(String uid) async {
   return alerts;
 }
 
-Future<List<UserAlert>> getUserDeviceAlerts(String deviceId) async {
+Future<List<UserAlert>> getUserDeviceAlerts() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableUserAlerts,
-    where: '${UserAlertFields.deviceId} = ?',
-    whereArgs: [deviceId],
   );
   List<UserAlert> alerts = [];
 

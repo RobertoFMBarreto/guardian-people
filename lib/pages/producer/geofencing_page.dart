@@ -381,7 +381,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                       await createFence(
                                         Fence(
                                           fenceId: fenceName,
-                                          uid: uid,
                                           name: fenceName,
                                           color: HexColor.toHex(color: fenceColor),
                                         ),

@@ -52,13 +52,13 @@ class _ProducerHomeState extends State<ProducerHome> {
   }
 
   Future<void> _loadDevices(String uid) async {
-    await getUserDevicesWithData(uid).then((allDevices) {
+    await getUserDevicesWithData().then((allDevices) {
       return setState(() => devices.addAll(allDevices));
     });
   }
 
   Future<void> _loadFences(String uid) async {
-    await getUserFences(uid).then((allFences) => setState(() => fences.addAll(allFences)));
+    await getUserFences().then((allFences) => setState(() => fences.addAll(allFences)));
   }
 
   Future<void> _loadAlertNotifications(String uid) async {

@@ -58,7 +58,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
       if (mounted) {
         if (userId != null) {
           uid = userId;
-          getUserFences(uid).then((allFences) {
+          getUserFences().then((allFences) {
             setState(() => fences.addAll(allFences));
           });
         }

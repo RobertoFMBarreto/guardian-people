@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
+import 'package:guardian/pages/producer/add_alert_page.dart';
 import 'package:guardian/pages/producer/alerts_management_page.dart';
 import 'package:guardian/pages/producer/alerts_page.dart';
 import 'package:guardian/pages/producer/device_page.dart';
@@ -164,9 +166,15 @@ class MyApp extends StatelessWidget {
         '/producer/devices': (context) {
           final args = ModalRoute.of(context)!.settings.arguments;
           if (args != null) {
+            final data = (args as Map<String, dynamic>);
+
             return ProducerDevicesPage(
-              isSelect: (args as Map<String, dynamic>)['isSelect'] as bool,
-              fenceId: (args as Map<String, dynamic>)['fenceId'] as String,
+              isSelect: data['isSelect'] as bool,
+              fenceId: data.containsKey('fenceId') ? data['fenceId'] as String : null,
+              alertId: data.containsKey('alertId') ? data['alertId'] as String : null,
+              notToShowDevices: data.containsKey('notToShowDevices')
+                  ? data['notToShowDevices'] as List<String>
+                  : null,
             );
           } else {
             return const ProducerDevicesPage();
@@ -191,6 +199,18 @@ class MyApp extends StatelessWidget {
           }
         },
         '/producer/alerts': (context) => const AlertsPage(),
+        '/producer/alerts/add': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments;
+          if (args != null) {
+            final data = args as Map<String, dynamic>;
+            return AddAlertPage(
+              isEdit: data['isEdit'] as bool,
+              alert: data['alert'] as UserAlert,
+            );
+          } else {
+            return const AddAlertPage();
+          }
+        },
         '/producer/alert/management': (context) {
           if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
             return AlertsManagementPage(

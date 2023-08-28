@@ -14,7 +14,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
   final String? fenceId;
-  const ProducerDevicesPage({super.key, this.isSelect = false, this.fenceId});
+  final String? alertId;
+  final List<String>? notToShowDevices;
+  const ProducerDevicesPage({
+    super.key,
+    this.isSelect = false,
+    this.fenceId,
+    this.alertId,
+    this.notToShowDevices,
+  });
 
   @override
   State<ProducerDevicesPage> createState() => _ProducerDevicesPageState();
@@ -42,31 +50,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
-        print(widget.isSelect);
-        print(widget.fenceId != null);
-        if (widget.isSelect && widget.fenceId != null) {
-          getUserFenceUnselectedDevicesFiltered(
-            batteryRangeValues: _batteryRangeValues,
-            elevationRangeValues: _elevationRangeValues,
-            dtUsageRangeValues: _dtUsageRangeValues,
-            searchString: searchString,
-            tmpRangeValues: _tmpRangeValues,
-            uid: uid,
-            fenceId: widget.fenceId!,
-          ).then((searchDevices) {
-            setState(() {
-              devices = [];
-              devices.addAll(searchDevices);
-            });
-          });
-        } else {
-          getUserDevices(uid).then(
-            (filteredDevices) => setState(() {
-              devices = [];
-              devices.addAll(filteredDevices);
-            }),
-          );
-        }
+        _filterDevices();
       }
     });
 
@@ -89,7 +73,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           devices.addAll(searchDevices);
         });
       });
-    } else {
+    } else if (widget.isSelect && widget.alertId != null) {
       await getUserDevicesFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
@@ -100,9 +84,32 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
       ).then((searchDevices) {
         setState(() {
           devices = [];
-          devices.addAll(searchDevices);
+          if (widget.notToShowDevices != null) {
+            devices.addAll(
+              searchDevices.where(
+                (device) => !widget.notToShowDevices!.contains(device.deviceId),
+              ),
+            );
+          } else {
+            devices.addAll(searchDevices);
+          }
         });
       });
+    } else {
+      getUserDevices().then(
+        (filteredDevices) => setState(() {
+          devices = [];
+          if (widget.notToShowDevices != null) {
+            devices.addAll(
+              filteredDevices.where(
+                (device) => !widget.notToShowDevices!.contains(device.deviceId),
+              ),
+            );
+          } else {
+            devices.addAll(filteredDevices);
+          }
+        }),
+      );
     }
   }
 

@@ -3,7 +3,9 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
+import 'package:guardian/models/key_value_pair.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
+import 'package:guardian/widgets/inputs/custom_dropdown.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_comparisson_dropdown.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_parameter_dropdown.dart';
 
@@ -90,16 +92,29 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  AlertComparissonDropdown(
+                  CustomDropdown(
                     value: alertComparisson,
+                    values: AlertComparissons.values
+                        .map((e) => KeyValuePair(key: e.toString(), value: e))
+                        .toList(),
                     onChanged: (value) {
                       setState(() {
                         if (value != null) {
-                          alertComparisson = value;
+                          alertComparisson = value as AlertComparissons;
                         }
                       });
                     },
                   ),
+                  // AlertComparissonDropdown(
+                  //   value: alertComparisson,
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       if (value != null) {
+                  //         alertComparisson = value;
+                  //       }
+                  //     });
+                  //   },
+                  // ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(

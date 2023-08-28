@@ -2,7 +2,6 @@ import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
-import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<Fence> createFence(Fence fence) async {
@@ -56,12 +55,10 @@ Future<Fence?> getFence(String fenceId) async {
   return null;
 }
 
-Future<List<Fence>> getUserFences(String uid) async {
+Future<List<Fence>> getUserFences() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFence,
-    where: '${FenceFields.uid} = ?',
-    whereArgs: [uid],
   );
   List<Fence> fences = [];
   if (data.isNotEmpty) {
