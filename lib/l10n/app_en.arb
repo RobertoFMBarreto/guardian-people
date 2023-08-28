@@ -84,5 +84,6 @@
   "device_warnings": "device warnings",
   "device_fences": "device fences",
   "select_all": "select all",
-  "fence_name": "fence name"
+  "fence_name": "fence name",
+  "remove_all": "delete all"
 }

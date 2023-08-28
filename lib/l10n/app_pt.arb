@@ -84,5 +84,6 @@
   "device_warnings": "alertas do dispositivo",
   "device_fences": "cercas do dispositivo",
   "select_all": "selecionar todos",
-  "fence_name": "nome da cerca"
+  "fence_name": "nome da cerca",
+  "remove_all": "apagar todos"
 }

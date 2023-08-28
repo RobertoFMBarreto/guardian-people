@@ -125,8 +125,6 @@ Future<List<UserAlert>> loadAlerts() async {
         comparisson: comparisson,
         value: alert['value'],
         alertId: alert['id'],
-        deviceId: alert['device'],
-        uid: alert['uid'],
       ),
     );
   }

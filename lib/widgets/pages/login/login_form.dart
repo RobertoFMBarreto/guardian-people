@@ -89,6 +89,9 @@ class _LoginFormState extends State<LoginForm> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TextFormField(
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
                     decoration: const InputDecoration(
                       label: Text('Password'),
                     ),

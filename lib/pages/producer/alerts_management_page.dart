@@ -80,24 +80,41 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                         children: [
                           TextButton.icon(
                             onPressed: () {
-                              if (selectedAlerts.length == alerts.length) {
-                                setState(() {
-                                  selectedAlerts.removeRange(0, selectedAlerts.length);
-                                });
+                              if (widget.isSelect) {
+                                if (selectedAlerts.length == alerts.length) {
+                                  setState(() {
+                                    selectedAlerts.removeRange(0, selectedAlerts.length);
+                                  });
+                                } else {
+                                  setState(() {
+                                    selectedAlerts.addAll(alerts);
+                                  });
+                                }
                               } else {
+                                deleteAllAlerts();
                                 setState(() {
-                                  selectedAlerts.addAll(alerts);
+                                  alerts = [];
                                 });
                               }
                             },
                             icon: Icon(
-                              selectedAlerts.length == alerts.length ? Icons.close : Icons.done,
-                              color: theme.colorScheme.secondary,
+                              !widget.isSelect
+                                  ? Icons.delete_forever
+                                  : selectedAlerts.length == alerts.length
+                                      ? Icons.close
+                                      : Icons.done,
+                              color: widget.isSelect
+                                  ? theme.colorScheme.secondary
+                                  : theme.colorScheme.error,
                             ),
                             label: Text(
-                              localizations.select_all.capitalize(),
+                              widget.isSelect
+                                  ? localizations.select_all.capitalize()
+                                  : localizations.remove_all.capitalize(),
                               style: theme.textTheme.bodyLarge!.copyWith(
-                                color: theme.colorScheme.secondary,
+                                color: widget.isSelect
+                                    ? theme.colorScheme.secondary
+                                    : theme.colorScheme.error,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -126,28 +143,44 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                     });
                                   }
                                 })
-                            : GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (context) => AddAlertBottomSheet(
-                                      comparisson: alerts[index].comparisson,
-                                      hasNotification: alerts[index].hasNotification,
-                                      parameter: alerts[index].parameter,
-                                      value: alerts[index].value,
-                                      isEdit: true,
-                                      onConfirm: (parameter, comparisson, value, hasNotification) {
-                                        //TODO: edit alert code
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: AlertManagementItem(
-                                  alert: alerts[index],
-                                  onDelete: (alert) {
-                                    //!TODO: Remove code
+                            : Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (context) => AddAlertBottomSheet(
+                                        comparisson: alerts[index].comparisson,
+                                        hasNotification: alerts[index].hasNotification,
+                                        parameter: alerts[index].parameter,
+                                        value: alerts[index].value,
+                                        isEdit: true,
+                                        onConfirm:
+                                            (parameter, comparisson, value, hasNotification) {
+                                          final newAlert = alerts[index].copy(
+                                            parameter: parameter,
+                                            comparisson: comparisson,
+                                            value: value,
+                                            hasNotification: hasNotification,
+                                          );
+
+                                          updateUserAlert(newAlert).then(
+                                            (_) {
+                                              Navigator.of(context).pop();
+                                              setState(() => alerts[index] = newAlert);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    );
                                   },
+                                  child: AlertManagementItem(
+                                    alert: alerts[index],
+                                    onDelete: (alert) {
+                                      //!TODO: Remove code
+                                    },
+                                  ),
                                 ),
                               ),
                       ),
@@ -169,7 +202,16 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                     isScrollControlled: true,
                     builder: (context) => AddAlertBottomSheet(
                       onConfirm: (parameter, comparisson, value, hasNotification) {
-                        //TODO: Add alert code
+                        createAlert(
+                          UserAlert(
+                            alertId: (alerts.length + 1).toString(),
+                            hasNotification: hasNotification,
+                            parameter: parameter,
+                            comparisson: comparisson,
+                            value: value,
+                          ),
+                        ).then((newAlert) => setState(() => alerts.add(newAlert)));
+                        Navigator.of(context).pop();
                       },
                     ),
                   );

@@ -136,11 +136,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                           //!TODO: Delete code for alert
                           removeAlertDevice(alert.alertId, widget.device.deviceId);
                           setState(() {
-                            alerts.removeWhere(
-                              (element) =>
-                                  element.alertId == alert.alertId &&
-                                  element.deviceId == widget.device.deviceId,
-                            );
+                            alerts.removeWhere((element) => element.alertId == alert.alertId);
                           });
                         },
                       ),

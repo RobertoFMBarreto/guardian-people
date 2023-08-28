@@ -26,7 +26,7 @@ class GuardianDatabase {
 
     return await openDatabase(
       path,
-      version: 10,
+      version: 11,
       onCreate: (Database database, int version) async {
         await _createDB(database, version);
       },
@@ -82,8 +82,6 @@ class GuardianDatabase {
     await db.execute("""
       CREATE TABLE IF NOT EXISTS $tableUserAlerts (
         ${UserAlertFields.alertId} $idType,
-        ${UserAlertFields.deviceId} $textType,
-        ${UserAlertFields.uid} $textType,
         ${UserAlertFields.hasNotification} $boolType,
         ${UserAlertFields.parameter} $textType,
         ${UserAlertFields.comparisson} $textType,

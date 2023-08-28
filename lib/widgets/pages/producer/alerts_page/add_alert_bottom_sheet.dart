@@ -115,7 +115,8 @@ class _AddAlertBottomSheetState extends State<AddAlertBottomSheet> {
                       decoration: InputDecoration(
                         label: Text(localizations.value.capitalize()),
                       ),
-                      initialValue: comparissonValue.toString(),
+                      keyboardType: TextInputType.number,
+                      initialValue: comparissonValue != 0 ? comparissonValue.toString() : null,
                       validator: (value) {
                         if (value == null) {
                           return localizations.insert_value.capitalize();

@@ -59,6 +59,7 @@ Future<Device?> getDeviceWithData(String deviceId) async {
     tableDevices,
     where: '${DeviceFields.deviceId} = ?',
     whereArgs: [deviceId],
+    orderBy: DeviceFields.name,
   );
 
   if (data.isNotEmpty) {
@@ -75,6 +76,7 @@ Future<List<Device>> getUserDevices(String uid) async {
     tableDevices,
     where: '${DeviceFields.uid} = ?',
     whereArgs: [uid],
+    orderBy: DeviceFields.name,
   );
 
   List<Device> devices = [];
@@ -95,6 +97,7 @@ Future<List<Device>> getUserDevicesWithData(String uid) async {
     tableDevices,
     where: '${DeviceFields.uid} = ?',
     whereArgs: [uid],
+    orderBy: DeviceFields.name,
   );
 
   List<Device> devices = [];
@@ -153,6 +156,8 @@ Future<List<Device>> getUserDevicesFiltered({
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
         deviceData.${DeviceDataFields.elevation} >= ? AND deviceData.${DeviceDataFields.elevation} <= ? AND
         ${DeviceFields.name} LIKE ?
+      ORDER BY
+        ${DeviceFields.name}
     ''',
     [
       uid,
@@ -227,6 +232,8 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
         deviceData.${DeviceDataFields.elevation} >= ? AND deviceData.${DeviceDataFields.elevation} <= ? AND
         ${DeviceFields.name} LIKE ? AND $tableDevices.${DeviceFields.deviceId} NOT IN (SELECT ${DeviceFields.deviceId} FROM $tableFenceDevices)
+      ORDER BY
+        ${DeviceFields.name}
     ''',
     [
       uid,

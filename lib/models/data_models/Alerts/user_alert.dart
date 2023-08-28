@@ -116,8 +116,6 @@ class UserAlertFields {
 
 class UserAlert {
   final String alertId;
-  final String deviceId;
-  final String uid;
   final bool hasNotification;
   final AlertParameter parameter;
   final AlertComparissons comparisson;
@@ -125,8 +123,6 @@ class UserAlert {
 
   UserAlert({
     required this.alertId,
-    required this.deviceId,
-    required this.uid,
     required this.hasNotification,
     required this.parameter,
     required this.comparisson,
@@ -144,8 +140,6 @@ class UserAlert {
   }) =>
       UserAlert(
         alertId: alertId ?? this.alertId,
-        deviceId: deviceId ?? this.deviceId,
-        uid: uid ?? this.uid,
         hasNotification: hasNotification ?? this.hasNotification,
         parameter: parameter ?? this.parameter,
         comparisson: comparisson ?? this.comparisson,
@@ -154,8 +148,6 @@ class UserAlert {
 
   Map<String, Object?> toJson() => {
         UserAlertFields.alertId: alertId,
-        UserAlertFields.deviceId: deviceId,
-        UserAlertFields.uid: uid,
         UserAlertFields.hasNotification: hasNotification ? 1 : 0,
         UserAlertFields.parameter: parameter.toString(),
         UserAlertFields.comparisson: comparisson.toString(),
@@ -167,8 +159,6 @@ class UserAlert {
     final comparisson = parseComparissonFromString(json[UserAlertFields.comparisson] as String);
     return UserAlert(
       alertId: json[UserAlertFields.alertId] as String,
-      deviceId: json[UserAlertFields.deviceId] as String,
-      uid: json[UserAlertFields.uid] as String,
       hasNotification: json[UserAlertFields.hasNotification] == 1,
       parameter: parameter,
       comparisson: comparisson,
