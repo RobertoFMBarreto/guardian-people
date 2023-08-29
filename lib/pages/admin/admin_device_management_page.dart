@@ -18,6 +18,7 @@ class AdminDeviceManagementPage extends StatefulWidget {
 
 class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   List<Device> devices = [];
+  late Device device;
   bool isLoading = true;
 
   @override
@@ -27,9 +28,10 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   }
 
   Future<void> _loadDevices() async {
+    device = widget.device;
     getUserDevices(uid: widget.producerId).then((allDevices) {
       setState(() {
-        devices.addAll(allDevices);
+        devices.addAll(allDevices.where((element) => element.deviceId != device.deviceId));
         isLoading = false;
       });
     });
@@ -65,10 +67,31 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                           Navigator.of(context).pop();
                         },
                       ),
-                      device: devices.first,
+                      device: device,
                     ),
                   ),
-                  OptionButton(device: widget.device),
+                  OptionButton(
+                    key: Key(device.isActive.toString()),
+                    device: device,
+                    onRemove: () {
+                      //TODO: Remove device
+                      deleteDevice(device.deviceId).then((_) {
+                        Navigator.of(context).pop();
+                      });
+                    },
+                    onBlock: () {
+                      //TODO: block device
+
+                      final newDevice = device.copy(isActive: !device.isActive);
+                      updateDevice(newDevice).then((_) {
+                        setState(
+                          () {
+                            device = newDevice;
+                          },
+                        );
+                      });
+                    },
+                  ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
@@ -84,9 +107,13 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                   SliverFillRemaining(
                     child: ListView.builder(
                       itemCount: devices.length,
-                      itemBuilder: (context, index) => DeviceItem(
-                        device: devices[index],
-                        isPopPush: true,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: DeviceItem(
+                          device: devices[index],
+                          isPopPush: true,
+                          producerId: widget.producerId,
+                        ),
                       ),
                     ),
                   )

@@ -25,14 +25,12 @@ class _AlertsPageState extends State<AlertsPage> {
   }
 
   Future<void> _loadAlerts() async {
-    getUid(context).then((userId) {
-      if (userId != null) {
-        getUserNotifications(userId).then(
-          (allAlerts) => alerts.addAll(allAlerts),
-        );
+    getUserNotifications().then(
+      (allAlerts) {
+        alerts.addAll(allAlerts);
         setState(() => isLoading = false);
-      }
-    });
+      },
+    );
   }
 
   @override

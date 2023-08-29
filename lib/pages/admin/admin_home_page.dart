@@ -49,85 +49,82 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   color: theme.colorScheme.secondary,
                 ),
               )
-            : Expanded(
-                child: CustomScrollView(
-                  slivers: [
-                    if (!kIsWeb)
-                      SliverPersistentHeader(
-                        delegate: SliverMainAppBar(
-                          imageUrl: '',
-                          name: 'Admin',
-                          isHomeShape: true,
-                          title: Text(
-                            localizations.highlights.capitalize(),
-                            style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
-                          ),
-                          tailWidget: PopupMenuButton(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            color: theme.colorScheme.onSecondary,
-                            icon: const Icon(Icons.menu),
-                            onSelected: (item) {
-                              switch (item) {
-                                case 0:
-                                  Navigator.of(context).pushNamed('/profile');
-                                  break;
-                                case 1:
-                                  //! Logout code
-                                  clearUserSession().then(
-                                    (value) => Navigator.of(context).popAndPushNamed('/login'),
-                                  );
+            : CustomScrollView(
+                slivers: [
+                  if (!kIsWeb)
+                    SliverPersistentHeader(
+                      delegate: SliverMainAppBar(
+                        imageUrl: '',
+                        name: 'Admin',
+                        isHomeShape: true,
+                        title: Text(
+                          localizations.highlights.capitalize(),
+                          style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
+                        ),
+                        tailWidget: PopupMenuButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          color: theme.colorScheme.onSecondary,
+                          icon: const Icon(Icons.menu),
+                          onSelected: (item) {
+                            switch (item) {
+                              case 0:
+                                Navigator.of(context).pushNamed('/profile');
+                                break;
+                              case 1:
+                                //! Logout code
+                                clearUserSession().then(
+                                  (value) => Navigator.of(context).popAndPushNamed('/login'),
+                                );
 
-                                  break;
-                              }
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              PopupMenuItem(
-                                value: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(localizations.profile.capitalize()),
-                                    const Icon(
-                                      Icons.person,
-                                      size: 15,
-                                    ),
-                                  ],
-                                ),
+                                break;
+                            }
+                          },
+                          itemBuilder: (BuildContext context) => [
+                            PopupMenuItem(
+                              value: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(localizations.profile.capitalize()),
+                                  const Icon(
+                                    Icons.person,
+                                    size: 15,
+                                  ),
+                                ],
                               ),
-                              PopupMenuItem(
-                                value: 1,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(localizations.logout.capitalize()),
-                                    const Icon(
-                                      Icons.logout,
-                                      size: 15,
-                                    ),
-                                  ],
-                                ),
+                            ),
+                            PopupMenuItem(
+                              value: 1,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(localizations.logout.capitalize()),
+                                  const Icon(
+                                    Icons.logout,
+                                    size: 15,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        pinned: true,
-                      ),
-                    Highlights(users: users),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Text(
-                          localizations.producers.capitalize(),
-                          style:
-                              theme.textTheme.headlineMedium!.copyWith(fontSize: kIsWeb ? 42 : 22),
+                            ),
+                          ],
                         ),
                       ),
+                      pinned: true,
                     ),
-                    Producers(
-                      producers: users,
+                  Highlights(users: users),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        localizations.producers.capitalize(),
+                        style: theme.textTheme.headlineMedium!.copyWith(fontSize: kIsWeb ? 42 : 22),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  Producers(
+                    producers: users,
+                  ),
+                ],
               ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -87,5 +87,6 @@
   "select_all": "select all",
   "fence_name": "fence name",
   "remove_all": "delete all",
-  "producer": "producer"
+  "producer": "producer",
+  "no_device_data": "no device data"
 }

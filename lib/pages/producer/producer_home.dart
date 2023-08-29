@@ -38,9 +38,9 @@ class _ProducerHomeState extends State<ProducerHome> {
         getUser(uid).then((userData) {
           if (userData != null) {
             user = userData;
-            _loadDevices(uid).then(
-              (_) => _loadFences(uid).then(
-                (_) => _loadAlertNotifications(uid).then(
+            _loadDevices().then(
+              (_) => _loadFences().then(
+                (_) => _loadAlertNotifications().then(
                   (value) => isLoading = false,
                 ),
               ),
@@ -51,18 +51,18 @@ class _ProducerHomeState extends State<ProducerHome> {
     });
   }
 
-  Future<void> _loadDevices(String uid) async {
+  Future<void> _loadDevices() async {
     await getUserDevicesWithData().then((allDevices) {
       return setState(() => devices.addAll(allDevices));
     });
   }
 
-  Future<void> _loadFences(String uid) async {
+  Future<void> _loadFences() async {
     await getUserFences().then((allFences) => setState(() => fences.addAll(allFences)));
   }
 
-  Future<void> _loadAlertNotifications(String uid) async {
-    await getUserNotifications(uid)
+  Future<void> _loadAlertNotifications() async {
+    await getUserNotifications()
         .then((allAlerts) => setState(() => alertNotifications.addAll(allAlerts)));
   }
 
@@ -73,8 +73,10 @@ class _ProducerHomeState extends State<ProducerHome> {
     return Scaffold(
       body: SafeArea(
         child: isLoading
-            ? CircularProgressIndicator(
-                color: theme.colorScheme.secondary,
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: theme.colorScheme.secondary,
+                ),
               )
             : CustomScrollView(
                 physics: const NeverScrollableScrollPhysics(),

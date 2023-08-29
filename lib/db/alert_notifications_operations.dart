@@ -6,12 +6,10 @@ import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 
-Future<List<UserAlertNotification>> getUserNotifications(String uid) async {
+Future<List<UserAlertNotification>> getUserNotifications() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertNotification,
-    where: '${AlertNotificationFields.uid} = ?',
-    whereArgs: [uid],
   );
 
   List<UserAlertNotification> notifications = [];

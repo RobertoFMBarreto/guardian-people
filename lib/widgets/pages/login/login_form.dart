@@ -118,7 +118,7 @@ class _LoginFormState extends State<LoginForm> {
                         // search user and verify if its correct
                         //!TODO: Change to services
                         loadUsers().then(
-                          (allUsers) {
+                          (allUsers) async {
                             List<User> users = allUsers;
                             List<User> user = users
                                 .where((element) =>
@@ -131,8 +131,15 @@ class _LoginFormState extends State<LoginForm> {
                               });
                             } else {
                               //!TODO: To Remove it
-                              loadUserDevices(user.first.uid);
-                              loadUserFences(user.first.uid);
+                              if (user.first.isAdmin) {
+                                for (var u in users) {
+                                  await createUser(u);
+                                  await loadUserDevices(u.uid);
+                                  await loadUserFences(u.uid);
+                                }
+                              }
+                              await loadUserDevices(user.first.uid);
+                              await loadUserFences(user.first.uid);
                               //loadAlerts();
 
                               // pop loading dialog

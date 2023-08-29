@@ -47,63 +47,108 @@ class DeviceItem extends StatelessWidget {
           }
         });
       },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Expanded(
-            flex: 2,
-            child: Icon(
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            width: 0.5,
+            color: Colors.grey.shade200,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+            leading: const Icon(
               Icons.sensors,
               size: 35,
               color: gdSecondaryColor,
             ),
-          ),
-          Expanded(
-            flex: 10,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    device.name.toString(),
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
-                  ),
-                  // Text(
-                  //   '${device.data!.first.dataUsage.toString()}/10MB',
-                  //   style: theme.textTheme.bodyMedium!.copyWith(),
-                  // ),
-                ],
+            title: Text(
+              device.name.toString(),
+              style: theme.textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
               ),
             ),
-          ),
-          if (device.data != null)
-            if (device.data!.isNotEmpty)
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DeviceWidgetProvider.getBatteryWidget(
-                      deviceBattery: device.data!.first.battery,
-                      color: theme.colorScheme.secondary,
-                    ),
-                    Text(
-                      '${device.data!.first.battery.toString()}%',
-                      style: theme.textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w500,
+            trailing: device.data != null && device.data!.isNotEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      DeviceWidgetProvider.getBatteryWidget(
+                        deviceBattery: device.data!.first.battery,
+                        color: theme.colorScheme.secondary,
                       ),
-                    ),
-                  ],
-                ),
-              )
-        ],
+                      Text(
+                        '${device.data!.first.battery.toString()}%',
+                        style: theme.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
+          ),
+        ),
+        // child: Row(
+        //   crossAxisAlignment: CrossAxisAlignment.center,
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     const Expanded(
+        //       flex: 2,
+        //       child: Icon(
+        //         Icons.sensors,
+        //         size: 35,
+        //         color: gdSecondaryColor,
+        //       ),
+        //     ),
+        //     Expanded(
+        //       flex: 10,
+        //       child: Padding(
+        //         padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        //         child: Column(
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Text(
+        //               device.name.toString(),
+        //               style: theme.textTheme.bodyLarge!.copyWith(
+        //                 fontWeight: FontWeight.w600,
+        //                 fontSize: 18,
+        //               ),
+        //             ),
+        //             // Text(
+        //             //   '${device.data!.first.dataUsage.toString()}/10MB',
+        //             //   style: theme.textTheme.bodyMedium!.copyWith(),
+        //             // ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //     if (device.data != null)
+        //       if (device.data!.isNotEmpty)
+        //         Expanded(
+        //           flex: 1,
+        //           child: Column(
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             mainAxisAlignment: MainAxisAlignment.center,
+        //             children: [
+        //               DeviceWidgetProvider.getBatteryWidget(
+        //                 deviceBattery: device.data!.first.battery,
+        //                 color: theme.colorScheme.secondary,
+        //               ),
+        //               Text(
+        //                 '${device.data!.first.battery.toString()}%',
+        //                 style: theme.textTheme.bodyMedium!.copyWith(
+        //                   fontWeight: FontWeight.w500,
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //         )
+        //   ],
+        // ),
       ),
     );
   }

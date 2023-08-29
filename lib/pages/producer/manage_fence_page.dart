@@ -195,9 +195,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           ),
                           child: DeviceItemRemovable(
                             key: Key(devices[index].deviceId),
-                            deviceTitle: devices[index].name,
-                            deviceData: devices[index].data!.first.dataUsage,
-                            deviceBattery: devices[index].data!.first.battery,
+                            device: devices[index],
                             onRemoveDevice: () {
                               //!TODO: On remove device
                               removeDeviceFence(fence.fenceId, devices[index].deviceId).then(

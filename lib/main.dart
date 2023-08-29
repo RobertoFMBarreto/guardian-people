@@ -181,7 +181,6 @@ class MyApp extends StatelessWidget {
           }
         },
         '/producer/device': (context) {
-          print(ModalRoute.of(context)!.settings.arguments);
           if (ModalRoute.of(context)!.settings.arguments != null) {
             final data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return DevicePage(device: data['device'] as Device);

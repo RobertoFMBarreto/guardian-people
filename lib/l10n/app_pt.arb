@@ -87,5 +87,6 @@
   "select_all": "selecionar todos",
   "fence_name": "nome da cerca",
   "remove_all": "apagar todos",
-  "producer": "produtor"
+  "producer": "produtor",
+  "no_device_data": "não existem dados do dispositivo"
 }

@@ -285,14 +285,11 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                       itemCount: devices.length,
                       itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 8.0,
+                          horizontal: 10.0,
                         ),
                         child: isRemoveMode
                             ? DeviceItemRemovable(
-                                deviceTitle: devices[index].name,
-                                deviceData: devices[index].data?.first.dataUsage,
-                                deviceBattery: devices[index].data?.first.battery,
+                                device: devices[index],
                                 onRemoveDevice: () {
                                   //!TODO: On remove device code
                                   deleteDevice(devices[index].deviceId).then((_) {

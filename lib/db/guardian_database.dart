@@ -33,6 +33,13 @@ class GuardianDatabase {
     );
   }
 
+  static Future<void> deleteDb() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'guardian.db');
+
+    return await deleteDatabase(path);
+  }
+
   static Future<void> _createDB(Database db, int version) async {
     const idType = 'TEXT PRIMARY KEY NOT NULL';
     const idIncrementType = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL';

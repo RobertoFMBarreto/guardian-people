@@ -279,9 +279,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                             ),
                             child: DeviceItemRemovable(
                               key: Key(alertDevices[index].deviceId),
-                              deviceTitle: alertDevices[index].name,
-                              deviceData: alertDevices[index].data!.first.dataUsage,
-                              deviceBattery: alertDevices[index].data!.first.battery,
+                              device: alertDevices[index],
                               onRemoveDevice: () {
                                 //!TODO: On remove device
                                 if (widget.alert != null) {

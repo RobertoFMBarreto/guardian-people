@@ -67,49 +67,57 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                       localizations.device_data.capitalize(),
                       style: theme.textTheme.headlineMedium,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconText(
-                          icon: Icons.sim_card,
-                          iconColor: theme.colorScheme.secondary,
-                          text: '${device.data!.first.dataUsage}/10MB',
-                          fontSize: 23,
-                          iconSize: 25,
-                        ),
-                        IconText(
-                          isInverted: true,
-                          icon: Icons.landscape,
-                          iconColor: theme.colorScheme.secondary,
-                          text: '${device.data!.first.elevation.round()}m',
-                          fontSize: 23,
-                          iconSize: 30,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconText(
-                          icon: Icons.device_thermostat,
-                          iconColor: theme.colorScheme.secondary,
-                          text: '${device.data!.first.temperature}ºC',
-                          fontSize: 23,
-                          iconSize: 30,
-                        ),
-                        IconText(
-                          icon: DeviceWidgetProvider.getBatteryIcon(
-                            deviceBattery: 80,
-                            color: theme.colorScheme.secondary,
+                    if (device.data == null)
+                      Text(
+                        localizations.no_device_data.capitalize(),
+                        style: theme.textTheme.bodyLarge!.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    if (device.data != null)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconText(
+                            icon: Icons.sim_card,
+                            iconColor: theme.colorScheme.secondary,
+                            text: '${device.data!.first.dataUsage}/10MB',
+                            fontSize: 23,
+                            iconSize: 25,
                           ),
-                          isInverted: true,
-                          iconColor: theme.colorScheme.secondary,
-                          text: '${device.data!.first.battery}%',
-                          fontSize: 23,
-                          iconSize: 30,
-                        ),
-                      ],
-                    )
+                          IconText(
+                            isInverted: true,
+                            icon: Icons.landscape,
+                            iconColor: theme.colorScheme.secondary,
+                            text: '${device.data!.first.elevation.round()}m',
+                            fontSize: 23,
+                            iconSize: 30,
+                          ),
+                        ],
+                      ),
+                    if (device.data != null)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconText(
+                            icon: Icons.device_thermostat,
+                            iconColor: theme.colorScheme.secondary,
+                            text: '${device.data!.first.temperature}ºC',
+                            fontSize: 23,
+                            iconSize: 30,
+                          ),
+                          IconText(
+                            icon: DeviceWidgetProvider.getBatteryIcon(
+                              deviceBattery: 80,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            isInverted: true,
+                            iconColor: theme.colorScheme.secondary,
+                            text: '${device.data!.first.battery}%',
+                            fontSize: 23,
+                            iconSize: 30,
+                          ),
+                        ],
+                      )
                   ],
                 ),
               ),
