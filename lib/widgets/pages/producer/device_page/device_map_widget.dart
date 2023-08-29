@@ -101,7 +101,6 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    double deviceHeight = MediaQuery.of(context).size.height;
     dropDownValue = !widget.isInterval ? 0 : dropDownValue;
     showHeatMap = !widget.isInterval ? false : showHeatMap;
     AppLocalizations localizations = AppLocalizations.of(context)!;

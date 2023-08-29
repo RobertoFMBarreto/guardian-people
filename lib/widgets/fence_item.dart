@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/widgets/color_circle.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FenceItem extends StatelessWidget {
   final String name;
@@ -12,7 +9,6 @@ class FenceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    AppLocalizations localizations = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),

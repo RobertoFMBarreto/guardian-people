@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
