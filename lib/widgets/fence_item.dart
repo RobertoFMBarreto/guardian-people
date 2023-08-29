@@ -13,51 +13,57 @@ class FenceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                name,
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        side: BorderSide(
+          width: .5,
+          color: Colors.grey.shade200,
+        ),
+      ),
+      shadowColor: Colors.blueAccent,
+      elevation: 3,
+      child: ClipPath(
+        clipper: ShapeBorderClipper(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(
+                color: color,
+                width: 10,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: Text(
-                      '${localizations.color.capitalize()}:',
-                      style: theme.textTheme.bodyLarge!.copyWith(
-                        fontSize: 16,
-                      ),
-                    ),
+          ),
+          padding: const EdgeInsets.only(left: 15, right: 8.0, top: 8.0, bottom: 8.0),
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
+                child: Text(
+                  name,
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
                   ),
-                  ColorCircle(
-                    color: color,
-                  ),
-                ],
+                ),
               ),
-            )
-          ],
+              IconButton(
+                onPressed: onRemove,
+                icon: const Icon(Icons.delete_forever),
+                iconSize: 30,
+                color: theme.colorScheme.error,
+              )
+            ],
+          ),
         ),
-        IconButton(
-          onPressed: onRemove,
-          icon: const Icon(Icons.delete_forever),
-          iconSize: 30,
-          color: theme.colorScheme.error,
-        )
-      ],
+      ),
     );
   }
 }

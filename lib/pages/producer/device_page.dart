@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/device_operations.dart';
@@ -19,11 +21,22 @@ class DevicePage extends StatefulWidget {
 class _DevicePageState extends State<DevicePage> {
   bool isInterval = false;
   late Device device;
+  int reloadNum = 0;
   @override
   void initState() {
     device = widget.device;
 
     super.initState();
+  }
+
+  Future<void> _reloadDevice() async {
+    await getDevice(widget.device.deviceId).then((newDevice) {
+      if (newDevice != null) {
+        setState(() {
+          device = newDevice;
+        });
+      }
+    });
   }
 
   @override
@@ -54,7 +67,6 @@ class _DevicePageState extends State<DevicePage> {
                         ),
                       ),
                       ToggleSwitch(
-                        //!TODO: Widget está a ser rebuilded quando acontece scroll o que leva a que volte ao indice inicial
                         initialLabelIndex: isInterval ? 1 : 0,
                         cornerRadius: 50,
                         radiusStyle: true,
@@ -107,6 +119,10 @@ class _DevicePageState extends State<DevicePage> {
                         .then((newDevice) {
                       if (newDevice != null && newDevice.runtimeType == Device) {
                         setState(() => device = (newDevice as Device));
+                      } else {
+                        setState(() {
+                          reloadNum = Random().nextInt(999999);
+                        });
                       }
                     });
                   },
@@ -115,7 +131,7 @@ class _DevicePageState extends State<DevicePage> {
             ),
             SliverFillRemaining(
               child: DeviceMapWidget(
-                key: Key(device.color),
+                key: Key(reloadNum.toString()),
                 device: device,
                 isInterval: isInterval,
               ),

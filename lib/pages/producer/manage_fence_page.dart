@@ -189,26 +189,21 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: ListView.builder(
                         itemCount: devices.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                          ),
-                          child: DeviceItemRemovable(
-                            key: Key(devices[index].deviceId),
-                            device: devices[index],
-                            onRemoveDevice: () {
-                              //!TODO: On remove device
-                              removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
-                                (_) {
-                                  setState(() {
-                                    devices.removeWhere(
-                                      (element) => element.deviceId == devices[index].deviceId,
-                                    );
-                                  });
-                                },
-                              );
-                            },
-                          ),
+                        itemBuilder: (context, index) => DeviceItemRemovable(
+                          key: Key(devices[index].deviceId),
+                          device: devices[index],
+                          onRemoveDevice: () {
+                            //!TODO: On remove device
+                            removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
+                              (_) {
+                                setState(() {
+                                  devices.removeWhere(
+                                    (element) => element.deviceId == devices[index].deviceId,
+                                  );
+                                });
+                              },
+                            );
+                          },
                         ),
                       ),
                     ),

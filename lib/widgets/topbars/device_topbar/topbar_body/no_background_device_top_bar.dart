@@ -99,53 +99,61 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                           fontSize: 40,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconText(
-                            icon: Icons.sim_card,
-                            iconColor: theme.colorScheme.onSecondary,
-                            text: '${widget.device.data!.first.dataUsage}/10MB',
-                            fontSize: 23,
-                            iconSize: 25,
-                            textColor: theme.colorScheme.onSecondary,
-                          ),
-                          IconText(
-                            isInverted: true,
-                            icon: Icons.landscape,
-                            iconColor: theme.colorScheme.onSecondary,
-                            text: '${widget.device.data!.first.elevation.round()}m',
-                            fontSize: 23,
-                            iconSize: 30,
-                            textColor: theme.colorScheme.onSecondary,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconText(
-                            icon: Icons.device_thermostat,
-                            iconColor: theme.colorScheme.onSecondary,
-                            text: '${widget.device.data!.first.temperature}ºC',
-                            fontSize: 23,
-                            iconSize: 30,
-                            textColor: theme.colorScheme.onSecondary,
-                          ),
-                          IconText(
-                            icon: DeviceWidgetProvider.getBatteryIcon(
-                              deviceBattery: 80,
-                              color: theme.colorScheme.onSecondary,
+                      if (widget.device.data == null)
+                        Text(
+                          localizations.no_device_data.capitalize(),
+                          style: theme.textTheme.bodyLarge!.copyWith(fontSize: 20),
+                          textAlign: TextAlign.center,
+                        ),
+                      if (widget.device.data != null)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconText(
+                              icon: Icons.sim_card,
+                              iconColor: theme.colorScheme.onSecondary,
+                              text: '${widget.device.data!.first.dataUsage}/10MB',
+                              fontSize: 23,
+                              iconSize: 25,
+                              textColor: theme.colorScheme.onSecondary,
                             ),
-                            isInverted: true,
-                            iconColor: theme.colorScheme.onSecondary,
-                            text: '${widget.device.data!.first.battery}%',
-                            fontSize: 23,
-                            iconSize: 30,
-                            textColor: theme.colorScheme.onSecondary,
-                          ),
-                        ],
-                      ),
+                            IconText(
+                              isInverted: true,
+                              icon: Icons.landscape,
+                              iconColor: theme.colorScheme.onSecondary,
+                              text: '${widget.device.data!.first.elevation.round()}m',
+                              fontSize: 23,
+                              iconSize: 30,
+                              textColor: theme.colorScheme.onSecondary,
+                            ),
+                          ],
+                        ),
+                      if (widget.device.data != null)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconText(
+                              icon: Icons.device_thermostat,
+                              iconColor: theme.colorScheme.onSecondary,
+                              text: '${widget.device.data!.first.temperature}ºC',
+                              fontSize: 23,
+                              iconSize: 30,
+                              textColor: theme.colorScheme.onSecondary,
+                            ),
+                            IconText(
+                              icon: DeviceWidgetProvider.getBatteryIcon(
+                                deviceBattery: 80,
+                                color: theme.colorScheme.onSecondary,
+                              ),
+                              isInverted: true,
+                              iconColor: theme.colorScheme.onSecondary,
+                              text: '${widget.device.data!.first.battery}%',
+                              fontSize: 23,
+                              iconSize: 30,
+                              textColor: theme.colorScheme.onSecondary,
+                            ),
+                          ],
+                        ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,

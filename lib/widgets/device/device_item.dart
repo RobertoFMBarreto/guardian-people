@@ -3,6 +3,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
+import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
 class DeviceItem extends StatelessWidget {
@@ -59,10 +60,10 @@ class DeviceItem extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.sensors,
               size: 35,
-              color: gdSecondaryColor,
+              color: HexColor(device.color),
             ),
             title: Text(
               device.name.toString(),

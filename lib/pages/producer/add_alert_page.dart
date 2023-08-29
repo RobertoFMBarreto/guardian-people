@@ -273,38 +273,33 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         flex: 2,
                         child: ListView.builder(
                           itemCount: alertDevices.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                            ),
-                            child: DeviceItemRemovable(
-                              key: Key(alertDevices[index].deviceId),
-                              device: alertDevices[index],
-                              onRemoveDevice: () {
-                                //!TODO: On remove device
-                                if (widget.alert != null) {
-                                  removeAlertDevice(
-                                    widget.alert!.alertId,
-                                    alertDevices[index].deviceId,
-                                  ).then(
-                                    (_) {
-                                      setState(() {
-                                        alertDevices.removeWhere(
-                                          (element) =>
-                                              element.deviceId == alertDevices[index].deviceId,
-                                        );
-                                      });
-                                    },
+                          itemBuilder: (context, index) => DeviceItemRemovable(
+                            key: Key(alertDevices[index].deviceId),
+                            device: alertDevices[index],
+                            onRemoveDevice: () {
+                              //!TODO: On remove device
+                              if (widget.alert != null) {
+                                removeAlertDevice(
+                                  widget.alert!.alertId,
+                                  alertDevices[index].deviceId,
+                                ).then(
+                                  (_) {
+                                    setState(() {
+                                      alertDevices.removeWhere(
+                                        (element) =>
+                                            element.deviceId == alertDevices[index].deviceId,
+                                      );
+                                    });
+                                  },
+                                );
+                              } else {
+                                setState(() {
+                                  alertDevices.removeWhere(
+                                    (element) => element.deviceId == alertDevices[index].deviceId,
                                   );
-                                } else {
-                                  setState(() {
-                                    alertDevices.removeWhere(
-                                      (element) => element.deviceId == alertDevices[index].deviceId,
-                                    );
-                                  });
-                                }
-                              },
-                            ),
+                                });
+                              }
+                            },
                           ),
                         ),
                       ),
