@@ -26,10 +26,6 @@ class _DevicePageState extends State<DevicePage> {
     super.initState();
   }
 
-  void _reloadDevice() {
-    getDevice(device.deviceId).then((deviceData) => setState(() => device = deviceData!));
-  }
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -37,6 +33,7 @@ class _DevicePageState extends State<DevicePage> {
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
               key: Key(device.name),
@@ -116,7 +113,7 @@ class _DevicePageState extends State<DevicePage> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
+            SliverFillRemaining(
               child: DeviceMapWidget(
                 key: Key(device.color),
                 device: device,
