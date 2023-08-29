@@ -6,7 +6,6 @@ import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/key_value_pair.dart';
 import 'package:guardian/widgets/default_bottom_sheet.dart';
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
-import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_comparisson_dropdown.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet/alert_parameter_dropdown.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

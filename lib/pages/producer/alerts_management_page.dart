@@ -5,7 +5,6 @@ import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
-import 'package:guardian/widgets/pages/producer/alerts_page/add_alert_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/selectable_alert_management_item.dart';
 
@@ -161,33 +160,6 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                       print('BAck');
                                       _loadAlerts();
                                     });
-                                    // showModalBottomSheet(
-                                    //   context: context,
-                                    //   isScrollControlled: true,
-                                    //   builder: (context) => AddAlertBottomSheet(
-                                    //     comparisson: alerts[index].comparisson,
-                                    //     hasNotification: alerts[index].hasNotification,
-                                    //     parameter: alerts[index].parameter,
-                                    //     value: alerts[index].value,
-                                    //     isEdit: true,
-                                    //     onConfirm:
-                                    //         (parameter, comparisson, value, hasNotification) {
-                                    //       final newAlert = alerts[index].copy(
-                                    //         parameter: parameter,
-                                    //         comparisson: comparisson,
-                                    //         value: value,
-                                    //         hasNotification: hasNotification,
-                                    //       );
-
-                                    //       updateUserAlert(newAlert).then(
-                                    //         (_) {
-                                    //           Navigator.of(context).pop();
-                                    //           setState(() => alerts[index] = newAlert);
-                                    //         },
-                                    //       );
-                                    //     },
-                                    //   ),
-                                    // );
                                   },
                                   child: AlertManagementItem(
                                     alert: alerts[index],
@@ -214,24 +186,6 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                   Navigator.of(context).pushNamed('/producer/alerts/add').then((_) {
                     _loadAlerts();
                   });
-                  // showModalBottomSheet(
-                  //   context: context,
-                  //   isScrollControlled: true,
-                  //   builder: (context) => AddAlertBottomSheet(
-                  //     onConfirm: (parameter, comparisson, value, hasNotification) {
-                  //       createAlert(
-                  //         UserAlert(
-                  //           alertId: (alerts.length + 1).toString(),
-                  //           hasNotification: hasNotification,
-                  //           parameter: parameter,
-                  //           comparisson: comparisson,
-                  //           value: value,
-                  //         ),
-                  //       ).then((newAlert) => setState(() => alerts.add(newAlert)));
-                  //       Navigator.of(context).pop();
-                  //     },
-                  //   ),
-                  // );
                 } else {
                   Navigator.of(context).pop(selectedAlerts);
                 }

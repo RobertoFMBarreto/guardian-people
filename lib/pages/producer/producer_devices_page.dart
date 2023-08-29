@@ -190,6 +190,39 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                   },
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      if (selectedDevices.length == devices.length) {
+                        setState(() {
+                          selectedDevices = [];
+                        });
+                      } else {
+                        setState(() {
+                          selectedDevices = devices;
+                        });
+                      }
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          selectedDevices.length == devices.length ? Icons.remove : Icons.add,
+                          color: theme.colorScheme.secondary,
+                        ),
+                        Text(
+                          localizations.select_all.capitalize(),
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),

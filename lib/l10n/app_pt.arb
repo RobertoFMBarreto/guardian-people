@@ -85,5 +85,6 @@
   "device_fences": "cercas do dispositivo",
   "select_all": "selecionar todos",
   "fence_name": "nome da cerca",
-  "remove_all": "apagar todos"
+  "remove_all": "apagar todos",
+  "producer": "produtor"
 }

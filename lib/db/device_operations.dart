@@ -149,12 +149,12 @@ Future<List<Device>> getUserDevicesFiltered({
         GROUP BY deviceDt.${DeviceDataFields.deviceId}
       ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
       WHERE
-        ${DeviceFields.uid} = ? AND
+        (${DeviceFields.uid} = ? AND
         deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
         deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
         deviceData.${DeviceDataFields.elevation} >= ? AND deviceData.${DeviceDataFields.elevation} <= ? AND
-        ${DeviceFields.name} LIKE ?
+        ${DeviceFields.name} LIKE ?) OR (${DeviceFields.uid} = ? AND ${DeviceFields.name} LIKE ? AND deviceData.${DeviceDataFields.temperature} IS NULL)
       ORDER BY
         ${DeviceFields.name}
     ''',
@@ -169,14 +169,19 @@ Future<List<Device>> getUserDevicesFiltered({
       elevationRangeValues.start,
       elevationRangeValues.end,
       '%$searchString%',
+      uid,
+      '%$searchString%',
     ],
   );
   List<Device> devices = [];
   if (data.isNotEmpty) {
     for (var dt in data) {
       Device device = Device.fromJson(dt);
-      DeviceData data = DeviceData.fromJson(dt);
-      device.data = [data];
+      // if there is device data
+      if (dt['temperature'] != null) {
+        DeviceData data = DeviceData.fromJson(dt);
+        device.data = [data];
+      }
       devices.add(device);
     }
   }

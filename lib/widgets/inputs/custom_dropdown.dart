@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/key_value_pair.dart';
 
 class CustomDropdown extends StatelessWidget {
@@ -36,36 +35,6 @@ class CustomDropdown extends StatelessWidget {
                   ),
                 )
                 .toList()
-            // DropdownMenuItem(
-            //   value: AlertComparissons.equal,
-            //   child: Text(
-            //     'Igual',
-            //   ),
-            // ),
-            // DropdownMenuItem(
-            //   value: AlertComparissons.greater,
-            //   child: Text(
-            //     'Maior',
-            //   ),
-            // ),
-            // DropdownMenuItem(
-            //   value: AlertComparissons.less,
-            //   child: Text(
-            //     'Menor',
-            //   ),
-            // ),
-            // DropdownMenuItem(
-            //   value: AlertComparissons.greaterOrEqual,
-            //   child: Text(
-            //     'Maior ou igual',
-            //   ),
-            // ),
-            // DropdownMenuItem(
-            //   value: AlertComparissons.lessOrEqual,
-            //   child: Text(
-            //     'Menor ou igual',
-            //   ),
-            // ),
           ],
           onChanged: onChanged,
         ),

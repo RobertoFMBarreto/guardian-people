@@ -1,10 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
+import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
@@ -38,12 +43,24 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
 
   List<Device> devices = [];
 
+  late User producer;
+
+  bool isLoading = true;
+
   @override
   void initState() {
     _filterDevices().then(
       (filteredDevices) => setState(() {
         devices = [];
         devices.addAll(filteredDevices);
+        getUser(widget.producerId).then((user) {
+          setState(() {
+            if (user != null) {
+              producer = user;
+            }
+            isLoading = false;
+          });
+        });
       }),
     );
     super.initState();
@@ -138,8 +155,26 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                   context: context,
                   isScrollControlled: true,
                   builder: (context) => AddDeviceBottomSheet(
-                    onAddDevice: () {
+                    onAddDevice: (imei, name) {
                       //TODO: Add device code
+                      createDevice(
+                        Device(
+                          uid: widget.producerId,
+                          deviceId: Random().nextInt(90000).toString(),
+                          imei: imei,
+                          color: HexColor.toHex(color: Colors.red),
+                          isActive: true,
+                          name: name,
+                        ),
+                      ).then((newDevice) {
+                        Navigator.of(context).pop();
+                        _filterDevices().then((newDevices) {
+                          setState(() {
+                            devices = [];
+                            devices.addAll(newDevices);
+                          });
+                        });
+                      });
                     },
                   ),
                 );
@@ -158,115 +193,124 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
             ),
           ],
         ),
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                key: ValueKey('$isRemoveMode'),
-                pinned: true,
-                delegate: SliverMainAppBar(
-                  imageUrl: '',
-                  name: 'Nome Produtor',
-                  title: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          localizations.devices.capitalize(),
-                          style: theme.textTheme.headlineSmall!.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        isRemoveMode
-                            ? TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isRemoveMode = false;
-                                  });
-                                },
-                                child: Text(
-                                  localizations.cancel.capitalize(),
-                                  style: theme.textTheme.bodyMedium!.copyWith(
-                                    color: gdCancelTextColor,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox()
-                      ],
-                    ),
-                  ),
-                  leadingWidget: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: theme.colorScheme.onSecondary,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  tailWidget: IconButton(
-                    icon: Icon(
-                      Icons.delete_forever,
-                      color: theme.colorScheme.onSecondary,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      //TODO: Code for deleting the producer
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  child: SearchWithFilterInput(
-                    onFilter: () {
-                      _scaffoldKey.currentState!.openEndDrawer();
-                    },
-                    onSearchChanged: (value) {
-                      setState(() {
-                        searchString = value;
-                        _filterDevices().then(
-                          (filteredDevices) => setState(() {
-                            devices = [];
-                            devices.addAll(filteredDevices);
-                          }),
-                        );
-                      });
-                    },
-                  ),
-                ),
-              ),
-              SliverList.builder(
-                itemCount: devices.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 8.0,
-                  ),
-                  child: isRemoveMode
-                      ? DeviceItemRemovable(
-                          deviceTitle: devices[index].imei,
-                          deviceData: devices[index].data!.first.dataUsage,
-                          deviceBattery: devices[index].data!.first.battery,
-                          onRemoveDevice: () {},
-                        )
-                      : DeviceItem(
-                          device: devices[index],
-                        ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: deviceHeight * 0.1),
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: theme.colorScheme.secondary,
                 ),
               )
-            ],
-          ),
-        ),
+            : SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverPersistentHeader(
+                      key: ValueKey('$isRemoveMode'),
+                      pinned: true,
+                      delegate: SliverMainAppBar(
+                        imageUrl: '',
+                        name: producer.name,
+                        title: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                localizations.devices.capitalize(),
+                                style: theme.textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              isRemoveMode
+                                  ? TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          isRemoveMode = false;
+                                        });
+                                      },
+                                      child: Text(
+                                        localizations.cancel.capitalize(),
+                                        style: theme.textTheme.bodyMedium!.copyWith(
+                                          color: gdCancelTextColor,
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox()
+                            ],
+                          ),
+                        ),
+                        leadingWidget: IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: theme.colorScheme.onSecondary,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        tailWidget: IconButton(
+                          icon: Icon(
+                            Icons.delete_forever,
+                            color: theme.colorScheme.onSecondary,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            //TODO: Code for deleting the producer
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        child: SearchWithFilterInput(
+                          onFilter: () {
+                            _scaffoldKey.currentState!.openEndDrawer();
+                          },
+                          onSearchChanged: (value) {
+                            setState(() {
+                              searchString = value;
+                              _filterDevices().then(
+                                (filteredDevices) => setState(() {
+                                  devices = [];
+                                  devices.addAll(filteredDevices);
+                                }),
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SliverList.builder(
+                      itemCount: devices.length,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: 8.0,
+                        ),
+                        child: isRemoveMode
+                            ? DeviceItemRemovable(
+                                deviceTitle: devices[index].imei,
+                                deviceData: devices[index].data!.first.dataUsage,
+                                deviceBattery: devices[index].data!.first.battery,
+                                onRemoveDevice: () {
+                                  //!TODO: On remove device code
+                                },
+                              )
+                            : DeviceItem(
+                                device: devices[index],
+                                producerId: widget.producerId,
+                              ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: deviceHeight * 0.1),
+                      ),
+                    )
+                  ],
+                ),
+              ),
       ),
     );
   }

@@ -129,7 +129,7 @@ class MyApp extends StatelessWidget {
           }
         },
         '/admin/producer/device': (context) {
-          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Map<String, dynamic>) {
+          if (ModalRoute.of(context)!.settings.arguments != null) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return AdminDeviceManagementPage(
               device: args['device'] as Device,

@@ -112,7 +112,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         ),
                         pinned: true,
                       ),
-                    Highlights(users: users.sublist(0, 2)),
+                    Highlights(users: users),
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20.0),
@@ -137,11 +137,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
               isScrollControlled: true,
               builder: (context) => AddProducerBottomSheet(
                     onAddProducer: () {
-                      //TODO: Add device code
+                      //!TODO: Add producer code
                     },
                   ));
         },
-        tooltip: 'Adicionar Produtor',
+        tooltip: '${localizations.add.capitalize()} ${localizations.producer}',
         backgroundColor: theme.colorScheme.secondary,
         shape: const CircleBorder(),
         child: Icon(

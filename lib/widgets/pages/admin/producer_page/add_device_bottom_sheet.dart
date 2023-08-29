@@ -7,7 +7,7 @@ import 'package:guardian/widgets/default_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddDeviceBottomSheet extends StatefulWidget {
-  final Function()? onAddDevice;
+  final Function(String, String) onAddDevice;
   const AddDeviceBottomSheet({super.key, required this.onAddDevice});
 
   @override
@@ -16,6 +16,7 @@ class AddDeviceBottomSheet extends StatefulWidget {
 
 class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
   String imei = '';
+  String name = '';
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -32,6 +33,17 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
             ),
             onChanged: (value) {
               imei = value;
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
+          child: TextField(
+            decoration: InputDecoration(
+              label: Text(localizations.name.capitalize()),
+            ),
+            onChanged: (value) {
+              name = value;
             },
           ),
         ),
@@ -59,7 +71,9 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
                 width: deviceWidth * 0.05,
               ),
               ElevatedButton(
-                onPressed: widget.onAddDevice,
+                onPressed: () {
+                  widget.onAddDevice(imei, name);
+                },
                 child: Text(
                   localizations.add.capitalize(),
                   style: theme.textTheme.bodyMedium!.copyWith(

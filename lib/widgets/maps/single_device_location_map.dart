@@ -6,7 +6,6 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
