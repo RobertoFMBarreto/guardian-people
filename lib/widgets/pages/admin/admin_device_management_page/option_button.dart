@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 class OptionButton extends StatelessWidget {
-  const OptionButton({super.key});
+  final Device device;
+  const OptionButton({super.key, required this.device});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +26,9 @@ class OptionButton extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: () {
                   //TODO: Remove device
+                  deleteDevice(device.deviceId).then((_) {
+                    Navigator.of(context).pop();
+                  });
                 },
                 icon: Icon(
                   Icons.delete_forever,
@@ -46,13 +52,14 @@ class OptionButton extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: () {
                   //TODO: block device
+                  updateDevice(device.copy(isActive: false));
                 },
                 icon: Icon(
-                  Icons.lock,
+                  device.isActive ? Icons.lock_open : Icons.lock,
                   color: theme.colorScheme.error,
                 ),
                 label: Text(
-                  '${localizations.block.capitalize()} ${localizations.device.capitalize()}',
+                  '${device.isActive ? localizations.block.capitalize() : localizations.unblock.capitalize()} ${localizations.device.capitalize()}',
                   style: theme.textTheme.bodyLarge!.copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),

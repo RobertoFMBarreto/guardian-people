@@ -12,7 +12,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Device device;
   final Widget? tailWidget;
-  const NoBackgroundDeviceTopBar({super.key, required this.device, required this.tailWidget});
+  final Function() onColorChanged;
+  const NoBackgroundDeviceTopBar({
+    super.key,
+    required this.device,
+    required this.tailWidget,
+    required this.onColorChanged,
+  });
 
   @override
   State<NoBackgroundDeviceTopBar> createState() => _NoBackgroundDeviceTopBarState();
@@ -155,6 +161,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                     setState(() {
                                       deviceColor = color;
                                       widget.device.color = HexColor.toHex(color: deviceColor);
+                                      widget.onColorChanged();
                                     });
 
                                     updateDevice(

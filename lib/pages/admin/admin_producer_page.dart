@@ -227,7 +227,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                         });
                                       },
                                       child: Text(
-                                        localizations.cancel.capitalize(),
+                                        localizations.confirm.capitalize(),
                                         style: theme.textTheme.bodyMedium!.copyWith(
                                           color: gdCancelTextColor,
                                         ),
@@ -290,11 +290,16 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                         ),
                         child: isRemoveMode
                             ? DeviceItemRemovable(
-                                deviceTitle: devices[index].imei,
-                                deviceData: devices[index].data!.first.dataUsage,
-                                deviceBattery: devices[index].data!.first.battery,
+                                deviceTitle: devices[index].name,
+                                deviceData: devices[index].data?.first.dataUsage,
+                                deviceBattery: devices[index].data?.first.battery,
                                 onRemoveDevice: () {
                                   //!TODO: On remove device code
+                                  deleteDevice(devices[index].deviceId).then((_) {
+                                    setState(() {
+                                      devices.removeAt(index);
+                                    });
+                                  });
                                 },
                               )
                             : DeviceItem(

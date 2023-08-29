@@ -28,30 +28,27 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   }
 
   Future<void> _loadAlerts() async {
-    await getUid(context).then((userId) async {
-      alerts = [];
-      if (userId != null) {
-        if (widget.isSelect) {
-          await getDeviceUnselectedAlerts(userId).then(
-            (allAlerts) {
-              setState(() {
-                alerts.addAll(allAlerts);
-                isLoading = false;
-              });
-            },
-          );
-        } else {
-          await getUserAlerts(userId).then(
-            (allAlerts) {
-              setState(() {
-                alerts.addAll(allAlerts);
-                isLoading = false;
-              });
-            },
-          );
-        }
-      }
-    });
+    if (widget.isSelect) {
+      await getDeviceUnselectedAlerts().then(
+        (allAlerts) {
+          setState(() {
+            alerts = [];
+            alerts.addAll(allAlerts);
+            isLoading = false;
+          });
+        },
+      );
+    } else {
+      await getUserAlerts().then(
+        (allAlerts) {
+          setState(() {
+            alerts = [];
+            alerts.addAll(allAlerts);
+            isLoading = false;
+          });
+        },
+      );
+    }
   }
 
   @override

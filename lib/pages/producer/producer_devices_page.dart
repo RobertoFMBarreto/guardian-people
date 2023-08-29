@@ -73,30 +73,15 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           devices.addAll(searchDevices);
         });
       });
-    } else if (widget.isSelect && widget.alertId != null) {
-      await getUserDevicesFiltered(
+    } else {
+      getUserDevicesFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
         searchString: searchString,
         tmpRangeValues: _tmpRangeValues,
         uid: uid,
-      ).then((searchDevices) {
-        setState(() {
-          devices = [];
-          if (widget.notToShowDevices != null) {
-            devices.addAll(
-              searchDevices.where(
-                (device) => !widget.notToShowDevices!.contains(device.deviceId),
-              ),
-            );
-          } else {
-            devices.addAll(searchDevices);
-          }
-        });
-      });
-    } else {
-      getUserDevices().then(
+      ).then(
         (filteredDevices) => setState(() {
           devices = [];
           if (widget.notToShowDevices != null) {

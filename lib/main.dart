@@ -181,10 +181,10 @@ class MyApp extends StatelessWidget {
           }
         },
         '/producer/device': (context) {
-          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
-            return DevicePage(
-              device: ModalRoute.of(context)!.settings.arguments as Device,
-            );
+          print(ModalRoute.of(context)!.settings.arguments);
+          if (ModalRoute.of(context)!.settings.arguments != null) {
+            final data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return DevicePage(device: data['device'] as Device);
           } else {
             throw ErrorDescription('Device not provided');
           }

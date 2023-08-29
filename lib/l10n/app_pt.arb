@@ -21,6 +21,7 @@
   "device_data": "dados do dispositivo",
   "device_color": "cor do dispositivo",
   "block": "bloquear",
+  "unblock": "desbloquear",
   "profile": "perfil",
   "logout": "sair",
   "alerts": "alertas",

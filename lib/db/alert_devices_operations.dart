@@ -92,7 +92,7 @@ Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
   return alerts;
 }
 
-Future<List<UserAlert>> getDeviceUnselectedAlerts(String deviceId) async {
+Future<List<UserAlert>> getDeviceUnselectedAlerts() async {
   final db = await GuardianDatabase().database;
   final data = await db.rawQuery(
     '''
@@ -100,7 +100,7 @@ Future<List<UserAlert>> getDeviceUnselectedAlerts(String deviceId) async {
         $tableUserAlerts.${AlertDevicesFields.alertId}
       FROM $tableUserAlerts
       LEFT JOIN $tableAlertDevices ON $tableAlertDevices.${AlertDevicesFields.alertId} = $tableUserAlerts.${AlertDevicesFields.alertId}
-      WHERE $tableAlertDevices.${AlertDevicesFields.alertId} IS NULL
+      WHERE $tableAlertDevices.${AlertDevicesFields.deviceId} IS NULL
     ''',
   );
   List<UserAlert> alerts = [];

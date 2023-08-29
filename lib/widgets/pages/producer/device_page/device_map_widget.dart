@@ -237,11 +237,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                     ),
                     SizedBox(
                       key: firstItemDataKey,
-                      height: deviceHeight * 0.3,
+                      height: deviceHeight * 0.45,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: SingleDeviceLocationMap(
-                          key: Key('${showFence}_$showHeatMap'),
+                          key: Key('${showFence}_${showHeatMap}_${widget.device.color}'),
                           showCurrentPosition: true,
                           deviceData: deviceData,
                           imei: widget.device.imei,
@@ -264,11 +264,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                   ],
                 ),
               ),
-              if (deviceData.isNotEmpty)
-                DeviceDataInfoList(
-                  mapKey: firstItemDataKey,
-                  deviceData: widget.isInterval ? deviceData : [deviceData.first],
-                )
+              // if (deviceData.isNotEmpty)
+              //   DeviceDataInfoList(
+              //     mapKey: firstItemDataKey,
+              //     deviceData: widget.isInterval ? deviceData : [deviceData.first],
+              //   )
             ],
           );
   }

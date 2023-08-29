@@ -21,6 +21,7 @@
   "device_data": "device data",
   "device_color": "device color",
   "block": "block",
+  "unblock": "unblock",
   "profile": "profile",
   "logout": "logout",
   "alerts": "alerts",

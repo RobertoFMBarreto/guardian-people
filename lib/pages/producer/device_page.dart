@@ -42,6 +42,9 @@ class _DevicePageState extends State<DevicePage> {
               key: Key(device.name),
               pinned: true,
               delegate: SliverDeviceAppBar(
+                onColorChanged: () {
+                  setState(() {});
+                },
                 title: Padding(
                   padding: const EdgeInsets.only(right: 20.0),
                   child: Row(
@@ -105,8 +108,6 @@ class _DevicePageState extends State<DevicePage> {
                       arguments: device,
                     )
                         .then((newDevice) {
-                      print(newDevice);
-                      print(newDevice != null && newDevice.runtimeType == Device);
                       if (newDevice != null && newDevice.runtimeType == Device) {
                         setState(() => device = (newDevice as Device));
                       }
@@ -117,6 +118,7 @@ class _DevicePageState extends State<DevicePage> {
             ),
             SliverToBoxAdapter(
               child: DeviceMapWidget(
+                key: Key(device.color),
                 device: device,
                 isInterval: isInterval,
               ),

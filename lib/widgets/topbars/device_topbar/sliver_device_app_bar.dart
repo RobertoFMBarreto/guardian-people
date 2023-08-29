@@ -11,10 +11,12 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Widget? title;
   Device device;
   bool isWhiteBody;
+  Function()? onColorChanged;
   SliverDeviceAppBar({
     this.leadingWidget,
     this.tailWidget,
     this.title,
+    this.onColorChanged,
     this.isWhiteBody = false,
     required this.device,
   });
@@ -44,6 +46,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
                     device: device,
                     extent: adjustedShrinkOffset,
                     tailWidget: tailWidget,
+                    onColorChanged: onColorChanged,
                   ),
           ),
         ],

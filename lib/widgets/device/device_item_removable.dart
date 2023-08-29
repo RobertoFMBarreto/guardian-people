@@ -4,16 +4,16 @@ import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 
 class DeviceItemRemovable extends StatelessWidget {
   final String deviceTitle;
-  final int deviceData;
-  final int deviceBattery;
+  final int? deviceData;
+  final int? deviceBattery;
   final Function() onRemoveDevice;
   final bool isPopPush;
 
   const DeviceItemRemovable({
     super.key,
     required this.deviceTitle,
-    required this.deviceData,
-    required this.deviceBattery,
+    this.deviceData,
+    this.deviceBattery,
     required this.onRemoveDevice,
     this.isPopPush = false,
   });
@@ -52,33 +52,35 @@ class DeviceItemRemovable extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-                Text(
-                  '${deviceData.toString()}/10MB',
-                  style: theme.textTheme.bodyMedium!.copyWith(),
-                ),
+                if (deviceData != null)
+                  Text(
+                    '${deviceData.toString()}/10MB',
+                    style: theme.textTheme.bodyMedium!.copyWith(),
+                  ),
               ],
             ),
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DeviceWidgetProvider.getBatteryWidget(
-                deviceBattery: deviceBattery,
-                color: theme.colorScheme.secondary,
-              ),
-              Text(
-                '${deviceBattery.toString()}%',
-                style: theme.textTheme.bodyMedium!.copyWith(
-                  fontWeight: FontWeight.w500,
+        if (deviceBattery != null)
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DeviceWidgetProvider.getBatteryWidget(
+                  deviceBattery: deviceBattery!,
+                  color: theme.colorScheme.secondary,
                 ),
-              ),
-            ],
-          ),
-        )
+                Text(
+                  '${deviceBattery.toString()}%',
+                  style: theme.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          )
       ],
     );
   }

@@ -7,8 +7,14 @@ class DeviceTopBar extends StatelessWidget {
   final double extent;
   final Device device;
   final Widget? tailWidget;
-  const DeviceTopBar(
-      {super.key, required this.device, required this.extent, required this.tailWidget});
+  final Function()? onColorChanged;
+  const DeviceTopBar({
+    super.key,
+    required this.device,
+    required this.extent,
+    required this.tailWidget,
+    this.onColorChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,11 @@ class DeviceTopBar extends StatelessWidget {
           ? DeviceMinTopBar(
               device: device,
             )
-          : NoBackgroundDeviceTopBar(device: device, tailWidget: tailWidget),
+          : NoBackgroundDeviceTopBar(
+              device: device,
+              tailWidget: tailWidget,
+              onColorChanged: onColorChanged!,
+            ),
     );
   }
 }

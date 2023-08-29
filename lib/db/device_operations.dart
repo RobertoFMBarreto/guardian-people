@@ -18,7 +18,7 @@ Future<Device> createDevice(Device device) async {
   return device.copy(id: id);
 }
 
-Future<int> deleteDevice(int id) async {
+Future<int> deleteDevice(String id) async {
   final db = await GuardianDatabase().database;
 
   return db.delete(
