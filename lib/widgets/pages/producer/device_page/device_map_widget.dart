@@ -10,7 +10,6 @@ import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/maps/single_device_location_map.dart';
-import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_time_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
