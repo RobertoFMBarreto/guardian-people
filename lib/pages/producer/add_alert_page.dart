@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
@@ -74,6 +75,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     ThemeData theme = Theme.of(context);
     double deviceWidth = MediaQuery.of(context).size.width;
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(

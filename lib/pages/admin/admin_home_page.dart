@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -41,7 +42,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+        automaticallyImplyLeading: false,
+        toolbarHeight: 0,
+      ),
       body: SafeArea(
         child: isLoading
             ? Center(

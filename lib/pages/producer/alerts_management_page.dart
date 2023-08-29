@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
@@ -54,6 +55,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(

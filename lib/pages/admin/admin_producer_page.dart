@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/user_operations.dart';
@@ -90,13 +91,18 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
-
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+          automaticallyImplyLeading: false,
+          toolbarHeight: 0,
+        ),
         key: _scaffoldKey,
         endDrawer: SafeArea(
           child: ProducerPageDrawer(

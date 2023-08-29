@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -64,6 +65,11 @@ class _WelcomePageState extends State<WelcomePage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+          automaticallyImplyLeading: false,
+          toolbarHeight: 0,
+        ),
         body: Center(
           child: Column(
             children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
@@ -37,6 +38,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   @override
   void initState() {
     super.initState();
+
     fence = widget.fence;
     fenceColor = HexColor(fence.color);
     fenceHexColor = fence.color;

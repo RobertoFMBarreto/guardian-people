@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
@@ -32,6 +33,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   @override
   void initState() {
     super.initState();
+
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
@@ -71,6 +73,11 @@ class _ProducerHomeState extends State<ProducerHome> {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+        automaticallyImplyLeading: false,
+        toolbarHeight: 0,
+      ),
       body: SafeArea(
         child: isLoading
             ? Center(

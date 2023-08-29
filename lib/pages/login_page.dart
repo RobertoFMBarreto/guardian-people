@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/pages/login/login_form.dart';
 
@@ -22,8 +23,13 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
-        child: const Scaffold(
+        child: Scaffold(
           backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+            automaticallyImplyLeading: false,
+            toolbarHeight: 0,
+          ),
           body: SafeArea(
             child: Center(
               child: Padding(
