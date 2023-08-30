@@ -114,9 +114,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
-              bounds: widget.deviceData.isEmpty &&
-                      widget.startingZoom == 17 &&
-                      (polygons.isNotEmpty || circles.isNotEmpty)
+              bounds: (polygons.isNotEmpty || circles.isNotEmpty)
                   ? LatLngBounds.fromPoints(
                       polygons.isEmpty ? circles.first.points : polygons.first.points)
                   : null,
