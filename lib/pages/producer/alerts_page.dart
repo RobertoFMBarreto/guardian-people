@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
+import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/db/user_alert_operations.dart';
+import 'package:guardian/models/data_models/Alerts/alert_notifications.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
@@ -19,6 +22,14 @@ class _AlertsPageState extends State<AlertsPage> {
 
   @override
   void initState() {
+    // getUserDevices().then((devices) {
+    //   getUserAlerts().then((alerts) {
+    //     createAlertNotification(AlertNotification(
+    //       deviceId: devices.first.deviceId,
+    //       alertId: alerts.first.alertId,
+    //     ));
+    //   });
+    // });
     _loadAlerts().then((value) => setState(() => isLoading = false));
     super.initState();
   }

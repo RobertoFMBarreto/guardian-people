@@ -15,7 +15,8 @@ class AlertItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed('/producer/device', arguments: alertNotification.device);
+        Navigator.of(context).pushNamed('/producer/device',
+            arguments: {'device': alertNotification.device, 'producerId': null});
       },
       child: Card(
         elevation: 3,

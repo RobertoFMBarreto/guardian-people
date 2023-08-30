@@ -1,7 +1,6 @@
 const String tableAlertNotification = 'alert_notifications';
 
 class AlertNotificationFields {
-  static const String uid = 'uid';
   static const String deviceId = 'device_id';
   static const String notificationId = 'notification_id';
   static const String alertId = 'alert_id';
@@ -15,7 +14,7 @@ class AlertNotification {
   const AlertNotification({
     required this.deviceId,
     required this.alertId,
-    required this.isDeleted,
+    this.isDeleted = false,
   });
 
   AlertNotification copy({

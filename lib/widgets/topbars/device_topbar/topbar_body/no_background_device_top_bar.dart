@@ -102,7 +102,10 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                       if (widget.device.data == null)
                         Text(
                           localizations.no_device_data.capitalize(),
-                          style: theme.textTheme.bodyLarge!.copyWith(fontSize: 20),
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            fontSize: 20,
+                            color: theme.colorScheme.onSecondary,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       if (widget.device.data != null)

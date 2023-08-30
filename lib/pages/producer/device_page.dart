@@ -30,16 +30,6 @@ class _DevicePageState extends State<DevicePage> {
     super.initState();
   }
 
-  Future<void> _reloadDevice() async {
-    await getDevice(widget.device.deviceId).then((newDevice) {
-      if (newDevice != null) {
-        setState(() {
-          device = newDevice;
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);

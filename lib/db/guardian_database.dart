@@ -108,8 +108,8 @@ class GuardianDatabase {
       CREATE TABLE IF NOT EXISTS $tableAlertNotification (
         ${AlertNotificationFields.notificationId} $idIncrementType,
         ${AlertNotificationFields.alertId} $textType,
-        ${AlertNotificationFields.uid} $textType,
-        ${AlertNotificationFields.deviceId} $textType
+        ${AlertNotificationFields.deviceId} $textType,
+        ${AlertNotificationFields.isDeleted} $boolType
       )""");
 
     // Create fences table
