@@ -29,6 +29,22 @@ Future<AlertNotification> createAlertNotification(AlertNotification notification
   return notification;
 }
 
+Future<void> removeAllNotifications() async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableAlertNotification,
+  );
+}
+
+Future<void> removeNotification(String notificationId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableAlertNotification,
+    where: '${AlertNotificationFields.notificationId} = ?',
+    whereArgs: [notificationId],
+  );
+}
+
 Future<List<UserAlertNotification>> getUserNotifications() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
@@ -42,7 +58,13 @@ Future<List<UserAlertNotification>> getUserNotifications() async {
       final alertNotification = AlertNotification.fromJson(dt);
       UserAlert alert = (await getAlert(alertNotification.alertId))!;
       Device device = (await getDevice(alertNotification.deviceId))!;
-      notifications.add(UserAlertNotification(device: device, alert: alert));
+      notifications.add(
+        UserAlertNotification(
+          device: device,
+          alert: alert,
+          notificationId: alertNotification.notificationId!,
+        ),
+      );
     }
   }
 

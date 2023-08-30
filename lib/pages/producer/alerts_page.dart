@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/models/data_models/Alerts/alert_notifications.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/models/providers/read_json.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -37,6 +39,7 @@ class _AlertsPageState extends State<AlertsPage> {
   Future<void> _loadAlerts() async {
     getUserNotifications().then(
       (allAlerts) {
+        alerts = [];
         alerts.addAll(allAlerts);
         setState(() => isLoading = false);
       },
@@ -65,7 +68,7 @@ class _AlertsPageState extends State<AlertsPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    //!TODO: on remove all alerts
+                    removeAllNotifications().then((_) => loadAlerts());
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,6 +101,13 @@ class _AlertsPageState extends State<AlertsPage> {
                         itemCount: alerts.length,
                         itemBuilder: (context, index) => AlertItem(
                           alertNotification: alerts[index],
+                          onRemove: () async {
+                            await removeNotification(
+                              alerts[index].notificationId,
+                            ).then(
+                              (_) async => await _loadAlerts(),
+                            );
+                          },
                         ),
                       ),
                     ),

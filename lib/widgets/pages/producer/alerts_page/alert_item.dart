@@ -5,9 +5,11 @@ import 'package:guardian/models/user_alert_notification.dart';
 
 class AlertItem extends StatelessWidget {
   final UserAlertNotification alertNotification;
+  final Function() onRemove;
   const AlertItem({
     super.key,
     required this.alertNotification,
+    required this.onRemove,
   });
 
   @override
@@ -30,9 +32,7 @@ class AlertItem extends StatelessWidget {
           subtitle: Text(
               '${alertNotification.alert.parameter.toShortString(context).capitalize()} ${alertNotification.alert.comparisson.toShortString(context)} a ${alertNotification.alert.value}'),
           trailing: IconButton(
-            onPressed: () {
-              //!TODO: Delete code for alert
-            },
+            onPressed: onRemove,
             icon: Icon(
               Icons.delete_forever,
               size: 30,

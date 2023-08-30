@@ -60,12 +60,25 @@ class _ProducerHomeState extends State<ProducerHome> {
   }
 
   Future<void> _loadFences() async {
-    await getUserFences().then((allFences) => setState(() => fences.addAll(allFences)));
+    await getUserFences().then(
+      (allFences) => setState(
+        () {
+          fences = [];
+          fences.addAll(allFences);
+        },
+      ),
+    );
   }
 
   Future<void> _loadAlertNotifications() async {
-    await getUserNotifications()
-        .then((allAlerts) => setState(() => alertNotifications.addAll(allAlerts)));
+    await getUserNotifications().then(
+      (allAlerts) => setState(
+        () {
+          alertNotifications = [];
+          alertNotifications.addAll(allAlerts);
+        },
+      ),
+    );
   }
 
   @override
@@ -100,7 +113,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).pushNamed('/producer/fences');
+                                Navigator.of(context)
+                                    .pushNamed('/producer/fences')
+                                    .then((_) => _loadFences());
                               },
                               child: Text(localizations.fences.capitalize()),
                             ),
@@ -171,7 +186,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                                   title: localizations.devices.capitalize(),
                                   description: '${devices.length}',
                                   onTap: () {
-                                    Navigator.of(context).pushNamed('/producer/devices');
+                                    Navigator.of(context).pushNamed('/producer/devices').then(
+                                          (_) => _loadDevices(),
+                                        );
                                   },
                                 ),
                               ),
@@ -184,7 +201,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                                   description: '${alertNotifications.length}',
                                   isAlert: true,
                                   onTap: () {
-                                    Navigator.of(context).pushNamed('/producer/alerts');
+                                    Navigator.of(context).pushNamed('/producer/alerts').then(
+                                          (_) => _loadAlertNotifications(),
+                                        );
                                   },
                                 ),
                               ),
