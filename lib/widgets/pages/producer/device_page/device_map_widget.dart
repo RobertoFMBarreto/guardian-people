@@ -44,23 +44,29 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   @override
   void initState() {
-    _getCurrentPosition().then(
-      (_) => _loadFences().then(
-        (_) => _getDeviceData(),
-      ),
-    );
+    _getCurrentPosition().then((_) {
+      if (mounted) {
+        _loadFences().then(
+          (_) {
+            if (mounted) {
+              _getDeviceData();
+            }
+          },
+        );
+      }
+    });
     super.initState();
   }
 
   Future<void> _loadFences() async {
     getUid(context).then((userId) {
-      if (mounted) {
-        if (userId != null) {
-          uid = userId;
-          getUserFences().then((allFences) {
+      if (userId != null) {
+        uid = userId;
+        getUserFences().then((allFences) {
+          if (mounted) {
             setState(() => fences.addAll(allFences));
-          });
-        }
+          }
+        });
       }
     });
   }

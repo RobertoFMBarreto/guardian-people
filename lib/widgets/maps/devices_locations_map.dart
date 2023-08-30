@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_points_operations.dart';
@@ -124,6 +125,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.linovt.guardian',
+                tileProvider: FMTC.instance('guardian').getTileProvider(),
               ),
               if (circles.isNotEmpty)
                 CircleLayer(

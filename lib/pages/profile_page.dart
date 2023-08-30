@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 
 import '../widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 
@@ -15,6 +16,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    checkInternetConnection(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);

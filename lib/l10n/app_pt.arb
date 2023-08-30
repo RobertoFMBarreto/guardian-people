@@ -88,5 +88,8 @@
   "fence_name": "nome da cerca",
   "remove_all": "apagar todos",
   "producer": "produtor",
-  "no_device_data": "não existem dados do dispositivo"
+  "no_device_data": "não existem dados do dispositivo",
+  "no_wifi": "sem conexão à internet",
+  "no_wifi_operations": "as suas operações estarão limitadas",
+  "ok": "ok"
 }

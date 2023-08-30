@@ -11,6 +11,7 @@ import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/floating_action_button.dart';
@@ -60,6 +61,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               producer = user;
             }
             isLoading = false;
+
+            checkInternetConnection(context);
           });
         });
       }),

@@ -12,6 +12,7 @@ import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/key_value_pair.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
 
@@ -54,11 +55,15 @@ class _AddAlertPageState extends State<AddAlertPage> {
         setState(() {
           isLoading = false;
         });
+
+        checkInternetConnection(context);
       });
     } else {
       setState(() {
         isLoading = false;
       });
+
+      checkInternetConnection(context);
     }
     super.initState();
   }

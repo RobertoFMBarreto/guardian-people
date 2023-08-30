@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
@@ -11,6 +12,7 @@ import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/color_circle.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:latlong2/latlong.dart';
@@ -65,7 +67,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
                 setState(() {
                   isLoading = false;
                 });
-                print(fencePoints);
+
+                checkInternetConnection(context);
               }
             });
           } else {
@@ -75,6 +78,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
               setState(() {
                 isLoading = false;
               });
+
+              checkInternetConnection(context);
             }
           }
         });
@@ -194,7 +199,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
                           ),
                           children: [
                             TileLayer(
-                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              //urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              tileProvider: FMTC.instance('guardian').getTileProvider(),
                             ),
                             if (polyEditor.points.length >= 2 && isCircle)
                               CircleLayer(

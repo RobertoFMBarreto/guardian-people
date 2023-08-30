@@ -13,6 +13,7 @@ import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
 
@@ -33,7 +34,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   void initState() {
     deviceName = widget.device.name;
     _getDeviceAlerts().then(
-      (_) => _getDeviceFences(),
+      (_) => _getDeviceFences().then(
+        (_) => checkInternetConnection(context),
+      ),
     );
     controller.text = widget.device.name;
     super.initState();

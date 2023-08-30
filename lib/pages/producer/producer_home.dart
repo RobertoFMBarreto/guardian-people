@@ -9,6 +9,7 @@ import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
@@ -33,7 +34,6 @@ class _ProducerHomeState extends State<ProducerHome> {
   @override
   void initState() {
     super.initState();
-
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
@@ -43,7 +43,10 @@ class _ProducerHomeState extends State<ProducerHome> {
             _loadDevices().then(
               (_) => _loadFences().then(
                 (_) => _loadAlertNotifications().then(
-                  (value) => isLoading = false,
+                  (value) {
+                    checkInternetConnection(context);
+                    isLoading = false;
+                  },
                 ),
               ),
             );
@@ -55,6 +58,7 @@ class _ProducerHomeState extends State<ProducerHome> {
 
   Future<void> _loadDevices() async {
     await getUserDevicesWithData().then((allDevices) {
+      devices = [];
       return setState(() => devices.addAll(allDevices));
     });
   }
@@ -85,6 +89,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(147, 215, 166, 1),

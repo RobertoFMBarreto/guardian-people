@@ -26,6 +26,7 @@ import 'colors.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterMapTileCaching.initialise();
+  await FMTC.instance('guardian').manage.createAsync();
   runApp(const MyApp());
 }
 

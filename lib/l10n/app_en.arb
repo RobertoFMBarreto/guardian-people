@@ -88,5 +88,8 @@
   "fence_name": "fence name",
   "remove_all": "delete all",
   "producer": "producer",
-  "no_device_data": "no device data"
+  "no_device_data": "no device data",
+  "no_wifi": "no wifi conection",
+  "no_wifi_operations": "your operations are limited",
+  "ok": "ok"
 }

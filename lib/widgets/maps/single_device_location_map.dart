@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
@@ -81,9 +82,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
         //}
       }
       isLoading = false;
-      setState(() {
-        polygons.addAll(allFences);
-      });
+      if (mounted) {
+        setState(() {
+          polygons.addAll(allFences);
+        });
+      }
     });
   }
 
@@ -123,6 +126,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.linovt.guardian',
+                tileProvider: FMTC.instance('guardian').getTileProvider(),
               ),
               if (showFence)
                 CircleLayer(

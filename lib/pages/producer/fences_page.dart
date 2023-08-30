@@ -6,6 +6,7 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,7 +30,10 @@ class _FencesPageState extends State<FencesPage> {
 
   @override
   void initState() {
-    _loadFences().then((value) => setState(() => isLoading = false));
+    _loadFences().then((_) {
+      checkInternetConnection(context);
+      setState(() => isLoading = false);
+    });
     super.initState();
   }
 

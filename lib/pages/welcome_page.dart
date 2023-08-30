@@ -5,6 +5,7 @@ import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -16,7 +17,7 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
-    getToken(context);
+    getToken(context).then((_) => checkInternetConnection(context));
 
     super.initState();
   }

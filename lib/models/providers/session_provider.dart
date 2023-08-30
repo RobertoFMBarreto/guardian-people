@@ -27,6 +27,19 @@ Future<bool> hasUserSession() async {
   return uid != null;
 }
 
+Future<bool> hasShownNoWifiDialog() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  bool? hasShowed = prefs.getBool('showedNoWifi');
+  return hasShowed ?? false;
+}
+
+Future<void> setShownNoWifiDialog(bool value) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  prefs.setBool('showedNoWifi', value);
+}
+
 Future<String?> getUid(BuildContext context) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 

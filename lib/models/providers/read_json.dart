@@ -44,7 +44,7 @@ Future<List<Device>> loadUserDevices(String uid) async {
   for (var device in devicesMapList) {
     if (device['uid'] == uid) {
       // load devices and their data
-      final dev = await createDevice(
+      await createDevice(
         Device(
           imei: device['imei'],
           color: device['color'],

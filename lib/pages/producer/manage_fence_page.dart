@@ -9,6 +9,7 @@ import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -42,7 +43,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
     fence = widget.fence;
     fenceColor = HexColor(fence.color);
     fenceHexColor = fence.color;
-    _loadDevices();
+    _loadDevices().then((_) => checkInternetConnection(context));
   }
 
   Future<void> _loadDevices() async {

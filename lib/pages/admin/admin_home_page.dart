@@ -4,6 +4,7 @@ import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
@@ -35,6 +36,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         users.addAll(usersData);
         isLoading = false;
       });
+
+      checkInternetConnection(context);
     });
   }
 
