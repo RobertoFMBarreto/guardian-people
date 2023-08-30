@@ -93,6 +93,20 @@ class _ProducerHomeState extends State<ProducerHome> {
                       imageUrl: '',
                       name: user.name,
                       isHomeShape: true,
+                      title: Padding(
+                        padding: const EdgeInsets.only(right: 20.0, bottom: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed('/producer/fences');
+                              },
+                              child: Text(localizations.fences.capitalize()),
+                            ),
+                          ],
+                        ),
+                      ),
                       tailWidget: PopupMenuButton(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         color: theme.colorScheme.onSecondary,
@@ -177,20 +191,6 @@ class _ProducerHomeState extends State<ProducerHome> {
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20.0, top: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pushNamed('/producer/fences');
-                                },
-                                child: Text(localizations.fences.capitalize()),
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     ),
                   ),
