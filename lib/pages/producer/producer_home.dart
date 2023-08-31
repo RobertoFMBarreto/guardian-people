@@ -152,19 +152,20 @@ class _ProducerHomeState extends State<ProducerHome> {
                           }
                         },
                         itemBuilder: (BuildContext context) => [
-                          PopupMenuItem(
-                            value: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(localizations.profile.capitalize()),
-                                const Icon(
-                                  Icons.person,
-                                  size: 15,
-                                ),
-                              ],
+                          if (widget.hasConnection)
+                            PopupMenuItem(
+                              value: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(localizations.profile.capitalize()),
+                                  const Icon(
+                                    Icons.person,
+                                    size: 15,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
                           PopupMenuItem(
                             value: 1,
                             child: Row(

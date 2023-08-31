@@ -75,29 +75,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           color: theme.colorScheme.onSecondary,
                           icon: const Icon(Icons.menu),
                           onSelected: (item) {
-                            if (widget.hasConnection) {
-                              switch (item) {
-                                case 0:
-                                  Navigator.of(context).pushNamed('/profile');
-                                  break;
-                                case 1:
-                                  //! Logout code
-                                  clearUserSession().then(
-                                    (value) => Navigator.of(context).popAndPushNamed('/login'),
-                                  );
+                            switch (item) {
+                              case 0:
+                                Navigator.of(context).pushNamed('/profile');
+                                break;
+                              case 1:
+                                //! Logout code
+                                clearUserSession().then(
+                                  (value) => Navigator.of(context).popAndPushNamed('/login'),
+                                );
 
-                                  break;
-                              }
-                            } else {
-                              switch (item) {
-                                case 0:
-                                  //! Logout code
-                                  clearUserSession().then(
-                                    (value) => Navigator.of(context).popAndPushNamed('/login'),
-                                  );
-
-                                  break;
-                              }
+                                break;
                             }
                           },
                           itemBuilder: (BuildContext context) => [

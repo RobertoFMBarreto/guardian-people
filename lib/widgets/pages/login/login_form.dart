@@ -9,7 +9,8 @@ import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
+  final bool hasConnection;
+  const LoginForm({super.key, required this.hasConnection});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -112,50 +113,56 @@ class _LoginFormState extends State<LoginForm> {
                     onPressed: () async {
                       // if true the inputs are filled and correct
                       if (_formKey.currentState!.validate()) {
-                        // show loading
-                        showLoadingDialog(context);
+                        if (widget.hasConnection) {
+                          // show loading
+                          showLoadingDialog(context);
 
-                        // search user and verify if its correct
-                        //!TODO: Change to services
-                        loadUsers().then(
-                          (allUsers) async {
-                            List<User> users = allUsers;
-                            List<User> user = users
-                                .where((element) =>
-                                    element.email == _email && _password == 'teste123@')
-                                .toList();
-                            if (user.isEmpty) {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                errorString = localizations.login_error.capitalize();
-                              });
-                            } else {
-                              //!TODO: To Remove it
-                              if (user.first.isAdmin) {
-                                for (var u in users) {
-                                  await createUser(u);
-                                  await loadUserDevices(u.uid);
-                                  await loadUserFences(u.uid);
+                          // search user and verify if its correct
+                          //!TODO: Change to services
+                          loadUsers().then(
+                            (allUsers) async {
+                              List<User> users = allUsers;
+                              List<User> user = users
+                                  .where((element) =>
+                                      element.email == _email && _password == 'teste123@')
+                                  .toList();
+                              if (user.isEmpty) {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  errorString = localizations.login_error.capitalize();
+                                });
+                              } else {
+                                //!TODO: To Remove it
+                                if (user.first.isAdmin) {
+                                  for (var u in users) {
+                                    await createUser(u);
+                                    await loadUserDevices(u.uid);
+                                    await loadUserFences(u.uid);
+                                  }
                                 }
-                              }
-                              await loadUserDevices(user.first.uid);
-                              await loadUserFences(user.first.uid);
-                              //loadAlerts();
+                                await loadUserDevices(user.first.uid);
+                                await loadUserFences(user.first.uid);
+                                //loadAlerts();
 
-                              // pop loading dialog
-                              Navigator.of(context).pop();
-                              // store session data
-                              setUserSession(user.first.uid);
-                              // store user profile
-                              createUser(user.first).then((_) {
-                                // send to admin or producer
-                                Navigator.of(context).popAndPushNamed(
-                                  user.first.isAdmin ? '/admin' : '/producer',
-                                );
-                              });
-                            }
-                          },
-                        );
+                                // pop loading dialog
+                                Navigator.of(context).pop();
+                                // store session data
+                                setUserSession(user.first.uid);
+                                // store user profile
+                                createUser(user.first).then((_) {
+                                  // send to admin or producer
+                                  Navigator.of(context).popAndPushNamed(
+                                    user.first.isAdmin ? '/admin' : '/producer',
+                                  );
+                                });
+                              }
+                            },
+                          );
+                        } else {
+                          setState(() {
+                            errorString = localizations.no_wifi.capitalize();
+                          });
+                        }
                       }
                     },
                     child: const Text('Login'),

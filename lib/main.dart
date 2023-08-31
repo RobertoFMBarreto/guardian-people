@@ -173,7 +173,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => const WelcomePage(),
-        '/login': (context) => const LoginPage(),
+        '/login': (context) => LoginPage(hasConnection: hasConnection),
         '/profile': (context) => const ProfilePage(),
         '/admin': (context) => AdminHomePage(hasConnection: hasConnection),
         '/admin/producer': (context) {

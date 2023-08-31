@@ -4,7 +4,8 @@ import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/pages/login/login_form.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  final bool hasConnection;
+  const LoginPage({super.key, required this.hasConnection});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class LoginPage extends StatelessWidget {
             child: Center(
               child: Padding(
                 padding: EdgeInsets.all(20.0),
-                child: LoginForm(),
+                child: LoginForm(hasConnection: hasConnection),
               ),
             ),
           ),
