@@ -38,18 +38,20 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
 
   @override
   void initState() {
-    _getCurrentPosition().then((_) {
-      if (widget.fences != null) {
-        if (widget.fences!.length > 1 && widget.centerOnPoly) {
-          throw ErrorDescription("Can only center on poly with one poly");
-        }
-      }
-      _loadFences().then(
-        (_) => setState(() => isLoading = false),
-      );
-    });
-
+    _setup();
     super.initState();
+  }
+
+  Future<void> _setup() async {
+    await _getCurrentPosition();
+    if (widget.fences != null) {
+      if (widget.fences!.length > 1 && widget.centerOnPoly) {
+        throw ErrorDescription("Can only center on poly with one poly");
+      }
+    }
+    _loadFences().then(
+      (_) => setState(() => isLoading = false),
+    );
   }
 
   Future<void> _getCurrentPosition() async {
