@@ -91,5 +91,7 @@
   "no_device_data": "não existem dados do dispositivo",
   "no_wifi": "sem conexão à internet",
   "no_wifi_operations": "as suas operações estarão limitadas",
-  "ok": "ok"
+  "ok": "ok",
+  "state_history": "histórico de estados",
+  "no_data_to_show": "não existem dados para mostrar"
 }

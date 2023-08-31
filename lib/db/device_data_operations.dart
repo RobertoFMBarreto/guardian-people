@@ -74,11 +74,12 @@ Future<List<DeviceData>> getDeviceData({
   bool isInterval = false,
 }) async {
   final db = await GuardianDatabase().database;
-  final data = isInterval && startDate!.difference(endDate!).inSeconds.abs() < 60
+  final data = isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60
       ? await db.query(
           tableDeviceData,
           where: '''${DeviceDataFields.deviceId} = ? AND
-                  ${DeviceDataFields.dateTime} >= ? AND ${DeviceDataFields.dateTime} <= ?''',
+                  ${DeviceDataFields.dateTime} >= ? AND 
+                  ${DeviceDataFields.dateTime} <= ?''',
           whereArgs: [deviceId, startDate.toIso8601String(), endDate.toIso8601String()],
           orderBy: '${DeviceDataFields.dateTime} DESC',
         )

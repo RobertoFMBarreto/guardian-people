@@ -19,6 +19,7 @@ import 'package:guardian/pages/login_page.dart';
 import 'package:guardian/pages/producer/add_alert_page.dart';
 import 'package:guardian/pages/producer/alerts_management_page.dart';
 import 'package:guardian/pages/producer/alerts_page.dart';
+import 'package:guardian/pages/producer/device_history_page.dart';
 import 'package:guardian/pages/producer/device_page.dart';
 import 'package:guardian/pages/producer/device_settings_page.dart';
 import 'package:guardian/pages/producer/fences_page.dart';
@@ -260,6 +261,15 @@ class _MyAppState extends State<MyApp> {
         '/producer/device/settings': (context) {
           if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
             return DeviceSettingsPage(
+              device: ModalRoute.of(context)!.settings.arguments as Device,
+            );
+          } else {
+            throw ErrorDescription('Device not provided');
+          }
+        },
+        '/producer/device/history': (context) {
+          if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+            return DeviceHistoryPage(
               device: ModalRoute.of(context)!.settings.arguments as Device,
             );
           } else {

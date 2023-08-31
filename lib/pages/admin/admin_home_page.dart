@@ -1,14 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
-import 'package:guardian/widgets/inputs/search_filter_input.dart';
-
 import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
-import 'package:guardian/widgets/pages/admin/admin_home/highlights.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';

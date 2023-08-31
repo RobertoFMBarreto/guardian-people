@@ -43,6 +43,19 @@ class _DevicePageState extends State<DevicePage> {
         automaticallyImplyLeading: false,
         toolbarHeight: 0,
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/producer/device/history', arguments: widget.device);
+        },
+        backgroundColor: theme.colorScheme.secondary,
+        label: Text(
+          localizations.state_history.capitalize(),
+          style: theme.textTheme.bodyLarge!.copyWith(
+            fontWeight: FontWeight.w500,
+            color: theme.colorScheme.onSecondary,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: CustomScrollView(
           physics: const NeverScrollableScrollPhysics(),
@@ -120,6 +133,7 @@ class _DevicePageState extends State<DevicePage> {
                             if (newDevice != null && newDevice.runtimeType == Device) {
                               setState(() => device = (newDevice as Device));
                             } else {
+                              // Force reload map
                               setState(() {
                                 reloadNum = Random().nextInt(999999);
                               });
