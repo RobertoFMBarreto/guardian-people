@@ -24,6 +24,20 @@ class _LoginFormState extends State<LoginForm> {
   String _email = '';
   String _password = '';
 
+  Future<void> _loadDataRemoveThisLater(List<User> users, User user) async {
+    //!TODO: To Remove it
+    if (user.isAdmin) {
+      for (var u in users) {
+        await createUser(u);
+        await loadUserDevices(u.uid);
+        await loadUserFences(u.uid);
+      }
+    } else {
+      await loadUserDevices(user.uid);
+      await loadUserFences(user.uid);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -134,28 +148,18 @@ class _LoginFormState extends State<LoginForm> {
                                   errorString = localizations.login_error.capitalize();
                                 });
                               } else {
-                                //!TODO: To Remove it
-                                if (user.first.isAdmin) {
-                                  for (var u in users) {
-                                    await createUser(u);
-                                    await loadUserDevices(u.uid);
-                                    await loadUserFences(u.uid);
-                                  }
-                                }
-                                await loadUserDevices(user.first.uid);
-                                await loadUserFences(user.first.uid);
-                                //loadAlerts();
-
-                                // pop loading dialog
-                                Navigator.of(context).pop();
-                                // store session data
-                                setUserSession(user.first.uid);
-                                // store user profile
-                                createUser(user.first).then((_) {
-                                  // send to admin or producer
-                                  Navigator.of(context).popAndPushNamed(
-                                    user.first.isAdmin ? '/admin' : '/producer',
-                                  );
+                                _loadDataRemoveThisLater(users, user.first).then((_) {
+                                  // pop loading dialog
+                                  Navigator.of(context).pop();
+                                  // store session data
+                                  setUserSession(user.first.uid);
+                                  // store user profile
+                                  createUser(user.first).then((_) {
+                                    // send to admin or producer
+                                    Navigator.of(context).popAndPushNamed(
+                                      user.first.isAdmin ? '/admin' : '/producer',
+                                    );
+                                  });
                                 });
                               }
                             },

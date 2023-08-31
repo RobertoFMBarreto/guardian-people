@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/db/user_operations.dart';
-import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -25,21 +24,19 @@ class _WelcomePageState extends State<WelcomePage> {
       (uid) async {
         if (uid != null) {
           // get user data
-          User? user = await getUser(uid);
+          getUser(uid).then((user) {
+            //!TODO: To Remove it
+            // loadUserDevices(uid);
+            // loadUserFences(uid);
+            // loadAlerts();
 
-          //!TODO: To Remove it
-          // loadUserDevices(uid);
-          // loadUserFences(uid);
-          // loadAlerts();
-
-          // if there is stored data use it for getting his role
-          if (user != null) {
-            // ignore: use_build_context_synchronously
-            Navigator.of(context).popAndPushNamed(user.isAdmin ? '/admin' : '/producer');
-          } else {
-            // ignore: use_build_context_synchronously
-            Navigator.of(context).pushReplacementNamed('/login');
-          }
+            // if there is stored data use it for getting his role
+            if (user != null) {
+              Navigator.of(context).popAndPushNamed(user.isAdmin ? '/admin' : '/producer');
+            } else {
+              Navigator.of(context).pushReplacementNamed('/login');
+            }
+          });
         } else {
           Navigator.of(context).pushReplacementNamed('/login');
         }
