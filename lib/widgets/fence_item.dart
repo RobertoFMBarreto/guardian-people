@@ -4,7 +4,13 @@ class FenceItem extends StatelessWidget {
   final String name;
   final Color color;
   final Function() onRemove;
-  const FenceItem({super.key, required this.onRemove, required this.name, required this.color});
+  final bool hasConnection;
+  const FenceItem(
+      {super.key,
+      required this.onRemove,
+      required this.name,
+      required this.color,
+      required this.hasConnection});
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +56,13 @@ class FenceItem extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: onRemove,
-                icon: const Icon(Icons.delete_forever),
-                iconSize: 30,
-                color: theme.colorScheme.error,
-              )
+              if (hasConnection)
+                IconButton(
+                  onPressed: onRemove,
+                  icon: const Icon(Icons.delete_forever),
+                  iconSize: 30,
+                  color: theme.colorScheme.error,
+                )
             ],
           ),
         ),

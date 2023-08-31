@@ -88,7 +88,7 @@ class _FencesPageState extends State<FencesPage> {
                   color: theme.colorScheme.onSecondary,
                 ),
               )
-            : widget.isSelect
+            : widget.isSelect || !widget.hasConnection
                 ? null
                 : FloatingActionButton(
                     shape: const CircleBorder(),
@@ -137,11 +137,13 @@ class _FencesPageState extends State<FencesPage> {
                         itemCount: fences.length,
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () {
-                            Navigator.of(context)
-                                .pushNamed('/producer/fence/manage', arguments: fences[index])
-                                .then(
-                                  (_) => _loadFences(),
-                                );
+                            if (widget.hasConnection) {
+                              Navigator.of(context)
+                                  .pushNamed('/producer/fence/manage', arguments: fences[index])
+                                  .then(
+                                    (_) => _loadFences(),
+                                  );
+                            }
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -165,6 +167,7 @@ class _FencesPageState extends State<FencesPage> {
                                 : FenceItem(
                                     name: fences[index].name,
                                     color: HexColor(fences[index].color),
+                                    hasConnection: widget.hasConnection,
                                     onRemove: () {
                                       //!TODO remove item from list
                                       removeFence(fences[index]).then((_) => _loadFences());
