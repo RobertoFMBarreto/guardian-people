@@ -1,18 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
-import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,7 +18,9 @@ import 'package:latlong2/latlong.dart';
 
 class ManageFencePage extends StatefulWidget {
   final Fence fence;
-  const ManageFencePage({super.key, required this.fence});
+
+  final bool hasConnection;
+  const ManageFencePage({super.key, required this.fence, required this.hasConnection});
 
   @override
   State<ManageFencePage> createState() => _ManageFencePageState();
@@ -39,53 +39,13 @@ class _ManageFencePageState extends State<ManageFencePage> {
 
   bool isLoading = true;
 
-  late StreamSubscription subscription;
-
-  @override
-  void dispose() {
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
-    subscription.cancel();
-    super.dispose();
-  }
-
   @override
   void initState() {
     super.initState();
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
     fence = widget.fence;
     fenceColor = HexColor(fence.color);
     fenceHexColor = fence.color;
-    _loadDevices().then((_) => checkInternetConnection(context));
+    _loadDevices();
   }
 
   Future<void> _loadDevices() async {
@@ -114,6 +74,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: !isLoading
           ? AppBar(

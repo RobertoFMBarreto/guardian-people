@@ -3,10 +3,14 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
+import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/navigator_key.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
@@ -26,6 +30,7 @@ import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';
 import 'colors.dart';
 
+final globalNavigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterMapTileCaching.initialise();
@@ -41,6 +46,46 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late StreamSubscription subscription;
+
+  bool hasConnection = true;
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    setup().then(
+      (_) => subscription = wifiConnectionChecker(
+        context: context,
+        onHasConnection: () async {
+          print("Has Connection");
+          setState(() {
+            hasConnection = true;
+          });
+
+          await setShownNoWifiDialog(false);
+        },
+        onNotHasConnection: () async {
+          print("No Connection");
+          setState(() {
+            hasConnection = false;
+          });
+
+          await showNoWifiDialog(context);
+        },
+      ),
+    );
+    super.initState();
+  }
+
+  Future<void> setup() async {
+    hasConnection = await checkInternetConnection(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Change status bar color
@@ -50,6 +95,7 @@ class _MyAppState extends State<MyApp> {
       ),
     );
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Guardian',
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -150,19 +196,25 @@ class _MyAppState extends State<MyApp> {
             throw ErrorDescription('Device not provided');
           }
         },
-        '/producer': (context) => const ProducerHome(),
+        '/producer': (context) => ProducerHome(
+              hasConnection: hasConnection,
+            ),
         '/producer/fences': (context) {
           if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
             return FencesPage(
               isSelect: ModalRoute.of(context)!.settings.arguments as bool,
+              hasConnection: hasConnection,
             );
           } else {
-            return const FencesPage();
+            return FencesPage(
+              hasConnection: hasConnection,
+            );
           }
         },
         '/producer/fence/manage': (context) {
           return ManageFencePage(
             fence: ModalRoute.of(context)!.settings.arguments as Fence,
+            hasConnection: hasConnection,
           );
         },
         '/producer/geofencing': (context) {
@@ -186,15 +238,21 @@ class _MyAppState extends State<MyApp> {
               notToShowDevices: data.containsKey('notToShowDevices')
                   ? data['notToShowDevices'] as List<String>
                   : null,
+              hasConnection: hasConnection,
             );
           } else {
-            return const ProducerDevicesPage();
+            return ProducerDevicesPage(
+              hasConnection: hasConnection,
+            );
           }
         },
         '/producer/device': (context) {
           if (ModalRoute.of(context)!.settings.arguments != null) {
             final data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return DevicePage(device: data['device'] as Device);
+            return DevicePage(
+              device: data['device'] as Device,
+              hasConnection: hasConnection,
+            );
           } else {
             throw ErrorDescription('Device not provided');
           }
@@ -208,7 +266,9 @@ class _MyAppState extends State<MyApp> {
             throw ErrorDescription('Device not provided');
           }
         },
-        '/producer/alerts': (context) => const AlertsPage(),
+        '/producer/alerts': (context) => AlertsPage(
+              hasConnection: hasConnection,
+            ),
         '/producer/alerts/add': (context) {
           final args = ModalRoute.of(context)!.settings.arguments;
           if (args != null) {
@@ -225,6 +285,7 @@ class _MyAppState extends State<MyApp> {
           if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
             return AlertsManagementPage(
               isSelect: ModalRoute.of(context)!.settings.arguments as bool,
+              hasConnection: hasConnection,
             );
           } else {
             throw ErrorDescription('isSelect not provided');

@@ -1,21 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
-import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/selectable_alert_management_item.dart';
 
 class AlertsManagementPage extends StatefulWidget {
   final bool isSelect;
-  const AlertsManagementPage({super.key, this.isSelect = false});
+
+  final bool hasConnection;
+  const AlertsManagementPage({super.key, this.isSelect = false, required this.hasConnection});
 
   @override
   State<AlertsManagementPage> createState() => _AlertsManagementPageState();
@@ -26,32 +25,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   bool isLoading = true;
   List<UserAlert> selectedAlerts = [];
 
-  late StreamSubscription subscription;
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
-
   @override
   void initState() {
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
     _loadAlerts().then((value) => setState(() => isLoading = false));
     super.initState();
   }

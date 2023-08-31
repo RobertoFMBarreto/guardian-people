@@ -2,17 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
-import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
-import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlertsPage extends StatefulWidget {
-  const AlertsPage({super.key});
+  final bool hasConnection;
+  const AlertsPage({super.key, required this.hasConnection});
 
   @override
   State<AlertsPage> createState() => _AlertsPageState();
@@ -22,14 +21,6 @@ class _AlertsPageState extends State<AlertsPage> {
   List<UserAlertNotification> alerts = [];
   late String uid;
   bool isLoading = true;
-
-  late StreamSubscription subscription;
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -41,22 +32,7 @@ class _AlertsPageState extends State<AlertsPage> {
     //     ));
     //   });
     // });
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
+
     _loadAlerts().then((_) {
       setState(() => isLoading = false);
     });

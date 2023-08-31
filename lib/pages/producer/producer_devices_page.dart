@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/db/device_operations.dart';
-import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/widgets/device/device_item_selectable.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 
@@ -21,12 +19,15 @@ class ProducerDevicesPage extends StatefulWidget {
   final String? fenceId;
   final String? alertId;
   final List<String>? notToShowDevices;
+
+  final bool hasConnection;
   const ProducerDevicesPage({
     super.key,
     this.isSelect = false,
     this.fenceId,
     this.alertId,
     this.notToShowDevices,
+    required this.hasConnection,
   });
 
   @override
@@ -49,36 +50,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   List<Device> devices = [];
 
   late String uid;
-  late StreamSubscription subscription;
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
 
   @override
   void initState() {
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;
-        _filterDevices().then((_) => checkInternetConnection(context));
+        _filterDevices();
       }
     });
 
@@ -139,6 +117,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);

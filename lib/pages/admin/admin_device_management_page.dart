@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';

@@ -1,28 +1,23 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/user_operations.dart';
-import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ProducerHome extends StatefulWidget {
-  const ProducerHome({super.key});
+  final bool hasConnection;
+  const ProducerHome({super.key, required this.hasConnection});
 
   @override
   State<ProducerHome> createState() => _ProducerHomeState();
@@ -34,33 +29,12 @@ class _ProducerHomeState extends State<ProducerHome> {
   List<UserAlertNotification> alertNotifications = [];
   late User user;
   bool isLoading = true;
-  late StreamSubscription subscription;
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
+  bool hasShownNoWifi = false;
 
   @override
   void initState() {
     super.initState();
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
+
     _loadUserData().then(
       (_) => _loadDevices().then(
         (_) => _loadFences().then(

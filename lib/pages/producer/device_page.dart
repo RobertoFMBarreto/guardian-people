@@ -1,13 +1,10 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
+
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -15,7 +12,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DevicePage extends StatefulWidget {
   final Device device;
-  const DevicePage({super.key, required this.device});
+
+  final bool hasConnection;
+  const DevicePage({super.key, required this.device, required this.hasConnection});
 
   @override
   State<DevicePage> createState() => _DevicePageState();
@@ -26,33 +25,9 @@ class _DevicePageState extends State<DevicePage> {
   late Device device;
   int reloadNum = 0;
 
-  late StreamSubscription subscription;
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
-
   @override
   void initState() {
     device = widget.device;
-    subscription = wifiConnectionChecker(
-      context: context,
-      onHasConnection: () async {
-        print("Has Connection");
-        await setShownNoWifiDialog(false);
-      },
-      onNotHasConnection: () async {
-        print("No Connection");
-        await hasShownNoWifiDialog().then((hasShown) async {
-          if (!hasShown) {
-            showNoWifiDialog(context);
-            await setShownNoWifiDialog(true);
-          }
-        });
-      },
-    );
 
     super.initState();
   }
@@ -61,6 +36,7 @@ class _DevicePageState extends State<DevicePage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(147, 215, 166, 1),
@@ -72,7 +48,7 @@ class _DevicePageState extends State<DevicePage> {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
-              key: Key(device.name),
+              key: Key("${device.name}${widget.hasConnection}"),
               pinned: true,
               delegate: SliverDeviceAppBar(
                 onColorChanged: () {
@@ -126,30 +102,32 @@ class _DevicePageState extends State<DevicePage> {
                     Navigator.of(context).pop();
                   },
                 ),
-                tailWidget: IconButton(
-                  icon: Icon(
-                    Icons.settings_outlined,
-                    color: theme.colorScheme.onSecondary,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    //TODO: Code for settings of device
-                    Navigator.of(context)
-                        .pushNamed(
-                      '/producer/device/settings',
-                      arguments: device,
-                    )
-                        .then((newDevice) {
-                      if (newDevice != null && newDevice.runtimeType == Device) {
-                        setState(() => device = (newDevice as Device));
-                      } else {
-                        setState(() {
-                          reloadNum = Random().nextInt(999999);
-                        });
-                      }
-                    });
-                  },
-                ),
+                tailWidget: widget.hasConnection
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.settings_outlined,
+                          color: theme.colorScheme.onSecondary,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          //TODO: Code for settings of device
+                          Navigator.of(context)
+                              .pushNamed(
+                            '/producer/device/settings',
+                            arguments: device,
+                          )
+                              .then((newDevice) {
+                            if (newDevice != null && newDevice.runtimeType == Device) {
+                              setState(() => device = (newDevice as Device));
+                            } else {
+                              setState(() {
+                                reloadNum = Random().nextInt(999999);
+                              });
+                            }
+                          });
+                        },
+                      )
+                    : null,
               ),
             ),
             SliverFillRemaining(
