@@ -7,12 +7,14 @@ class DeviceItemRemovable extends StatelessWidget {
   final Device device;
   final Function() onRemoveDevice;
   final bool isPopPush;
+  final bool hasConnection;
 
   const DeviceItemRemovable({
     super.key,
     required this.device,
     required this.onRemoveDevice,
     this.isPopPush = false,
+    this.hasConnection = true,
   });
 
   @override
@@ -31,14 +33,16 @@ class DeviceItemRemovable extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: ListTile(
-          leading: GestureDetector(
-            onTap: onRemoveDevice,
-            child: const Icon(
-              Icons.delete_forever,
-              size: 35,
-              color: gdErrorColor,
-            ),
-          ),
+          leading: hasConnection
+              ? GestureDetector(
+                  onTap: onRemoveDevice,
+                  child: const Icon(
+                    Icons.delete_forever,
+                    size: 35,
+                    color: gdErrorColor,
+                  ),
+                )
+              : null,
           title: Text(
             device.name.toString(),
             style: theme.textTheme.bodyLarge!.copyWith(

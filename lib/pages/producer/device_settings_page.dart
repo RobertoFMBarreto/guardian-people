@@ -187,6 +187,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: FenceItem(
                         name: fences[index].name,
+                        hasConnection: true,
                         color: HexColor(fences[index].color),
                         onRemove: () {
                           removeDeviceFence(fences[index].fenceId, widget.device.deviceId);

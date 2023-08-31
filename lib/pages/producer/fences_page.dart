@@ -137,13 +137,11 @@ class _FencesPageState extends State<FencesPage> {
                         itemCount: fences.length,
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () {
-                            if (widget.hasConnection) {
-                              Navigator.of(context)
-                                  .pushNamed('/producer/fence/manage', arguments: fences[index])
-                                  .then(
-                                    (_) => _loadFences(),
-                                  );
-                            }
+                            Navigator.of(context)
+                                .pushNamed('/producer/fence/manage', arguments: fences[index])
+                                .then(
+                                  (_) => _loadFences(),
+                                );
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),

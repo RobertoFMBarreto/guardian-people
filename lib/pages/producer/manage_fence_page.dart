@@ -84,17 +84,18 @@ class _ManageFencePageState extends State<ManageFencePage> {
               ),
               centerTitle: true,
               actions: [
-                TextButton(
-                  onPressed: () {
-                    //!TODO call service to delete fence
-                    removeFence(fence).then((_) => Navigator.of(context).pop());
-                  },
-                  child: Text(
-                    localizations.remove.capitalize(),
-                    style: theme.textTheme.bodyLarge!
-                        .copyWith(color: theme.colorScheme.error, fontWeight: FontWeight.w500),
-                  ),
-                )
+                if (widget.hasConnection)
+                  TextButton(
+                    onPressed: () {
+                      //!TODO call service to delete fence
+                      removeFence(fence).then((_) => Navigator.of(context).pop());
+                    },
+                    child: Text(
+                      localizations.remove.capitalize(),
+                      style: theme.textTheme.bodyLarge!
+                          .copyWith(color: theme.colorScheme.error, fontWeight: FontWeight.w500),
+                    ),
+                  )
               ],
             )
           : null,
@@ -129,26 +130,27 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed('/producer/geofencing', arguments: fence)
-                            .then(
-                          (newPoints) {
-                            if (newPoints != null && newPoints.runtimeType == List<LatLng>) {
-                              setState(() {
-                                points = newPoints as List<LatLng>;
-                              });
-                              _reloadFence();
-                            }
-                          },
-                        );
-                      },
-                      child: Text('${localizations.edit.capitalize()} ${localizations.fence}'),
+                  if (widget.hasConnection)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushNamed('/producer/geofencing', arguments: fence)
+                              .then(
+                            (newPoints) {
+                              if (newPoints != null && newPoints.runtimeType == List<LatLng>) {
+                                setState(() {
+                                  points = newPoints as List<LatLng>;
+                                });
+                                _reloadFence();
+                              }
+                            },
+                          );
+                        },
+                        child: Text('${localizations.edit.capitalize()} ${localizations.fence}'),
+                      ),
                     ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
@@ -158,34 +160,35 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           '${localizations.associated_devices.capitalize()}:',
                           style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        IconButton(
-                          onPressed: () async {
-                            Navigator.of(context).pushNamed(
-                              '/producer/devices',
-                              arguments: {
-                                'isSelect': true,
-                                'fenceId': fence.fenceId,
-                              },
-                            ).then((selectedDevices) async {
-                              if (selectedDevices != null &&
-                                  selectedDevices.runtimeType == List<Device>) {
-                                final selected = selectedDevices as List<Device>;
-                                setState(() {
-                                  devices.addAll(selected);
-                                });
-                                for (var device in selected) {
-                                  await createFenceDevice(
-                                    FenceDevices(
-                                      fenceId: fence.fenceId,
-                                      deviceId: device.deviceId,
-                                    ),
-                                  );
+                        if (widget.hasConnection)
+                          IconButton(
+                            onPressed: () async {
+                              Navigator.of(context).pushNamed(
+                                '/producer/devices',
+                                arguments: {
+                                  'isSelect': true,
+                                  'fenceId': fence.fenceId,
+                                },
+                              ).then((selectedDevices) async {
+                                if (selectedDevices != null &&
+                                    selectedDevices.runtimeType == List<Device>) {
+                                  final selected = selectedDevices as List<Device>;
+                                  setState(() {
+                                    devices.addAll(selected);
+                                  });
+                                  for (var device in selected) {
+                                    await createFenceDevice(
+                                      FenceDevices(
+                                        fenceId: fence.fenceId,
+                                        deviceId: device.deviceId,
+                                      ),
+                                    );
+                                  }
                                 }
-                              }
-                            });
-                          },
-                          icon: const Icon(Icons.add),
-                        ),
+                              });
+                            },
+                            icon: const Icon(Icons.add),
+                          ),
                       ],
                     ),
                   ),
@@ -198,6 +201,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         itemBuilder: (context, index) => DeviceItemRemovable(
                           key: Key(devices[index].deviceId),
                           device: devices[index],
+                          hasConnection: widget.hasConnection,
                           onRemoveDevice: () {
                             //!TODO: On remove device
                             removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
