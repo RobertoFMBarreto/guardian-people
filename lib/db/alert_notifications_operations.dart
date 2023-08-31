@@ -45,6 +45,15 @@ Future<void> removeNotification(String notificationId) async {
   );
 }
 
+Future<void> removeAllAlertNotifications(String alertId) async {
+  final db = await GuardianDatabase().database;
+  await db.delete(
+    tableAlertNotification,
+    where: '${AlertNotificationFields.alertId} = ?',
+    whereArgs: [alertId],
+  );
+}
+
 Future<List<UserAlertNotification>> getUserNotifications() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(

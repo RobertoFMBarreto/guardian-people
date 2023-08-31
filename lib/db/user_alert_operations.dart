@@ -1,3 +1,4 @@
+import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/guardian_database.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:sqflite/sqflite.dart';
@@ -47,6 +48,7 @@ Future<UserAlert> updateUserAlert(UserAlert alert) async {
 
 Future<int> deleteAlert(String alertId) async {
   final db = await GuardianDatabase().database;
+  await removeAllAlertDevices(alertId);
   return db.delete(
     tableUserAlerts,
     where: '${UserAlertFields.alertId} = ?',

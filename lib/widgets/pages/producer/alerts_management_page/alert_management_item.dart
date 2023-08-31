@@ -6,7 +6,13 @@ import 'package:guardian/models/extensions/string_extension.dart';
 class AlertManagementItem extends StatelessWidget {
   final UserAlert alert;
   final Function(UserAlert) onDelete;
-  const AlertManagementItem({super.key, required this.alert, required this.onDelete});
+  final bool hasConnection;
+  const AlertManagementItem({
+    super.key,
+    required this.alert,
+    required this.onDelete,
+    required this.hasConnection,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +76,16 @@ class AlertManagementItem extends StatelessWidget {
                 ),
               ],
             ),
-            IconButton(
-              onPressed: () {
-                onDelete(alert);
-              },
-              icon: Icon(
-                Icons.delete_forever,
-                color: theme.colorScheme.error,
+            if (hasConnection)
+              IconButton(
+                onPressed: () {
+                  onDelete(alert);
+                },
+                icon: Icon(
+                  Icons.delete_forever,
+                  color: theme.colorScheme.error,
+                ),
               ),
-            ),
           ],
         ),
       ),

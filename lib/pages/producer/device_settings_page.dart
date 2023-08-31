@@ -134,6 +134,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: AlertManagementItem(
                         alert: alerts[index],
+                        hasConnection: true,
                         onDelete: (alert) {
                           //!TODO: Delete code for alert
                           removeAlertDevice(alert.alertId, widget.device.deviceId);

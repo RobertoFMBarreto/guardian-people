@@ -79,54 +79,55 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
                 child: Column(
                   children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: () {
-                              if (widget.isSelect) {
-                                if (selectedAlerts.length == alerts.length) {
-                                  setState(() {
-                                    selectedAlerts.removeRange(0, selectedAlerts.length);
-                                  });
+                    if (widget.hasConnection)
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton.icon(
+                              onPressed: () {
+                                if (widget.isSelect) {
+                                  if (selectedAlerts.length == alerts.length) {
+                                    setState(() {
+                                      selectedAlerts.removeRange(0, selectedAlerts.length);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedAlerts.addAll(alerts);
+                                    });
+                                  }
                                 } else {
+                                  deleteAllAlerts();
                                   setState(() {
-                                    selectedAlerts.addAll(alerts);
+                                    alerts = [];
                                   });
                                 }
-                              } else {
-                                deleteAllAlerts();
-                                setState(() {
-                                  alerts = [];
-                                });
-                              }
-                            },
-                            icon: Icon(
-                              !widget.isSelect
-                                  ? Icons.delete_forever
-                                  : selectedAlerts.length == alerts.length
-                                      ? Icons.close
-                                      : Icons.done,
-                              color: widget.isSelect
-                                  ? theme.colorScheme.secondary
-                                  : theme.colorScheme.error,
-                            ),
-                            label: Text(
-                              widget.isSelect
-                                  ? localizations.select_all.capitalize()
-                                  : localizations.remove_all.capitalize(),
-                              style: theme.textTheme.bodyLarge!.copyWith(
+                              },
+                              icon: Icon(
+                                !widget.isSelect
+                                    ? Icons.delete_forever
+                                    : selectedAlerts.length == alerts.length
+                                        ? Icons.close
+                                        : Icons.done,
                                 color: widget.isSelect
                                     ? theme.colorScheme.secondary
                                     : theme.colorScheme.error,
-                                fontWeight: FontWeight.bold,
+                              ),
+                              label: Text(
+                                widget.isSelect
+                                    ? localizations.select_all.capitalize()
+                                    : localizations.remove_all.capitalize(),
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  color: widget.isSelect
+                                      ? theme.colorScheme.secondary
+                                      : theme.colorScheme.error,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
                     Expanded(
                       flex: 15,
                       child: ListView.builder(
@@ -152,21 +153,28 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                      '/producer/alerts/add',
-                                      arguments: {
-                                        'isEdit': true,
-                                        'alert': alerts[index],
-                                      },
-                                    ).then((_) {
-                                      print('BAck');
-                                      _loadAlerts();
-                                    });
+                                    if (widget.hasConnection) {
+                                      Navigator.of(context).pushNamed(
+                                        '/producer/alerts/add',
+                                        arguments: {
+                                          'isEdit': true,
+                                          'alert': alerts[index],
+                                        },
+                                      ).then((_) {
+                                        print('BAck');
+                                        _loadAlerts();
+                                      });
+                                    }
                                   },
                                   child: AlertManagementItem(
                                     alert: alerts[index],
+                                    hasConnection: widget.hasConnection,
                                     onDelete: (alert) {
                                       //!TODO: Remove code
+                                      deleteAlert(alerts[index].alertId);
+                                      setState(() {
+                                        alerts.removeAt(index);
+                                      });
                                     },
                                   ),
                                 ),
