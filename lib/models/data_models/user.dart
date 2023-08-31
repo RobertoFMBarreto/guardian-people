@@ -16,6 +16,7 @@ class User {
   final String email;
   final int phone;
   final bool isAdmin;
+  final int? devicesAmount;
   const User({
     this.id,
     required this.uid,
@@ -23,6 +24,7 @@ class User {
     required this.email,
     required this.isAdmin,
     required this.phone,
+    this.devicesAmount,
   });
 
   User copy({
@@ -56,5 +58,6 @@ class User {
         email: json[UserFields.email] as String,
         isAdmin: json[UserFields.isAdmin] == 1,
         phone: json[UserFields.phone] as int,
+        devicesAmount: json['devicesAmount'] as int?,
       );
 }

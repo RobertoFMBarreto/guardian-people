@@ -92,6 +92,15 @@ Future<List<Device>> getUserDevices({String? uid}) async {
   return devices;
 }
 
+Future<void> getUserDevicesAmount(String uid) async {
+  final db = await GuardianDatabase().database;
+  final data = await db.rawQuery(
+    'SELECT COUNT(${DeviceFields.deviceId}) FROM $tableDevices WHERE ${DeviceFields.deviceId} = ?',
+    [uid],
+  );
+  print('DATA: $data');
+}
+
 Future<List<Device>> getUserDevicesWithData() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(

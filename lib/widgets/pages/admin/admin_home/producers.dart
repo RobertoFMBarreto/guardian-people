@@ -38,7 +38,7 @@ class Producers extends StatelessWidget {
                   ),
                   child: Producer(
                     producerName: e.name,
-                    devicesInfo: '10 ${localizations.devices}',
+                    devicesInfo: '${e.devicesAmount} ${localizations.devices}',
                     imageUrl: '',
                     uid: e.uid,
                   ),
