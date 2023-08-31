@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -51,7 +50,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+        backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
         automaticallyImplyLeading: false,
         toolbarHeight: 0,
       ),

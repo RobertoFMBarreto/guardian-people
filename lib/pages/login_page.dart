@@ -26,14 +26,14 @@ class LoginPage extends StatelessWidget {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+            backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
             automaticallyImplyLeading: false,
             toolbarHeight: 0,
           ),
           body: SafeArea(
             child: Center(
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: LoginForm(hasConnection: hasConnection),
               ),
             ),

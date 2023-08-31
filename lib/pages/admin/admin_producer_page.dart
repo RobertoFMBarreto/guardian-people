@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/user_operations.dart';
@@ -101,7 +100,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+          backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
           automaticallyImplyLeading: false,
           toolbarHeight: 0,
         ),

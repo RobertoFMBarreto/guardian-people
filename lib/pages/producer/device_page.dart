@@ -39,7 +39,7 @@ class _DevicePageState extends State<DevicePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+        backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
         automaticallyImplyLeading: false,
         toolbarHeight: 0,
       ),

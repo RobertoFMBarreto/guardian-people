@@ -65,7 +65,7 @@ class _WelcomePageState extends State<WelcomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(147, 215, 166, 1),
+          backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
           automaticallyImplyLeading: false,
           toolbarHeight: 0,
         ),

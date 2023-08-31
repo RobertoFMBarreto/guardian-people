@@ -1,4 +1,3 @@
-import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,7 +22,6 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     final now = DateTime.now();
     _selectedValue = DateTime(now.year, now.month, now.day);
     _getDeviceData();
@@ -105,14 +103,15 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                 ),
               ),
               //TODO: Fix date to current date because the day 31 is broken
-              initialDate: DateTime(2023, 8, 30),
+              initialDate: _selectedValue.day == 31
+                  ? DateTime(_selectedValue.year, _selectedValue.month, 30)
+                  : _selectedValue,
               activeColor: theme.colorScheme.secondary,
               locale: Localizations.localeOf(context).languageCode,
               onDateChange: (selectedDate) {
                 setState(() {
                   _selectedValue = selectedDate;
                 });
-                print(_selectedValue);
                 _getDeviceData();
               },
             ),

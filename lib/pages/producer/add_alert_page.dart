@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
@@ -66,7 +65,6 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _getAlertDevices(String alertId) async {
     getAlertDevices(alertId).then((allDevices) {
-      print(allDevices);
       setState(() => alertDevices.addAll(allDevices));
     });
   }
@@ -231,7 +229,6 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         children: [
                           TextButton.icon(
                             onPressed: () {
-                              print(alertDevices.map((e) => e.deviceId).toList());
                               Navigator.of(context)
                                   .pushNamed(
                                 '/producer/devices',
@@ -367,7 +364,6 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                         value: comparissonValue,
                                       ),
                                     ).then((createdAlert) async {
-                                      print(createdAlert);
                                       for (var device in alertDevices) {
                                         await addAlertDevice(
                                           AlertDevices(

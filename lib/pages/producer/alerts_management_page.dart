@@ -161,7 +161,6 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                           'alert': alerts[index],
                                         },
                                       ).then((_) {
-                                        print('BAck');
                                         _loadAlerts();
                                       });
                                     }

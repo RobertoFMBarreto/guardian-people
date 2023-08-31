@@ -63,7 +63,6 @@ class _MyAppState extends State<MyApp> {
       (_) => subscription = wifiConnectionChecker(
         context: context,
         onHasConnection: () async {
-          print("Has Connection");
           setState(() {
             hasConnection = true;
           });
@@ -71,7 +70,6 @@ class _MyAppState extends State<MyApp> {
           await setShownNoWifiDialog(false);
         },
         onNotHasConnection: () async {
-          print("No Connection");
           setState(() {
             hasConnection = false;
           });

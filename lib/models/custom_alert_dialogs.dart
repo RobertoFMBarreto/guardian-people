@@ -8,7 +8,6 @@ Future<void> showNoWifiDialog(BuildContext context) async {
   AppLocalizations localizations = AppLocalizations.of(navigatorKey.currentContext!)!;
   ThemeData theme = Theme.of(context);
   hasShownNoWifiDialog().then((hasShown) async {
-    print("Has showed: $hasShown");
     if (!hasShown) {
       setShownNoWifiDialog(true).then(
         (_) => showDialog<void>(
