@@ -175,10 +175,11 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => const WelcomePage(),
         '/login': (context) => const LoginPage(),
         '/profile': (context) => const ProfilePage(),
-        '/admin': (context) => const AdminHomePage(),
+        '/admin': (context) => AdminHomePage(hasConnection: hasConnection),
         '/admin/producer': (context) {
           if (ModalRoute.of(context)!.settings.arguments.runtimeType == String) {
             return AdminProducerPage(
+              hasConnection: hasConnection,
               producerId: ModalRoute.of(context)!.settings.arguments as String,
             );
           } else {
@@ -191,6 +192,7 @@ class _MyAppState extends State<MyApp> {
             return AdminDeviceManagementPage(
               device: args['device'] as Device,
               producerId: args['producerId'] as String,
+              hasConnection: hasConnection,
             );
           } else {
             throw ErrorDescription('Device not provided');
@@ -241,9 +243,7 @@ class _MyAppState extends State<MyApp> {
               hasConnection: hasConnection,
             );
           } else {
-            return ProducerDevicesPage(
-              hasConnection: hasConnection,
-            );
+            return ProducerDevicesPage(hasConnection: hasConnection);
           }
         },
         '/producer/device': (context) {
@@ -266,9 +266,7 @@ class _MyAppState extends State<MyApp> {
             throw ErrorDescription('Device not provided');
           }
         },
-        '/producer/alerts': (context) => AlertsPage(
-              hasConnection: hasConnection,
-            ),
+        '/producer/alerts': (context) => AlertsPage(hasConnection: hasConnection),
         '/producer/alerts/add': (context) {
           final args = ModalRoute.of(context)!.settings.arguments;
           if (args != null) {

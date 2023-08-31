@@ -14,7 +14,8 @@ import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminHomePage extends StatefulWidget {
-  const AdminHomePage({super.key});
+  final bool hasConnection;
+  const AdminHomePage({super.key, required this.hasConnection});
 
   @override
   State<AdminHomePage> createState() => _AdminHomePageState();
@@ -74,33 +75,46 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           color: theme.colorScheme.onSecondary,
                           icon: const Icon(Icons.menu),
                           onSelected: (item) {
-                            switch (item) {
-                              case 0:
-                                Navigator.of(context).pushNamed('/profile');
-                                break;
-                              case 1:
-                                //! Logout code
-                                clearUserSession().then(
-                                  (value) => Navigator.of(context).popAndPushNamed('/login'),
-                                );
+                            if (widget.hasConnection) {
+                              switch (item) {
+                                case 0:
+                                  Navigator.of(context).pushNamed('/profile');
+                                  break;
+                                case 1:
+                                  //! Logout code
+                                  clearUserSession().then(
+                                    (value) => Navigator.of(context).popAndPushNamed('/login'),
+                                  );
 
-                                break;
+                                  break;
+                              }
+                            } else {
+                              switch (item) {
+                                case 0:
+                                  //! Logout code
+                                  clearUserSession().then(
+                                    (value) => Navigator.of(context).popAndPushNamed('/login'),
+                                  );
+
+                                  break;
+                              }
                             }
                           },
                           itemBuilder: (BuildContext context) => [
-                            PopupMenuItem(
-                              value: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(localizations.profile.capitalize()),
-                                  const Icon(
-                                    Icons.person,
-                                    size: 15,
-                                  ),
-                                ],
+                            if (widget.hasConnection)
+                              PopupMenuItem(
+                                value: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(localizations.profile.capitalize()),
+                                    const Icon(
+                                      Icons.person,
+                                      size: 15,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
                             PopupMenuItem(
                               value: 1,
                               child: Row(
@@ -135,26 +149,28 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 ],
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => AddProducerBottomSheet(
-                    onAddProducer: () {
-                      //!TODO: Add producer code
-                    },
-                  ));
-        },
-        tooltip: '${localizations.add.capitalize()} ${localizations.producer}',
-        backgroundColor: theme.colorScheme.secondary,
-        shape: const CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: theme.colorScheme.onSecondary,
-          size: 40,
-        ),
-      ),
+      floatingActionButton: widget.hasConnection
+          ? FloatingActionButton(
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => AddProducerBottomSheet(
+                          onAddProducer: () {
+                            //!TODO: Add producer code
+                          },
+                        ));
+              },
+              tooltip: '${localizations.add.capitalize()} ${localizations.producer}',
+              backgroundColor: theme.colorScheme.secondary,
+              shape: const CircleBorder(),
+              child: Icon(
+                Icons.add,
+                color: theme.colorScheme.onSecondary,
+                size: 40,
+              ),
+            )
+          : null,
     );
   }
 }

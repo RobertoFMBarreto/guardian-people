@@ -12,7 +12,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class AdminDeviceManagementPage extends StatefulWidget {
   final Device device;
   final String producerId;
-  const AdminDeviceManagementPage({super.key, required this.device, required this.producerId});
+  final bool hasConnection;
+  const AdminDeviceManagementPage({
+    super.key,
+    required this.device,
+    required this.producerId,
+    required this.hasConnection,
+  });
 
   @override
   State<AdminDeviceManagementPage> createState() => _AdminDeviceManagementPageState();
@@ -76,28 +82,29 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                       device: device,
                     ),
                   ),
-                  OptionButton(
-                    key: Key(device.isActive.toString()),
-                    device: device,
-                    onRemove: () {
-                      //TODO: Remove device
-                      deleteDevice(device.deviceId).then((_) {
-                        Navigator.of(context).pop();
-                      });
-                    },
-                    onBlock: () {
-                      //TODO: block device
+                  if (widget.hasConnection)
+                    OptionButton(
+                      key: Key(device.isActive.toString()),
+                      device: device,
+                      onRemove: () {
+                        //TODO: Remove device
+                        deleteDevice(device.deviceId).then((_) {
+                          Navigator.of(context).pop();
+                        });
+                      },
+                      onBlock: () {
+                        //TODO: block device
 
-                      final newDevice = device.copy(isActive: !device.isActive);
-                      updateDevice(newDevice).then((_) {
-                        setState(
-                          () {
-                            device = newDevice;
-                          },
-                        );
-                      });
-                    },
-                  ),
+                        final newDevice = device.copy(isActive: !device.isActive);
+                        updateDevice(newDevice).then((_) {
+                          setState(
+                            () {
+                              device = newDevice;
+                            },
+                          );
+                        });
+                      },
+                    ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),

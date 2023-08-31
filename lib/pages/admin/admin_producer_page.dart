@@ -25,7 +25,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
   final String producerId;
-  const AdminProducerPage({super.key, required this.producerId});
+  final bool hasConnection;
+  const AdminProducerPage({super.key, required this.producerId, required this.hasConnection});
 
   @override
   State<AdminProducerPage> createState() => _AdminProducerPageState();
@@ -152,54 +153,56 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
             },
           ),
         ),
-        floatingActionButton: CustomFloatingActionButton(
-          options: [
-            CustomFloatingActionButtonOption(
-              title: '${localizations.add.capitalize()} ${localizations.device.capitalize()}',
-              icon: Icons.add,
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => AddDeviceBottomSheet(
-                    onAddDevice: (imei, name) {
-                      //TODO: Add device code
-                      createDevice(
-                        Device(
-                          uid: widget.producerId,
-                          deviceId: Random().nextInt(90000).toString(),
-                          imei: imei,
-                          color: HexColor.toHex(color: Colors.red),
-                          isActive: true,
-                          name: name,
+        floatingActionButton: widget.hasConnection
+            ? CustomFloatingActionButton(
+                options: [
+                  CustomFloatingActionButtonOption(
+                    title: '${localizations.add.capitalize()} ${localizations.device.capitalize()}',
+                    icon: Icons.add,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => AddDeviceBottomSheet(
+                          onAddDevice: (imei, name) {
+                            //TODO: Add device code
+                            createDevice(
+                              Device(
+                                uid: widget.producerId,
+                                deviceId: Random().nextInt(90000).toString(),
+                                imei: imei,
+                                color: HexColor.toHex(color: Colors.red),
+                                isActive: true,
+                                name: name,
+                              ),
+                            ).then((newDevice) {
+                              Navigator.of(context).pop();
+                              _filterDevices().then((newDevices) {
+                                setState(() {
+                                  devices = [];
+                                  devices.addAll(newDevices);
+                                });
+                              });
+                            });
+                          },
                         ),
-                      ).then((newDevice) {
-                        Navigator.of(context).pop();
-                        _filterDevices().then((newDevices) {
-                          setState(() {
-                            devices = [];
-                            devices.addAll(newDevices);
-                          });
-                        });
+                      );
+                    },
+                  ),
+                  CustomFloatingActionButtonOption(
+                    title: isRemoveMode
+                        ? localizations.cancel.capitalize()
+                        : '${localizations.remove.capitalize()} ${localizations.device.capitalize()}',
+                    icon: isRemoveMode ? Icons.cancel : Icons.remove,
+                    onTap: () {
+                      setState(() {
+                        isRemoveMode = !isRemoveMode;
                       });
                     },
                   ),
-                );
-              },
-            ),
-            CustomFloatingActionButtonOption(
-              title: isRemoveMode
-                  ? localizations.cancel.capitalize()
-                  : '${localizations.remove.capitalize()} ${localizations.device.capitalize()}',
-              icon: isRemoveMode ? Icons.cancel : Icons.remove,
-              onTap: () {
-                setState(() {
-                  isRemoveMode = !isRemoveMode;
-                });
-              },
-            ),
-          ],
-        ),
+                ],
+              )
+            : null,
         body: isLoading
             ? Center(
                 child: CircularProgressIndicator(
@@ -254,17 +257,19 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                             Navigator.of(context).pop();
                           },
                         ),
-                        tailWidget: IconButton(
-                          icon: Icon(
-                            Icons.delete_forever,
-                            color: theme.colorScheme.onSecondary,
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            //TODO: Code for deleting the producer
-                            Navigator.of(context).pop();
-                          },
-                        ),
+                        tailWidget: widget.hasConnection
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: theme.colorScheme.onSecondary,
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  //TODO: Code for deleting the producer
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            : null,
                       ),
                     ),
                     SliverToBoxAdapter(
