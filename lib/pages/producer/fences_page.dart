@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/db/fence_operations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
@@ -15,8 +16,10 @@ import 'package:guardian/widgets/selectable_fence_item.dart';
 class FencesPage extends StatefulWidget {
   final bool isSelect;
 
-  final bool hasConnection;
-  const FencesPage({super.key, this.isSelect = false, required this.hasConnection});
+  const FencesPage({
+    super.key,
+    this.isSelect = false,
+  });
 
   @override
   State<FencesPage> createState() => _FencesPageState();
@@ -88,7 +91,7 @@ class _FencesPageState extends State<FencesPage> {
                   color: theme.colorScheme.onSecondary,
                 ),
               )
-            : widget.isSelect || !widget.hasConnection
+            : widget.isSelect || !hasConnection
                 ? null
                 : FloatingActionButton(
                     shape: const CircleBorder(),
@@ -165,7 +168,6 @@ class _FencesPageState extends State<FencesPage> {
                                 : FenceItem(
                                     name: fences[index].name,
                                     color: HexColor(fences[index].color),
-                                    hasConnection: widget.hasConnection,
                                     onRemove: () {
                                       //!TODO remove item from list
                                       removeFence(fences[index]).then((_) => _loadFences());

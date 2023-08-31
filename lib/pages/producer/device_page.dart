@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
@@ -13,8 +14,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class DevicePage extends StatefulWidget {
   final Device device;
 
-  final bool hasConnection;
-  const DevicePage({super.key, required this.device, required this.hasConnection});
+  const DevicePage({
+    super.key,
+    required this.device,
+  });
 
   @override
   State<DevicePage> createState() => _DevicePageState();
@@ -61,7 +64,7 @@ class _DevicePageState extends State<DevicePage> {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
-              key: Key("${device.name}${widget.hasConnection}"),
+              key: Key("${device.name}${hasConnection}"),
               pinned: true,
               delegate: SliverDeviceAppBar(
                 onColorChanged: () {
@@ -115,7 +118,7 @@ class _DevicePageState extends State<DevicePage> {
                     Navigator.of(context).pop();
                   },
                 ),
-                tailWidget: widget.hasConnection
+                tailWidget: hasConnection
                     ? IconButton(
                         icon: Icon(
                           Icons.settings_outlined,

@@ -20,14 +20,12 @@ class ProducerDevicesPage extends StatefulWidget {
   final String? alertId;
   final List<String>? notToShowDevices;
 
-  final bool hasConnection;
   const ProducerDevicesPage({
     super.key,
     this.isSelect = false,
     this.fenceId,
     this.alertId,
     this.notToShowDevices,
-    required this.hasConnection,
   });
 
   @override

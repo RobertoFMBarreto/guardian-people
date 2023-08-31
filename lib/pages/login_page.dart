@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/widgets/pages/login/login_form.dart';
 
 class LoginPage extends StatelessWidget {
-  final bool hasConnection;
-  const LoginPage({super.key, required this.hasConnection});
+  const LoginPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +32,11 @@ class LoginPage extends StatelessWidget {
             automaticallyImplyLeading: false,
             toolbarHeight: 0,
           ),
-          body: SafeArea(
+          body: const SafeArea(
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: LoginForm(hasConnection: hasConnection),
+                padding: EdgeInsets.all(20.0),
+                child: LoginForm(),
               ),
             ),
           ),

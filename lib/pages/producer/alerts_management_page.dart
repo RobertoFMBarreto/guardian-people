@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:guardian/db/alert_devices_operations.dart';
 import 'package:guardian/db/user_alert_operations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
@@ -13,8 +14,10 @@ import 'package:guardian/widgets/selectable_alert_management_item.dart';
 class AlertsManagementPage extends StatefulWidget {
   final bool isSelect;
 
-  final bool hasConnection;
-  const AlertsManagementPage({super.key, this.isSelect = false, required this.hasConnection});
+  const AlertsManagementPage({
+    super.key,
+    this.isSelect = false,
+  });
 
   @override
   State<AlertsManagementPage> createState() => _AlertsManagementPageState();
@@ -79,7 +82,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
                 child: Column(
                   children: [
-                    if (widget.hasConnection)
+                    if (hasConnection)
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -153,7 +156,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: GestureDetector(
                                   onTap: () {
-                                    if (widget.hasConnection) {
+                                    if (hasConnection) {
                                       Navigator.of(context).pushNamed(
                                         '/producer/alerts/add',
                                         arguments: {
@@ -167,7 +170,6 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                   },
                                   child: AlertManagementItem(
                                     alert: alerts[index],
-                                    hasConnection: widget.hasConnection,
                                     onDelete: (alert) {
                                       //!TODO: Remove code
                                       deleteAlert(alerts[index].alertId);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
@@ -11,12 +12,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class AdminDeviceManagementPage extends StatefulWidget {
   final Device device;
   final String producerId;
-  final bool hasConnection;
+
   const AdminDeviceManagementPage({
     super.key,
     required this.device,
     required this.producerId,
-    required this.hasConnection,
   });
 
   @override
@@ -81,7 +81,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                       device: device,
                     ),
                   ),
-                  if (widget.hasConnection)
+                  if (hasConnection)
                     OptionButton(
                       key: Key(device.isActive.toString()),
                       device: device,

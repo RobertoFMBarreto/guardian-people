@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 class AlertManagementItem extends StatelessWidget {
   final UserAlert alert;
   final Function(UserAlert) onDelete;
-  final bool hasConnection;
+
   const AlertManagementItem({
     super.key,
     required this.alert,
     required this.onDelete,
-    required this.hasConnection,
   });
 
   @override

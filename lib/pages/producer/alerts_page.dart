@@ -10,8 +10,9 @@ import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlertsPage extends StatefulWidget {
-  final bool hasConnection;
-  const AlertsPage({super.key, required this.hasConnection});
+  const AlertsPage({
+    super.key,
+  });
 
   @override
   State<AlertsPage> createState() => _AlertsPageState();

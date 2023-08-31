@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
@@ -19,8 +20,10 @@ import 'package:latlong2/latlong.dart';
 class ManageFencePage extends StatefulWidget {
   final Fence fence;
 
-  final bool hasConnection;
-  const ManageFencePage({super.key, required this.fence, required this.hasConnection});
+  const ManageFencePage({
+    super.key,
+    required this.fence,
+  });
 
   @override
   State<ManageFencePage> createState() => _ManageFencePageState();
@@ -84,7 +87,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
               ),
               centerTitle: true,
               actions: [
-                if (widget.hasConnection)
+                if (hasConnection)
                   TextButton(
                     onPressed: () {
                       //!TODO call service to delete fence
@@ -130,7 +133,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       ),
                     ),
                   ),
-                  if (widget.hasConnection)
+                  if (hasConnection)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
@@ -160,7 +163,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           '${localizations.associated_devices.capitalize()}:',
                           style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        if (widget.hasConnection)
+                        if (hasConnection)
                           IconButton(
                             onPressed: () async {
                               Navigator.of(context).pushNamed(
@@ -201,7 +204,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         itemBuilder: (context, index) => DeviceItemRemovable(
                           key: Key(devices[index].deviceId),
                           device: devices[index],
-                          hasConnection: widget.hasConnection,
                           onRemoveDevice: () {
                             //!TODO: On remove device
                             removeDeviceFence(fence.fenceId, devices[index].deviceId).then(

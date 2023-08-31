@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/user.dart';
@@ -24,8 +25,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
   final String producerId;
-  final bool hasConnection;
-  const AdminProducerPage({super.key, required this.producerId, required this.hasConnection});
+
+  const AdminProducerPage({
+    super.key,
+    required this.producerId,
+  });
 
   @override
   State<AdminProducerPage> createState() => _AdminProducerPageState();
@@ -152,7 +156,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
             },
           ),
         ),
-        floatingActionButton: widget.hasConnection
+        floatingActionButton: hasConnection
             ? CustomFloatingActionButton(
                 options: [
                   CustomFloatingActionButtonOption(
@@ -256,7 +260,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                             Navigator.of(context).pop();
                           },
                         ),
-                        tailWidget: widget.hasConnection
+                        tailWidget: hasConnection
                             ? IconButton(
                                 icon: Icon(
                                   Icons.delete_forever,

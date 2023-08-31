@@ -4,6 +4,7 @@ import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
@@ -16,8 +17,9 @@ import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerHome extends StatefulWidget {
-  final bool hasConnection;
-  const ProducerHome({super.key, required this.hasConnection});
+  const ProducerHome({
+    super.key,
+  });
 
   @override
   State<ProducerHome> createState() => _ProducerHomeState();
@@ -152,7 +154,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                           }
                         },
                         itemBuilder: (BuildContext context) => [
-                          if (widget.hasConnection)
+                          if (hasConnection)
                             PopupMenuItem(
                               value: 0,
                               child: Row(

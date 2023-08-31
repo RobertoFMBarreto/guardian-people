@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 
 class FenceItem extends StatelessWidget {
   final String name;
   final Color color;
   final Function() onRemove;
-  final bool hasConnection;
-  const FenceItem(
-      {super.key,
-      required this.onRemove,
-      required this.name,
-      required this.color,
-      required this.hasConnection});
+
+  const FenceItem({
+    super.key,
+    required this.onRemove,
+    required this.name,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {

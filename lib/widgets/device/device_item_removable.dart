@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/providers/device/device_widgets_provider.dart';
 
@@ -7,14 +8,12 @@ class DeviceItemRemovable extends StatelessWidget {
   final Device device;
   final Function() onRemoveDevice;
   final bool isPopPush;
-  final bool hasConnection;
 
   const DeviceItemRemovable({
     super.key,
     required this.device,
     required this.onRemoveDevice,
     this.isPopPush = false,
-    this.hasConnection = true,
   });
 
   @override
