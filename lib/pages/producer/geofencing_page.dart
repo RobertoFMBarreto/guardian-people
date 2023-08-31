@@ -67,8 +67,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
                 setState(() {
                   isLoading = false;
                 });
-
-                checkInternetConnection(context);
               }
             });
           } else {
@@ -78,8 +76,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
               setState(() {
                 isLoading = false;
               });
-
-              checkInternetConnection(context);
             }
           }
         });

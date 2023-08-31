@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
@@ -30,9 +33,14 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     // Change status bar color

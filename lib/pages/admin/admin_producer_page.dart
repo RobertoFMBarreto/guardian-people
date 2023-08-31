@@ -61,8 +61,6 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               producer = user;
             }
             isLoading = false;
-
-            checkInternetConnection(context);
           });
         });
       }),

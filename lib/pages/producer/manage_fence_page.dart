@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
+import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
@@ -36,10 +39,49 @@ class _ManageFencePageState extends State<ManageFencePage> {
 
   bool isLoading = true;
 
+  late StreamSubscription subscription;
+
+  @override
+  void dispose() {
+    subscription = wifiConnectionChecker(
+      context: context,
+      onHasConnection: () async {
+        print("Has Connection");
+        await setShownNoWifiDialog(false);
+      },
+      onNotHasConnection: () async {
+        print("No Connection");
+        await hasShownNoWifiDialog().then((hasShown) async {
+          if (!hasShown) {
+            showNoWifiDialog(context);
+            await setShownNoWifiDialog(true);
+          }
+        });
+      },
+    );
+    subscription.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-
+    subscription = wifiConnectionChecker(
+      context: context,
+      onHasConnection: () async {
+        print("Has Connection");
+        await setShownNoWifiDialog(false);
+      },
+      onNotHasConnection: () async {
+        print("No Connection");
+        await hasShownNoWifiDialog().then((hasShown) async {
+          if (!hasShown) {
+            showNoWifiDialog(context);
+            await setShownNoWifiDialog(true);
+          }
+        });
+      },
+    );
     fence = widget.fence;
     fenceColor = HexColor(fence.color);
     fenceHexColor = fence.color;

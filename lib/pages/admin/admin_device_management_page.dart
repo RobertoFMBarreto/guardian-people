@@ -36,8 +36,6 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
         devices.addAll(allDevices.where((element) => element.deviceId != device.deviceId));
         isLoading = false;
       });
-
-      checkInternetConnection(context);
     });
   }
 

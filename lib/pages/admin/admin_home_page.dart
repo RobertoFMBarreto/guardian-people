@@ -36,8 +36,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
         users.addAll(usersData);
         isLoading = false;
       });
-
-      checkInternetConnection(context);
     });
   }
 

@@ -31,7 +31,11 @@ Future<bool> hasShownNoWifiDialog() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   bool? hasShowed = prefs.getBool('showedNoWifi');
-  return hasShowed ?? false;
+  if (hasShowed == null) {
+    hasShowed = false;
+    setShownNoWifiDialog(false);
+  }
+  return hasShowed;
 }
 
 Future<void> setShownNoWifiDialog(bool value) async {

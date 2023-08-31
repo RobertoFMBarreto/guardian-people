@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_map_widget.dart';
 import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
@@ -22,11 +25,35 @@ class _DevicePageState extends State<DevicePage> {
   bool isInterval = false;
   late Device device;
   int reloadNum = 0;
+
+  late StreamSubscription subscription;
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
     device = widget.device;
+    subscription = wifiConnectionChecker(
+      context: context,
+      onHasConnection: () async {
+        print("Has Connection");
+        await setShownNoWifiDialog(false);
+      },
+      onNotHasConnection: () async {
+        print("No Connection");
+        await hasShownNoWifiDialog().then((hasShown) async {
+          if (!hasShown) {
+            showNoWifiDialog(context);
+            await setShownNoWifiDialog(true);
+          }
+        });
+      },
+    );
 
-    checkInternetConnection(context);
     super.initState();
   }
 

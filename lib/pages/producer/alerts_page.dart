@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
+import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
@@ -19,6 +23,14 @@ class _AlertsPageState extends State<AlertsPage> {
   late String uid;
   bool isLoading = true;
 
+  late StreamSubscription subscription;
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
     // getUserDevices().then((devices) {
@@ -29,8 +41,23 @@ class _AlertsPageState extends State<AlertsPage> {
     //     ));
     //   });
     // });
+    subscription = wifiConnectionChecker(
+      context: context,
+      onHasConnection: () async {
+        print("Has Connection");
+        await setShownNoWifiDialog(false);
+      },
+      onNotHasConnection: () async {
+        print("No Connection");
+        await hasShownNoWifiDialog().then((hasShown) async {
+          if (!hasShown) {
+            showNoWifiDialog(context);
+            await setShownNoWifiDialog(true);
+          }
+        });
+      },
+    );
     _loadAlerts().then((_) {
-      checkInternetConnection(context);
       setState(() => isLoading = false);
     });
     super.initState();

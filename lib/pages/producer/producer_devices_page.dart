@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/db/device_operations.dart';
+import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
@@ -46,9 +49,32 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   List<Device> devices = [];
 
   late String uid;
+  late StreamSubscription subscription;
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
+    subscription = wifiConnectionChecker(
+      context: context,
+      onHasConnection: () async {
+        print("Has Connection");
+        await setShownNoWifiDialog(false);
+      },
+      onNotHasConnection: () async {
+        print("No Connection");
+        await hasShownNoWifiDialog().then((hasShown) async {
+          if (!hasShown) {
+            showNoWifiDialog(context);
+            await setShownNoWifiDialog(true);
+          }
+        });
+      },
+    );
     getUid(context).then((userId) {
       if (userId != null) {
         uid = userId;

@@ -18,7 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
-    checkInternetConnection(context);
     super.initState();
   }
 

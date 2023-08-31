@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/db/alert_notifications_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/models/custom_alert_dialogs.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
@@ -15,6 +19,7 @@ import 'package:guardian/widgets/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/square_devices_info.dart';
 import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ProducerHome extends StatefulWidget {
   const ProducerHome({super.key});
@@ -27,29 +32,56 @@ class _ProducerHomeState extends State<ProducerHome> {
   List<Device> devices = [];
   List<Fence> fences = [];
   List<UserAlertNotification> alertNotifications = [];
-  late String uid;
   late User user;
   bool isLoading = true;
+  late StreamSubscription subscription;
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    getUid(context).then((userId) {
-      if (userId != null) {
-        uid = userId;
+    subscription = wifiConnectionChecker(
+      context: context,
+      onHasConnection: () async {
+        print("Has Connection");
+        await setShownNoWifiDialog(false);
+      },
+      onNotHasConnection: () async {
+        print("No Connection");
+        await hasShownNoWifiDialog().then((hasShown) async {
+          if (!hasShown) {
+            showNoWifiDialog(context);
+            await setShownNoWifiDialog(true);
+          }
+        });
+      },
+    );
+    _loadUserData().then(
+      (_) => _loadDevices().then(
+        (_) => _loadFences().then(
+          (_) => _loadAlertNotifications().then(
+            (_) {
+              isLoading = false;
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _loadUserData() async {
+    getUid(context).then((uid) {
+      if (uid != null) {
         getUser(uid).then((userData) {
           if (userData != null) {
-            user = userData;
-            _loadDevices().then(
-              (_) => _loadFences().then(
-                (_) => _loadAlertNotifications().then(
-                  (value) {
-                    checkInternetConnection(context);
-                    isLoading = false;
-                  },
-                ),
-              ),
-            );
+            setState(() {
+              user = userData;
+            });
           }
         });
       }

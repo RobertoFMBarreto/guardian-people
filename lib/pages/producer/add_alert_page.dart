@@ -55,15 +55,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
         setState(() {
           isLoading = false;
         });
-
-        checkInternetConnection(context);
       });
     } else {
       setState(() {
         isLoading = false;
       });
-
-      checkInternetConnection(context);
     }
     super.initState();
   }
