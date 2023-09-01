@@ -11,9 +11,12 @@ import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 
 import 'package:guardian/widgets/color_circle.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
+import 'package:guardian/widgets/maps/map_provider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 // ignore: depend_on_referenced_packages
@@ -29,68 +32,57 @@ class GeofencingPage extends StatefulWidget {
 }
 
 class _GeofencingPageState extends State<GeofencingPage> {
+  final _polygons = <Polygon>[];
+  final TextEditingController _nameController = TextEditingController();
+
+  late PolyEditor _polyEditor;
+  late Polygon _editingPolygon;
+  late String uid;
+  late Future _future;
+
   Position? _currentPosition;
-  late PolyEditor polyEditor;
-  bool isCircle = false;
+
+  bool _isCircle = false;
   bool isLoading = true;
-
-  final polygons = <Polygon>[];
-  late Polygon editingPolygon;
-  late Polygon backupPolygon;
-
-  String fenceName = '';
-  Color fenceColor = Colors.red;
-  TextEditingController nameController = TextEditingController();
+  String _fenceName = '';
+  Color _fenceColor = Colors.red;
 
   List<LatLng> fencePoints = [];
 
-  late String uid;
-
-  @override
-  void initState() {
-    getUid(context).then((userId) {
-      if (userId != null) {
-        uid = userId;
-
-        _getCurrentPosition().then((_) {
-          if (widget.fence != null) {
-            _loadFencePoints().then((_) {
-              if (mounted) {
-                // if there are only 2 points then its a circle
-                isCircle = fencePoints.length == 2;
-                fenceName = widget.fence!.name;
-                fenceColor = HexColor(widget.fence!.color);
-                nameController.text = fenceName;
-                _initPolygon();
-                _initPolyEditor();
-                setState(() {
-                  isLoading = false;
-                });
-              }
-            });
-          } else {
-            if (mounted) {
-              _initPolygon();
-              _initPolyEditor();
-              setState(() {
-                isLoading = false;
-              });
-            }
-          }
-        });
-      }
-    });
-    super.initState();
-  }
-
   @override
   void dispose() {
-    nameController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
+  @override
+  void initState() {
+    _future = _setup();
+    super.initState();
+  }
+
+  Future<void> _setup() async {
+    await _getCurrentPosition();
+    if (widget.fence != null) {
+      await _loadFencePoints();
+      if (mounted) {
+        setState(() {
+          // if there are only 2 points then its a circle
+          _isCircle = fencePoints.length == 2;
+          _fenceName = widget.fence!.name;
+          _fenceColor = HexColor(widget.fence!.color);
+          _nameController.text = _fenceName;
+        });
+      }
+    }
+    if (mounted) {
+      _initPolygon();
+      _initPolyEditor();
+    }
+  }
+
   void _initPolygon() {
-    editingPolygon = Polygon(
+    _editingPolygon = Polygon(
       color: widget.fence != null
           ? HexColor(widget.fence!.color).withOpacity(0.5)
           : gdMapGeofenceFillColor,
@@ -100,57 +92,58 @@ class _GeofencingPageState extends State<GeofencingPage> {
       points: [],
     );
     if (widget.fence != null) {
-      editingPolygon.points.addAll(fencePoints);
+      _editingPolygon.points.addAll(fencePoints);
     }
   }
 
   void _initPolyEditor() {
-    polyEditor = PolyEditor(
+    _polyEditor = PolyEditor(
       addClosePathMarker: true,
-      points: editingPolygon.points,
+      points: _editingPolygon.points,
       pointIcon: const Icon(Icons.circle, size: 23),
-      intermediateIcon: isCircle ? null : const Icon(Icons.square_rounded, size: 23),
+      intermediateIcon: _isCircle ? null : const Icon(Icons.square_rounded, size: 23),
       intermediateIconSize: const Size(50, 50),
       pointIconSize: const Size(50, 50),
       callbackRefresh: () {
-        if (editingPolygon.points.length > 2 && isCircle) {
-          polyEditor.remove(editingPolygon.points.length - 2);
+        if (_editingPolygon.points.length > 2 && _isCircle) {
+          _polyEditor.remove(_editingPolygon.points.length - 2);
         }
 
         setState(() {});
       },
     );
 
-    polygons.add(editingPolygon);
+    _polygons.add(_editingPolygon);
   }
 
   Future<void> _getCurrentPosition() async {
-    final hasPermission = await handleLocationPermission(context);
-
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
-    }).catchError((e) {
-      debugPrint(e);
-    });
+    await getCurrentPosition(
+      context,
+      (position) {
+        if (mounted) {
+          setState(() => _currentPosition = position);
+        }
+      },
+    );
   }
 
   void _resetPolygon() {
-    editingPolygon.points.clear();
+    _editingPolygon.points.clear();
     if (widget.fence != null) {
-      if (fencePoints.length == 2 && isCircle) {
-        editingPolygon.points.addAll(fencePoints);
-      } else if (fencePoints.length > 2 && !isCircle) {
-        editingPolygon.points.addAll(fencePoints);
+      if (fencePoints.length == 2 && _isCircle) {
+        _editingPolygon.points.addAll(fencePoints);
+      } else if (fencePoints.length > 2 && !_isCircle) {
+        _editingPolygon.points.addAll(fencePoints);
       } else {
-        editingPolygon.points.clear();
+        _editingPolygon.points.clear();
       }
     }
   }
 
   Future<void> _loadFencePoints() async {
-    await getFencePoints(widget.fence!.fenceId).then((allPoints) => fencePoints.addAll(allPoints));
+    await getFencePoints(widget.fence!.fenceId).then(
+      (allPoints) => fencePoints.addAll(allPoints),
+    );
   }
 
   @override
@@ -162,256 +155,261 @@ class _GeofencingPageState extends State<GeofencingPage> {
         CustomFocusManager.unfocus(context);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.fence != null ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.fence.capitalize()}',
-            style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
+          appBar: AppBar(
+            title: Text(
+              '${widget.fence != null ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.fence.capitalize()}',
+              style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
+            ),
+            centerTitle: true,
           ),
-          centerTitle: true,
-        ),
-        body: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                ),
-              )
-            : Column(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        FlutterMap(
-                          options: MapOptions(
-                            onTap: (_, ll) {
-                              polyEditor.add(editingPolygon.points, ll);
-                            },
-                            center: widget.fence == null
-                                ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                                : getFenceCenter(fencePoints),
-                            zoom: 17,
-                          ),
+          body: FutureBuilder(
+              future: _future,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CustomCircularProgressIndicator();
+                } else {
+                  return Column(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
                           children: [
-                            TileLayer(
-                              //urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              tileProvider: FMTC.instance('guardian').getTileProvider(),
-                            ),
-                            if (polyEditor.points.length >= 2 && isCircle)
-                              CircleLayer(
-                                circles: [
-                                  CircleMarker(
-                                    useRadiusInMeter: true,
-                                    color: widget.fence != null
-                                        ? HexColor(widget.fence!.color).withOpacity(0.5)
-                                        : gdMapGeofenceFillColor,
-                                    borderColor: widget.fence != null
-                                        ? HexColor(widget.fence!.color)
-                                        : gdMapGeofenceBorderColor,
-                                    borderStrokeWidth: 2,
-                                    point: LatLng(
-                                      polyEditor.points.first.latitude,
-                                      polyEditor.points.first.longitude,
-                                    ),
-                                    radius: calculateDistance(
-                                      polyEditor.points.first.latitude,
-                                      polyEditor.points.first.longitude,
-                                      polyEditor.points.last.latitude,
-                                      polyEditor.points.last.longitude,
-                                    ),
-                                  )
-                                ],
+                            FlutterMap(
+                              options: MapOptions(
+                                onTap: (_, ll) {
+                                  _polyEditor.add(_editingPolygon.points, ll);
+                                },
+                                center: widget.fence == null
+                                    ? LatLng(
+                                        _currentPosition!.latitude, _currentPosition!.longitude)
+                                    : getFenceCenter(fencePoints),
+                                zoom: 17,
                               ),
-                            PolygonLayer(polygons: polygons),
-                            DragMarkers(
-                              markers: polyEditor.edit(),
-                            ),
-                            MarkerLayer(
-                              markers: [
-                                Marker(
-                                  point: LatLng(
-                                    _currentPosition!.latitude,
-                                    _currentPosition!.longitude,
+                              children: [
+                                TileLayer(
+                                  //urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  tileProvider: FMTC.instance('guardian').getTileProvider(),
+                                ),
+                                if (_polyEditor.points.length >= 2 && _isCircle)
+                                  CircleLayer(
+                                    circles: [
+                                      CircleMarker(
+                                        useRadiusInMeter: true,
+                                        color: widget.fence != null
+                                            ? HexColor(widget.fence!.color).withOpacity(0.5)
+                                            : gdMapGeofenceFillColor,
+                                        borderColor: widget.fence != null
+                                            ? HexColor(widget.fence!.color)
+                                            : gdMapGeofenceBorderColor,
+                                        borderStrokeWidth: 2,
+                                        point: LatLng(
+                                          _polyEditor.points.first.latitude,
+                                          _polyEditor.points.first.longitude,
+                                        ),
+                                        radius: calculateDistance(
+                                          _polyEditor.points.first.latitude,
+                                          _polyEditor.points.first.longitude,
+                                          _polyEditor.points.last.latitude,
+                                          _polyEditor.points.last.longitude,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  builder: (context) {
-                                    return const Icon(
-                                      Icons.circle,
-                                      color: gdMapLocationPointColor,
-                                      size: 30,
-                                    );
-                                  },
+                                getPolygonFences(_polygons),
+                                DragMarkers(
+                                  markers: _polyEditor.edit(),
+                                ),
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: LatLng(
+                                        _currentPosition!.latitude,
+                                        _currentPosition!.longitude,
+                                      ),
+                                      builder: (context) {
+                                        return const Icon(
+                                          Icons.circle,
+                                          color: gdMapLocationPointColor,
+                                          size: 30,
+                                        );
+                                      },
+                                    )
+                                  ],
                                 )
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                FloatingActionButton.small(
+                                  heroTag: 'polygon',
+                                  backgroundColor: _isCircle
+                                      ? Colors.white
+                                      : const Color.fromRGBO(182, 255, 199, 1),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isCircle = false;
+                                      _resetPolygon();
+                                    });
+                                  },
+                                  child: const Icon(Icons.square_outlined),
+                                ),
+                                FloatingActionButton.small(
+                                  heroTag: 'circle',
+                                  backgroundColor: _isCircle
+                                      ? const Color.fromRGBO(182, 255, 199, 1)
+                                      : Colors.white,
+                                  onPressed: () {
+                                    setState(() {
+                                      _isCircle = true;
+                                      _resetPolygon();
+                                    });
+                                  },
+                                  child: const Icon(Icons.circle_outlined),
+                                ),
+                                FloatingActionButton.small(
+                                  heroTag: 'reset',
+                                  child: const Icon(Icons.replay),
+                                  onPressed: () {
+                                    setState(() {
+                                      _resetPolygon();
+                                    });
+                                  },
+                                ),
                               ],
                             )
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            FloatingActionButton.small(
-                              heroTag: 'polygon',
-                              backgroundColor:
-                                  isCircle ? Colors.white : const Color.fromRGBO(182, 255, 199, 1),
-                              onPressed: () {
-                                setState(() {
-                                  isCircle = false;
-                                  _resetPolygon();
-                                });
-                              },
-                              child: const Icon(Icons.square_outlined),
-                            ),
-                            FloatingActionButton.small(
-                              heroTag: 'circle',
-                              backgroundColor:
-                                  isCircle ? const Color.fromRGBO(182, 255, 199, 1) : Colors.white,
-                              onPressed: () {
-                                setState(() {
-                                  isCircle = true;
-                                  _resetPolygon();
-                                });
-                              },
-                              child: const Icon(Icons.circle_outlined),
-                            ),
-                            FloatingActionButton.small(
-                              heroTag: 'reset',
-                              child: const Icon(Icons.replay),
-                              onPressed: () {
-                                setState(() {
-                                  _resetPolygon();
-                                });
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextField(
-                            onChanged: (newValue) {
-                              fenceName = newValue;
-                            },
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              label: Text(
-                                localizations.fence_name.capitalize(),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    localizations.fence_color.capitalize(),
-                                    style: theme.textTheme.bodyLarge,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => CustomColorPickerInput(
-                                          pickerColor: fenceColor,
-                                          onSave: (color) {
-                                            //!TODO: Logic to update device color
-                                            setState(() {
-                                              fenceColor = color;
-                                            });
-
-                                            //!TODO update fence
-                                          },
-                                          hexColor: HexColor.toHex(color: fenceColor),
-                                        ),
-                                      );
-                                    },
-                                    child: ColorCircle(
-                                      color: fenceColor,
-                                      radius: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: theme.elevatedButtonTheme.style!.copyWith(
-                                    backgroundColor:
-                                        const MaterialStatePropertyAll(gdCancelBtnColor),
-                                  ),
-                                  child: Text(
-                                    localizations.cancel.capitalize(),
-                                    style: theme.textTheme.bodyLarge!.copyWith(
-                                      color: theme.colorScheme.onSecondary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    String fenceId;
-                                    // if is edit mode
-                                    if (widget.fence != null) {
-                                      fenceId = widget.fence!.fenceId;
-                                      // first udpate the fence
-                                      await updateFence(
-                                        widget.fence!.copy(
-                                          name: fenceName,
-                                          color: HexColor.toHex(color: fenceColor),
-                                        ),
-                                      );
-                                    } else {
-                                      fenceId = fenceName;
-                                      await createFence(
-                                        Fence(
-                                          fenceId: fenceName,
-                                          name: fenceName,
-                                          color: HexColor.toHex(color: fenceColor),
-                                        ),
-                                      );
-                                    }
-
-                                    // second update fence points
-                                    await createFencePointFromList(editingPolygon.points, fenceId);
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.of(context).pop(editingPolygon.points);
-                                  },
-                                  child: Text(
-                                    localizations.confirm.capitalize(),
-                                    style: theme.textTheme.bodyLarge!.copyWith(
-                                      color: theme.colorScheme.onSecondary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  )
-                ],
-              ),
-      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextField(
+                                onChanged: (newValue) {
+                                  _fenceName = newValue;
+                                },
+                                controller: _nameController,
+                                decoration: InputDecoration(
+                                  label: Text(
+                                    localizations.fence_name.capitalize(),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        localizations.fence_color.capitalize(),
+                                        style: theme.textTheme.bodyLarge,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => CustomColorPickerInput(
+                                              pickerColor: _fenceColor,
+                                              onSave: (color) {
+                                                //!TODO: Logic to update device color
+                                                setState(() {
+                                                  _fenceColor = color;
+                                                });
+
+                                                //!TODO update fence
+                                              },
+                                              hexColor: HexColor.toHex(color: _fenceColor),
+                                            ),
+                                          );
+                                        },
+                                        child: ColorCircle(
+                                          color: _fenceColor,
+                                          radius: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      style: theme.elevatedButtonTheme.style!.copyWith(
+                                        backgroundColor:
+                                            const MaterialStatePropertyAll(gdCancelBtnColor),
+                                      ),
+                                      child: Text(
+                                        localizations.cancel.capitalize(),
+                                        style: theme.textTheme.bodyLarge!.copyWith(
+                                          color: theme.colorScheme.onSecondary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        String fenceId;
+                                        // if is edit mode
+                                        if (widget.fence != null) {
+                                          fenceId = widget.fence!.fenceId;
+                                          // first udpate the fence
+                                          await updateFence(
+                                            widget.fence!.copy(
+                                              name: _fenceName,
+                                              color: HexColor.toHex(color: _fenceColor),
+                                            ),
+                                          );
+                                        } else {
+                                          fenceId = _fenceName;
+                                          await createFence(
+                                            Fence(
+                                              fenceId: _fenceName,
+                                              name: _fenceName,
+                                              color: HexColor.toHex(color: _fenceColor),
+                                            ),
+                                          );
+                                        }
+
+                                        // second update fence points
+                                        await createFencePointFromList(
+                                            _editingPolygon.points, fenceId);
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.of(context).pop(_editingPolygon.points);
+                                      },
+                                      child: Text(
+                                        localizations.confirm.capitalize(),
+                                        style: theme.textTheme.bodyLarge!.copyWith(
+                                          color: theme.colorScheme.onSecondary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }
+              })),
     );
   }
 }

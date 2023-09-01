@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:guardian/models/navigator_key.dart';
+import 'package:guardian/models/providers/permissions_provides.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -31,4 +33,24 @@ StreamSubscription<ConnectivityResult> wifiConnectionChecker() {
       }
     },
   );
+}
+
+/// Method that allows to get device current location
+/// @param onGetPosition -> Method to run when we get the device location
+/// @param context -> current app context
+
+Future<void> getCurrentPosition(
+  BuildContext context,
+  Function(Position position) onGetPosition,
+) async {
+  final hasPermission = await handleLocationPermission(context);
+
+  if (!hasPermission) return;
+
+  await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
+      .then((dynamic position) {
+    onGetPosition(position);
+  }).catchError((e) {
+    debugPrint(e.toString());
+  });
 }

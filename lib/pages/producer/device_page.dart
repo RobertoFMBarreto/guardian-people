@@ -24,13 +24,13 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
-  bool isInterval = false;
-  late Device device;
-  int reloadNum = 0;
+  bool _isInterval = false;
+  late Device _device;
+  int _reloadNum = 0;
 
   @override
   void initState() {
-    device = widget.device;
+    _device = widget.device;
 
     super.initState();
   }
@@ -64,7 +64,7 @@ class _DevicePageState extends State<DevicePage> {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
-              key: Key("${device.name}${hasConnection}"),
+              key: Key("${_device.name}$hasConnection"),
               pinned: true,
               delegate: SliverDeviceAppBar(
                 onColorChanged: () {
@@ -82,7 +82,7 @@ class _DevicePageState extends State<DevicePage> {
                         ),
                       ),
                       ToggleSwitch(
-                        initialLabelIndex: isInterval ? 1 : 0,
+                        initialLabelIndex: _isInterval ? 1 : 0,
                         cornerRadius: 50,
                         radiusStyle: true,
                         activeBgColor: [theme.colorScheme.secondary],
@@ -100,14 +100,14 @@ class _DevicePageState extends State<DevicePage> {
                         ],
                         onToggle: (index) {
                           setState(() {
-                            isInterval = index == 1;
+                            _isInterval = index == 1;
                           });
                         },
                       ),
                     ],
                   ),
                 ),
-                device: device,
+                device: _device,
                 leadingWidget: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
@@ -130,15 +130,15 @@ class _DevicePageState extends State<DevicePage> {
                           Navigator.of(context)
                               .pushNamed(
                             '/producer/device/settings',
-                            arguments: device,
+                            arguments: _device,
                           )
                               .then((newDevice) {
                             if (newDevice != null && newDevice.runtimeType == Device) {
-                              setState(() => device = (newDevice as Device));
+                              setState(() => _device = (newDevice as Device));
                             } else {
                               // Force reload map
                               setState(() {
-                                reloadNum = Random().nextInt(999999);
+                                _reloadNum = Random().nextInt(999999);
                               });
                             }
                           });
@@ -149,9 +149,9 @@ class _DevicePageState extends State<DevicePage> {
             ),
             SliverFillRemaining(
               child: DeviceMapWidget(
-                key: Key(reloadNum.toString()),
-                device: device,
-                isInterval: isInterval,
+                key: Key(_reloadNum.toString()),
+                device: _device,
+                isInterval: _isInterval,
               ),
             ),
           ],

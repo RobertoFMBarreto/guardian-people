@@ -8,6 +8,8 @@ import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/maps/single_device_location_map.dart';
 import 'package:guardian/widgets/pages/producer/device_page/device_time_widget.dart';
@@ -23,83 +25,62 @@ class DeviceMapWidget extends StatefulWidget {
 }
 
 class _DeviceMapWidgetState extends State<DeviceMapWidget> {
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
-  DateTime startDateBackup = DateTime.now();
-  DateTime endDateBackup = DateTime.now();
-  bool showFence = true;
-  bool showRoute = false;
-  Position? _currentPosition;
-  List<Fence> fences = [];
-  List<DeviceData> deviceData = [];
-
-  double currentZoom = 17;
-
-  bool showHeatMap = false;
-  int dropDownValue = 0;
-
-  final firstItemDataKey = GlobalKey();
+  final _firstItemDataKey = GlobalKey();
 
   late String uid;
+  late Future _future;
+
+  Position? _currentPosition;
+
+  List<DeviceData> _deviceData = [];
+
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now();
+
+  bool _showFence = true;
+  bool _showRoute = false;
+  double _currentZoom = 17;
+  bool _showHeatMap = false;
+  int _dropDownValue = 0;
 
   @override
   void initState() {
-    _getCurrentPosition().then((_) {
-      if (mounted) {
-        _loadFences().then(
-          (_) {
-            if (mounted) {
-              _getDeviceData();
-            }
-          },
-        );
-      }
-    });
+    _future = _setup();
     super.initState();
   }
 
-  Future<void> _loadFences() async {
-    getUid(context).then((userId) {
-      if (userId != null) {
-        uid = userId;
-        getUserFences().then((allFences) {
-          if (mounted) {
-            setState(() => fences.addAll(allFences));
-          }
-        });
-      }
-    });
+  Future<void> _setup() async {
+    await _getCurrentPosition();
+    await _getDeviceData();
   }
 
   Future<void> _getCurrentPosition() async {
-    final hasPermission = await handleLocationPermission(context);
-
-    if (!hasPermission) return;
-
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
-        .then((dynamic position) {
-      if (mounted) {
-        if (position is Position) {
-          setState(() => _currentPosition = position);
+    getCurrentPosition(
+      context,
+      (position) {
+        if (position.runtimeType == Position) {
+          if (mounted) {
+            setState(() => _currentPosition = position);
+          }
         }
-      }
-    }).catchError((e) {
-      debugPrint(e.toString());
-    });
+      },
+    );
   }
 
   Future<void> _getDeviceData() async {
     await getDeviceData(
-      startDate: startDate,
-      endDate: endDate,
+      startDate: _startDate,
+      endDate: _endDate,
       deviceId: widget.device.deviceId,
       isInterval: widget.isInterval,
     ).then(
       (data) async {
-        deviceData = [];
-        setState(() {
-          deviceData.addAll(data);
-        });
+        _deviceData = [];
+        if (mounted) {
+          setState(() {
+            _deviceData.addAll(data);
+          });
+        }
       },
     );
   }
@@ -107,16 +88,16 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    dropDownValue = !widget.isInterval ? 0 : dropDownValue;
-    showHeatMap = !widget.isInterval ? false : showHeatMap;
+    _dropDownValue = !widget.isInterval ? 0 : _dropDownValue;
+    _showHeatMap = !widget.isInterval ? false : _showHeatMap;
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    return _currentPosition == null
-        ? Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.secondary,
-            ),
-          )
-        : Padding(
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CustomCircularProgressIndicator();
+        } else {
+          return Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -131,12 +112,12 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: RangeDateTimeInput(
-                                  startDate: startDate,
-                                  endDate: endDate,
+                                  startDate: _startDate,
+                                  endDate: _endDate,
                                   onConfirm: (newStartDate, newEndDate) {
                                     setState(() {
-                                      startDate = newStartDate;
-                                      endDate = newEndDate;
+                                      _startDate = newStartDate;
+                                      _endDate = newEndDate;
                                     });
                                     _getDeviceData();
                                     Navigator.of(context).pop();
@@ -152,8 +133,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           DeviceTimeWidget(
-                            startDate: startDate,
-                            endDate: endDate,
+                            startDate: _startDate,
+                            endDate: _endDate,
                           ),
                           Icon(
                             Icons.calendar_month,
@@ -173,13 +154,14 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                         style: theme.textTheme.bodyLarge,
                       ),
                       Switch(
-                          activeTrackColor: theme.colorScheme.secondary,
-                          value: showRoute,
-                          onChanged: (value) {
-                            setState(() {
-                              showRoute = value;
-                            });
-                          }),
+                        activeTrackColor: theme.colorScheme.secondary,
+                        value: _showRoute,
+                        onChanged: (value) {
+                          setState(() {
+                            _showRoute = value;
+                          });
+                        },
+                      ),
                     ],
                   ),
                 Padding(
@@ -192,7 +174,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           isDense: true,
                           borderRadius: BorderRadius.circular(20),
                           underline: const SizedBox(),
-                          value: dropDownValue,
+                          value: _dropDownValue,
                           items: [
                             DropdownMenuItem(
                               value: 0,
@@ -210,9 +192,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           onChanged: (value) {
                             setState(() {
                               if (value != null) {
-                                showHeatMap = value == 1;
-                                dropDownValue = value;
-                                showFence = false;
+                                _showHeatMap = value == 1;
+                                _dropDownValue = value;
+                                _showFence = false;
                               }
                             });
                           },
@@ -225,45 +207,49 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                             style: theme.textTheme.bodyLarge,
                           ),
                           Switch(
-                              activeTrackColor: theme.colorScheme.secondary,
-                              value: showFence,
-                              onChanged: (value) {
-                                setState(() {
-                                  showFence = value;
-                                });
-                              }),
+                            activeTrackColor: theme.colorScheme.secondary,
+                            value: _showFence,
+                            onChanged: (value) {
+                              setState(() {
+                                _showFence = value;
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ],
                   ),
                 ),
                 Expanded(
-                  key: firstItemDataKey,
+                  key: _firstItemDataKey,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: SingleDeviceLocationMap(
-                      key: Key('${showFence}_${showHeatMap}_${widget.device.color}'),
+                      key: Key('${_showFence}_${_showHeatMap}_${widget.device.color}'),
                       showCurrentPosition: true,
-                      deviceData: deviceData,
+                      deviceData: _deviceData,
                       imei: widget.device.imei,
                       deviceColor: widget.device.color,
-                      showFence: showFence,
+                      showFence: _showFence,
                       isInterval: widget.isInterval,
-                      endDate: endDate,
-                      startDate: startDate,
-                      showRoute: showRoute,
+                      endDate: _endDate,
+                      startDate: _startDate,
+                      showRoute: _showRoute,
                       onZoomChange: (newZoom) {
                         // No need to setstate because we dont need to update the screen
                         // just need to store the value in case the map restarts to keep zoom
-                        currentZoom = newZoom;
+                        _currentZoom = newZoom;
                       },
-                      startingZoom: currentZoom,
-                      showHeatMap: showHeatMap,
+                      startingZoom: _currentZoom,
+                      showHeatMap: _showHeatMap,
                     ),
                   ),
                 ),
               ],
             ),
           );
+        }
+      },
+    );
   }
 }

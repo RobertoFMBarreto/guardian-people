@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/models/providers/location_provider.dart';
+import 'package:guardian/models/providers/system_provider.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/maps/map_provider.dart';
 import 'package:latlong2/latlong.dart';
 
 class DevicesLocationsMap extends StatefulWidget {
@@ -30,38 +31,34 @@ class DevicesLocationsMap extends StatefulWidget {
 }
 
 class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
-  final polygons = <Polygon>[];
-  final circles = <Polygon>[];
-  bool isLoading = true;
+  final _polygons = <Polygon>[];
+  final _circles = <Polygon>[];
+
+  late Future _future;
+
   Position? _currentPosition;
-  List<LatLng> fencePoints = [];
 
   @override
   void initState() {
-    _setup();
+    _future = _setup();
     super.initState();
   }
 
   Future<void> _setup() async {
-    await _getCurrentPosition();
+    await getCurrentPosition(
+      context,
+      (position) {
+        if (mounted) {
+          setState(() => _currentPosition = position);
+        }
+      },
+    );
     if (widget.fences != null) {
       if (widget.fences!.length > 1 && widget.centerOnPoly) {
         throw ErrorDescription("Can only center on poly with one poly");
       }
     }
-    _loadFences().then(
-      (_) => setState(() => isLoading = false),
-    );
-  }
-
-  Future<void> _getCurrentPosition() async {
-    final hasPermission = await handleLocationPermission(context);
-
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.reduced)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
-    }).catchError((e) {});
+    await _loadFences();
   }
 
   Future<void> _loadFences() async {
@@ -95,22 +92,21 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     }
     if (mounted) {
       setState(() {
-        polygons.addAll(allPolygons);
-        circles.addAll(allCircles);
+        _polygons.addAll(allPolygons);
+        _circles.addAll(allCircles);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    return isLoading
-        ? Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.secondary,
-            ),
-          )
-        : FlutterMap(
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CustomCircularProgressIndicator();
+        } else {
+          return FlutterMap(
             options: MapOptions(
               center: !widget.centerOnPoly && _currentPosition != null
                   ? LatLng(
@@ -118,46 +114,15 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       _currentPosition!.longitude,
                     )
                   : null,
-              bounds: widget.centerOnPoly ? LatLngBounds.fromPoints(polygons.first.points) : null,
+              bounds: widget.centerOnPoly ? LatLngBounds.fromPoints(_polygons.first.points) : null,
               zoom: 17,
               minZoom: 3,
               maxZoom: 18,
             ),
             children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.linovt.guardian',
-                tileProvider: FMTC.instance('guardian').getTileProvider(),
-              ),
-              if (circles.isNotEmpty)
-                CircleLayer(
-                  circles: [
-                    ...circles
-                        .map(
-                          (circle) => CircleMarker(
-                            useRadiusInMeter: true,
-                            color: circle.color,
-                            borderColor: circle.borderColor,
-                            borderStrokeWidth: 2,
-                            point: LatLng(
-                              circle.points.first.latitude,
-                              circle.points.first.longitude,
-                            ),
-                            radius: calculateDistance(
-                              circle.points.first.latitude,
-                              circle.points.first.longitude,
-                              circle.points.last.latitude,
-                              circle.points.last.longitude,
-                            ),
-                          ),
-                        )
-                        .toList()
-                  ],
-                ),
-              if (polygons.isNotEmpty)
-                PolygonLayer(
-                  polygons: polygons,
-                ),
+              getTileLayer(),
+              if (_circles.isNotEmpty) getCircleFences(_circles),
+              if (_polygons.isNotEmpty) getPolygonFences(_polygons),
               MarkerLayer(
                 markers: [
                   if (widget.showCurrentPosition && _currentPosition != null)
@@ -189,5 +154,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
               ),
             ],
           );
+        }
+      },
+    );
   }
 }

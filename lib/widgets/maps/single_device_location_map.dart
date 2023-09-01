@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/db/fence_devices_operations.dart';
 import 'package:guardian/db/fence_points_operations.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/models/providers/location_provider.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/maps/map_provider.dart';
 import 'package:latlong2/latlong.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
@@ -45,29 +45,29 @@ class SingleDeviceLocationMap extends StatefulWidget {
 }
 
 class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
-  final polygons = <Polygon>[];
-  final circles = <Polygon>[];
-  bool isLoading = true;
-  bool showFence = true;
+  final _polygons = <Polygon>[];
+  final _circles = <Polygon>[];
   final MapController _mapController = MapController();
 
-  List<Map<double, MaterialColor>> gradients = [
-    HeatMapOptions.defaultGradient,
-    {0.25: Colors.blue, 0.55: Colors.red, 0.85: Colors.pink, 1.0: Colors.purple}
-  ];
+  late Future _future;
+
+  bool _showFence = true;
 
   @override
   void initState() {
-    _loadDeviceFences();
-    showFence = widget.showFence;
+    _future = _setup();
     super.initState();
   }
 
-  void _loadDeviceFences() {
+  Future<void> _setup() async {
+    await _loadDeviceFences();
+    _showFence = widget.showFence;
+  }
+
+  Future<void> _loadDeviceFences() async {
     List<Polygon> allFences = [];
-    getDeviceFence(widget.imei).then((fence) async {
+    await getDeviceFence(widget.imei).then((fence) async {
       if (fence != null) {
-        //for (Fence fence in fences) {
         List<LatLng> fencePoints = [];
         fencePoints.addAll(await getFencePoints(fence.fenceId));
         allFences.add(
@@ -79,12 +79,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
             isFilled: true,
           ),
         );
-        //}
       }
-      isLoading = false;
       if (mounted) {
         setState(() {
-          polygons.addAll(allFences);
+          _polygons.addAll(allFences);
         });
       }
     });
@@ -92,14 +90,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    return isLoading
-        ? Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.secondary,
-            ),
-          )
-        : FlutterMap(
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CustomCircularProgressIndicator();
+        } else {
+          return FlutterMap(
             mapController: _mapController,
             options: MapOptions(
               center: widget.deviceData.isNotEmpty
@@ -117,46 +114,17 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
-              bounds: (polygons.isNotEmpty || circles.isNotEmpty)
+              bounds: (_polygons.isNotEmpty || _circles.isNotEmpty)
                   ? LatLngBounds.fromPoints(
-                      polygons.isEmpty ? circles.first.points : polygons.first.points)
+                      _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
                   : null,
             ),
             children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.linovt.guardian',
-                tileProvider: FMTC.instance('guardian').getTileProvider(),
-              ),
-              if (showFence)
-                CircleLayer(
-                  circles: [
-                    ...circles
-                        .map(
-                          (circle) => CircleMarker(
-                            useRadiusInMeter: true,
-                            color: circle.color,
-                            borderColor: circle.borderColor,
-                            borderStrokeWidth: 2,
-                            point: LatLng(
-                              polygons.first.points.first.latitude,
-                              polygons.first.points.first.longitude,
-                            ),
-                            radius: calculateDistance(
-                              polygons.first.points.first.latitude,
-                              polygons.first.points.first.longitude,
-                              polygons.first.points.last.latitude,
-                              polygons.first.points.last.longitude,
-                            ),
-                          ),
-                        )
-                        .toList()
-                  ],
-                ),
-              if (showFence)
-                PolygonLayer(
-                  polygons: polygons,
-                ),
+              getTileLayer(),
+              if (_showFence) ...[
+                getCircleFences(_circles),
+                getPolygonFences(_polygons),
+              ],
               if (widget.isInterval && !widget.showHeatMap && widget.showRoute)
                 PolylineLayer(
                   polylines: [
@@ -225,5 +193,8 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               ]
             ],
           );
+        }
+      },
+    );
   }
 }
