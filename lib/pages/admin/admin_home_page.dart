@@ -4,6 +4,7 @@ import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
 import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
@@ -22,24 +23,33 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
-  List<User> users = [];
-  bool isLoading = true;
-  String searchString = '';
+  late Future _future;
+
+  List<User> _users = [];
+  String _searchString = '';
+
   @override
   void initState() {
-    _loadUser();
+    _future = _setup();
     super.initState();
   }
 
-  Future<void> _loadUser() async {
-    getProducersWithSearchAndDevicesAmount(searchString).then((usersData) {
-      // TODO: get users and update db
-      setState(() {
-        users = [];
-        users.addAll(usersData);
-        isLoading = false;
-      });
-    });
+  Future<void> _setup() async {
+    await _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    await getProducersWithSearchAndDevicesAmount(_searchString).then(
+      (usersData) {
+        // TODO: get users and update db
+        if (mounted) {
+          setState(() {
+            _users = [];
+            _users.addAll(usersData);
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -54,13 +64,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
         toolbarHeight: 0,
       ),
       body: SafeArea(
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                ),
-              )
-            : CustomScrollView(
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CustomCircularProgressIndicator();
+            } else {
+              return CustomScrollView(
                 slivers: [
                   if (!kIsWeb)
                     SliverPersistentHeader(
@@ -73,8 +83,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           child: SearchFieldInput(
                             label: localizations.search.capitalize(),
                             onChanged: (value) {
-                              searchString = value;
-                              _loadUser();
+                              _searchString = value;
+                              _loadUsers();
                             },
                           ),
                         ),
@@ -139,10 +149,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     ),
                   ),
                   Producers(
-                    producers: users,
+                    producers: _users,
                   ),
                 ],
-              ),
+              );
+            }
+          },
+        ),
       ),
       floatingActionButton: hasConnection
           ? FloatingActionButton(
