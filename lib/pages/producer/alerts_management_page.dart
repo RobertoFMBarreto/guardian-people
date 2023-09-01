@@ -141,7 +141,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                 alert: alerts[index],
                                 isSelected: selectedAlerts.contains(alerts[index]),
                                 onSelected: () {
-                                  //!TODO: select code
+                                  // TODO: select code
                                   if (selectedAlerts.contains(alerts[index])) {
                                     setState(() {
                                       selectedAlerts.remove(alerts[index]);
@@ -171,7 +171,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                   child: AlertManagementItem(
                                     alert: alerts[index],
                                     onDelete: (alert) {
-                                      //!TODO: Remove code
+                                      // TODO: Remove code
                                       deleteAlert(alerts[index].alertId);
                                       setState(() {
                                         alerts.removeAt(index);

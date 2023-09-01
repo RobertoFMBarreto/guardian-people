@@ -318,12 +318,12 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                             builder: (context) => CustomColorPickerInput(
                                               pickerColor: _fenceColor,
                                               onSave: (color) {
-                                                //!TODO: Logic to update device color
+                                                // TODO: Logic to update device color
                                                 setState(() {
                                                   _fenceColor = color;
                                                 });
 
-                                                //!TODO update fence
+                                                // TODO update fence
                                               },
                                               hexColor: HexColor.toHex(color: _fenceColor),
                                             ),

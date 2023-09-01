@@ -30,7 +30,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
   }
 
   void getMoreInfo() {
-    //!TODO: code to get more 10 data info
+    // TODO: code to get more 10 data info
     setState(() {
       devicesDataInfo.addAll(List.generate(10, (index) => false));
 
@@ -39,7 +39,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
   }
 
   void showLessInfo() {
-    //!TODO: code to get more 10 data info
+    // TODO: code to get more 10 data info
     setState(() {
       devicesDataInfo.removeRange(10, _currentTopicExtent);
       _currentTopicExtent = 10;

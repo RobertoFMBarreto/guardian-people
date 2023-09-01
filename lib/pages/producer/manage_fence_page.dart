@@ -90,7 +90,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 if (hasConnection)
                   TextButton(
                     onPressed: () {
-                      //!TODO call service to delete fence
+                      // TODO call service to delete fence
                       removeFence(fence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
@@ -205,7 +205,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           key: Key(devices[index].deviceId),
                           device: devices[index],
                           onRemoveDevice: () {
-                            //!TODO: On remove device
+                            // TODO: On remove device
                             removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
                               (_) {
                                 setState(() {

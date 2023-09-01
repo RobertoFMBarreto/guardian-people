@@ -309,7 +309,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                             ? DeviceItemRemovable(
                                 device: devices[index],
                                 onRemoveDevice: () {
-                                  //!TODO: On remove device code
+                                  // TODO: On remove device code
                                   deleteDevice(devices[index].deviceId).then((_) {
                                     setState(() {
                                       devices.removeAt(index);

@@ -25,7 +25,7 @@ class _LoginFormState extends State<LoginForm> {
   String _password = '';
 
   Future<void> _loadDataRemoveThisLater(List<User> users, User user) async {
-    //!TODO: To Remove it
+    // TODO: To Remove it
     if (user.isAdmin) {
       for (var u in users) {
         await createUser(u);
@@ -134,7 +134,7 @@ class _LoginFormState extends State<LoginForm> {
                           showLoadingDialog(context);
 
                           // search user and verify if its correct
-                          //!TODO: Change to services
+                          // TODO: Change to services
                           loadUsers().then(
                             (allUsers) async {
                               List<User> users = allUsers;

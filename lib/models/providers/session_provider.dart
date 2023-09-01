@@ -16,7 +16,7 @@ Future<void> clearUserSession() async {
   // remove all session data
   await prefs.clear();
 
-  //!TODO call logout service
+  // TODO call logout service
   await GuardianDatabase.deleteDb();
 }
 

@@ -33,7 +33,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> _loadUser() async {
     getProducersWithSearchAndDevicesAmount(searchString).then((usersData) {
-      //!TODO: get users and update db
+      // TODO: get users and update db
       setState(() {
         users = [];
         users.addAll(usersData);
@@ -152,7 +152,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     isScrollControlled: true,
                     builder: (context) => AddProducerBottomSheet(
                           onAddProducer: () {
-                            //!TODO: Add producer code
+                            // TODO: Add producer code
                           },
                         ));
               },

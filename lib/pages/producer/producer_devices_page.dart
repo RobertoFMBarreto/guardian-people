@@ -256,7 +256,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                            //!TODO: get devices from fence data
+                            // TODO: get devices from fence data
                             child: ListView.builder(
                               itemCount: _devices.length,
                               itemBuilder: (context, index) => Padding(

@@ -168,7 +168,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 builder: (context) => CustomColorPickerInput(
                                   pickerColor: deviceColor,
                                   onSave: (color) {
-                                    //!TODO: Logic to update device color
+                                    // TODO: Logic to update device color
                                     setState(() {
                                       deviceColor = color;
                                       widget.device.color = HexColor.toHex(color: deviceColor);

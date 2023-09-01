@@ -25,7 +25,7 @@ class _WelcomePageState extends State<WelcomePage> {
         if (uid != null) {
           // get user data
           getUser(uid).then((user) {
-            //!TODO: To Remove it
+            // TODO: To Remove it
             // loadUserDevices(uid);
             // loadUserFences(uid);
             // loadAlerts();

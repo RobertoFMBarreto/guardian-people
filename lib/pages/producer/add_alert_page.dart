@@ -277,7 +277,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                             key: Key(alertDevices[index].deviceId),
                             device: alertDevices[index],
                             onRemoveDevice: () {
-                              //!TODO: On remove device
+                              // TODO: On remove device
                               if (widget.alert != null) {
                                 removeAlertDevice(
                                   widget.alert!.alertId,

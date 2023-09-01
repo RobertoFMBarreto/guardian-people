@@ -126,7 +126,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                           alertId: selectedAlert.alertId),
                                     );
                                   }
-                                  //!TODO: add service call
+                                  // TODO: add service call
                                 }
                               },
                             );
@@ -151,7 +151,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             child: AlertManagementItem(
                               alert: _alerts[index],
                               onDelete: (alert) {
-                                //!TODO: Delete code for alert
+                                // TODO: Delete code for alert
                                 removeAlertDevice(alert.alertId, widget.device.deviceId);
                                 setState(() {
                                   _alerts
@@ -190,7 +190,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                 localizations.device_fences.capitalize(),
                                 style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                               ),
-                              //!TODO: se poder ter várias cercas trocar
+                              // TODO: se poder ter várias cercas trocar
                               _fences.isEmpty ? const Icon(Icons.add) : const SizedBox()
                             ],
                           ),
@@ -211,7 +211,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     (element) => element.fenceId == _fences[index].fenceId,
                                   );
                                 });
-                                //!TODO remove item service call
+                                // TODO remove item service call
                               },
                             ),
                           ),

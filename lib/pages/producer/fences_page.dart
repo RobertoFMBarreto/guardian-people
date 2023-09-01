@@ -91,7 +91,7 @@ class _FencesPageState extends State<FencesPage> {
                       shape: const CircleBorder(),
                       backgroundColor: theme.colorScheme.secondary,
                       onPressed: () {
-                        //!TODO:code to add a new fence
+                        // TODO:code to add a new fence
                         Navigator.of(context).pushNamed('/producer/geofencing').then(
                               (_) => _searchFences(),
                             );
@@ -148,7 +148,7 @@ class _FencesPageState extends State<FencesPage> {
                                         color: HexColor(_fences[index].color),
                                         isSelected: _fences[index] == _selectedFence,
                                         onSelected: () {
-                                          //!TODO: select code
+                                          // TODO: select code
                                           if (_selectedFence == _fences[index]) {
                                             setState(() {
                                               _selectedFence = null;
@@ -163,7 +163,7 @@ class _FencesPageState extends State<FencesPage> {
                                         name: _fences[index].name,
                                         color: HexColor(_fences[index].color),
                                         onRemove: () {
-                                          //!TODO remove item from list
+                                          // TODO remove item from list
                                           removeFence(_fences[index]).then((_) => _searchFences());
                                         },
                                       ),
