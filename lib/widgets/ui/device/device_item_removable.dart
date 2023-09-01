@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 
 class DeviceItemRemovable extends StatelessWidget {

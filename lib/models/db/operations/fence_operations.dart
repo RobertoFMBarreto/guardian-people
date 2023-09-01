@@ -1,7 +1,7 @@
-import 'package:guardian/db/fence_devices_operations.dart';
-import 'package:guardian/db/fence_points_operations.dart';
-import 'package:guardian/db/guardian_database.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/operations/guardian_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<Fence> createFence(Fence fence) async {

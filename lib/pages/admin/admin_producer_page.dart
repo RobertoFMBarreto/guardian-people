@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/db/admin/admin_devices_operations.dart';
-import 'package:guardian/db/device_operations.dart';
-import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/user.dart';
+import 'package:guardian/models/db/operations/admin/admin_devices_operations.dart';
+import 'package:guardian/models/db/operations/device_operations.dart';
+import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/custom_floating_btn_option.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/hex_color.dart';

@@ -1,9 +1,9 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/db/device_data_operations.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/operations/device_data_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
 
@@ -103,9 +103,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                 ),
               ),
               //TODO: Fix date to current date because the day 31 is broken
-              initialDate: _selectedValue.day == 31
-                  ? DateTime(_selectedValue.year, _selectedValue.month, 30)
-                  : _selectedValue,
+              initialDate: DateTime.now().subtract(Duration(days: 1)),
               activeColor: theme.colorScheme.secondary,
               locale: Localizations.localeOf(context).languageCode,
               onDateChange: (selectedDate) {

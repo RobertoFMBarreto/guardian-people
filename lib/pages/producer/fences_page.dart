@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/db/fence_operations.dart';
+import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/hex_color.dart';

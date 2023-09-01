@@ -1,4 +1,4 @@
-import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
 
 const String tableDevices = 'devices';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/db/user_operations.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';

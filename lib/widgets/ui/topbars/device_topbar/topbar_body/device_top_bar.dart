@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/device_min_top_bar.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/no_background_device_top_bar.dart';
 

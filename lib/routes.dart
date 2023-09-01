@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Fences/fence.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:guardian/pages/admin/admin_producer_page.dart';

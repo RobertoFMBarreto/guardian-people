@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:guardian/db/alert_notifications_operations.dart';
-import 'package:guardian/db/device_operations.dart';
-import 'package:guardian/db/fence_operations.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
-import 'package:guardian/models/data_models/user.dart';
+import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/data_models/user.dart';
+import 'package:guardian/models/db/operations/device_operations.dart';
+import 'package:guardian/models/db/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/models/user_alert_notification.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/db/guardian_database.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/operations/guardian_database.dart';
 
 class AdminDevicesOperations {
   static Future<List<Device>> getUserDevicesFiltered({

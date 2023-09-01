@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:guardian/db/device_data_operations.dart';
-import 'package:guardian/db/device_operations.dart';
-import 'package:guardian/db/fence_devices_operations.dart';
-import 'package:guardian/db/fence_operations.dart';
-import 'package:guardian/db/fence_points_operations.dart';
-import 'package:guardian/db/user_alert_operations.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/Device/device_data.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
-import 'package:guardian/models/data_models/Fences/fence_devices.dart';
-import 'package:guardian/models/data_models/Fences/fence_points.dart';
-import 'package:guardian/models/data_models/user.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/data_models/Fences/fence_devices.dart';
+import 'package:guardian/models/db/data_models/Fences/fence_points.dart';
+import 'package:guardian/models/db/data_models/user.dart';
+import 'package:guardian/models/db/operations/device_operations.dart';
+import 'package:guardian/models/db/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/operations/fence_operations.dart';
+import 'package:guardian/models/db/operations/device_data_operations.dart';
+import 'package:guardian/models/db/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/operations/user_alert_operations.dart';
 
 Future<List<User>> loadUsers() async {
   String usersInput = '';

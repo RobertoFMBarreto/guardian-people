@@ -3,12 +3,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/db/fence_devices_operations.dart';
-import 'package:guardian/db/fence_points_operations.dart';
-import 'package:guardian/models/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/operations/fence_points_operations.dart';
+import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/maps/map_provider.dart';
 import 'package:latlong2/latlong.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {

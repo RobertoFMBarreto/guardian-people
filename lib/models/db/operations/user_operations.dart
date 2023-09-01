@@ -1,8 +1,8 @@
-import 'package:guardian/db/guardian_database.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/operations/guardian_database.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../models/data_models/user.dart';
+import '../data_models/user.dart';
 
 Future<User> createUser(User user) async {
   final db = await GuardianDatabase().database;

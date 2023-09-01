@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 import 'package:guardian/widgets/ui/device/device_map_widget.dart';

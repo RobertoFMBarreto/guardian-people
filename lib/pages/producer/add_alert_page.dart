@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/db/alert_devices_operations.dart';
-import 'package:guardian/db/user_alert_operations.dart';
-import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Alerts/alert_devices.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/operations/alert_devices_operations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/operations/user_alert_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/key_value_pair.dart';

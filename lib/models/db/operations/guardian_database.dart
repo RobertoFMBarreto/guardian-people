@@ -1,12 +1,12 @@
-import 'package:guardian/models/data_models/Alerts/alert_devices.dart';
-import 'package:guardian/models/data_models/Alerts/alert_notifications.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
-import 'package:guardian/models/data_models/Device/device_data.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
-import 'package:guardian/models/data_models/Fences/fence_devices.dart';
-import 'package:guardian/models/data_models/Fences/fence_points.dart';
-import 'package:guardian/models/data_models/user.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Alerts/alert_devices.dart';
+import 'package:guardian/models/db/data_models/Alerts/alert_notifications.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
+import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/data_models/Fences/fence_devices.dart';
+import 'package:guardian/models/db/data_models/Fences/fence_points.dart';
+import 'package:guardian/models/db/data_models/user.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

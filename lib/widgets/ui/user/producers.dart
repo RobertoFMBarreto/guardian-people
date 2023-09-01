@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/models/data_models/user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/db/data_models/user.dart';
 import 'producer.dart';
 
 class Producers extends StatelessWidget {

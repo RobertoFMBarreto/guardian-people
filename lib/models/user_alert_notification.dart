@@ -1,5 +1,5 @@
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
 
 class UserAlertNotification {
   final Device device;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/db/user_operations.dart';
+import 'package:guardian/models/db/data_models/user.dart';
+import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/read_json.dart';

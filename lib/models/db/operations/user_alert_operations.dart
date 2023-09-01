@@ -1,6 +1,6 @@
-import 'package:guardian/db/alert_devices_operations.dart';
-import 'package:guardian/db/guardian_database.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/operations/guardian_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<UserAlert> createAlert(UserAlert alert) async {

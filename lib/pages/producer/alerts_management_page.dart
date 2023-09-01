@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/db/alert_devices_operations.dart';
-import 'package:guardian/db/user_alert_operations.dart';
+import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/operations/alert_devices_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/db/operations/user_alert_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 

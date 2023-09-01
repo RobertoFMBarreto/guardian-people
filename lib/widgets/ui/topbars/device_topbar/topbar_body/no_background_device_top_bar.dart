@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/db/device_operations.dart';
-import 'package:guardian/models/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/hex_color.dart';
