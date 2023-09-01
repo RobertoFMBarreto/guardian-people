@@ -113,7 +113,6 @@ Future<List<Device>> getUserDevicesWithData() async {
 }
 
 Future<List<Device>> getUserDevicesFiltered({
-  required String uid,
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
   required RangeValues tmpRangeValues,
@@ -149,17 +148,15 @@ Future<List<Device>> getUserDevicesFiltered({
         GROUP BY deviceDt.${DeviceDataFields.deviceId}
       ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
       WHERE
-        (${DeviceFields.uid} = ? AND
-        deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
+        (deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
         deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
         deviceData.${DeviceDataFields.elevation} >= ? AND deviceData.${DeviceDataFields.elevation} <= ? AND
-        ${DeviceFields.name} LIKE ?) OR (${DeviceFields.uid} = ? AND ${DeviceFields.name} LIKE ? AND deviceData.${DeviceDataFields.temperature} IS NULL)
+        ${DeviceFields.name} LIKE ?) OR (${DeviceFields.name} LIKE ? AND deviceData.${DeviceDataFields.temperature} IS NULL)
       ORDER BY
         ${DeviceFields.name}
     ''',
     [
-      uid,
       dtUsageRangeValues.start,
       dtUsageRangeValues.end,
       tmpRangeValues.start,
@@ -169,7 +166,6 @@ Future<List<Device>> getUserDevicesFiltered({
       elevationRangeValues.start,
       elevationRangeValues.end,
       '%$searchString%',
-      uid,
       '%$searchString%',
     ],
   );
@@ -188,8 +184,25 @@ Future<List<Device>> getUserDevicesFiltered({
   return devices;
 }
 
+Future<double> getMaxElevation() async {
+  final db = await GuardianDatabase().database;
+  final data = await db.rawQuery('''
+      SELECT IFNULL(MAX(${DeviceDataFields.elevation}),0) AS maxElevation FROM $tableDevices
+      LEFT JOIN $tableDeviceData ON $tableDeviceData.${DeviceDataFields.deviceId} = $tableDevices.${DeviceFields.deviceId}
+    ''');
+  return data.first['maxElevation'] as double;
+}
+
+Future<double> getMaxTemperature() async {
+  final db = await GuardianDatabase().database;
+  final data = await db.rawQuery('''
+      SELECT IFNULL(MAX(${DeviceDataFields.temperature}),0) AS maxTemperature FROM $tableDevices
+      LEFT JOIN $tableDeviceData ON $tableDeviceData.${DeviceDataFields.deviceId} = $tableDevices.${DeviceFields.deviceId}
+    ''');
+  return data.first['maxTemperature'] as double;
+}
+
 Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
-  required String uid,
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
   required RangeValues tmpRangeValues,
@@ -198,10 +211,6 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
   required String fenceId,
 }) async {
   final db = await GuardianDatabase().database;
-
-  // !TODO: se poder ter várias fences adicionar denovo
-  // $tableDevices.${DeviceFields.deviceId} NOT IN (SELECT ${DeviceFields.deviceId} FROM $tableFenceDevices WHERE ${FenceDevicesFields.fenceId} = ?)
-
   final data = await db.rawQuery(
     '''
       SELECT
@@ -230,7 +239,6 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
         GROUP BY deviceDt.${DeviceDataFields.deviceId}
       ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
       WHERE
-        ${DeviceFields.uid} = ? AND
         deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
         deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
@@ -240,7 +248,6 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
         ${DeviceFields.name}
     ''',
     [
-      uid,
       dtUsageRangeValues.start,
       dtUsageRangeValues.end,
       tmpRangeValues.start,

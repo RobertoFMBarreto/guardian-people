@@ -15,6 +15,8 @@ class ProducerPageDrawer extends StatelessWidget {
   final Function(RangeValues)? onChangedElev;
   final Function()? onConfirm;
   final Function()? onResetFilters;
+  final double maxTemp;
+  final double maxElevation;
   const ProducerPageDrawer({
     super.key,
     required this.batteryRangeValues,
@@ -27,6 +29,8 @@ class ProducerPageDrawer extends StatelessWidget {
     this.onChangedTmp,
     this.onChangedElev,
     this.onResetFilters,
+    required this.maxTemp,
+    required this.maxElevation,
   });
 
   @override
@@ -64,16 +68,16 @@ class ProducerPageDrawer extends StatelessWidget {
             ),
             RangeInput(
               currentRangeValues: tmpRangeValues,
-              max: 35, //TODO: Get biggest tmp of all devices
-              min: 0, //TODO: Get lowest tmp of all devices
+              max: maxTemp,
+              min: 0,
               title: localizations.temperature.capitalize(),
               label: '${tmpRangeValues.start.round()}ºC - ${tmpRangeValues.end.round()}ºC',
               onChanged: onChangedTmp,
             ),
             RangeInput(
               currentRangeValues: elevationRangeValues,
-              max: 1500, //TODO: Get biggest elevation of all devices
-              min: 0, //TODO: Get lowest elevation of all devices
+              max: maxElevation,
+              min: 0,
               title: localizations.elevation.capitalize(),
               label:
                   '${elevationRangeValues.start.round()}m - ${elevationRangeValues.end.round()}m',

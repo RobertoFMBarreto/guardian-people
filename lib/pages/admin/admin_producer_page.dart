@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/db/admin/admin_devices_operations.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/main.dart';
@@ -73,7 +74,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
   }
 
   Future<List<Device>> _filterDevices() async {
-    return await getUserDevicesFiltered(
+    return await AdminDevicesOperations.getUserDevicesFiltered(
       batteryRangeValues: _batteryRangeValues,
       elevationRangeValues: _elevationRangeValues,
       dtUsageRangeValues: _dtUsageRangeValues,
@@ -115,6 +116,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
             dtUsageRangeValues: _dtUsageRangeValues,
             tmpRangeValues: _tmpRangeValues,
             elevationRangeValues: _elevationRangeValues,
+            maxElevation: 100,
+            maxTemp: 100,
             onChangedBat: (values) {
               setState(() {
                 _batteryRangeValues = values;

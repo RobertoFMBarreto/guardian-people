@@ -5,7 +5,7 @@ import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/device/device_item_selectable.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
@@ -34,31 +34,51 @@ class ProducerDevicesPage extends StatefulWidget {
 
 class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String searchString = '';
+
+  late double _maxElevation;
+  late double _maxTemperature;
+  late Future<void> _future;
+
+  String _searchString = '';
   RangeValues _batteryRangeValues = const RangeValues(0, 100);
   RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
-  RangeValues _elevationRangeValues =
-      const RangeValues(0, 1500); //TODO: Get maior/menor altura de todos os devices
-  RangeValues _tmpRangeValues =
-      const RangeValues(0, 35); //TODO: Get maior/menor tmp de todos os devices
+  RangeValues _elevationRangeValues = const RangeValues(0, 1000);
+  RangeValues _tmpRangeValues = const RangeValues(0, 25);
 
-  bool isRemoveMode = false;
-
-  List<Device> selectedDevices = [];
-  List<Device> devices = [];
-
-  late String uid;
+  List<Device> _selectedDevices = [];
+  List<Device> _devices = [];
 
   @override
   void initState() {
-    getUid(context).then((userId) {
-      if (userId != null) {
-        uid = userId;
-        _filterDevices();
-      }
-    });
+    _future = _setup();
 
     super.initState();
+  }
+
+  Future<void> _setup() async {
+    await _setupFilterRanges();
+    await _filterDevices();
+  }
+
+  Future<void> _setupFilterRanges() async {
+    _batteryRangeValues = const RangeValues(0, 100);
+    _dtUsageRangeValues = const RangeValues(0, 10);
+
+    _maxElevation = await getMaxElevation();
+    _maxTemperature = await getMaxTemperature();
+    setState(() {
+      _elevationRangeValues = RangeValues(0, _maxElevation);
+      _tmpRangeValues = RangeValues(0, _maxTemperature);
+    });
+  }
+
+  Future<void> _resetFilters() async {
+    setState(() {
+      _batteryRangeValues = const RangeValues(0, 100);
+      _dtUsageRangeValues = const RangeValues(0, 10);
+      _elevationRangeValues = RangeValues(0, _maxTemperature);
+      _tmpRangeValues = RangeValues(0, _maxElevation);
+    });
   }
 
   Future<void> _filterDevices() async {
@@ -67,14 +87,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
-        searchString: searchString,
+        searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
-        uid: uid,
         fenceId: widget.fenceId!,
       ).then((searchDevices) {
         setState(() {
-          devices = [];
-          devices.addAll(searchDevices);
+          _devices = [];
+          _devices.addAll(searchDevices);
         });
       });
     } else {
@@ -82,199 +101,204 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
-        searchString: searchString,
+        searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
-        uid: uid,
       ).then(
         (filteredDevices) => setState(() {
-          devices = [];
+          _devices = [];
           if (widget.notToShowDevices != null) {
-            devices.addAll(
+            _devices.addAll(
               filteredDevices.where(
                 (device) => !widget.notToShowDevices!.contains(device.deviceId),
               ),
             );
           } else {
-            devices.addAll(filteredDevices);
+            _devices.addAll(filteredDevices);
           }
         }),
       );
     }
   }
 
-  Future<void> _resetFilters() async {
-    setState(() {
-      _batteryRangeValues = const RangeValues(0, 100);
-      _dtUsageRangeValues = const RangeValues(0, 10);
-      _elevationRangeValues = const RangeValues(0, 1500);
-      _tmpRangeValues = const RangeValues(0, 35);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+    print('Build');
 
     return GestureDetector(
-      onTap: () {
-        CustomFocusManager.unfocus(context);
-      },
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text(
-            localizations.devices.capitalize(),
-            style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
+        onTap: () {
+          CustomFocusManager.unfocus(context);
+        },
+        child: Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            title: Text(
+              localizations.devices.capitalize(),
+              style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
+            ),
+            centerTitle: true,
           ),
-          centerTitle: true,
-        ),
-        endDrawer: SafeArea(
-          child: ProducerPageDrawer(
-            batteryRangeValues: _batteryRangeValues,
-            dtUsageRangeValues: _dtUsageRangeValues,
-            tmpRangeValues: _tmpRangeValues,
-            elevationRangeValues: _elevationRangeValues,
-            onChangedBat: (values) {
-              setState(() {
-                _batteryRangeValues = values;
-              });
-            },
-            onChangedDtUsg: (values) {
-              setState(() {
-                _dtUsageRangeValues = values;
-              });
-            },
-            onChangedTmp: (values) {
-              setState(() {
-                _tmpRangeValues = values;
-              });
-            },
-            onChangedElev: (values) {
-              setState(() {
-                _elevationRangeValues = values;
-              });
-            },
-            onConfirm: () {
-              _filterDevices();
-              _scaffoldKey.currentState!.closeEndDrawer();
-            },
-            onResetFilters: () {
-              _resetFilters();
-              _filterDevices();
-            },
-          ),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                child: SearchWithFilterInput(
-                  onFilter: () {
-                    _scaffoldKey.currentState!.openEndDrawer();
+          endDrawer: _devices.isNotEmpty
+              ? SafeArea(
+                  child: ProducerPageDrawer(
+                    batteryRangeValues: _batteryRangeValues,
+                    dtUsageRangeValues: _dtUsageRangeValues,
+                    tmpRangeValues: _tmpRangeValues,
+                    elevationRangeValues: _elevationRangeValues,
+                    maxElevation: _maxElevation,
+                    maxTemp: _maxTemperature,
+                    onChangedBat: (values) {
+                      setState(() {
+                        _batteryRangeValues = values;
+                      });
+                    },
+                    onChangedDtUsg: (values) {
+                      setState(() {
+                        _dtUsageRangeValues = values;
+                      });
+                    },
+                    onChangedTmp: (values) {
+                      setState(() {
+                        _tmpRangeValues = values;
+                      });
+                    },
+                    onChangedElev: (values) {
+                      setState(() {
+                        _elevationRangeValues = values;
+                      });
+                    },
+                    onConfirm: () {
+                      _filterDevices();
+                      _scaffoldKey.currentState!.closeEndDrawer();
+                    },
+                    onResetFilters: () {
+                      _resetFilters();
+                      _filterDevices();
+                    },
+                  ),
+                )
+              : null,
+          floatingActionButton: widget.isSelect && _selectedDevices.isNotEmpty
+              ? FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.of(context).pop(_selectedDevices);
                   },
-                  onSearchChanged: (value) {
-                    searchString = value;
-                    _filterDevices();
-                  },
-                ),
-              ),
-              if (widget.isSelect)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        if (selectedDevices.length == devices.length) {
-                          setState(() {
-                            selectedDevices = [];
-                          });
-                        } else {
-                          setState(() {
-                            selectedDevices = devices;
-                          });
-                        }
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            selectedDevices.length == devices.length ? Icons.remove : Icons.add,
-                            color: theme.colorScheme.secondary,
-                          ),
-                          Text(
-                            localizations.select_all.capitalize(),
-                            style: theme.textTheme.bodyLarge!.copyWith(
-                              color: theme.colorScheme.secondary,
-                            ),
-                          ),
-                        ],
-                      ),
+                  label: Text(
+                    localizations.confirm.capitalize(),
+                    style: theme.textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                  ],
-                ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  //!TODO: get devices from fence data
-                  child: ListView.builder(
-                    itemCount: devices.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                      ),
-                      child: widget.isSelect
-                          ? DeviceItemSelectable(
-                              deviceImei: devices[index].name,
-                              deviceData: devices[index].data!.first.dataUsage,
-                              deviceBattery: devices[index].data!.first.battery,
-                              isSelected: selectedDevices
-                                  .where((element) => element.deviceId == devices[index].deviceId)
-                                  .isNotEmpty,
-                              onSelected: () {
-                                int i = selectedDevices.indexWhere(
-                                    (element) => element.deviceId == devices[index].deviceId);
-                                setState(() {
-                                  if (i >= 0) {
-                                    selectedDevices.removeAt(i);
+                  ),
+                  icon: const Icon(Icons.done),
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
+                )
+              : null,
+          body: FutureBuilder(
+              future: _future,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CustomCircularProgressIndicator();
+                } else {
+                  return SafeArea(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                          child: SearchWithFilterInput(
+                            onFilter: () {
+                              _scaffoldKey.currentState!.openEndDrawer();
+                            },
+                            onSearchChanged: (value) {
+                              _searchString = value;
+                              _filterDevices();
+                            },
+                          ),
+                        ),
+                        if (widget.isSelect)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  if (_selectedDevices.length == _devices.length) {
+                                    setState(() {
+                                      _selectedDevices = [];
+                                    });
                                   } else {
-                                    selectedDevices.add(devices[index]);
+                                    setState(() {
+                                      _selectedDevices = _devices;
+                                    });
                                   }
-                                });
-                              },
-                            )
-                          : DeviceItem(
-                              device: devices[index],
-                              onBackFromDeviceScreen: () {
-                                _filterDevices();
-                              },
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      _selectedDevices.length == _devices.length
+                                          ? Icons.remove
+                                          : Icons.add,
+                                      color: theme.colorScheme.secondary,
+                                    ),
+                                    Text(
+                                      localizations.select_all.capitalize(),
+                                      style: theme.textTheme.bodyLarge!.copyWith(
+                                        color: theme.colorScheme.secondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            //!TODO: get devices from fence data
+                            child: ListView.builder(
+                              itemCount: _devices.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                child: widget.isSelect
+                                    ? DeviceItemSelectable(
+                                        deviceImei: _devices[index].name,
+                                        deviceData: _devices[index].data!.first.dataUsage,
+                                        deviceBattery: _devices[index].data!.first.battery,
+                                        isSelected: _selectedDevices
+                                            .where((element) =>
+                                                element.deviceId == _devices[index].deviceId)
+                                            .isNotEmpty,
+                                        onSelected: () {
+                                          int i = _selectedDevices.indexWhere((element) =>
+                                              element.deviceId == _devices[index].deviceId);
+                                          setState(() {
+                                            if (i >= 0) {
+                                              _selectedDevices.removeAt(i);
+                                            } else {
+                                              _selectedDevices.add(_devices[index]);
+                                            }
+                                          });
+                                        },
+                                      )
+                                    : DeviceItem(
+                                        device: _devices[index],
+                                        onBackFromDeviceScreen: () {
+                                          _filterDevices();
+                                        },
+                                      ),
+                              ),
                             ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: widget.isSelect && selectedDevices.isNotEmpty
-            ? FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.of(context).pop(selectedDevices);
-                },
-                label: Text(
-                  localizations.confirm.capitalize(),
-                  style: theme.textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                icon: const Icon(Icons.done),
-                backgroundColor: theme.colorScheme.secondary,
-                foregroundColor: theme.colorScheme.onSecondary,
-              )
-            : null,
-      ),
-    );
+                  );
+                }
+              }),
+        ));
   }
 }
