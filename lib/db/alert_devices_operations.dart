@@ -8,12 +8,12 @@ import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future<AlertDevices> addAlertDevice(AlertDevices alertDevice) async {
+Future<AlertDevice> addAlertDevice(AlertDevice alertDevice) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
-    where: '''${AlertDevicesFields.deviceId} = ? AND 
-              ${AlertDevicesFields.alertId} = ? ''',
+    where: '''${AlertDeviceFields.deviceId} = ? AND 
+              ${AlertDeviceFields.alertId} = ? ''',
     whereArgs: [
       alertDevice.deviceId,
       alertDevice.deviceId,
@@ -34,7 +34,7 @@ Future<void> removeAllAlertDevices(String alertId) async {
   final db = await GuardianDatabase().database;
   await db.delete(
     tableAlertDevices,
-    where: '${AlertDevicesFields.alertId} = ? ',
+    where: '${AlertDeviceFields.alertId} = ? ',
     whereArgs: [alertId],
   );
 }
@@ -43,7 +43,7 @@ Future<void> removeAlertDevice(String alertId, String deviceId) async {
   final db = await GuardianDatabase().database;
   await db.delete(
     tableAlertDevices,
-    where: '${AlertDevicesFields.alertId} = ? AND ${AlertDevicesFields.deviceId} = ?',
+    where: '${AlertDeviceFields.alertId} = ? AND ${AlertDeviceFields.deviceId} = ?',
     whereArgs: [alertId, deviceId],
   );
 }
@@ -52,7 +52,7 @@ Future<List<Device>> getAlertDevices(String alertId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
-    where: '${AlertDevicesFields.alertId} = ?',
+    where: '${AlertDeviceFields.alertId} = ?',
     whereArgs: [alertId],
   );
 
@@ -60,7 +60,7 @@ Future<List<Device>> getAlertDevices(String alertId) async {
 
   if (data.isNotEmpty) {
     for (var alertData in data) {
-      final deviceId = AlertDevices.fromJson(alertData).deviceId;
+      final deviceId = AlertDevice.fromJson(alertData).deviceId;
       Device? device = await getDevice(deviceId);
       if (device != null) {
         final lastDeviceData = await getLastDeviceData(deviceId);
@@ -77,14 +77,14 @@ Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableAlertDevices,
-    where: '${AlertDevicesFields.deviceId} = ?',
+    where: '${AlertDeviceFields.deviceId} = ?',
     whereArgs: [deviceId],
   );
   List<UserAlert> alerts = [];
 
   if (data.isNotEmpty) {
     for (var alertData in data) {
-      final alertId = AlertDevices.fromJson(alertData).alertId;
+      final alertId = AlertDevice.fromJson(alertData).alertId;
       final alert = await getAlert(alertId);
       if (alert != null) alerts.add(alert);
     }
@@ -97,17 +97,17 @@ Future<List<UserAlert>> getDeviceUnselectedAlerts() async {
   final data = await db.rawQuery(
     '''
       SELECT 
-        $tableUserAlerts.${AlertDevicesFields.alertId}
+        $tableUserAlerts.${AlertDeviceFields.alertId}
       FROM $tableUserAlerts
-      LEFT JOIN $tableAlertDevices ON $tableAlertDevices.${AlertDevicesFields.alertId} = $tableUserAlerts.${AlertDevicesFields.alertId}
-      WHERE $tableAlertDevices.${AlertDevicesFields.deviceId} IS NULL
+      LEFT JOIN $tableAlertDevices ON $tableAlertDevices.${AlertDeviceFields.alertId} = $tableUserAlerts.${AlertDeviceFields.alertId}
+      WHERE $tableAlertDevices.${AlertDeviceFields.deviceId} IS NULL
     ''',
   );
   List<UserAlert> alerts = [];
 
   if (data.isNotEmpty) {
     for (var alertData in data) {
-      final alertId = alertData[AlertDevicesFields.alertId] as String;
+      final alertId = alertData[AlertDeviceFields.alertId] as String;
       final alert = await getAlert(alertId);
       if (alert != null) alerts.add(alert);
     }

@@ -10,18 +10,18 @@ import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/models/helpers/focus_manager.dart';
+import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/device/device_item.dart';
-import 'package:guardian/widgets/device/device_item_removable.dart';
-import 'package:guardian/widgets/floating_action_button.dart';
+import 'package:guardian/widgets/ui/device/device_item.dart';
+import 'package:guardian/widgets/ui/device/device_item_removable.dart';
+import 'package:guardian/widgets/ui/interactables/floating_action_button.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
-import 'package:guardian/widgets/pages/admin/producer_page/add_device_bottom_sheet.dart';
-import 'package:guardian/widgets/pages/admin/producer_page/producer_page_drawer.dart';
+import 'package:guardian/widgets/ui/bottom_sheets/add_device_bottom_sheet.dart';
+import 'package:guardian/widgets/ui/drawers/producer_page_drawer.dart';
 
-import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

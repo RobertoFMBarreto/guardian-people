@@ -141,7 +141,7 @@ Future<List<Fence>> loadUserFences(String uid) async {
       // load fence points
       for (var point in fence['points']) {
         createFencePoint(
-          FencePoints(
+          FencePoint(
             fenceId: fence["id"],
             lat: point['lat'],
             lon: point['lon'],
@@ -151,7 +151,7 @@ Future<List<Fence>> loadUserFences(String uid) async {
 
       for (var device in fence['devices']) {
         createFenceDevice(
-          FenceDevices(
+          FenceDevice(
             fenceId: fence["id"],
             deviceId: device['imei'],
           ),

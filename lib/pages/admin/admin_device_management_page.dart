@@ -3,11 +3,11 @@ import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/device/device_item.dart';
-import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
-import 'package:guardian/widgets/topbars/device_topbar/sliver_device_app_bar.dart';
+import 'package:guardian/widgets/ui/device/device_item.dart';
+import 'package:guardian/widgets/ui/device/option_button.dart';
+import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {

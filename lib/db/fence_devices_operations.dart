@@ -6,11 +6,11 @@ import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future<FenceDevices> createFenceDevice(FenceDevices fenceDevice) async {
+Future<FenceDevice> createFenceDevice(FenceDevice fenceDevice) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFenceDevices,
-    where: '${FenceDevicesFields.deviceId} = ? AND ${FenceDevicesFields.fenceId} = ?',
+    where: '${FenceDeviceFields.deviceId} = ? AND ${FenceDeviceFields.fenceId} = ?',
     whereArgs: [fenceDevice.deviceId, fenceDevice.fenceId],
   );
   if (data.isEmpty) {
@@ -28,11 +28,11 @@ Future<Fence?> getDeviceFence(String deviceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFenceDevices,
-    where: '${FenceDevicesFields.deviceId} = ?',
+    where: '${FenceDeviceFields.deviceId} = ?',
     whereArgs: [deviceId],
   );
   if (data.isNotEmpty) {
-    return await getFence(FenceDevices.fromJson(data.first).fenceId);
+    return await getFence(FenceDevice.fromJson(data.first).fenceId);
   }
   return null;
 }
@@ -41,7 +41,7 @@ Future<void> removeDeviceFence(String fenceId, String deviceId) async {
   final db = await GuardianDatabase().database;
   await db.delete(
     tableFenceDevices,
-    where: '${FenceDevicesFields.fenceId} = ? AND ${FenceDevicesFields.deviceId} = ?',
+    where: '${FenceDeviceFields.fenceId} = ? AND ${FenceDeviceFields.deviceId} = ?',
     whereArgs: [fenceId, deviceId],
   );
 }
@@ -50,7 +50,7 @@ Future<void> removeAllFenceDevices(String fenceId) async {
   final db = await GuardianDatabase().database;
   await db.delete(
     tableFenceDevices,
-    where: '${FenceDevicesFields.fenceId} = ?',
+    where: '${FenceDeviceFields.fenceId} = ?',
     whereArgs: [fenceId],
   );
 }
@@ -59,7 +59,7 @@ Future<List<Device>> getFenceDevices(String fenceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFenceDevices,
-    where: '${FenceDevicesFields.fenceId} = ?',
+    where: '${FenceDeviceFields.fenceId} = ?',
     whereArgs: [fenceId],
   );
 
@@ -67,7 +67,7 @@ Future<List<Device>> getFenceDevices(String fenceId) async {
 
   if (data.isNotEmpty) {
     for (var dev in data) {
-      final device = await getDeviceWithData(FenceDevices.fromJson(dev).deviceId);
+      final device = await getDeviceWithData(FenceDevice.fromJson(dev).deviceId);
       if (device != null) {
         fenceDevices.add(device);
       }

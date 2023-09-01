@@ -6,11 +6,11 @@ import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
+import 'package:guardian/widgets/ui/dropdown/alert/alert_management_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/widgets/selectable_alert_management_item.dart';
+import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart';
 
 class AlertsManagementPage extends StatefulWidget {
   final bool isSelect;

@@ -7,14 +7,14 @@ import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/producer_provider.dart';
+import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/models/user_alert_notification.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/maps/devices_locations_map.dart';
-import 'package:guardian/widgets/pages/home/home_dropdown.dart';
-import 'package:guardian/widgets/square_devices_info.dart';
-import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
+import 'package:guardian/widgets/ui/device/square_devices_info.dart';
+import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
 class ProducerHome extends StatefulWidget {
   const ProducerHome({

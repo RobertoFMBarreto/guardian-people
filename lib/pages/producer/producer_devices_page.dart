@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
-
-import 'package:guardian/widgets/device/device_item_selectable.dart';
+import 'package:guardian/models/helpers/focus_manager.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
+import 'package:guardian/widgets/ui/device/device_item.dart';
+import 'package:guardian/widgets/ui/device/device_item_selectable.dart';
 
-import '../../widgets/device/device_item.dart';
-import '../../widgets/pages/admin/producer_page/producer_page_drawer.dart';
+import '../../widgets/ui/drawers/producer_page_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerDevicesPage extends StatefulWidget {

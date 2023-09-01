@@ -5,7 +5,7 @@ import 'package:guardian/db/device_data_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/widgets/pages/producer/device_page/device_data_info_list_item.dart';
+import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
 
 class DeviceHistoryPage extends StatefulWidget {
   final Device device;

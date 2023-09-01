@@ -10,12 +10,12 @@ import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/models/helpers/focus_manager.dart';
+import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/fence_item.dart';
-import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
+import 'package:guardian/widgets/ui/fence/fence_item.dart';
+import 'package:guardian/widgets/ui/dropdown/alert/alert_management_item.dart';
 
 class DeviceSettingsPage extends StatefulWidget {
   final Device device;
@@ -121,7 +121,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   });
                                   for (var selectedAlert in selectedAlerts) {
                                     await addAlertDevice(
-                                      AlertDevices(
+                                      AlertDevice(
                                           deviceId: widget.device.deviceId,
                                           alertId: selectedAlert.alertId),
                                     );
@@ -175,7 +175,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   _fences.add(newFence);
                                 });
                                 createFenceDevice(
-                                  FenceDevices(
+                                  FenceDevice(
                                     fenceId: newFence.fenceId,
                                     deviceId: widget.device.deviceId,
                                   ),

@@ -4,12 +4,11 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:guardian/models/navigator_key.dart';
-import 'package:guardian/models/providers/permissions_provides.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
+import 'package:guardian/models/helpers/navigator_key_helper.dart';
+import 'package:guardian/models/providers/permissions_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-
-import '../custom_alert_dialogs.dart';
 
 Future<bool> checkInternetConnection(BuildContext context) async {
   return await InternetAddress.lookup('google.com').then((result) {

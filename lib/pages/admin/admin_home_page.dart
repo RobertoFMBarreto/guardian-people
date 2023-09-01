@@ -3,13 +3,13 @@ import 'package:guardian/db/user_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/user.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
-import 'package:guardian/widgets/pages/admin/admin_home/add_producer_bottom_sheet.dart';
-import 'package:guardian/widgets/pages/admin/admin_home/producers.dart';
+import 'package:guardian/widgets/ui/bottom_sheets/add_producer_bottom_sheet.dart';
+import 'package:guardian/widgets/ui/user/producers.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/widgets/topbars/main_topbar/sliver_main_app_bar.dart';
+import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -88,54 +88,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             },
                           ),
                         ),
-                        tailWidget: PopupMenuButton(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          color: theme.colorScheme.onSecondary,
-                          icon: const Icon(Icons.menu),
-                          onSelected: (item) {
-                            switch (item) {
-                              case 0:
-                                Navigator.of(context).pushNamed('/profile');
-                                break;
-                              case 1:
-                                //! Logout code
-                                clearUserSession().then(
-                                  (value) => Navigator.of(context).popAndPushNamed('/login'),
-                                );
-
-                                break;
-                            }
-                          },
-                          itemBuilder: (BuildContext context) => [
-                            if (hasConnection)
-                              PopupMenuItem(
-                                value: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(localizations.profile.capitalize()),
-                                    const Icon(
-                                      Icons.person,
-                                      size: 15,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            PopupMenuItem(
-                              value: 1,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(localizations.logout.capitalize()),
-                                  const Icon(
-                                    Icons.logout,
-                                    size: 15,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        tailWidget: const HomeDropDown(),
                       ),
                       pinned: true,
                     ),

@@ -6,8 +6,8 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
 
 import 'package:guardian/models/user_alert_notification.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/pages/producer/alerts_page/alert_item.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlertsPage extends StatefulWidget {

@@ -98,9 +98,9 @@ class GuardianDatabase {
     // Create alert devices table
     await db.execute("""
       CREATE TABLE IF NOT EXISTS $tableAlertDevices (
-        ${AlertDevicesFields.alertDevicesId} $idIncrementType,
-        ${AlertDevicesFields.alertId} $textType,
-        ${AlertDevicesFields.deviceId} $textType
+        ${AlertDeviceFields.alertDevicesId} $idIncrementType,
+        ${AlertDeviceFields.alertId} $textType,
+        ${AlertDeviceFields.deviceId} $textType
       )""");
 
     // Create alert notifications table
@@ -123,18 +123,18 @@ class GuardianDatabase {
     // Create fence devices table
     await db.execute("""
       CREATE TABLE IF NOT EXISTS $tableFenceDevices (
-        ${FenceDevicesFields.fenceDevicesId} $idIncrementType,
-        ${FenceDevicesFields.fenceId} $textType,
-        ${FenceDevicesFields.deviceId} $textType
+        ${FenceDeviceFields.fenceDevicesId} $idIncrementType,
+        ${FenceDeviceFields.fenceId} $textType,
+        ${FenceDeviceFields.deviceId} $textType
       )""");
 
     // Create fence points table
     await db.execute("""
       CREATE TABLE IF NOT EXISTS $tableFencePoints (
-        ${FencePointsFields.fencePointsId} $idIncrementType,
-        ${FencePointsFields.fenceId} $textType,
-        ${FencePointsFields.lat} $doubleType,
-        ${FencePointsFields.lon} $doubleType
+        ${FencePointFields.fencePointsId} $idIncrementType,
+        ${FencePointFields.fenceId} $textType,
+        ${FencePointFields.lat} $doubleType,
+        ${FencePointFields.lon} $doubleType
       )""");
   }
 

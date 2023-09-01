@@ -1,35 +1,35 @@
 const String tableFenceDevices = 'fence_devices';
 
-class FenceDevicesFields {
+class FenceDeviceFields {
   static const String fenceDevicesId = 'fence_devices_id';
   static const String fenceId = 'fence_id';
   static const String deviceId = 'device_id';
 }
 
-class FenceDevices {
+class FenceDevice {
   final String fenceId;
   final String deviceId;
-  FenceDevices({
+  FenceDevice({
     required this.fenceId,
     required this.deviceId,
   });
 
-  FenceDevices copy({
+  FenceDevice copy({
     String? fenceId,
     String? deviceId,
   }) =>
-      FenceDevices(
+      FenceDevice(
         fenceId: fenceId ?? this.fenceId,
         deviceId: deviceId ?? this.deviceId,
       );
 
   Map<String, Object?> toJson() => {
-        FenceDevicesFields.fenceId: fenceId,
-        FenceDevicesFields.deviceId: deviceId,
+        FenceDeviceFields.fenceId: fenceId,
+        FenceDeviceFields.deviceId: deviceId,
       };
 
-  static FenceDevices fromJson(Map<String, Object?> json) => FenceDevices(
-        fenceId: json[FenceDevicesFields.fenceId] as String,
-        deviceId: json[FenceDevicesFields.deviceId] as String,
+  static FenceDevice fromJson(Map<String, Object?> json) => FenceDevice(
+        fenceId: json[FenceDeviceFields.fenceId] as String,
+        deviceId: json[FenceDeviceFields.deviceId] as String,
       );
 }

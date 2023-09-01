@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/widgets/pages/login/login_form.dart';
+import 'package:guardian/models/helpers/focus_manager.dart';
+import 'package:guardian/widgets/ui/login/login_form.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({

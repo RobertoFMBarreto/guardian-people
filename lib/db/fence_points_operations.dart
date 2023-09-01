@@ -8,26 +8,26 @@ Future<void> createFencePointFromList(List<LatLng> points, String fenceId) async
   // first remove all points
   await db.delete(
     tableFencePoints,
-    where: '${FencePointsFields.fenceId} = ?',
+    where: '${FencePointFields.fenceId} = ?',
     whereArgs: [fenceId],
   );
   // second add all points again
   for (LatLng point in points) {
     await db.insert(
       tableFencePoints,
-      FencePoints(fenceId: fenceId, lat: point.latitude, lon: point.longitude).toJson(),
+      FencePoint(fenceId: fenceId, lat: point.latitude, lon: point.longitude).toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 }
 
-Future<FencePoints> createFencePoint(FencePoints point) async {
+Future<FencePoint> createFencePoint(FencePoint point) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFencePoints,
-    where: '''${FencePointsFields.fenceId} = ? AND
-              ${FencePointsFields.lat} = ? AND 
-              ${FencePointsFields.lon} = ?''',
+    where: '''${FencePointFields.fenceId} = ? AND
+              ${FencePointFields.lat} = ? AND 
+              ${FencePointFields.lon} = ?''',
     whereArgs: [point.fenceId, point.lat, point.lon],
   );
   if (data.isEmpty) {
@@ -45,14 +45,14 @@ Future<List<LatLng>> getFencePoints(String fenceId) async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableFencePoints,
-    where: '${FencePointsFields.fenceId} = ?',
+    where: '${FencePointFields.fenceId} = ?',
     whereArgs: [fenceId],
   );
   List<LatLng> fencePoints = [];
   if (data.isNotEmpty) {
     fencePoints.addAll(
       data.map((e) {
-        final point = FencePoints.fromJson(e);
+        final point = FencePoint.fromJson(e);
         return LatLng(point.lat, point.lon);
       }).toList(),
     );
@@ -65,7 +65,7 @@ Future<void> removeAllFencePoints(String fenceId) async {
   final db = await GuardianDatabase().database;
   await db.delete(
     tableFencePoints,
-    where: '${FencePointsFields.fenceId} = ?',
+    where: '${FencePointFields.fenceId} = ?',
     whereArgs: [fenceId],
   );
 }

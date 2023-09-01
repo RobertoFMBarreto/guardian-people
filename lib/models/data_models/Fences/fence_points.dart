@@ -1,42 +1,42 @@
 const String tableFencePoints = 'fence_points';
 
-class FencePointsFields {
+class FencePointFields {
   static const String fencePointsId = 'fence_points_id';
   static const String fenceId = 'fence_id';
   static const String lat = 'lat';
   static const String lon = 'lon';
 }
 
-class FencePoints {
+class FencePoint {
   final String fenceId;
   final double lat;
   final double lon;
-  FencePoints({
+  FencePoint({
     required this.fenceId,
     required this.lat,
     required this.lon,
   });
 
-  FencePoints copy({
+  FencePoint copy({
     String? fenceId,
     double? lat,
     double? lon,
   }) =>
-      FencePoints(
+      FencePoint(
         fenceId: fenceId ?? this.fenceId,
         lat: lat ?? this.lat,
         lon: lon ?? this.lon,
       );
 
   Map<String, Object?> toJson() => {
-        FencePointsFields.fenceId: fenceId,
-        FencePointsFields.lat: lat,
-        FencePointsFields.lon: lon,
+        FencePointFields.fenceId: fenceId,
+        FencePointFields.lat: lat,
+        FencePointFields.lon: lon,
       };
 
-  static FencePoints fromJson(Map<String, Object?> json) => FencePoints(
-        fenceId: json[FencePointsFields.fenceId] as String,
-        lat: json[FencePointsFields.lat] as double,
-        lon: json[FencePointsFields.lon] as double,
+  static FencePoint fromJson(Map<String, Object?> json) => FencePoint(
+        fenceId: json[FencePointFields.fenceId] as String,
+        lat: json[FencePointFields.lat] as double,
+        lon: json[FencePointFields.lon] as double,
       );
 }

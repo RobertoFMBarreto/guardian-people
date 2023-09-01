@@ -9,12 +9,12 @@ import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/focus_manager.dart';
+import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/key_value_pair.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
+import 'package:guardian/widgets/ui/device/device_item_removable.dart';
 
 class AddAlertPage extends StatefulWidget {
   final UserAlert? alert;
@@ -67,7 +67,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   Future<void> _addAlertDevices(String alertId) async {
     for (var device in _alertDevices) {
       await addAlertDevice(
-        AlertDevices(
+        AlertDevice(
           deviceId: device.deviceId,
           alertId: alertId,
         ),

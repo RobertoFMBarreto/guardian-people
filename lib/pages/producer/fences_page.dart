@@ -5,13 +5,13 @@ import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/focus_manager.dart';
-import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/fence_item.dart';
+import 'package:guardian/models/helpers/focus_manager.dart';
+import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/widgets/selectable_fence_item.dart';
+import 'package:guardian/widgets/ui/fence/selectable_fence_item.dart';
 
 class FencesPage extends StatefulWidget {
   final bool isSelect;
