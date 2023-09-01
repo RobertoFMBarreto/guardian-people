@@ -40,7 +40,7 @@ class AdminDevicesOperations {
           ) as deviceDt
         GROUP BY deviceDt.${DeviceDataFields.deviceId}
       ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
-      WHERE (${DeviceFields.uid} = ?
+      WHERE (${DeviceFields.uid} = ? AND
         deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
         deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
@@ -59,8 +59,8 @@ class AdminDevicesOperations {
         batteryRangeValues.end,
         elevationRangeValues.start,
         elevationRangeValues.end,
-        uid,
         '%$searchString%',
+        uid,
         '%$searchString%',
       ],
     );

@@ -66,19 +66,23 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
 
     _maxElevation = await getMaxElevation();
     _maxTemperature = await getMaxTemperature();
-    setState(() {
-      _elevationRangeValues = RangeValues(0, _maxElevation);
-      _tmpRangeValues = RangeValues(0, _maxTemperature);
-    });
+    if (mounted) {
+      setState(() {
+        _elevationRangeValues = RangeValues(0, _maxElevation);
+        _tmpRangeValues = RangeValues(0, _maxTemperature);
+      });
+    }
   }
 
   Future<void> _resetFilters() async {
-    setState(() {
-      _batteryRangeValues = const RangeValues(0, 100);
-      _dtUsageRangeValues = const RangeValues(0, 10);
-      _elevationRangeValues = RangeValues(0, _maxTemperature);
-      _tmpRangeValues = RangeValues(0, _maxElevation);
-    });
+    if (mounted) {
+      setState(() {
+        _batteryRangeValues = const RangeValues(0, 100);
+        _dtUsageRangeValues = const RangeValues(0, 10);
+        _elevationRangeValues = RangeValues(0, _maxTemperature);
+        _tmpRangeValues = RangeValues(0, _maxElevation);
+      });
+    }
   }
 
   Future<void> _filterDevices() async {
@@ -91,10 +95,12 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         tmpRangeValues: _tmpRangeValues,
         fenceId: widget.fenceId!,
       ).then((searchDevices) {
-        setState(() {
-          _devices = [];
-          _devices.addAll(searchDevices);
-        });
+        if (mounted) {
+          setState(() {
+            _devices = [];
+            _devices.addAll(searchDevices);
+          });
+        }
       });
     } else {
       getUserDevicesFiltered(
