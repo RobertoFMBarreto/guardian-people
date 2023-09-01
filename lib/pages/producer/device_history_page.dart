@@ -92,8 +92,8 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                     gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
                       colors: [
                         Color.fromRGBO(88, 200, 160, 1),
                         Color.fromRGBO(147, 215, 166, 1),

@@ -22,8 +22,8 @@ class SquareDevicesInfo extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
             colors: isAlert
                 ? [
                     const Color.fromRGBO(231, 75, 75, 1),
