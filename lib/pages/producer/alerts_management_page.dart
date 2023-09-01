@@ -6,6 +6,7 @@ import 'package:guardian/db/user_alert_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/pages/producer/alerts_management_page/alert_management_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,35 +25,42 @@ class AlertsManagementPage extends StatefulWidget {
 }
 
 class _AlertsManagementPageState extends State<AlertsManagementPage> {
-  List<UserAlert> alerts = [];
-  bool isLoading = true;
-  List<UserAlert> selectedAlerts = [];
+  late Future _future;
+
+  List<UserAlert> _alerts = [];
+  List<UserAlert> _selectedAlerts = [];
 
   @override
   void initState() {
-    _loadAlerts().then((value) => setState(() => isLoading = false));
+    _future = _setup();
     super.initState();
+  }
+
+  Future<void> _setup() async {
+    await _loadAlerts();
   }
 
   Future<void> _loadAlerts() async {
     if (widget.isSelect) {
       await getDeviceUnselectedAlerts().then(
         (allAlerts) {
-          setState(() {
-            alerts = [];
-            alerts.addAll(allAlerts);
-            isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              _alerts = [];
+              _alerts.addAll(allAlerts);
+            });
+          }
         },
       );
     } else {
       await getUserAlerts().then(
         (allAlerts) {
-          setState(() {
-            alerts = [];
-            alerts.addAll(allAlerts);
-            isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              _alerts = [];
+              _alerts.addAll(allAlerts);
+            });
+          }
         },
       );
     }
@@ -72,121 +80,123 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-                child: Column(
-                  children: [
-                    if (hasConnection)
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton.icon(
-                              onPressed: () {
-                                if (widget.isSelect) {
-                                  if (selectedAlerts.length == alerts.length) {
-                                    setState(() {
-                                      selectedAlerts.removeRange(0, selectedAlerts.length);
-                                    });
+        child: FutureBuilder(
+            future: _future,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CustomCircularProgressIndicator();
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+                  child: Column(
+                    children: [
+                      if (hasConnection)
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton.icon(
+                                onPressed: () {
+                                  if (widget.isSelect) {
+                                    if (_selectedAlerts.length == _alerts.length) {
+                                      setState(() {
+                                        _selectedAlerts.removeRange(0, _selectedAlerts.length);
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _selectedAlerts.addAll(_alerts);
+                                      });
+                                    }
                                   } else {
+                                    deleteAllAlerts();
                                     setState(() {
-                                      selectedAlerts.addAll(alerts);
+                                      _alerts = [];
                                     });
                                   }
-                                } else {
-                                  deleteAllAlerts();
-                                  setState(() {
-                                    alerts = [];
-                                  });
-                                }
-                              },
-                              icon: Icon(
-                                !widget.isSelect
-                                    ? Icons.delete_forever
-                                    : selectedAlerts.length == alerts.length
-                                        ? Icons.close
-                                        : Icons.done,
-                                color: widget.isSelect
-                                    ? theme.colorScheme.secondary
-                                    : theme.colorScheme.error,
-                              ),
-                              label: Text(
-                                widget.isSelect
-                                    ? localizations.select_all.capitalize()
-                                    : localizations.remove_all.capitalize(),
-                                style: theme.textTheme.bodyLarge!.copyWith(
+                                },
+                                icon: Icon(
+                                  !widget.isSelect
+                                      ? Icons.delete_forever
+                                      : _selectedAlerts.length == _alerts.length
+                                          ? Icons.close
+                                          : Icons.done,
                                   color: widget.isSelect
                                       ? theme.colorScheme.secondary
                                       : theme.colorScheme.error,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    Expanded(
-                      flex: 15,
-                      child: ListView.builder(
-                        itemCount: alerts.length,
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        itemBuilder: (context, index) => widget.isSelect
-                            ? SelectableAlertManagementItem(
-                                alert: alerts[index],
-                                isSelected: selectedAlerts.contains(alerts[index]),
-                                onSelected: () {
-                                  // TODO: select code
-                                  if (selectedAlerts.contains(alerts[index])) {
-                                    setState(() {
-                                      selectedAlerts.remove(alerts[index]);
-                                    });
-                                  } else {
-                                    setState(() {
-                                      selectedAlerts.add(alerts[index]);
-                                    });
-                                  }
-                                })
-                            : Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (hasConnection) {
-                                      Navigator.of(context).pushNamed(
-                                        '/producer/alerts/add',
-                                        arguments: {
-                                          'isEdit': true,
-                                          'alert': alerts[index],
-                                        },
-                                      ).then((_) {
-                                        _loadAlerts();
-                                      });
-                                    }
-                                  },
-                                  child: AlertManagementItem(
-                                    alert: alerts[index],
-                                    onDelete: (alert) {
-                                      // TODO: Remove code
-                                      deleteAlert(alerts[index].alertId);
-                                      setState(() {
-                                        alerts.removeAt(index);
-                                      });
-                                    },
+                                label: Text(
+                                  widget.isSelect
+                                      ? localizations.select_all.capitalize()
+                                      : localizations.remove_all.capitalize(),
+                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                    color: widget.isSelect
+                                        ? theme.colorScheme.secondary
+                                        : theme.colorScheme.error,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                      Expanded(
+                        flex: 15,
+                        child: ListView.builder(
+                          itemCount: _alerts.length,
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          itemBuilder: (context, index) => widget.isSelect
+                              ? SelectableAlertManagementItem(
+                                  alert: _alerts[index],
+                                  isSelected: _selectedAlerts.contains(_alerts[index]),
+                                  onSelected: () {
+                                    // TODO: select code
+                                    if (_selectedAlerts.contains(_alerts[index])) {
+                                      setState(() {
+                                        _selectedAlerts.remove(_alerts[index]);
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _selectedAlerts.add(_alerts[index]);
+                                      });
+                                    }
+                                  })
+                              : Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (hasConnection) {
+                                        Navigator.of(context).pushNamed(
+                                          '/producer/alerts/add',
+                                          arguments: {
+                                            'isEdit': true,
+                                            'alert': _alerts[index],
+                                          },
+                                        ).then((_) {
+                                          _loadAlerts();
+                                        });
+                                      }
+                                    },
+                                    child: AlertManagementItem(
+                                      alert: _alerts[index],
+                                      onDelete: (alert) {
+                                        // TODO: Remove code
+                                        deleteAlert(_alerts[index].alertId);
+                                        setState(() {
+                                          _alerts.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                    ],
+                  ),
+                );
+              }
+            }),
       ),
-      floatingActionButton: (widget.isSelect && selectedAlerts.isNotEmpty) || !widget.isSelect
+      floatingActionButton: (widget.isSelect && _selectedAlerts.isNotEmpty) || !widget.isSelect
           ? FloatingActionButton.extended(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100),
@@ -198,7 +208,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                     _loadAlerts();
                   });
                 } else {
-                  Navigator.of(context).pop(selectedAlerts);
+                  Navigator.of(context).pop(_selectedAlerts);
                 }
               },
               label: Text(
