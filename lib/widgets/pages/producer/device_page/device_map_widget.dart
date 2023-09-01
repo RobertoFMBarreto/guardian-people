@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:guardian/db/device_data_operations.dart';
-import 'package:guardian/db/fence_operations.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/data_models/Device/device_data.dart';
-import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/location_provider.dart';
-import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/maps/single_device_location_map.dart';
@@ -26,11 +20,7 @@ class DeviceMapWidget extends StatefulWidget {
 
 class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   final _firstItemDataKey = GlobalKey();
-
-  late String uid;
   late Future _future;
-
-  Position? _currentPosition;
 
   List<DeviceData> _deviceData = [];
 
@@ -50,21 +40,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   }
 
   Future<void> _setup() async {
-    await _getCurrentPosition();
     await _getDeviceData();
-  }
-
-  Future<void> _getCurrentPosition() async {
-    getCurrentPosition(
-      context,
-      (position) {
-        if (position.runtimeType == Position) {
-          if (mounted) {
-            setState(() => _currentPosition = position);
-          }
-        }
-      },
-    );
   }
 
   Future<void> _getDeviceData() async {

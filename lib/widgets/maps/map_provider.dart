@@ -1,7 +1,5 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
-import 'package:guardian/colors.dart';
-import 'package:guardian/models/data_models/Device/device_data.dart';
 import 'package:guardian/models/providers/location_provider.dart';
 import 'package:latlong2/latlong.dart';
 
