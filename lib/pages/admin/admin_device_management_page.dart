@@ -3,6 +3,7 @@ import 'package:guardian/db/device_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/device/device_item.dart';
 import 'package:guardian/widgets/pages/admin/admin_device_management_page/option_button.dart';
@@ -24,23 +25,30 @@ class AdminDeviceManagementPage extends StatefulWidget {
 }
 
 class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
-  List<Device> devices = [];
-  late Device device;
-  bool isLoading = true;
+  late Device _device;
+  late Future _future;
+
+  List<Device> _devices = [];
 
   @override
   void initState() {
-    _loadDevices();
+    _future = _setup();
     super.initState();
   }
 
+  Future<void> _setup() async {
+    _device = widget.device;
+    await _loadDevices();
+  }
+
   Future<void> _loadDevices() async {
-    device = widget.device;
-    getUserDevices(uid: widget.producerId).then((allDevices) {
-      setState(() {
-        devices.addAll(allDevices.where((element) => element.deviceId != device.deviceId));
-        isLoading = false;
-      });
+    // TODO : create operation for this
+    await getUserDevices(uid: widget.producerId).then((allDevices) {
+      if (mounted) {
+        setState(() {
+          _devices.addAll(allDevices.where((element) => element.deviceId != _device.deviceId));
+        });
+      }
     });
   }
 
@@ -55,13 +63,13 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
         toolbarHeight: 0,
       ),
       body: SafeArea(
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                ),
-              )
-            : CustomScrollView(
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CustomCircularProgressIndicator();
+            } else {
+              return CustomScrollView(
                 physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverPersistentHeader(
@@ -78,27 +86,27 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                           Navigator.of(context).pop();
                         },
                       ),
-                      device: device,
+                      device: _device,
                     ),
                   ),
                   if (hasConnection)
                     OptionButton(
-                      key: Key(device.isActive.toString()),
-                      device: device,
+                      key: Key(_device.isActive.toString()),
+                      device: _device,
                       onRemove: () {
                         //TODO: Remove device
-                        deleteDevice(device.deviceId).then((_) {
+                        deleteDevice(_device.deviceId).then((_) {
                           Navigator.of(context).pop();
                         });
                       },
                       onBlock: () {
                         //TODO: block device
 
-                        final newDevice = device.copy(isActive: !device.isActive);
+                        final newDevice = _device.copy(isActive: !_device.isActive);
                         updateDevice(newDevice).then((_) {
                           setState(
                             () {
-                              device = newDevice;
+                              _device = newDevice;
                             },
                           );
                         });
@@ -118,11 +126,11 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                   ),
                   SliverFillRemaining(
                     child: ListView.builder(
-                      itemCount: devices.length,
+                      itemCount: _devices.length,
                       itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: DeviceItem(
-                          device: devices[index],
+                          device: _devices[index],
                           isPopPush: true,
                           producerId: widget.producerId,
                         ),
@@ -130,7 +138,10 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                     ),
                   )
                 ],
-              ),
+              );
+            }
+          },
+        ),
       ),
     );
   }

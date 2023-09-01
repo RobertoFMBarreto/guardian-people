@@ -139,8 +139,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                     dtUsageRangeValues: _dtUsageRangeValues,
                     tmpRangeValues: _tmpRangeValues,
                     elevationRangeValues: _elevationRangeValues,
-                    maxElevation: 100,
-                    maxTemp: 100,
+                    maxElevation: _maxElevation,
+                    maxTemp: _maxTemperature,
                     onChangedBat: (values) {
                       setState(() {
                         _batteryRangeValues = values;
