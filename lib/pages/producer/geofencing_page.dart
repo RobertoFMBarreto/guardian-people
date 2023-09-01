@@ -9,7 +9,6 @@ import 'package:guardian/models/data_models/Fences/fence.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/providers/hex_color.dart';
-import 'package:guardian/models/providers/location_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 
 import 'package:guardian/widgets/color_circle.dart';
@@ -36,7 +35,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
 
   late PolyEditor _polyEditor;
   late Polygon _editingPolygon;
-  late String uid;
   late Future _future;
 
   Position? _currentPosition;
