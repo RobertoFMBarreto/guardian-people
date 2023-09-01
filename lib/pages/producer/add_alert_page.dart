@@ -11,6 +11,7 @@ import 'package:guardian/models/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/focus_manager.dart';
 import 'package:guardian/models/key_value_pair.dart';
+import 'package:guardian/widgets/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/device/device_item_removable.dart';
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
@@ -29,44 +30,100 @@ class AddAlertPage extends StatefulWidget {
 }
 
 class _AddAlertPageState extends State<AddAlertPage> {
-  AlertComparissons alertComparisson = AlertComparissons.equal;
-
-  AlertParameter alertParameter = AlertParameter.temperature;
-
-  double comparissonValue = 0;
-
-  bool sendNotification = true;
-
   final _formKey = GlobalKey<FormState>();
+  final List<Device> _alertDevices = [];
 
-  List<Device> alertDevices = [];
+  late Future _future;
 
-  bool isLoading = true;
+  AlertComparissons _alertComparisson = AlertComparissons.equal;
+  AlertParameter _alertParameter = AlertParameter.temperature;
+  double _comparissonValue = 0;
+  bool _sendNotification = true;
 
   @override
   void initState() {
-    if (widget.alert != null) {
-      alertComparisson = widget.alert!.comparisson;
-      alertParameter = widget.alert!.parameter;
-      comparissonValue = widget.alert!.value;
-      sendNotification = widget.alert!.hasNotification;
-      _getAlertDevices(widget.alert!.alertId).then((value) {
-        setState(() {
-          isLoading = false;
-        });
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-    }
+    _future = _setup();
     super.initState();
   }
 
+  Future<void> _setup() async {
+    if (widget.alert != null) {
+      _alertComparisson = widget.alert!.comparisson;
+      _alertParameter = widget.alert!.parameter;
+      _comparissonValue = widget.alert!.value;
+      _sendNotification = widget.alert!.hasNotification;
+      await _getAlertDevices(widget.alert!.alertId);
+    }
+  }
+
   Future<void> _getAlertDevices(String alertId) async {
-    getAlertDevices(alertId).then((allDevices) {
-      setState(() => alertDevices.addAll(allDevices));
+    await getAlertDevices(alertId).then((allDevices) {
+      if (mounted) {
+        setState(() => _alertDevices.addAll(allDevices));
+      }
     });
+  }
+
+  Future<void> _addAlertDevices(String alertId) async {
+    for (var device in _alertDevices) {
+      await addAlertDevice(
+        AlertDevices(
+          deviceId: device.deviceId,
+          alertId: alertId,
+        ),
+      );
+    }
+  }
+
+  Future<void> _updateAlert() async {
+    await updateUserAlert(
+      widget.alert!.copy(
+        parameter: _alertParameter,
+        comparisson: _alertComparisson,
+        value: _comparissonValue,
+        hasNotification: _sendNotification,
+      ),
+    ).then(
+      (_) async => await removeAllAlertDevices(widget.alert!.alertId).then(
+        (_) async {
+          _addAlertDevices(widget.alert!.alertId).then(
+            (_) => Navigator.of(context).pop(),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _createAlert() async {
+    final newAlert = UserAlert(
+      alertId: Random().nextInt(90000).toString(),
+      hasNotification: _sendNotification,
+      parameter: _alertParameter,
+      comparisson: _alertComparisson,
+      value: _comparissonValue,
+    );
+    await createAlert(
+      newAlert,
+    ).then((createdAlert) async {
+      await _addAlertDevices(newAlert.alertId).then(
+        (_) => Navigator.of(context).pop(),
+      );
+    });
+  }
+
+  Future<void> _removeAlert(int index) async {
+    await removeAlertDevice(
+      widget.alert!.alertId,
+      _alertDevices[index].deviceId,
+    ).then(
+      (_) {
+        setState(() {
+          _alertDevices.removeWhere(
+            (element) => element.deviceId == _alertDevices[index].deviceId,
+          );
+        });
+      },
+    );
   }
 
   @override
@@ -83,14 +140,14 @@ class _AddAlertPageState extends State<AddAlertPage> {
         ),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                ),
-              )
-            : Form(
+      body: FutureBuilder(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CustomCircularProgressIndicator();
+          } else {
+            return SafeArea(
+              child: Form(
                 key: _formKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -107,7 +164,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: CustomDropdown(
-                          value: alertParameter,
+                          value: _alertParameter,
                           values: AlertParameter.values
                               .map((e) => KeyValuePair(
                                   key: e.toShortString(context).capitalize(), value: e))
@@ -115,7 +172,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           onChanged: (value) {
                             setState(() {
                               if (value != null) {
-                                alertParameter = value as AlertParameter;
+                                _alertParameter = value as AlertParameter;
                               }
                             });
                           },
@@ -125,7 +182,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           CustomDropdown(
-                            value: alertComparisson,
+                            value: _alertComparisson,
                             values: AlertComparissons.values
                                 .map((e) => KeyValuePair(
                                     key: e.toShortString(context).capitalize(), value: e))
@@ -133,7 +190,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                             onChanged: (value) {
                               setState(() {
                                 if (value != null) {
-                                  alertComparisson = value as AlertComparissons;
+                                  _alertComparisson = value as AlertComparissons;
                                 }
                               });
                             },
@@ -155,14 +212,14 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               ),
                               keyboardType: TextInputType.number,
                               initialValue:
-                                  comparissonValue != 0 ? comparissonValue.toString() : null,
+                                  _comparissonValue != 0 ? _comparissonValue.toString() : null,
                               validator: (value) {
                                 if (value == null) {
                                   return localizations.insert_value.capitalize();
                                 } else {
                                   double? inputValue = double.tryParse(value);
                                   if (inputValue != null) {
-                                    switch (alertParameter) {
+                                    switch (_alertParameter) {
                                       case AlertParameter.battery:
                                         if (inputValue < 0 || inputValue > 100) {
                                           return localizations.invalid_value.capitalize();
@@ -185,7 +242,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               onChanged: (value) {
                                 double? inputValue = double.tryParse(value);
                                 if (inputValue != null) {
-                                  comparissonValue = inputValue;
+                                  _comparissonValue = inputValue;
                                 }
                               },
                             ),
@@ -214,10 +271,10 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               padding: const EdgeInsets.all(8.0),
                               child: Switch(
                                   activeTrackColor: theme.colorScheme.secondary,
-                                  value: sendNotification,
+                                  value: _sendNotification,
                                   onChanged: (value) {
                                     setState(() {
-                                      sendNotification = value;
+                                      _sendNotification = value;
                                     });
                                   }),
                             ),
@@ -237,12 +294,12 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                         'isSelect': true,
                                         'alertId': widget.alert!.alertId,
                                         'notToShowDevices':
-                                            alertDevices.map((e) => e.deviceId).toList(),
+                                            _alertDevices.map((e) => e.deviceId).toList(),
                                       }
                                     : {
                                         'isSelect': true,
                                         'notToShowDevices':
-                                            alertDevices.map((e) => e.deviceId).toList(),
+                                            _alertDevices.map((e) => e.deviceId).toList(),
                                       },
                               )
                                   .then((selectedDevices) async {
@@ -250,7 +307,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                     selectedDevices.runtimeType == List<Device>) {
                                   final selected = selectedDevices as List<Device>;
                                   setState(() {
-                                    alertDevices.addAll(selected);
+                                    _alertDevices.addAll(selected);
                                   });
                                 }
                               });
@@ -272,30 +329,18 @@ class _AddAlertPageState extends State<AddAlertPage> {
                       Expanded(
                         flex: 2,
                         child: ListView.builder(
-                          itemCount: alertDevices.length,
+                          itemCount: _alertDevices.length,
                           itemBuilder: (context, index) => DeviceItemRemovable(
-                            key: Key(alertDevices[index].deviceId),
-                            device: alertDevices[index],
+                            key: Key(_alertDevices[index].deviceId),
+                            device: _alertDevices[index],
                             onRemoveDevice: () {
                               // TODO: On remove device
                               if (widget.alert != null) {
-                                removeAlertDevice(
-                                  widget.alert!.alertId,
-                                  alertDevices[index].deviceId,
-                                ).then(
-                                  (_) {
-                                    setState(() {
-                                      alertDevices.removeWhere(
-                                        (element) =>
-                                            element.deviceId == alertDevices[index].deviceId,
-                                      );
-                                    });
-                                  },
-                                );
+                                _removeAlert(index);
                               } else {
                                 setState(() {
-                                  alertDevices.removeWhere(
-                                    (element) => element.deviceId == alertDevices[index].deviceId,
+                                  _alertDevices.removeWhere(
+                                    (element) => element.deviceId == _alertDevices[index].deviceId,
                                   );
                                 });
                               }
@@ -331,49 +376,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   if (widget.alert != null && widget.isEdit!) {
-                                    await updateUserAlert(
-                                      widget.alert!.copy(
-                                        parameter: alertParameter,
-                                        comparisson: alertComparisson,
-                                        value: comparissonValue,
-                                        hasNotification: sendNotification,
-                                      ),
-                                    ).then(
-                                      (_) async =>
-                                          await removeAllAlertDevices(widget.alert!.alertId).then(
-                                        (_) async {
-                                          for (var device in alertDevices) {
-                                            await addAlertDevice(
-                                              AlertDevices(
-                                                deviceId: device.deviceId,
-                                                alertId: widget.alert!.alertId,
-                                              ),
-                                            );
-                                          }
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    );
+                                    _updateAlert();
                                   } else {
-                                    await createAlert(
-                                      UserAlert(
-                                        alertId: Random().nextInt(90000).toString(),
-                                        hasNotification: sendNotification,
-                                        parameter: alertParameter,
-                                        comparisson: alertComparisson,
-                                        value: comparissonValue,
-                                      ),
-                                    ).then((createdAlert) async {
-                                      for (var device in alertDevices) {
-                                        await addAlertDevice(
-                                          AlertDevices(
-                                            deviceId: device.deviceId,
-                                            alertId: createdAlert.alertId,
-                                          ),
-                                        );
-                                      }
-                                      Navigator.of(context).pop();
-                                    });
+                                    _createAlert();
                                   }
                                 }
                               },
@@ -393,6 +398,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
                   ),
                 ),
               ),
+            );
+          }
+        },
       ),
     );
   }
