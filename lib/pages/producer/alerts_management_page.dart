@@ -28,7 +28,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   late Future _future;
 
   List<UserAlert> _alerts = [];
-  List<UserAlert> _selectedAlerts = [];
+  final List<UserAlert> _selectedAlerts = [];
 
   @override
   void initState() {

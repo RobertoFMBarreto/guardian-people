@@ -30,7 +30,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   late Device _device;
   late Future _future;
 
-  List<Device> _devices = [];
+  final List<Device> _devices = [];
 
   @override
   void initState() {

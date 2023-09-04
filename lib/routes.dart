@@ -22,9 +22,9 @@ import 'package:guardian/pages/welcome_page.dart';
 
 Map<String, Widget Function(BuildContext)> routes = {
   '/': (context) => const WelcomePage(),
-  '/login': (context) => LoginPage(),
+  '/login': (context) => const LoginPage(),
   '/profile': (context) => const ProfilePage(),
-  '/admin': (context) => AdminHomePage(),
+  '/admin': (context) => const AdminHomePage(),
   '/admin/producer': (context) {
     if (ModalRoute.of(context)!.settings.arguments.runtimeType == String) {
       return AdminProducerPage(
@@ -45,14 +45,14 @@ Map<String, Widget Function(BuildContext)> routes = {
       throw ErrorDescription('Device not provided');
     }
   },
-  '/producer': (context) => ProducerHome(),
+  '/producer': (context) => const ProducerHome(),
   '/producer/fences': (context) {
     if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
       return FencesPage(
         isSelect: ModalRoute.of(context)!.settings.arguments as bool,
       );
     } else {
-      return FencesPage();
+      return const FencesPage();
     }
   },
   '/producer/fence/manage': (context) {
@@ -82,7 +82,7 @@ Map<String, Widget Function(BuildContext)> routes = {
             data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<String> : null,
       );
     } else {
-      return ProducerDevicesPage();
+      return const ProducerDevicesPage();
     }
   },
   '/producer/device': (context) {
@@ -113,7 +113,7 @@ Map<String, Widget Function(BuildContext)> routes = {
       throw ErrorDescription('Device not provided');
     }
   },
-  '/producer/alerts': (context) => AlertsPage(),
+  '/producer/alerts': (context) => const AlertsPage(),
   '/producer/alerts/add': (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     if (args != null) {

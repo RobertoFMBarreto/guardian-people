@@ -29,8 +29,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   late Future _future;
 
   String _deviceName = '';
-  List<UserAlert> _alerts = [];
-  List<Fence> _fences = [];
+  final List<UserAlert> _alerts = [];
+  final List<Fence> _fences = [];
   TextEditingController controller = TextEditingController();
 
   @override

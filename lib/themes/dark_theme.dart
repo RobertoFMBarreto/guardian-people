@@ -94,7 +94,7 @@ ThemeData darkTheme = ThemeData(
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
-        borderSide: const BorderSide(color: gdInputTextBorderColors),
+        borderSide: BorderSide(color: gdInputTextBorderColors),
       ),
     ),
   ),

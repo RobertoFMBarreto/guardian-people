@@ -129,7 +129,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    print('Build');
 
     return GestureDetector(
         onTap: () {
