@@ -2,10 +2,7 @@ import 'package:guardian/models/db/data_models/Alerts/alert_devices.dart';
 import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/Device/device_data.dart';
-import 'package:guardian/models/db/operations/device_data_operations.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/db/operations/guardian_database.dart';
-import 'package:guardian/models/db/operations/user_alert_operations.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<AlertDevice> addAlertDevice(AlertDevice alertDevice) async {
@@ -50,24 +47,38 @@ Future<void> removeAlertDevice(String alertId, String deviceId) async {
 
 Future<List<Device>> getAlertDevices(String alertId) async {
   final db = await GuardianDatabase().database;
-  final data = await db.query(
-    tableAlertDevices,
-    where: '${AlertDeviceFields.alertId} = ?',
-    whereArgs: [alertId],
+  final data = await db.rawQuery(
+    '''
+      SELECT 
+        *
+      FROM $tableAlertDevices
+      LEFT JOIN $tableUserAlerts ON $tableUserAlerts.${UserAlertFields.alertId} = $tableAlertDevices.${AlertDeviceFields.alertId}
+      LEFT JOIN $tableDevices ON $tableDevices.${DeviceFields.deviceId} = $tableAlertDevices.${AlertDeviceFields.deviceId}
+      LEFT JOIN (
+        SELECT * FROM 
+          (
+            SELECT * FROM $tableDeviceData
+            ORDER BY ${DeviceDataFields.dateTime} DESC 
+          ) as deviceDt
+        GROUP BY deviceDt.${DeviceDataFields.deviceId}
+      ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
+      WHERE $tableAlertDevices.${AlertDeviceFields.alertId} = ?
+    ''',
+    [alertId],
   );
 
   List<Device> devices = [];
 
   if (data.isNotEmpty) {
     for (var alertData in data) {
-      final deviceId = AlertDevice.fromJson(alertData).deviceId;
-      Device? device = await getDevice(deviceId);
-      if (device != null) {
-        final lastDeviceData = await getLastDeviceData(deviceId);
-        List<DeviceData> deviceData = lastDeviceData != null ? [lastDeviceData] : [];
-        device.data = deviceData;
-        devices.add(device);
+      Device device = Device.fromJson(alertData);
+      DeviceData? lastDeviceData;
+      if (alertData.containsKey(DeviceDataFields.battery)) {
+        lastDeviceData = DeviceData.fromJson(alertData);
       }
+      List<DeviceData> deviceData = lastDeviceData != null ? [lastDeviceData] : [];
+      device.data = deviceData;
+      devices.add(device);
     }
   }
   return devices;
@@ -75,18 +86,22 @@ Future<List<Device>> getAlertDevices(String alertId) async {
 
 Future<List<UserAlert>> getDeviceAlerts(String deviceId) async {
   final db = await GuardianDatabase().database;
-  final data = await db.query(
-    tableAlertDevices,
-    where: '${AlertDeviceFields.deviceId} = ?',
-    whereArgs: [deviceId],
+  final data = await db.rawQuery(
+    '''
+      SELECT 
+        *
+      FROM $tableAlertDevices
+      LEFT JOIN $tableUserAlerts ON $tableUserAlerts.${UserAlertFields.alertId} = $tableAlertDevices.${AlertDeviceFields.alertId}
+      WHERE $tableAlertDevices.${AlertDeviceFields.deviceId} = ?
+    ''',
+    [deviceId],
   );
   List<UserAlert> alerts = [];
 
   if (data.isNotEmpty) {
     for (var alertData in data) {
-      final alertId = AlertDevice.fromJson(alertData).alertId;
-      final alert = await getAlert(alertId);
-      if (alert != null) alerts.add(alert);
+      final alert = UserAlert.fromJson(alertData);
+      alerts.add(alert);
     }
   }
   return alerts;
@@ -97,9 +112,9 @@ Future<List<UserAlert>> getDeviceUnselectedAlerts() async {
   final data = await db.rawQuery(
     '''
       SELECT 
-        $tableUserAlerts.${AlertDeviceFields.alertId}
-      FROM $tableUserAlerts
-      LEFT JOIN $tableAlertDevices ON $tableAlertDevices.${AlertDeviceFields.alertId} = $tableUserAlerts.${AlertDeviceFields.alertId}
+        *
+      FROM $tableAlertDevices
+      LEFT JOIN $tableUserAlerts ON $tableUserAlerts.${UserAlertFields.alertId} = $tableAlertDevices.${AlertDeviceFields.alertId}
       WHERE $tableAlertDevices.${AlertDeviceFields.deviceId} IS NULL
     ''',
   );
@@ -107,9 +122,8 @@ Future<List<UserAlert>> getDeviceUnselectedAlerts() async {
 
   if (data.isNotEmpty) {
     for (var alertData in data) {
-      final alertId = alertData[AlertDeviceFields.alertId] as String;
-      final alert = await getAlert(alertId);
-      if (alert != null) alerts.add(alert);
+      final alert = UserAlert.fromJson(alertData);
+      alerts.add(alert);
     }
   }
   return alerts;

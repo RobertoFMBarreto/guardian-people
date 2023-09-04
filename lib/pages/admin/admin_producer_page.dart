@@ -7,7 +7,6 @@ import 'package:guardian/models/db/data_models/user.dart';
 import 'package:guardian/models/db/operations/admin/admin_devices_operations.dart';
 import 'package:guardian/models/db/operations/admin/admin_users_operations.dart';
 import 'package:guardian/models/db/operations/device_operations.dart';
-import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/custom_floating_btn_option.dart';
 import 'package:guardian/models/extensions/string_extension.dart';

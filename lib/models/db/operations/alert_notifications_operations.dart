@@ -1,9 +1,7 @@
 import 'package:guardian/models/db/data_models/Alerts/alert_notifications.dart';
 import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/db/operations/guardian_database.dart';
-import 'package:guardian/models/db/operations/user_alert_operations.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -56,8 +54,12 @@ Future<void> removeAllAlertNotifications(String alertId) async {
 
 Future<List<UserAlertNotification>> getUserNotifications() async {
   final db = await GuardianDatabase().database;
-  final data = await db.query(
-    tableAlertNotification,
+  final data = await db.rawQuery(
+    '''
+      SELECT * FROM $tableAlertNotification
+      LEFT JOIN $tableUserAlerts ON $tableUserAlerts.${UserAlertFields.alertId} = $tableAlertNotification.${AlertNotificationFields.alertId}
+      LEFT JOIN $tableDevices ON $tableDevices.${DeviceFields.deviceId} = $tableAlertNotification.${AlertNotificationFields.deviceId}
+    ''',
   );
 
   List<UserAlertNotification> notifications = [];
@@ -65,8 +67,8 @@ Future<List<UserAlertNotification>> getUserNotifications() async {
   if (data.isNotEmpty) {
     for (var dt in data) {
       final alertNotification = AlertNotification.fromJson(dt);
-      UserAlert alert = (await getAlert(alertNotification.alertId))!;
-      Device device = (await getDevice(alertNotification.deviceId))!;
+      UserAlert alert = UserAlert.fromJson(dt);
+      Device device = Device.fromJson(dt);
       notifications.add(
         UserAlertNotification(
           device: device,
