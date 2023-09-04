@@ -1,13 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:math' show cos, sqrt, asin;
 
-TileLayer getTileLayer() {
+TileLayer getTileLayer(BuildContext context) {
   return TileLayer(
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     userAgentPackageName: 'com.linovt.guardian',
     tileProvider: FMTC.instance('guardian').getTileProvider(),
+    tileDisplay: TileDisplay.fadeIn(),
   );
 }
 
@@ -52,3 +54,26 @@ double calculateDistance(lat1, lon1, lat2, lon2) {
       0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
   return (12742 * asin(sqrt(a))) * 1000;
 }
+
+const ColorFilter greyscale = ColorFilter.matrix(<double>[
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+]);

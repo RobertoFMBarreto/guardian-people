@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/data_models/Device/device_data.dart';
 import 'package:guardian/models/db/data_models/Fences/fence.dart';
 import 'package:guardian/models/db/operations/fence_points_operations.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
@@ -38,6 +39,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
 
   Position? _currentPosition;
 
+  List<LatLng> devicesDataPoints = [];
+
   @override
   void initState() {
     _future = _setup();
@@ -59,6 +62,16 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
       }
     }
     await _loadFences();
+    for (var device in widget.devices) {
+      if (device.data != null && device.data!.isNotEmpty) {
+        devicesDataPoints.add(
+          LatLng(
+            device.data!.first.lat,
+            device.data!.first.lon,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _loadFences() async {
@@ -114,13 +127,16 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       _currentPosition!.longitude,
                     )
                   : null,
-              bounds: widget.centerOnPoly ? LatLngBounds.fromPoints(_polygons.first.points) : null,
+              bounds: widget.centerOnPoly
+                  ? LatLngBounds.fromPoints(_polygons.first.points)
+                  : LatLngBounds.fromPoints(devicesDataPoints),
+              boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
               zoom: 17,
               minZoom: 3,
               maxZoom: 18,
             ),
             children: [
-              getTileLayer(),
+              getTileLayer(context),
               if (_circles.isNotEmpty) getCircleFences(_circles),
               if (_polygons.isNotEmpty) getPolygonFences(_polygons),
               MarkerLayer(

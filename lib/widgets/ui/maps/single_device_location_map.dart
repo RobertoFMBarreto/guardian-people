@@ -102,7 +102,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
           return FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: data.isNotEmpty
+              center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
                   ? LatLng(
                       data.first.lat,
                       data.first.lon,
@@ -117,13 +117,14 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               zoom: widget.startingZoom,
               minZoom: 3,
               maxZoom: 18,
+              boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
               bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
                   ? LatLngBounds.fromPoints(
                       _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
                   : null,
             ),
             children: [
-              getTileLayer(),
+              getTileLayer(context),
               if (_showFence) ...[
                 getCircleFences(_circles),
                 getPolygonFences(_polygons),

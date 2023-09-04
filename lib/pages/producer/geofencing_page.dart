@@ -185,7 +185,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                 zoom: 17,
                               ),
                               children: [
-                                getTileLayer(),
+                                getTileLayer(context),
                                 if (_polyEditor.points.length >= 2 && _isCircle)
                                   getCircleFences(_polygons),
                                 getPolygonFences(_polygons),

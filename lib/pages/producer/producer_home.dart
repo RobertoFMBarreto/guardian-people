@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
@@ -80,7 +81,6 @@ class _ProducerHomeState extends State<ProducerHome> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
