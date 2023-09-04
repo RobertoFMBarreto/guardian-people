@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/colors.dart';
@@ -35,6 +36,8 @@ class _ProducerHomeState extends State<ProducerHome> {
   List<Fence> _fences = [];
   List<UserAlertNotification> _alertNotifications = [];
 
+  int _reloadMap = 9999;
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +70,10 @@ class _ProducerHomeState extends State<ProducerHome> {
   Future<void> _loadFences() async {
     await getUserFences().then((allFences) {
       _fences = [];
-      setState(() => _fences.addAll(allFences));
+      setState(() {
+        _fences.addAll(allFences);
+        _reloadMap = Random().nextInt(999999);
+      });
     });
   }
 
@@ -110,9 +116,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed('/producer/fences')
-                                  .then((_) => _loadFences());
+                              Navigator.of(context).pushNamed('/producer/fences').then((_) {
+                                _loadFences();
+                              });
                             },
                             child: Text(localizations.fences.capitalize()),
                           ),
@@ -171,9 +177,11 @@ class _ProducerHomeState extends State<ProducerHome> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: DevicesLocationsMap(
+                        key: Key(_reloadMap.toString()),
                         showCurrentPosition: true,
                         devices: _devices,
                         fences: _fences,
+                        reloadMap: _reloadMap.toString(),
                       ),
                     ),
                   ),

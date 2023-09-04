@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Device/device_data.dart';
 import 'package:guardian/models/db/data_models/Fences/fence.dart';
 import 'package:guardian/models/db/operations/fence_points_operations.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
@@ -16,6 +15,7 @@ class DevicesLocationsMap extends StatefulWidget {
   final bool showCurrentPosition;
   final List<Device> devices;
   final List<Fence>? fences;
+  final String? reloadMap;
   final bool centerOnPoly;
   final bool centerOnDevice;
   const DevicesLocationsMap({
@@ -25,6 +25,7 @@ class DevicesLocationsMap extends StatefulWidget {
     this.fences,
     this.centerOnPoly = false,
     this.centerOnDevice = false,
+    this.reloadMap,
   });
 
   @override
@@ -120,6 +121,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
           return const CustomCircularProgressIndicator();
         } else {
           return FlutterMap(
+            key: Key(widget.reloadMap ?? ''),
             options: MapOptions(
               center: !widget.centerOnPoly && _currentPosition != null
                   ? LatLng(
