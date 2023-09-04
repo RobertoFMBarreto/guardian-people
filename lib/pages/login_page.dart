@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/login/login_form.dart';
 
@@ -9,25 +10,28 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
       },
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              Color.fromRGBO(88, 200, 160, 1),
-              Color.fromRGBO(147, 215, 166, 1),
+              theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+              theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
             ],
           ),
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
+            backgroundColor: Theme.of(context).brightness == Brightness.light
+                ? gdGradientEnd
+                : gdDarkGradientEnd,
             automaticallyImplyLeading: false,
             toolbarHeight: 0,
           ),

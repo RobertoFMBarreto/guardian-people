@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/Fences/fence.dart';
@@ -82,7 +83,8 @@ class _ProducerHomeState extends State<ProducerHome> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
+        backgroundColor:
+            Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
         automaticallyImplyLeading: false,
         toolbarHeight: 0,
       ),

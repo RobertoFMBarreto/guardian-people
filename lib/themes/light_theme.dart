@@ -69,5 +69,17 @@ ThemeData lightTheme = ThemeData(
       horizontal: 15,
     ),
   ),
-  bottomSheetTheme: const BottomSheetThemeData(backgroundColor: gdBackgroundColor),
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: gdBackgroundColor,
+  ),
+  cardTheme: CardTheme(
+    elevation: 3,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+      side: BorderSide(
+        width: 0.5,
+        color: Colors.grey.shade200,
+      ),
+    ),
+  ),
 );

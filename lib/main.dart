@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/routes.dart';
+import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
 
 late bool hasConnection;
@@ -53,8 +55,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // Change status bar color
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Color.fromRGBO(147, 215, 166, 1),
+      SystemUiOverlayStyle(
+        statusBarColor:
+            Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
       ),
     );
     return MaterialApp(
@@ -64,6 +67,8 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
       initialRoute: '/',
       routes: routes,
     );

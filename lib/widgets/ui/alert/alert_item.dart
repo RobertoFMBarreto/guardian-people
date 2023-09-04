@@ -21,7 +21,6 @@ class AlertItem extends StatelessWidget {
             arguments: {'device': alertNotification.device, 'producerId': null});
       },
       child: Card(
-        elevation: 3,
         child: ListTile(
           leading: Icon(
             Icons.sensors,

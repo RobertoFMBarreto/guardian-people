@@ -55,13 +55,14 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
       mainAxisSize: MainAxisSize.min,
       children: [
         TabBar(
-          indicatorColor: Colors.green,
+          indicatorColor: theme.colorScheme.secondary,
           controller: _tabController,
           tabs: [
             Tab(text: localizations.start_date.capitalize()),
             Tab(text: localizations.end_date.capitalize()),
           ],
-          labelColor: Colors.black,
+          labelColor:
+              Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
         ),
         SizedBox(
           height: 500,

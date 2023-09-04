@@ -271,6 +271,10 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               padding: const EdgeInsets.all(8.0),
                               child: Switch(
                                   activeTrackColor: theme.colorScheme.secondary,
+                                  inactiveTrackColor:
+                                      Theme.of(context).brightness == Brightness.light
+                                          ? gdToggleGreyArea
+                                          : gdDarkToggleGreyArea,
                                   value: _sendNotification,
                                   onChanged: (value) {
                                     setState(() {
@@ -360,7 +364,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 Navigator.of(context).pop();
                               },
                               style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(gdCancelBtnColor),
+                                backgroundColor: MaterialStatePropertyAll(gdDarkCancelBtnColor),
                               ),
                               child: Text(
                                 localizations.cancel.capitalize(),

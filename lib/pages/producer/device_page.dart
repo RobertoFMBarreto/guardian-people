@@ -42,7 +42,8 @@ class _DevicePageState extends State<DevicePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
+        backgroundColor:
+            Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
         automaticallyImplyLeading: false,
         toolbarHeight: 0,
       ),
@@ -87,8 +88,12 @@ class _DevicePageState extends State<DevicePage> {
                         radiusStyle: true,
                         activeBgColor: [theme.colorScheme.secondary],
                         activeFgColor: theme.colorScheme.onSecondary,
-                        inactiveBgColor: gdToggleGreyArea,
-                        inactiveFgColor: Colors.black,
+                        inactiveBgColor: Theme.of(context).brightness == Brightness.light
+                            ? gdToggleGreyArea
+                            : gdDarkToggleGreyArea,
+                        inactiveFgColor: Theme.of(context).brightness == Brightness.light
+                            ? Colors.black
+                            : Colors.white,
                         customTextStyles: const [
                           TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
                           TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),

@@ -33,19 +33,23 @@ class _DateSelectorInputState extends State<DateSelectorInput> {
         startRangeSelectionColor: theme.colorScheme.secondary,
         endRangeSelectionColor: theme.colorScheme.secondary,
         selectionColor: theme.colorScheme.secondary,
-        todayHighlightColor: Colors.black,
+        todayHighlightColor: theme.colorScheme.secondary,
         selectionTextStyle: theme.textTheme.bodyLarge,
-        yearCellStyle: const DateRangePickerYearCellStyle(
-          todayTextStyle: TextStyle(color: Colors.black),
-          todayCellDecoration: BoxDecoration(
+        yearCellStyle: DateRangePickerYearCellStyle(
+          todayTextStyle: TextStyle(
+              color:
+                  Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white),
+          todayCellDecoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(color: Colors.red, width: 2),
             ),
           ),
         ),
-        monthCellStyle: const DateRangePickerMonthCellStyle(
-          todayTextStyle: TextStyle(color: Colors.black),
-          todayCellDecoration: BoxDecoration(
+        monthCellStyle: DateRangePickerMonthCellStyle(
+          todayTextStyle: TextStyle(
+              color:
+                  Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white),
+          todayCellDecoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(color: Colors.red, width: 2),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/Device/device_data.dart';
 import 'package:guardian/models/db/operations/device_data_operations.dart';
@@ -131,6 +132,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       ),
                       Switch(
                         activeTrackColor: theme.colorScheme.secondary,
+                        inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                            ? gdToggleGreyArea
+                            : gdDarkToggleGreyArea,
                         value: _showRoute,
                         onChanged: (value) {
                           setState(() {
@@ -184,6 +188,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           ),
                           Switch(
                             activeTrackColor: theme.colorScheme.secondary,
+                            inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                                ? gdToggleGreyArea
+                                : gdDarkToggleGreyArea,
                             value: _showFence,
                             onChanged: (value) {
                               setState(() {

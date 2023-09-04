@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/extended_top_bar.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/normal_top_bar.dart';
 
@@ -22,16 +23,17 @@ class CustomMainTopBar extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
+    ThemeData theme = Theme.of(context);
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 300,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Color.fromRGBO(88, 200, 160, 1),
-            Color.fromRGBO(147, 215, 166, 1),
+            theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+            theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
           ],
         ),
       ),

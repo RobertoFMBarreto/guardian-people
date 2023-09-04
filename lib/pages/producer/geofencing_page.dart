@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
-import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Fences/fence.dart';
 import 'package:guardian/models/db/operations/fence_operations.dart';
@@ -186,35 +185,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                 zoom: 17,
                               ),
                               children: [
-                                TileLayer(
-                                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                  tileProvider: FMTC.instance('guardian').getTileProvider(),
-                                ),
+                                getTileLayer(),
                                 if (_polyEditor.points.length >= 2 && _isCircle)
-                                  CircleLayer(
-                                    circles: [
-                                      CircleMarker(
-                                        useRadiusInMeter: true,
-                                        color: widget.fence != null
-                                            ? HexColor(widget.fence!.color).withOpacity(0.5)
-                                            : gdMapGeofenceFillColor,
-                                        borderColor: widget.fence != null
-                                            ? HexColor(widget.fence!.color)
-                                            : gdMapGeofenceBorderColor,
-                                        borderStrokeWidth: 2,
-                                        point: LatLng(
-                                          _polyEditor.points.first.latitude,
-                                          _polyEditor.points.first.longitude,
-                                        ),
-                                        radius: calculateDistance(
-                                          _polyEditor.points.first.latitude,
-                                          _polyEditor.points.first.longitude,
-                                          _polyEditor.points.last.latitude,
-                                          _polyEditor.points.last.longitude,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                  getCircleFences(_polygons),
                                 getPolygonFences(_polygons),
                                 DragMarkers(
                                   markers: _polyEditor.edit(),
@@ -348,9 +321,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      style: theme.elevatedButtonTheme.style!.copyWith(
+                                      style: const ButtonStyle(
                                         backgroundColor:
-                                            const MaterialStatePropertyAll(gdCancelBtnColor),
+                                            MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                       ),
                                       child: Text(
                                         localizations.cancel.capitalize(),

@@ -48,14 +48,6 @@ class DeviceItem extends StatelessWidget {
         });
       },
       child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            width: 0.5,
-            color: Colors.grey.shade200,
-          ),
-        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ListTile(

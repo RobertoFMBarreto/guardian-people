@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 
 class SquareDevicesInfo extends StatelessWidget {
   final String title;
@@ -30,8 +31,8 @@ class SquareDevicesInfo extends StatelessWidget {
                     const Color.fromRGBO(231, 130, 130, 1),
                   ]
                 : [
-                    const Color.fromRGBO(88, 200, 160, 1),
-                    const Color.fromRGBO(147, 215, 166, 1),
+                    theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+                    theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
                   ],
           ),
         ),

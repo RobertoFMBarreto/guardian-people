@@ -13,8 +13,11 @@ class HomeDropDown extends StatelessWidget {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return PopupMenuButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: theme.colorScheme.onSecondary,
-      icon: const Icon(Icons.menu),
+      color: theme.brightness == Brightness.light ? Colors.white : Colors.black,
+      icon: Icon(
+        Icons.menu,
+        color: theme.colorScheme.onSecondary,
+      ),
       onSelected: (item) {
         switch (item) {
           case 0:

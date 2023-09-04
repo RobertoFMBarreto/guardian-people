@@ -17,15 +17,6 @@ class FenceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-        side: BorderSide(
-          width: .5,
-          color: Colors.grey.shade200,
-        ),
-      ),
-      shadowColor: Colors.blueAccent,
-      elevation: 3,
       child: ClipPath(
         clipper: ShapeBorderClipper(
           shape: RoundedRectangleBorder(

@@ -127,7 +127,9 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
+            backgroundColor: Theme.of(context).brightness == Brightness.light
+                ? gdGradientEnd
+                : gdDarkGradientEnd,
             automaticallyImplyLeading: false,
             toolbarHeight: 0,
           ),

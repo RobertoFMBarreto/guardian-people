@@ -1,6 +1,7 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/Device/device_data.dart';
 import 'package:guardian/models/db/operations/device_data_operations.dart';
@@ -71,12 +72,23 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
             EasyDateTimeLine(
               key: firstItemDataKey,
               headerProps: EasyHeaderProps(
-                monthPickerType: MonthPickerType.dropDown,
-                selectedDateFormat: SelectedDateFormat.fullDateDMonthAsStrY,
-                monthStyle: theme.textTheme.bodyLarge,
-              ),
+                  monthPickerType: MonthPickerType.dropDown,
+                  selectedDateFormat: SelectedDateFormat.fullDateDMonthAsStrY,
+                  monthStyle: theme.textTheme.bodyLarge,
+                  selectedDateStyle: TextStyle(
+                    color: theme.colorScheme.onSecondary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )),
               dayProps: EasyDayProps(
                 dayStructure: DayStructure.monthDayNumDayStr,
+                inactiveDayStyle: DayStyle(
+                  dayNumStyle: TextStyle(
+                    color: theme.colorScheme.onSecondary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 activeDayStyle: DayStyle(
                   dayNumStyle: TextStyle(
                     color: theme.colorScheme.onSecondary,
@@ -93,14 +105,14 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: [
-                        Color.fromRGBO(88, 200, 160, 1),
-                        Color.fromRGBO(147, 215, 166, 1),
+                        theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+                        theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
                       ],
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
@@ -49,20 +50,21 @@ class _WelcomePageState extends State<WelcomePage> {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Color.fromRGBO(88, 200, 160, 1),
-            Color.fromRGBO(147, 215, 166, 1),
+            theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+            theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
           ],
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
+          backgroundColor:
+              Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
           automaticallyImplyLeading: false,
           toolbarHeight: 0,
         ),

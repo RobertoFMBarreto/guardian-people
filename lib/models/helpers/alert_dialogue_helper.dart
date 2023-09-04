@@ -10,9 +10,9 @@ void showLoadingDialog(BuildContext context) {
     barrierDismissible: false,
     context: context,
     builder: (_) {
-      return const Dialog(
-        backgroundColor: Colors.white,
-        child: Padding(
+      return Dialog(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -43,6 +43,7 @@ Future<void> showNoWifiDialog(BuildContext context) async {
           barrierDismissible: false, // user must tap button!
           builder: (BuildContext context) {
             return AlertDialog(
+              backgroundColor: Theme.of(context).colorScheme.background,
               title: Text(localizations.no_wifi.capitalize()),
               content: SingleChildScrollView(
                 child: ListBody(
@@ -79,6 +80,7 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.background,
         title: Text(localizations.no_wifi.capitalize()),
         actions: <Widget>[
           TextButton(

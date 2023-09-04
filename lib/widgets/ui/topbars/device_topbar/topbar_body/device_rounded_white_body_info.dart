@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
@@ -17,13 +18,13 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
     return Container(
       width: deviceWidth,
       height: 300,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Color.fromRGBO(88, 200, 160, 1),
-            Color.fromRGBO(147, 215, 166, 1),
+            theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+            theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
           ],
         ),
       ),

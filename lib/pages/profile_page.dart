@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,7 +30,8 @@ class _ProfilePageState extends State<ProfilePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(147, 215, 166, 1),
+          backgroundColor:
+              Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
           automaticallyImplyLeading: false,
           toolbarHeight: 0,
         ),

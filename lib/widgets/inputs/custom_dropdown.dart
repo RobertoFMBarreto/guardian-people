@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 import 'package:guardian/models/key_value_pair.dart';
 
 class CustomDropdown extends StatelessWidget {
@@ -17,7 +18,10 @@ class CustomDropdown extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(width: 1),
+        border: Border.all(
+          width: 1,
+          color: gdInputTextBorderColors,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),

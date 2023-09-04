@@ -46,6 +46,7 @@ class _LoginFormState extends State<LoginForm> {
       constraints: const BoxConstraints(maxWidth: 400),
       child: Card(
         elevation: 10,
+        color: theme.colorScheme.background,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),

@@ -7,15 +7,21 @@ class ColorCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return Stack(
       alignment: Alignment.center,
       children: [
         Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(blurRadius: 1, color: Colors.grey, spreadRadius: 1, offset: Offset(.5, 1)),
+              BoxShadow(
+                blurRadius: 1,
+                color: theme.brightness == Brightness.light ? Colors.grey : Colors.grey.shade400,
+                spreadRadius: 1,
+                offset: const Offset(.5, 1),
+              ),
             ],
           ),
           child: CircleAvatar(
