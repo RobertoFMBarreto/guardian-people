@@ -173,6 +173,9 @@ class _GeofencingPageState extends State<GeofencingPage> {
                           children: [
                             FlutterMap(
                               options: MapOptions(
+                                bounds: widget.fence != null
+                                    ? LatLngBounds.fromPoints(fencePoints)
+                                    : null,
                                 onTap: (_, ll) {
                                   _polyEditor.add(_editingPolygon.points, ll);
                                 },
@@ -184,7 +187,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                               ),
                               children: [
                                 TileLayer(
-                                  //urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                                   tileProvider: FMTC.instance('guardian').getTileProvider(),
                                 ),
                                 if (_polyEditor.points.length >= 2 && _isCircle)

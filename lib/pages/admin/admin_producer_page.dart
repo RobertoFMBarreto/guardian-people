@@ -5,6 +5,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/user.dart';
 import 'package:guardian/models/db/operations/admin/admin_devices_operations.dart';
+import 'package:guardian/models/db/operations/admin/admin_users_operations.dart';
 import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/main.dart';
@@ -67,7 +68,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
         _devices = [];
         _devices.addAll(filteredDevices);
       });
-      await getUser(widget.producerId).then((user) {
+      await getProducer(widget.producerId).then((user) {
         if (mounted) {
           if (user != null) {
             setState(() {
@@ -80,7 +81,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
   }
 
   Future<List<Device>> _filterDevices() async {
-    return await AdminDevicesOperations.getUserDevicesFiltered(
+    return await getProducerDevicesFiltered(
       batteryRangeValues: _batteryRangeValues,
       elevationRangeValues: _elevationRangeValues,
       dtUsageRangeValues: _dtUsageRangeValues,

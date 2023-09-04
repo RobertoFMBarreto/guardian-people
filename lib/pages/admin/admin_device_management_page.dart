@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/main.dart';
+import 'package:guardian/models/db/operations/admin/admin_devices_operations.dart';
+import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
@@ -43,7 +44,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
 
   Future<void> _loadDevices() async {
     // TODO : create operation for this
-    await getUserDevices(uid: widget.producerId).then((allDevices) {
+    await getProducerDevices(widget.producerId).then((allDevices) {
       if (mounted) {
         setState(() {
           _devices.addAll(allDevices.where((element) => element.deviceId != _device.deviceId));

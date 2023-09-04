@@ -18,13 +18,13 @@ Future<Device> createDevice(Device device) async {
   return device.copy(id: id);
 }
 
-Future<int> deleteDevice(String id) async {
+Future<int> deleteDevice(String deviceId) async {
   final db = await GuardianDatabase().database;
 
   return db.delete(
     tableDevices,
     where: '${DeviceFields.deviceId} = ?',
-    whereArgs: [id],
+    whereArgs: [deviceId],
   );
 }
 
@@ -71,12 +71,10 @@ Future<Device?> getDeviceWithData(String deviceId) async {
   return null;
 }
 
-Future<List<Device>> getUserDevices({String? uid}) async {
+Future<List<Device>> getUserDevices() async {
   final db = await GuardianDatabase().database;
   final data = await db.query(
     tableDevices,
-    where: uid != null ? '${DeviceFields.uid} = ?' : null,
-    whereArgs: uid != null ? [uid] : null,
     orderBy: DeviceFields.name,
   );
 
@@ -273,7 +271,6 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
 }
 
 Future<List<Device>> getUserAlertUnselectedDevicesFiltered({
-  required String uid,
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
   required RangeValues tmpRangeValues,
@@ -314,7 +311,6 @@ Future<List<Device>> getUserAlertUnselectedDevicesFiltered({
         GROUP BY deviceDt.${DeviceDataFields.deviceId}
       ) deviceData ON $tableDevices.${DeviceFields.deviceId} = deviceData.${DeviceDataFields.deviceId}
       WHERE
-        ${DeviceFields.uid} = ? AND
         deviceData.${DeviceDataFields.dataUsage} >= ? AND  deviceData.${DeviceDataFields.dataUsage} <= ? AND
         deviceData.${DeviceDataFields.temperature} >= ? AND deviceData.${DeviceDataFields.temperature} <= ? AND
         deviceData.${DeviceDataFields.battery} >= ? AND deviceData.${DeviceDataFields.battery} <= ? AND
@@ -324,7 +320,6 @@ Future<List<Device>> getUserAlertUnselectedDevicesFiltered({
         ${DeviceFields.name}
     ''',
     [
-      uid,
       dtUsageRangeValues.start,
       dtUsageRangeValues.end,
       tmpRangeValues.start,
