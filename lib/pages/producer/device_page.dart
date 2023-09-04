@@ -25,6 +25,7 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> {
   bool _isInterval = false;
+  bool _toRange = false;
   late Device _device;
   int _reloadNum = 0;
 

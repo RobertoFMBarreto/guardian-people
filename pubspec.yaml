@@ -57,7 +57,7 @@ dependencies:
   flutter_map_tile_caching: ^8.0.1
   internet_connection_checker: ^1.0.0+1
   connectivity_plus: ^4.0.2
-  easy_date_timeline: ^0.1.0
+  easy_date_timeline: ^0.1.1
   date_picker_timeline: ^1.2.5
 
 dev_dependencies:

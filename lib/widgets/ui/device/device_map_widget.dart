@@ -201,7 +201,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: SingleDeviceLocationMap(
-                      key: Key('${_showFence}_${_showHeatMap}_${widget.device.color}'),
+                      key: Key(
+                          '${_showFence}_${_showHeatMap}_${widget.device.color}${widget.isInterval}'),
                       showCurrentPosition: true,
                       deviceData: _deviceData,
                       imei: widget.device.imei,

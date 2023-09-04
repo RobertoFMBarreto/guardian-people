@@ -22,10 +22,14 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
 
   @override
   void initState() {
+    _setup();
+    super.initState();
+  }
+
+  Future<void> _setup() async {
     final now = DateTime.now();
     _selectedValue = DateTime(now.year, now.month, now.day);
-    _getDeviceData();
-    super.initState();
+    await _getDeviceData();
   }
 
   Future<void> _getDeviceData() async {
@@ -102,8 +106,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                   ),
                 ),
               ),
-              //TODO: Fix date to current date because the day 31 is broken
-              initialDate: DateTime.now().subtract(Duration(days: 1)),
+              initialDate: _selectedValue,
               activeColor: theme.colorScheme.secondary,
               locale: Localizations.localeOf(context).languageCode,
               onDateChange: (selectedDate) {

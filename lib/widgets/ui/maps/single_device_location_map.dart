@@ -90,6 +90,9 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   @override
   Widget build(BuildContext context) {
+    List<DeviceData> data = widget.isInterval && widget.deviceData.isNotEmpty
+        ? widget.deviceData
+        : [widget.deviceData.first];
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
@@ -99,10 +102,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
           return FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: widget.deviceData.isNotEmpty
+              center: data.isNotEmpty
                   ? LatLng(
-                      widget.deviceData.first.lat,
-                      widget.deviceData.first.lon,
+                      data.first.lat,
+                      data.first.lon,
                     )
                   : null,
               onMapReady: () {
@@ -131,7 +134,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     Polyline(
                       color: gdErrorColor,
                       strokeWidth: 5,
-                      points: widget.deviceData
+                      points: data
                           .map(
                             (e) => LatLng(e.lat, e.lon),
                           )
@@ -139,10 +142,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     ),
                   ],
                 ),
-              if (widget.deviceData.isNotEmpty && widget.showHeatMap)
+              if (data.isNotEmpty && widget.showHeatMap)
                 HeatMapLayer(
                   heatMapDataSource: InMemoryHeatMapDataSource(
-                    data: widget.deviceData
+                    data: data
                         .map(
                           (e) => WeightedLatLng(LatLng(e.lat, e.lon), 1),
                         )
@@ -159,7 +162,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                       padding: EdgeInsets.all(50),
                       maxZoom: 15,
                     ),
-                    markers: widget.deviceData
+                    markers: data
                         .map(
                           (e) => Marker(
                             point: LatLng(e.lat, e.lon),
