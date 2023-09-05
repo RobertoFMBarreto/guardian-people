@@ -64,7 +64,7 @@ class _DevicePageState extends State<DevicePage> {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
-              key: Key("${_device.name}$hasConnection"),
+              key: Key("${_device.name}$hasConnection${theme.brightness}"),
               pinned: true,
               delegate: SliverDeviceAppBar(
                 onColorChanged: () {

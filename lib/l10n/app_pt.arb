@@ -93,5 +93,6 @@
   "no_wifi_operations": "as suas operações estarão limitadas",
   "ok": "ok",
   "state_history": "histórico de estados",
-  "no_data_to_show": "não existem dados para mostrar"
+  "no_data_to_show": "não existem dados para mostrar",
+  "at": "às"
 }

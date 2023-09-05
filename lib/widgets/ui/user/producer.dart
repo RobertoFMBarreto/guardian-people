@@ -47,31 +47,33 @@ class Producer extends StatelessWidget {
                       minWidth: 200,
                       maxWidth: 200,
                     ),
-                    child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0, top: 20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              producerName,
-                              style: theme.textTheme.headlineSmall!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 19,
+                    child: Card(
+                      child: Padding(
+                          padding:
+                              const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0, top: 20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                producerName,
+                                style: theme.textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              devicesInfo,
-                              style: theme.textTheme.bodyLarge!.copyWith(
-                                color: gdSecondaryTextColor,
-                                fontSize: 15,
-                                height: 1.2,
+                              Text(
+                                devicesInfo,
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  color: gdSecondaryTextColor,
+                                  fontSize: 15,
+                                  height: 1.2,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        )),
+                            ],
+                          )),
+                    ),
                   ),
                 ),
               ),

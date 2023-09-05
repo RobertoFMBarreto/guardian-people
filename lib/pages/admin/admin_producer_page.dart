@@ -120,7 +120,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
     ThemeData theme = Theme.of(context);
     double deviceHeight = MediaQuery.of(context).size.height;
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
+    _isRemoveMode = _isRemoveMode && hasConnection == false;
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);

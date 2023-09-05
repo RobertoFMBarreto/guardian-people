@@ -57,7 +57,7 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                 width: deviceWidth,
                 height: 250,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.background,
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Column(

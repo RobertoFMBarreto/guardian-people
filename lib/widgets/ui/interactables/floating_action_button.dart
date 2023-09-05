@@ -12,6 +12,7 @@ class CustomFloatingActionButton extends StatelessWidget {
     return SpeedDial(
       elevation: 7,
       backgroundColor: theme.colorScheme.secondary,
+      foregroundColor: theme.colorScheme.onSecondary,
       activeBackgroundColor: theme.colorScheme.onSecondary,
       activeChild: Icon(
         Icons.close,
@@ -22,10 +23,10 @@ class CustomFloatingActionButton extends StatelessWidget {
             (e) => SpeedDialChild(
               label: e.title,
               elevation: 7,
-              backgroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.background,
               shape: const CircleBorder(),
               labelStyle: theme.textTheme.bodyLarge!.copyWith(
-                color: Colors.black,
+                color: theme.colorScheme.onBackground,
               ),
               child: Icon(
                 e.icon,

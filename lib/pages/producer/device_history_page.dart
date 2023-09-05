@@ -76,7 +76,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                   selectedDateFormat: SelectedDateFormat.fullDateDMonthAsStrY,
                   monthStyle: theme.textTheme.bodyLarge,
                   selectedDateStyle: TextStyle(
-                    color: theme.colorScheme.onSecondary,
+                    color: theme.colorScheme.onBackground,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   )),
@@ -84,7 +84,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                 dayStructure: DayStructure.monthDayNumDayStr,
                 inactiveDayStyle: DayStyle(
                   dayNumStyle: TextStyle(
-                    color: theme.colorScheme.onSecondary,
+                    color: theme.colorScheme.onBackground,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),

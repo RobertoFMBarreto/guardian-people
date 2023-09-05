@@ -4,6 +4,7 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class DeviceDataInfoList extends StatefulWidget {
   final List<DeviceData> deviceData;
@@ -121,7 +122,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                                   ),
                                 ),
                                 Text(
-                                  widget.deviceData[index].dateTime.toLocal().toString(),
+                                  '${DateFormat(DateFormat.YEAR_NUM_MONTH_DAY, localizations.localeName).format(widget.deviceData[index].dateTime)} ${localizations.at} ${DateFormat(DateFormat.HOUR_MINUTE, localizations.localeName).format(widget.deviceData[index].dateTime)}',
                                   style: theme.textTheme.bodyMedium,
                                 ),
                               ],

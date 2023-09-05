@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/colors.dart';
 
 class IconText extends StatelessWidget {
   final IconData icon;
@@ -7,7 +8,7 @@ class IconText extends StatelessWidget {
   final double fontSize;
   final String text;
   final bool isInverted;
-  final Color textColor;
+  final Color? textColor;
   const IconText({
     super.key,
     required this.icon,
@@ -15,13 +16,18 @@ class IconText extends StatelessWidget {
     required this.text,
     required this.iconSize,
     required this.fontSize,
-    this.textColor = Colors.black,
+    this.textColor,
     this.isInverted = false,
   });
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    Color color = theme.brightness == Brightness.light && textColor == null
+        ? gdTextColor
+        : textColor == null
+            ? gdDarkTextColor
+            : textColor!;
     return isInverted
         ? Row(
             children: [
@@ -30,7 +36,7 @@ class IconText extends StatelessWidget {
                 style: theme.textTheme.bodyLarge!.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize,
-                  color: textColor,
+                  color: color,
                 ),
               ),
               Icon(
@@ -52,7 +58,7 @@ class IconText extends StatelessWidget {
                 style: theme.textTheme.bodyLarge!.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize,
-                  color: textColor,
+                  color: color,
                 ),
               ),
             ],
