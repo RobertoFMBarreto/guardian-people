@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/read_json.dart';
@@ -93,31 +94,32 @@ class _AlertsPageState extends State<AlertsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              removeAllNotifications().then((_) => loadAlerts());
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.delete_forever,
-                                  color: theme.colorScheme.error,
-                                ),
-                                Text(
-                                  '${localizations.remove.capitalize()} ${localizations.all.capitalize()}',
-                                  style: theme.textTheme.bodyLarge!.copyWith(
+                      if (hasConnection)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                removeAllNotifications().then((_) => loadAlerts());
+                              },
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.delete_forever,
                                     color: theme.colorScheme.error,
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    '${localizations.remove.capitalize()} ${localizations.all.capitalize()}',
+                                    style: theme.textTheme.bodyLarge!.copyWith(
+                                      color: theme.colorScheme.error,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),

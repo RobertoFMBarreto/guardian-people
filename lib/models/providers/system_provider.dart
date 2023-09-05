@@ -4,10 +4,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
-import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/permissions_provider.dart';
-import 'package:guardian/models/providers/session_provider.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 Future<bool> checkInternetConnection(BuildContext context) async {
@@ -21,14 +18,15 @@ Future<bool> checkInternetConnection(BuildContext context) async {
       false;
 }
 
-StreamSubscription<ConnectivityResult> wifiConnectionChecker() {
+StreamSubscription<ConnectivityResult> wifiConnectionChecker(
+    {required Function() onHasConnection, required Function() onNotHasConnection}) {
   return Connectivity().onConnectivityChanged.listen(
     (ConnectivityResult result) async {
       bool hasConnection = await InternetConnectionChecker().hasConnection;
       if (hasConnection) {
-        await setShownNoWifiDialog(false);
+        onHasConnection();
       } else {
-        await showNoWifiDialog(navigatorKey.currentContext!);
+        onNotHasConnection();
       }
     },
   );

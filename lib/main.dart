@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/routes.dart';
@@ -43,7 +45,21 @@ class _MyAppState extends State<MyApp> {
 
   Future<StreamSubscription> _setup() async {
     return _setupInitialConnectionState().then(
-      (_) => subscription = wifiConnectionChecker(),
+      (_) => subscription = wifiConnectionChecker(
+        onHasConnection: () async {
+          setState(() {
+            hasConnection = true;
+          });
+          await setShownNoWifiDialog(false);
+        },
+        onNotHasConnection: () async {
+          setState(() {
+            hasConnection = false;
+          });
+
+          await showNoWifiDialog(navigatorKey.currentContext!);
+        },
+      ),
     );
   }
 

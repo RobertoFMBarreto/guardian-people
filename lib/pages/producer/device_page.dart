@@ -39,7 +39,6 @@ class _DevicePageState extends State<DevicePage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor:

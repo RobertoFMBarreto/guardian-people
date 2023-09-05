@@ -15,7 +15,7 @@ import 'package:guardian/models/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
-import 'package:guardian/widgets/ui/dropdown/alert/alert_management_item.dart';
+import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 
 class DeviceSettingsPage extends StatefulWidget {
   final Device device;
@@ -37,6 +37,12 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   void initState() {
     _future = _setup();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   Future<void> _setup() async {

@@ -59,6 +59,12 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
+
   Future<void> _setup() async {
     await _loadDeviceFences();
     _showFence = widget.showFence;

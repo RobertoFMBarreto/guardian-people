@@ -19,11 +19,6 @@ class AlertManagementItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(10),
-      ),
       child: Padding(
         padding: const EdgeInsets.only(left: 10.0, top: 10.0, bottom: 10.0),
         child: Row(

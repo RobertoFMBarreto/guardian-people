@@ -8,7 +8,7 @@ import 'package:guardian/models/db/operations/user_alert_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/ui/dropdown/alert/alert_management_item.dart';
+import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart';
 
@@ -196,36 +196,37 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
               }
             }),
       ),
-      floatingActionButton: (widget.isSelect && _selectedAlerts.isNotEmpty) || !widget.isSelect
-          ? FloatingActionButton.extended(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100),
-              ),
-              backgroundColor: theme.colorScheme.secondary,
-              onPressed: () {
-                if (!widget.isSelect) {
-                  Navigator.of(context).pushNamed('/producer/alerts/add').then((_) {
-                    _loadAlerts();
-                  });
-                } else {
-                  Navigator.of(context).pop(_selectedAlerts);
-                }
-              },
-              label: Text(
-                widget.isSelect
-                    ? localizations.confirm.capitalize()
-                    : '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  color: theme.colorScheme.onSecondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              icon: Icon(
-                widget.isSelect ? Icons.done : Icons.add,
-                color: theme.colorScheme.onSecondary,
-              ),
-            )
-          : null,
+      floatingActionButton:
+          (widget.isSelect && _selectedAlerts.isNotEmpty) || !widget.isSelect && hasConnection
+              ? FloatingActionButton.extended(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  backgroundColor: theme.colorScheme.secondary,
+                  onPressed: () {
+                    if (!widget.isSelect) {
+                      Navigator.of(context).pushNamed('/producer/alerts/add').then((_) {
+                        _loadAlerts();
+                      });
+                    } else {
+                      Navigator.of(context).pop(_selectedAlerts);
+                    }
+                  },
+                  label: Text(
+                    widget.isSelect
+                        ? localizations.confirm.capitalize()
+                        : '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
+                    style: theme.textTheme.bodyLarge!.copyWith(
+                      color: theme.colorScheme.onSecondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  icon: Icon(
+                    widget.isSelect ? Icons.done : Icons.add,
+                    color: theme.colorScheme.onSecondary,
+                  ),
+                )
+              : null,
     );
   }
 }
