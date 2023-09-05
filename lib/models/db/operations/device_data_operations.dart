@@ -1,5 +1,5 @@
 import 'package:guardian/models/db/data_models/Device/device_data.dart';
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<DeviceData> createDeviceData(DeviceData deviceData) async {

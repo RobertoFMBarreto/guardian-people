@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/user_alert_notification.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlertItem extends StatelessWidget {
   final UserAlertNotification alertNotification;
@@ -15,6 +16,8 @@ class AlertItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed('/producer/device',
@@ -29,7 +32,7 @@ class AlertItem extends StatelessWidget {
           ),
           title: Text(alertNotification.device.imei),
           subtitle: Text(
-              '${alertNotification.alert.parameter.toShortString(context).capitalize()} ${alertNotification.alert.comparisson.toShortString(context)} a ${alertNotification.alert.value}'),
+              '${alertNotification.alert.parameter.toShortString(context).capitalize()} ${alertNotification.alert.comparisson.toShortString(context)} ${alertNotification.alert.comparisson == AlertComparissons.equal ? localizations.to : localizations.than} ${alertNotification.alert.value}'),
           trailing: IconButton(
             onPressed: onRemove,
             icon: Icon(

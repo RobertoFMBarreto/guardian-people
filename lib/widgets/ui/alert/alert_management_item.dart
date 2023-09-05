@@ -48,7 +48,8 @@ class AlertManagementItem extends StatelessWidget {
                     RichText(
                       maxLines: 2,
                       text: TextSpan(
-                        text: '${localizations.to} ',
+                        text:
+                            '${alert.comparisson == AlertComparissons.equal ? localizations.to : localizations.than} ',
                         style: theme.textTheme.bodyLarge,
                         children: [
                           TextSpan(

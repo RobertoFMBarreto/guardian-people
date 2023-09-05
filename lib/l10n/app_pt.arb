@@ -102,5 +102,6 @@
   "no_selected_fences": "não existem cercas selecionadas",
   "no_alerts": "não existem alertas",
   "no_fences": "não existem cercas",
-  "no_notifications": "não existem notificações"
+  "no_notifications": "não existem notificações",
+  "than": "que"
 }

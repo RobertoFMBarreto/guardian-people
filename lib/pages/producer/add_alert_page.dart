@@ -95,8 +95,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   Future<void> _createAlert() async {
+    final alertId = Random().nextInt(9999).toString();
     final newAlert = UserAlert(
-      alertId: Random().nextInt(90000).toString(),
+      alertId: alertId,
       hasNotification: _sendNotification,
       parameter: _alertParameter,
       comparisson: _alertComparisson,
@@ -105,7 +106,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     await createAlert(
       newAlert,
     ).then((createdAlert) async {
-      await _addAlertDevices(newAlert.alertId).then(
+      await _addAlertDevices(alertId).then(
         (_) => Navigator.of(context).pop(),
       );
     });
@@ -198,7 +199,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              localizations.to,
+                              _alertComparisson != AlertComparissons.equal
+                                  ? localizations.than
+                                  : localizations.to,
                               style: theme.textTheme.bodyLarge!.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 18,

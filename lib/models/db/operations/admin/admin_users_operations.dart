@@ -1,6 +1,6 @@
 import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/user.dart';
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 
 Future<User?> getProducer(String uid) async {
   final db = await GuardianDatabase().database;

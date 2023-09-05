@@ -21,31 +21,34 @@ class DeviceItem extends StatelessWidget {
     this.onBackFromDeviceScreen,
   });
 
+  void _onTapDevice(BuildContext context) {
+    getUid(context).then((uid) {
+      if (uid != null) {
+        userIsAdmin(uid).then((isAdmin) {
+          if (isPopPush) {
+            Navigator.of(context).popAndPushNamed(
+                isAdmin ? '/admin/producer/device' : '/producer/device',
+                arguments: {'device': device, 'producerId': producerId}).then((_) {
+              if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
+            });
+          } else {
+            Navigator.of(context).pushNamed(isAdmin ? '/admin/producer/device' : '/producer/device',
+                arguments: {'device': device, 'producerId': producerId}).then((_) {
+              if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
+            });
+          }
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
     return GestureDetector(
       onTap: () {
-        getUid(context).then((uid) {
-          if (uid != null) {
-            userIsAdmin(uid).then((isAdmin) {
-              if (isPopPush) {
-                Navigator.of(context).popAndPushNamed(
-                    isAdmin ? '/admin/producer/device' : '/producer/device',
-                    arguments: {'device': device, 'producerId': producerId}).then((_) {
-                  if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
-                });
-              } else {
-                Navigator.of(context).pushNamed(
-                    isAdmin ? '/admin/producer/device' : '/producer/device',
-                    arguments: {'device': device, 'producerId': producerId}).then((_) {
-                  if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
-                });
-              }
-            });
-          }
-        });
+        _onTapDevice(context);
       },
       child: Card(
         child: Padding(

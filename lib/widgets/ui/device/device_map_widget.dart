@@ -62,6 +62,30 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     );
   }
 
+  void _showDateSelector() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RangeDateTimeInput(
+                startDate: _startDate,
+                endDate: _endDate,
+                onConfirm: (newStartDate, newEndDate) {
+                  setState(() {
+                    _startDate = newStartDate;
+                    _endDate = newEndDate;
+                  });
+                  _getDeviceData();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -82,27 +106,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                 if (widget.isInterval)
                   GestureDetector(
                     onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: RangeDateTimeInput(
-                                  startDate: _startDate,
-                                  endDate: _endDate,
-                                  onConfirm: (newStartDate, newEndDate) {
-                                    setState(() {
-                                      _startDate = newStartDate;
-                                      _endDate = newEndDate;
-                                    });
-                                    _getDeviceData();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                            );
-                          });
+                      _showDateSelector();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10.0),

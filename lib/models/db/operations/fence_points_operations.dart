@@ -1,5 +1,5 @@
 import 'package:guardian/models/db/data_models/Fences/fence_points.dart';
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sqflite/sqflite.dart';
 

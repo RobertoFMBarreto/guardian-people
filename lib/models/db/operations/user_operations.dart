@@ -1,4 +1,4 @@
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../data_models/user.dart';

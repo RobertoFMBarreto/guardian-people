@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> setUserSession(String uid) async {

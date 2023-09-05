@@ -1,7 +1,7 @@
 import 'package:guardian/models/db/data_models/Alerts/alert_notifications.dart';
 import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:sqflite/sqflite.dart';
 

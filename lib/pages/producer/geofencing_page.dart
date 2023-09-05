@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/db/operations/fence_operations.dart';
 import 'package:guardian/models/db/operations/fence_points_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -43,6 +45,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
   Color _fenceColor = Colors.red;
 
   List<LatLng> fencePoints = [];
+  List<Device> _devices = [];
 
   @override
   void dispose() {
@@ -60,6 +63,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
     await _getCurrentPosition();
     if (widget.fence != null) {
       await _loadFencePoints();
+      await _loadDevices();
       if (mounted) {
         setState(() {
           // if there are only 2 points then its a circle
@@ -80,8 +84,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
     _editingPolygon = Polygon(
       color: widget.fence != null
           ? HexColor(widget.fence!.color).withOpacity(0.5)
-          : gdMapGeofenceFillColor,
-      borderColor: widget.fence != null ? HexColor(widget.fence!.color) : gdMapGeofenceBorderColor,
+          : _fenceColor.withOpacity(0.5),
+      borderColor: widget.fence != null ? HexColor(widget.fence!.color) : _fenceColor,
       borderStrokeWidth: 2,
       isFilled: true,
       points: [],
@@ -89,6 +93,18 @@ class _GeofencingPageState extends State<GeofencingPage> {
     if (widget.fence != null) {
       _editingPolygon.points.addAll(fencePoints);
     }
+  }
+
+  void _changePolygonColor() {
+    _editingPolygon = Polygon(
+      color: widget.fence != null
+          ? HexColor(widget.fence!.color).withOpacity(0.5)
+          : _fenceColor.withOpacity(0.5),
+      borderColor: widget.fence != null ? HexColor(widget.fence!.color) : _fenceColor,
+      borderStrokeWidth: 2,
+      isFilled: true,
+      points: _editingPolygon.points,
+    );
   }
 
   void _initPolyEditor() {
@@ -141,6 +157,12 @@ class _GeofencingPageState extends State<GeofencingPage> {
     );
   }
 
+  Future<void> _loadDevices() async {
+    await getUserDevicesWithData().then(
+      (allDevices) => _devices.addAll(allDevices),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -171,6 +193,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                           alignment: Alignment.bottomCenter,
                           children: [
                             FlutterMap(
+                              key: Key(_fenceColor.toString()),
                               options: MapOptions(
                                 bounds: widget.fence != null
                                     ? LatLngBounds.fromPoints(fencePoints)
@@ -194,6 +217,21 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                 ),
                                 MarkerLayer(
                                   markers: [
+                                    ..._devices
+                                        .map(
+                                          (device) => Marker(
+                                            point: LatLng(
+                                                device.data!.first.lat, device.data!.first.lon),
+                                            builder: (context) {
+                                              return Icon(
+                                                Icons.location_on,
+                                                color: HexColor(device.color),
+                                                size: 30,
+                                              );
+                                            },
+                                          ),
+                                        )
+                                        .toList(),
                                     Marker(
                                       point: LatLng(
                                         _currentPosition!.latitude,
@@ -299,6 +337,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                                 });
 
                                                 // TODO update fence
+                                                _changePolygonColor();
                                               },
                                               hexColor: HexColor.toHex(color: _fenceColor),
                                             ),

@@ -3,6 +3,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/date_time_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class RangeDateTimeInput extends StatefulWidget {
   final DateTime startDate;
@@ -47,6 +48,42 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
     super.dispose();
   }
 
+  void _onStartDateChanged(DateRangePickerSelectionChangedArgs args) {
+    setState(() {
+      if (args.value is DateTime) {
+        //store last date
+        DateTime backupDate = startDate;
+        //store new date
+        startDate = args.value;
+        //add the backup date hours to the new date
+        startDate = startDate.add(
+          Duration(
+            hours: backupDate.hour,
+            minutes: backupDate.minute,
+          ),
+        );
+      }
+    });
+  }
+
+  void _onEndDateChanged(DateRangePickerSelectionChangedArgs args) {
+    setState(() {
+      if (args.value is DateTime) {
+        //store last date
+        DateTime backupDate = endDate;
+        //store new date
+        endDate = args.value;
+        //add the backup date hours to the new date
+        endDate = endDate.add(
+          Duration(
+            hours: backupDate.hour,
+            minutes: backupDate.minute,
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -73,21 +110,7 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
               //startDate
               DateTimeInput(
                 onSelectionChanged: (args) {
-                  setState(() {
-                    if (args.value is DateTime) {
-                      //store last date
-                      DateTime backupDate = startDate;
-                      //store new date
-                      startDate = args.value;
-                      //add the backup date hours to the new date
-                      startDate = startDate.add(
-                        Duration(
-                          hours: backupDate.hour,
-                          minutes: backupDate.minute,
-                        ),
-                      );
-                    }
-                  });
+                  _onStartDateChanged(args);
                 },
                 onTimeChange: (newDate) {
                   setState(() {
@@ -100,21 +123,7 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
               //endDate
               DateTimeInput(
                 onSelectionChanged: (args) {
-                  setState(() {
-                    if (args.value is DateTime) {
-                      //store last date
-                      DateTime backupDate = endDate;
-                      //store new date
-                      endDate = args.value;
-                      //add the backup date hours to the new date
-                      endDate = endDate.add(
-                        Duration(
-                          hours: backupDate.hour,
-                          minutes: backupDate.minute,
-                        ),
-                      );
-                    }
-                  });
+                  _onEndDateChanged(args);
                 },
                 onTimeChange: (newDate) {
                   setState(() {

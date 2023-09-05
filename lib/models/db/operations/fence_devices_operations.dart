@@ -3,7 +3,7 @@ import 'package:guardian/models/db/data_models/Fences/fence.dart';
 import 'package:guardian/models/db/data_models/Fences/fence_devices.dart';
 import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/models/db/operations/fence_operations.dart';
-import 'package:guardian/models/db/operations/guardian_database.dart';
+import 'package:guardian/models/db/guardian_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<FenceDevice> createFenceDevice(FenceDevice fenceDevice) async {

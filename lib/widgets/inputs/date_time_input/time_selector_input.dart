@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimeSelectorInput extends StatelessWidget {
   final Function(DateTime)? onTimeChange;
@@ -9,8 +10,9 @@ class TimeSelectorInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return TimePickerSpinner(
-      locale: const Locale('pt', ''),
+      locale: Locale(localizations.localeName),
       time: time,
       is24HourMode: true,
       isShowSeconds: false,
