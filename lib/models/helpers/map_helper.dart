@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
+// import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart' if (kIsWeb) '';
 import 'package:latlong2/latlong.dart';
 import 'dart:math' show cos, sqrt, asin;
 
@@ -8,7 +9,7 @@ TileLayer getTileLayer(BuildContext context) {
   return TileLayer(
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     userAgentPackageName: 'com.linovt.guardian',
-    tileProvider: FMTC.instance('guardian').getTileProvider(),
+    // tileProvider: !kIsWeb ? FMTC.instance('guardian').getTileProvider() : null,
     tileDisplay: const TileDisplay.fadeIn(),
   );
 }

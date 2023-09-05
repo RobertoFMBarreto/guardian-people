@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/data_models/user.dart';
@@ -5,7 +6,7 @@ import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
-import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/tmp/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -174,6 +175,9 @@ class _LoginFormState extends State<LoginForm> {
                     },
                     onChanged: (newValue) {
                       _password = newValue;
+                    },
+                    onFieldSubmitted: (text) {
+                      _onLogin(localizations);
                     },
                   ),
                 ),

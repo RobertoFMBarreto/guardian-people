@@ -1,0 +1,60 @@
+Map<String, dynamic> usersDataJson = {
+  "users": [
+    {
+      "id": "0",
+      "name": "Admin",
+      "role": 0,
+      "imageUrl": "",
+      "email": "admin@admin.com",
+      "password": "admin"
+    },
+    {
+      "id": "1",
+      "name": "João Gonçalves",
+      "role": 1,
+      "imageUrl": "",
+      "email": "joao.goncalves@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "2",
+      "name": "Ricardo Martins",
+      "role": 1,
+      "imageUrl": "",
+      "email": "ricardo.martins@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "3",
+      "name": "José Alberto",
+      "role": 1,
+      "imageUrl": "",
+      "email": "jose.alberto@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "4",
+      "name": "Henrique Simões",
+      "role": 1,
+      "imageUrl": "",
+      "email": "henrique.simoes@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "5",
+      "name": "Augusto Pinho",
+      "role": 1,
+      "imageUrl": "",
+      "email": "augusto.pinho@teste.com",
+      "password": "teste123@"
+    },
+    {
+      "id": "6",
+      "name": "José Henriques",
+      "role": 1,
+      "imageUrl": "",
+      "email": "jose.henriques@teste.com",
+      "password": "teste123@"
+    }
+  ]
+};

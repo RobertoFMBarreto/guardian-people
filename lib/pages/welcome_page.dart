@@ -15,12 +15,12 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
-    getToken(context);
+    _getToken(context);
 
     super.initState();
   }
 
-  Future<void> getToken(BuildContext context) async {
+  Future<void> _getToken(BuildContext context) async {
     await getUid(context).then(
       (uid) async {
         if (uid != null) {

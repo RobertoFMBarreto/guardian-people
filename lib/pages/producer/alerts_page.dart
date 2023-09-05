@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/providers/read_json.dart';
+import 'package:guardian/models/providers/tmp/read_json.dart';
 
 import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';

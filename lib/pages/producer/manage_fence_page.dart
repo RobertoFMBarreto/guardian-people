@@ -73,6 +73,31 @@ class _ManageFencePageState extends State<ManageFencePage> {
     });
   }
 
+  Future<void> _selectDevices() async {
+    Navigator.of(context).pushNamed(
+      '/producer/devices',
+      arguments: {
+        'isSelect': true,
+        'fenceId': fence.fenceId,
+      },
+    ).then((selectedDevices) async {
+      if (selectedDevices != null && selectedDevices.runtimeType == List<Device>) {
+        final selected = selectedDevices as List<Device>;
+        setState(() {
+          devices.addAll(selected);
+        });
+        for (var device in selected) {
+          await createFenceDevice(
+            FenceDevice(
+              fenceId: fence.fenceId,
+              deviceId: device.deviceId,
+            ),
+          );
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -166,29 +191,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         if (hasConnection)
                           IconButton(
                             onPressed: () async {
-                              Navigator.of(context).pushNamed(
-                                '/producer/devices',
-                                arguments: {
-                                  'isSelect': true,
-                                  'fenceId': fence.fenceId,
-                                },
-                              ).then((selectedDevices) async {
-                                if (selectedDevices != null &&
-                                    selectedDevices.runtimeType == List<Device>) {
-                                  final selected = selectedDevices as List<Device>;
-                                  setState(() {
-                                    devices.addAll(selected);
-                                  });
-                                  for (var device in selected) {
-                                    await createFenceDevice(
-                                      FenceDevice(
-                                        fenceId: fence.fenceId,
-                                        deviceId: device.deviceId,
-                                      ),
-                                    );
-                                  }
-                                }
-                              });
+                              _selectDevices();
                             },
                             icon: const Icon(Icons.add),
                           ),

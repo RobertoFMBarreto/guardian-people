@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
+                                      return localizations.empty_field.capitalize();
                                     }
                                     return null;
                                   },
@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
+                                      return localizations.empty_field.capitalize();
                                     }
                                     return null;
                                   },
@@ -105,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
+                                      return localizations.empty_field.capitalize();
                                     }
                                     return null;
                                   },
@@ -119,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
+                                      return localizations.empty_field.capitalize();
                                     }
                                     return null;
                                   },

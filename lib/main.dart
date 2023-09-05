@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
@@ -12,12 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:guardian/routes.dart';
 import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
+// import 'package:guardian/models/providers/caching/stub.dart'
+//     if (dart.library.io) 'package:guardian/models/providers/caching/caching_provider.dart'
+//     if (dart.library.html) 'package:guardian/models/providers/caching/stub.dart';
 
 late bool hasConnection;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterMapTileCaching.initialise();
-  await FMTC.instance('guardian').manage.createAsync();
+  // if (!kIsWeb) {
+  //   await MapCaching().initMapCaching();
+  // }
   runApp(const MyApp());
 }
 
@@ -43,28 +47,33 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  Future<StreamSubscription> _setup() async {
-    return _setupInitialConnectionState().then(
-      (_) => subscription = wifiConnectionChecker(
-        onHasConnection: () async {
-          setState(() {
-            hasConnection = true;
-          });
-          await setShownNoWifiDialog(false);
-        },
-        onNotHasConnection: () async {
-          setState(() {
-            hasConnection = false;
-          });
+  Future<StreamSubscription?> _setup() async {
+    if (!kIsWeb) {
+      return _setupInitialConnectionState().then(
+        (_) => subscription = wifiConnectionChecker(
+          onHasConnection: () async {
+            setState(() {
+              hasConnection = true;
+            });
+            await setShownNoWifiDialog(false);
+          },
+          onNotHasConnection: () async {
+            setState(() {
+              hasConnection = false;
+            });
 
-          await showNoWifiDialog(navigatorKey.currentContext!);
-        },
-      ),
-    );
+            await showNoWifiDialog(navigatorKey.currentContext!);
+          },
+        ),
+      );
+    } else {
+      hasConnection = true;
+    }
+    return null;
   }
 
   Future<void> _setupInitialConnectionState() async {
-    hasConnection = await checkInternetConnection(context);
+    if (kIsWeb) hasConnection = await checkInternetConnection(context);
   }
 
   @override

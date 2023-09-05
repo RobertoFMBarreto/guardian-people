@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
 import 'package:guardian/models/db/data_models/Device/device.dart';
@@ -13,12 +15,23 @@ import 'package:guardian/models/db/operations/fence_operations.dart';
 import 'package:guardian/models/db/operations/device_data_operations.dart';
 import 'package:guardian/models/db/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/operations/user_alert_operations.dart';
+import 'package:guardian/models/providers/tmp/alerts_data.dart';
+import 'package:guardian/models/providers/tmp/devices_data.dart';
+import 'package:guardian/models/providers/tmp/fences_data.dart';
+import 'package:guardian/models/providers/tmp/users_data.dart';
 
 Future<List<User>> loadUsers() async {
   String usersInput = '';
-  usersInput = await rootBundle.loadString('assets/data/users.json');
+  if (!kIsWeb) {
+    usersInput = await rootBundle.loadString('assets/data/users.json');
+  }
 
-  Map<String, dynamic> usersMap = await json.decode(usersInput);
+  Map<String, dynamic> usersMap = {};
+  if (!kIsWeb) {
+    usersMap = await json.decode(usersInput);
+  } else {
+    usersMap = usersDataJson;
+  }
   List<User> users = [];
   usersMap['users']!.forEach(
     (user) {
@@ -37,8 +50,16 @@ Future<List<User>> loadUsers() async {
 }
 
 Future<List<Device>> loadUserDevices(String uid) async {
-  String devicesInput = await rootBundle.loadString('assets/data/devices.json');
-  Map devicesMap = await json.decode(devicesInput);
+  String devicesInput = '';
+  if (!kIsWeb) {
+    devicesInput = await rootBundle.loadString('assets/data/devices.json');
+  }
+  Map devicesMap = {};
+  if (!kIsWeb) {
+    devicesMap = await json.decode(devicesInput);
+  } else {
+    devicesMap = devicesDataJson;
+  }
   List<dynamic> devicesMapList = devicesMap['devices'];
   List<Device> devices = [];
   for (var device in devicesMapList) {
@@ -91,8 +112,16 @@ Future<List<Device>> loadUserDevices(String uid) async {
 }
 
 Future<List<UserAlert>> loadAlerts() async {
-  String alertsInput = await rootBundle.loadString('assets/data/alerts.json');
-  Map alertsMap = await json.decode(alertsInput);
+  String alertsInput = '';
+  if (!kIsWeb) {
+    alertsInput = await rootBundle.loadString('assets/data/alerts.json');
+  }
+  Map alertsMap;
+  if (!kIsWeb) {
+    alertsMap = await json.decode(alertsInput);
+  } else {
+    alertsMap = alertsDataJson;
+  }
   List<dynamic> alertsMapList = alertsMap['alerts'];
   List<UserAlert> alerts = [];
   for (var alert in alertsMapList) {
@@ -132,8 +161,16 @@ Future<List<UserAlert>> loadAlerts() async {
 }
 
 Future<List<Fence>> loadUserFences(String uid) async {
-  String devicesInput = await rootBundle.loadString('assets/data/fences.json');
-  Map fencesMap = await json.decode(devicesInput);
+  String fencesInput = '';
+  if (!kIsWeb) {
+    fencesInput = await rootBundle.loadString('assets/data/fences.json');
+  }
+  Map fencesMap;
+  if (!kIsWeb) {
+    fencesMap = await json.decode(fencesInput);
+  } else {
+    fencesMap = fencesDataJson;
+  }
   List<dynamic> fencesMapList = fencesMap['fences'];
   List<Fence> fences = [];
   for (var fence in fencesMapList) {

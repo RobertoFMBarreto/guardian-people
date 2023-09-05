@@ -163,6 +163,35 @@ class _GeofencingPageState extends State<GeofencingPage> {
     );
   }
 
+  Future<void> _confirmGeofence() async {
+    String fenceId;
+    // if is edit mode
+    if (widget.fence != null) {
+      fenceId = widget.fence!.fenceId;
+      // first udpate the fence
+      await updateFence(
+        widget.fence!.copy(
+          name: _fenceName,
+          color: HexColor.toHex(color: _fenceColor),
+        ),
+      );
+    } else {
+      fenceId = _fenceName;
+      await createFence(
+        Fence(
+          fenceId: _fenceName,
+          name: _fenceName,
+          color: HexColor.toHex(color: _fenceColor),
+        ),
+      );
+    }
+
+    // second update fence points
+    createFencePointFromList(_editingPolygon.points, fenceId).then(
+      (value) => Navigator.of(context).pop(_editingPolygon.points),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -373,34 +402,8 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                       ),
                                     ),
                                     ElevatedButton(
-                                      onPressed: () async {
-                                        String fenceId;
-                                        // if is edit mode
-                                        if (widget.fence != null) {
-                                          fenceId = widget.fence!.fenceId;
-                                          // first udpate the fence
-                                          await updateFence(
-                                            widget.fence!.copy(
-                                              name: _fenceName,
-                                              color: HexColor.toHex(color: _fenceColor),
-                                            ),
-                                          );
-                                        } else {
-                                          fenceId = _fenceName;
-                                          await createFence(
-                                            Fence(
-                                              fenceId: _fenceName,
-                                              name: _fenceName,
-                                              color: HexColor.toHex(color: _fenceColor),
-                                            ),
-                                          );
-                                        }
-
-                                        // second update fence points
-                                        await createFencePointFromList(
-                                            _editingPolygon.points, fenceId);
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.of(context).pop(_editingPolygon.points);
+                                      onPressed: () {
+                                        _confirmGeofence();
                                       },
                                       child: Text(
                                         localizations.confirm.capitalize(),
