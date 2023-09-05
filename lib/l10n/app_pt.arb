@@ -94,5 +94,13 @@
   "ok": "ok",
   "state_history": "histórico de estados",
   "no_data_to_show": "não existem dados para mostrar",
-  "at": "às"
+  "at": "às",
+  "no_producers": "não existem produtores registados",
+  "no_devices": "não existem dispositivos",
+  "no_selected_devices": "não existem dispositivos selecionados",
+  "no_selected_alerts": "não existem alertas selecionados",
+  "no_selected_fences": "não existem cercas selecionadas",
+  "no_alerts": "não existem alertas",
+  "no_fences": "não existem cercas",
+  "no_notifications": "não existem notificações"
 }

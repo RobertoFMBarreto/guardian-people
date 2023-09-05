@@ -129,47 +129,55 @@ class _FencesPageState extends State<FencesPage> {
                           ),
                         ),
                         Expanded(
-                          child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            itemCount: _fences.length,
-                            itemBuilder: (context, index) => GestureDetector(
-                              onTap: () {
-                                Navigator.of(context)
-                                    .pushNamed('/producer/fence/manage', arguments: _fences[index])
-                                    .then(
-                                      (_) => _searchFences(),
-                                    );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                child: widget.isSelect
-                                    ? SelectableFenceItem(
-                                        name: _fences[index].name,
-                                        color: HexColor(_fences[index].color),
-                                        isSelected: _fences[index] == _selectedFence,
-                                        onSelected: () {
-                                          // TODO: select code
-                                          if (_selectedFence == _fences[index]) {
-                                            setState(() {
-                                              _selectedFence = null;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _selectedFence = _fences[index];
-                                            });
-                                          }
-                                        })
-                                    : FenceItem(
-                                        name: _fences[index].name,
-                                        color: HexColor(_fences[index].color),
-                                        onRemove: () {
-                                          // TODO remove item from list
-                                          removeFence(_fences[index]).then((_) => _searchFences());
-                                        },
-                                      ),
-                              ),
-                            ),
-                          ),
+                          child: _fences.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    localizations.no_fences.capitalize(),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  itemCount: _fences.length,
+                                  itemBuilder: (context, index) => GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .pushNamed('/producer/fence/manage',
+                                              arguments: _fences[index])
+                                          .then(
+                                            (_) => _searchFences(),
+                                          );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                      child: widget.isSelect
+                                          ? SelectableFenceItem(
+                                              name: _fences[index].name,
+                                              color: HexColor(_fences[index].color),
+                                              isSelected: _fences[index] == _selectedFence,
+                                              onSelected: () {
+                                                // TODO: select code
+                                                if (_selectedFence == _fences[index]) {
+                                                  setState(() {
+                                                    _selectedFence = null;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _selectedFence = _fences[index];
+                                                  });
+                                                }
+                                              })
+                                          : FenceItem(
+                                              name: _fences[index].name,
+                                              color: HexColor(_fences[index].color),
+                                              onRemove: () {
+                                                // TODO remove item from list
+                                                removeFence(_fences[index])
+                                                    .then((_) => _searchFences());
+                                              },
+                                            ),
+                                    ),
+                                  ),
+                                ),
                         )
                       ],
                     ),

@@ -141,54 +141,58 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                         ),
                       Expanded(
                         flex: 15,
-                        child: ListView.builder(
-                          itemCount: _alerts.length,
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          itemBuilder: (context, index) => widget.isSelect
-                              ? SelectableAlertManagementItem(
-                                  alert: _alerts[index],
-                                  isSelected: _selectedAlerts.contains(_alerts[index]),
-                                  onSelected: () {
-                                    // TODO: select code
-                                    if (_selectedAlerts.contains(_alerts[index])) {
-                                      setState(() {
-                                        _selectedAlerts.remove(_alerts[index]);
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _selectedAlerts.add(_alerts[index]);
-                                      });
-                                    }
-                                  })
-                              : Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      if (hasConnection) {
-                                        Navigator.of(context).pushNamed(
-                                          '/producer/alerts/add',
-                                          arguments: {
-                                            'isEdit': true,
-                                            'alert': _alerts[index],
+                        child: _alerts.isEmpty
+                            ? Center(
+                                child: Text(localizations.no_alerts.capitalize()),
+                              )
+                            : ListView.builder(
+                                itemCount: _alerts.length,
+                                padding: const EdgeInsets.only(bottom: 20.0),
+                                itemBuilder: (context, index) => widget.isSelect
+                                    ? SelectableAlertManagementItem(
+                                        alert: _alerts[index],
+                                        isSelected: _selectedAlerts.contains(_alerts[index]),
+                                        onSelected: () {
+                                          // TODO: select code
+                                          if (_selectedAlerts.contains(_alerts[index])) {
+                                            setState(() {
+                                              _selectedAlerts.remove(_alerts[index]);
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _selectedAlerts.add(_alerts[index]);
+                                            });
+                                          }
+                                        })
+                                    : Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (hasConnection) {
+                                              Navigator.of(context).pushNamed(
+                                                '/producer/alerts/add',
+                                                arguments: {
+                                                  'isEdit': true,
+                                                  'alert': _alerts[index],
+                                                },
+                                              ).then((_) {
+                                                _loadAlerts();
+                                              });
+                                            }
                                           },
-                                        ).then((_) {
-                                          _loadAlerts();
-                                        });
-                                      }
-                                    },
-                                    child: AlertManagementItem(
-                                      alert: _alerts[index],
-                                      onDelete: (alert) {
-                                        // TODO: Remove code
-                                        deleteAlert(_alerts[index].alertId);
-                                        setState(() {
-                                          _alerts.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                        ),
+                                          child: AlertManagementItem(
+                                            alert: _alerts[index],
+                                            onDelete: (alert) {
+                                              // TODO: Remove code
+                                              deleteAlert(_alerts[index].alertId);
+                                              setState(() {
+                                                _alerts.removeAt(index);
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                              ),
                       ),
                     ],
                   ),

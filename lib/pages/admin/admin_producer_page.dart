@@ -326,35 +326,41 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                             ),
                           ),
                         ),
-                        SliverList.builder(
-                          itemCount: _devices.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                            ),
-                            child: _isRemoveMode
-                                ? DeviceItemRemovable(
-                                    device: _devices[index],
-                                    onRemoveDevice: () {
-                                      // TODO: On remove device code
-                                      deleteDevice(_devices[index].deviceId).then((_) {
-                                        setState(() {
-                                          _devices.removeAt(index);
+                        if (_devices.isEmpty)
+                          SliverFillRemaining(
+                            child: Center(child: Text(localizations.no_devices.capitalize())),
+                          ),
+                        if (_devices.isNotEmpty)
+                          SliverList.builder(
+                            itemCount: _devices.length,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
+                              child: _isRemoveMode
+                                  ? DeviceItemRemovable(
+                                      device: _devices[index],
+                                      onRemoveDevice: () {
+                                        // TODO: On remove device code
+                                        deleteDevice(_devices[index].deviceId).then((_) {
+                                          setState(() {
+                                            _devices.removeAt(index);
+                                          });
                                         });
-                                      });
-                                    },
-                                  )
-                                : DeviceItem(
-                                    device: _devices[index],
-                                    producerId: widget.producerId,
-                                  ),
+                                      },
+                                    )
+                                  : DeviceItem(
+                                      device: _devices[index],
+                                      producerId: widget.producerId,
+                                    ),
+                            ),
                           ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: deviceHeight * 0.1),
-                          ),
-                        )
+                        if (_devices.isNotEmpty)
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: deviceHeight * 0.1),
+                            ),
+                          )
                       ],
                     ),
                   );

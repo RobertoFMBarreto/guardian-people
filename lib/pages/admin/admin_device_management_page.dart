@@ -127,19 +127,24 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                       ),
                     ),
                   ),
-                  SliverFillRemaining(
-                    child: ListView.builder(
-                      itemCount: _devices.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: DeviceItem(
-                          device: _devices[index],
-                          isPopPush: true,
-                          producerId: widget.producerId,
+                  if (_devices.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(child: Text(localizations.no_devices.capitalize())),
+                    ),
+                  if (_devices.isNotEmpty)
+                    SliverFillRemaining(
+                      child: ListView.builder(
+                        itemCount: _devices.length,
+                        itemBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: DeviceItem(
+                            device: _devices[index],
+                            isPopPush: true,
+                            producerId: widget.producerId,
+                          ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                 ],
               );
             }

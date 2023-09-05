@@ -94,5 +94,13 @@
   "ok": "ok",
   "state_history": "state history",
   "no_data_to_show": "there is no data to show",
-  "at": "at"
+  "at": "at",
+  "no_producers": "there are no registered producers",
+  "no_devices": "there are no devices",
+  "no_selected_devices": "there are no selected devices",
+  "no_selected_alerts": "there are no selected alerts",
+  "no_selected_fences": "there are no selected fences",
+  "no_alerts": "there are no alerts",
+  "no_fences": "there are no fences",
+  "no_notifications": "there are no notifications"
 }

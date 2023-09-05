@@ -197,28 +197,32 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   ),
                   Expanded(
                     flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: ListView.builder(
-                        itemCount: devices.length,
-                        itemBuilder: (context, index) => DeviceItemRemovable(
-                          key: Key(devices[index].deviceId),
-                          device: devices[index],
-                          onRemoveDevice: () {
-                            // TODO: On remove device
-                            removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
-                              (_) {
-                                setState(() {
-                                  devices.removeWhere(
-                                    (element) => element.deviceId == devices[index].deviceId,
+                    child: devices.isEmpty
+                        ? Center(
+                            child: Text(localizations.no_selected_devices.capitalize()),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: ListView.builder(
+                              itemCount: devices.length,
+                              itemBuilder: (context, index) => DeviceItemRemovable(
+                                key: Key(devices[index].deviceId),
+                                device: devices[index],
+                                onRemoveDevice: () {
+                                  // TODO: On remove device
+                                  removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
+                                    (_) {
+                                      setState(() {
+                                        devices.removeWhere(
+                                          (element) => element.deviceId == devices[index].deviceId,
+                                        );
+                                      });
+                                    },
                                   );
-                                });
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                                },
+                              ),
+                            ),
+                          ),
                   ),
                 ],
               ),

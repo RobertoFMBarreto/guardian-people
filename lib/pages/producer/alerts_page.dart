@@ -121,22 +121,26 @@ class _AlertsPageState extends State<AlertsPage> {
                           ],
                         ),
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: ListView.builder(
-                            itemCount: alerts.length,
-                            itemBuilder: (context, index) => AlertItem(
-                              alertNotification: alerts[index],
-                              onRemove: () async {
-                                await removeNotification(
-                                  alerts[index].notificationId,
-                                ).then(
-                                  (_) async => await _loadAlerts(),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+                        child: alerts.isEmpty
+                            ? Center(
+                                child: Text(localizations.no_notifications.capitalize()),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: ListView.builder(
+                                  itemCount: alerts.length,
+                                  itemBuilder: (context, index) => AlertItem(
+                                    alertNotification: alerts[index],
+                                    onRemove: () async {
+                                      await removeNotification(
+                                        alerts[index].notificationId,
+                                      ).then(
+                                        (_) async => await _loadAlerts(),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
                       ),
                     ],
                   ),

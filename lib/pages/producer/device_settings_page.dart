@@ -150,23 +150,27 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         ),
                       ),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: _alerts.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: AlertManagementItem(
-                              alert: _alerts[index],
-                              onDelete: (alert) {
-                                // TODO: Delete code for alert
-                                removeAlertDevice(alert.alertId, widget.device.deviceId);
-                                setState(() {
-                                  _alerts
-                                      .removeWhere((element) => element.alertId == alert.alertId);
-                                });
-                              },
-                            ),
-                          ),
-                        ),
+                        child: _alerts.isEmpty
+                            ? Center(
+                                child: Text(localizations.no_selected_alerts.capitalize()),
+                              )
+                            : ListView.builder(
+                                itemCount: _alerts.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: AlertManagementItem(
+                                    alert: _alerts[index],
+                                    onDelete: (alert) {
+                                      // TODO: Delete code for alert
+                                      removeAlertDevice(alert.alertId, widget.device.deviceId);
+                                      setState(() {
+                                        _alerts.removeWhere(
+                                            (element) => element.alertId == alert.alertId);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -203,25 +207,30 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         ),
                       ),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: _fences.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: FenceItem(
-                              name: _fences[index].name,
-                              color: HexColor(_fences[index].color),
-                              onRemove: () {
-                                removeDeviceFence(_fences[index].fenceId, widget.device.deviceId);
-                                setState(() {
-                                  _fences.removeWhere(
-                                    (element) => element.fenceId == _fences[index].fenceId,
-                                  );
-                                });
-                                // TODO remove item service call
-                              },
-                            ),
-                          ),
-                        ),
+                        child: _fences.isEmpty
+                            ? Center(
+                                child: Text(localizations.no_selected_fences.capitalize()),
+                              )
+                            : ListView.builder(
+                                itemCount: _fences.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: FenceItem(
+                                    name: _fences[index].name,
+                                    color: HexColor(_fences[index].color),
+                                    onRemove: () {
+                                      removeDeviceFence(
+                                          _fences[index].fenceId, widget.device.deviceId);
+                                      setState(() {
+                                        _fences.removeWhere(
+                                          (element) => element.fenceId == _fences[index].fenceId,
+                                        );
+                                      });
+                                      // TODO remove item service call
+                                    },
+                                  ),
+                                ),
+                              ),
                       ),
                       if (widget.device.name != _deviceName)
                         Row(

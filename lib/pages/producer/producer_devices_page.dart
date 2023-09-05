@@ -258,45 +258,49 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                             ],
                           ),
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                            // TODO: get devices from fence data
-                            child: ListView.builder(
-                              itemCount: _devices.length,
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                ),
-                                child: widget.isSelect
-                                    ? DeviceItemSelectable(
-                                        deviceImei: _devices[index].name,
-                                        deviceData: _devices[index].data!.first.dataUsage,
-                                        deviceBattery: _devices[index].data!.first.battery,
-                                        isSelected: _selectedDevices
-                                            .where((element) =>
-                                                element.deviceId == _devices[index].deviceId)
-                                            .isNotEmpty,
-                                        onSelected: () {
-                                          int i = _selectedDevices.indexWhere((element) =>
-                                              element.deviceId == _devices[index].deviceId);
-                                          setState(() {
-                                            if (i >= 0) {
-                                              _selectedDevices.removeAt(i);
-                                            } else {
-                                              _selectedDevices.add(_devices[index]);
-                                            }
-                                          });
-                                        },
-                                      )
-                                    : DeviceItem(
-                                        device: _devices[index],
-                                        onBackFromDeviceScreen: () {
-                                          _filterDevices();
-                                        },
+                          child: _devices.isEmpty
+                              ? Center(
+                                  child: Text(localizations.no_devices.capitalize()),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                  // TODO: get devices from fence data
+                                  child: ListView.builder(
+                                    itemCount: _devices.length,
+                                    itemBuilder: (context, index) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0,
                                       ),
-                              ),
-                            ),
-                          ),
+                                      child: widget.isSelect
+                                          ? DeviceItemSelectable(
+                                              deviceImei: _devices[index].name,
+                                              deviceData: _devices[index].data!.first.dataUsage,
+                                              deviceBattery: _devices[index].data!.first.battery,
+                                              isSelected: _selectedDevices
+                                                  .where((element) =>
+                                                      element.deviceId == _devices[index].deviceId)
+                                                  .isNotEmpty,
+                                              onSelected: () {
+                                                int i = _selectedDevices.indexWhere((element) =>
+                                                    element.deviceId == _devices[index].deviceId);
+                                                setState(() {
+                                                  if (i >= 0) {
+                                                    _selectedDevices.removeAt(i);
+                                                  } else {
+                                                    _selectedDevices.add(_devices[index]);
+                                                  }
+                                                });
+                                              },
+                                            )
+                                          : DeviceItem(
+                                              device: _devices[index],
+                                              onBackFromDeviceScreen: () {
+                                                _filterDevices();
+                                              },
+                                            ),
+                                    ),
+                                  ),
+                                ),
                         ),
                       ],
                     ),

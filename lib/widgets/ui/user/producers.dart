@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/data_models/user.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'producer.dart';
 
 class Producers extends StatelessWidget {
@@ -15,29 +16,31 @@ class Producers extends StatelessWidget {
       hasScrollBody: true,
       child: Padding(
         padding: kIsWeb ? const EdgeInsets.symmetric(horizontal: 40.0) : const EdgeInsets.all(0),
-        child: GridView.extent(
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1,
-          maxCrossAxisExtent: 200,
-          children: producers
-              .map(
-                (e) => Container(
-                  constraints: const BoxConstraints(
-                    minWidth: 200,
-                    maxWidth: 200,
-                    minHeight: 150,
-                    maxHeight: 150,
-                  ),
-                  child: Producer(
-                    producerName: e.name,
-                    devicesInfo: '${e.devicesAmount} ${localizations.devices}',
-                    imageUrl: '',
-                    uid: e.uid,
-                  ),
-                ),
-              )
-              .toList(),
-        ),
+        child: producers.isEmpty
+            ? Center(child: Text(localizations.no_producers.capitalize()))
+            : GridView.extent(
+                physics: const NeverScrollableScrollPhysics(),
+                childAspectRatio: 1,
+                maxCrossAxisExtent: 200,
+                children: producers
+                    .map(
+                      (e) => Container(
+                        constraints: const BoxConstraints(
+                          minWidth: 200,
+                          maxWidth: 200,
+                          minHeight: 150,
+                          maxHeight: 150,
+                        ),
+                        child: Producer(
+                          producerName: e.name,
+                          devicesInfo: '${e.devicesAmount} ${localizations.devices}',
+                          imageUrl: '',
+                          uid: e.uid,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
       ),
     );
   }
