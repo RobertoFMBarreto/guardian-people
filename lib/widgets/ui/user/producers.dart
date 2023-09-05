@@ -17,15 +17,7 @@ class Producers extends StatelessWidget {
         padding: kIsWeb ? const EdgeInsets.symmetric(horizontal: 40.0) : const EdgeInsets.all(0),
         child: GridView.extent(
           physics: const NeverScrollableScrollPhysics(),
-          // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //   crossAxisCount: 7,
-          //   crossAxisSpacing: 0,
-          //   mainAxisSpacing: 0,
-          //   childAspectRatio: 1.35,
-          // ),
-          // itemCount: producers.length,
           childAspectRatio: 1,
-
           maxCrossAxisExtent: 200,
           children: producers
               .map(

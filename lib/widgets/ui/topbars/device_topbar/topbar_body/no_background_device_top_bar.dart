@@ -34,6 +34,34 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
     super.initState();
   }
 
+  void _showColorPicker() {
+    showDialog(
+      context: context,
+      builder: (context) => CustomColorPickerInput(
+        pickerColor: deviceColor,
+        onSave: (color) {
+          _onColorUpdate(color);
+        },
+        hexColor: HexColor.toHex(color: deviceColor),
+      ),
+    );
+  }
+
+  Future<void> _onColorUpdate(Color color) async {
+    // TODO: Logic to update device color
+    setState(() {
+      deviceColor = color;
+      widget.device.color = HexColor.toHex(color: deviceColor);
+      widget.onColorChanged();
+    });
+
+    await updateDevice(
+      widget.device.copy(
+        color: HexColor.toHex(color: deviceColor),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -164,27 +192,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => CustomColorPickerInput(
-                                  pickerColor: deviceColor,
-                                  onSave: (color) {
-                                    // TODO: Logic to update device color
-                                    setState(() {
-                                      deviceColor = color;
-                                      widget.device.color = HexColor.toHex(color: deviceColor);
-                                      widget.onColorChanged();
-                                    });
-
-                                    updateDevice(
-                                      widget.device.copy(
-                                        color: HexColor.toHex(color: deviceColor),
-                                      ),
-                                    );
-                                  },
-                                  hexColor: HexColor.toHex(color: deviceColor),
-                                ),
-                              );
+                              _showColorPicker();
                             },
                             child: ColorCircle(
                               color: deviceColor,

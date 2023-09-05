@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/widgets/ui/user/circle_avatar_border.dart';
 
 //ignore: must_be_immutable
 class ExtendedTopBar extends StatelessWidget {
@@ -42,18 +43,8 @@ class ExtendedTopBar extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 60 * (1 - (extent / 100)),
-                ),
-                CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  radius: 58 * (1 - (extent / 100)),
-                ),
-              ],
+            child: CircleAvatarBorder(
+              radius: 60 * (1 - (extent / 100)),
             ),
           ),
           Text(

@@ -38,6 +38,65 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
+  void _onLogin(AppLocalizations localizations) {
+    // if true the inputs are filled and correct
+    if (_formKey.currentState!.validate()) {
+      if (hasConnection) {
+        // show loading
+        showLoadingDialog(context);
+
+        // search user and verify if its correct
+        // TODO: Change to services
+        loadUsers().then(
+          (allUsers) async {
+            List<User> users = allUsers;
+            List<User> user = users
+                .where((element) => element.email == _email && _password == 'teste123@')
+                .toList();
+            if (user.isEmpty) {
+              Navigator.of(context).pop();
+              setState(() {
+                errorString = localizations.login_error.capitalize();
+              });
+            } else {
+              _loadDataRemoveThisLater(users, user.first).then((_) {
+                // pop loading dialog
+                Navigator.of(context).pop();
+                // store session data
+                setUserSession(user.first.uid);
+                // store user profile
+                createUser(user.first).then((_) {
+                  // send to admin or producer
+                  Navigator.of(context).popAndPushNamed(
+                    user.first.isAdmin ? '/admin' : '/producer',
+                  );
+                });
+              });
+            }
+          },
+        );
+      } else {
+        setState(() {
+          errorString = localizations.no_wifi.capitalize();
+        });
+      }
+    }
+  }
+
+  String? _validateEmail(String? value, AppLocalizations localizations) {
+    if (value == null || value.isEmpty) {
+      return localizations.empty_field.capitalize();
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value, AppLocalizations localizations) {
+    if (value == null || value.isEmpty) {
+      return localizations.empty_field.capitalize();
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -94,10 +153,7 @@ class _LoginFormState extends State<LoginForm> {
                       label: Text('Email'),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return localizations.empty_field.capitalize();
-                      }
-                      return null;
+                      return _validateEmail(value, localizations);
                     },
                     onChanged: (newValue) {
                       _email = newValue;
@@ -114,10 +170,7 @@ class _LoginFormState extends State<LoginForm> {
                       label: Text('Password'),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return localizations.empty_field.capitalize();
-                      }
-                      return null;
+                      return _validatePassword(value, localizations);
                     },
                     onChanged: (newValue) {
                       _password = newValue;
@@ -128,49 +181,7 @@ class _LoginFormState extends State<LoginForm> {
                   padding: const EdgeInsets.all(15.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      // if true the inputs are filled and correct
-                      if (_formKey.currentState!.validate()) {
-                        if (hasConnection) {
-                          // show loading
-                          showLoadingDialog(context);
-
-                          // search user and verify if its correct
-                          // TODO: Change to services
-                          loadUsers().then(
-                            (allUsers) async {
-                              List<User> users = allUsers;
-                              List<User> user = users
-                                  .where((element) =>
-                                      element.email == _email && _password == 'teste123@')
-                                  .toList();
-                              if (user.isEmpty) {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  errorString = localizations.login_error.capitalize();
-                                });
-                              } else {
-                                _loadDataRemoveThisLater(users, user.first).then((_) {
-                                  // pop loading dialog
-                                  Navigator.of(context).pop();
-                                  // store session data
-                                  setUserSession(user.first.uid);
-                                  // store user profile
-                                  createUser(user.first).then((_) {
-                                    // send to admin or producer
-                                    Navigator.of(context).popAndPushNamed(
-                                      user.first.isAdmin ? '/admin' : '/producer',
-                                    );
-                                  });
-                                });
-                              }
-                            },
-                          );
-                        } else {
-                          setState(() {
-                            errorString = localizations.no_wifi.capitalize();
-                          });
-                        }
-                      }
+                      _onLogin(localizations);
                     },
                     child: const Text('Login'),
                   ),
