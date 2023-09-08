@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
+import 'package:guardian/models/helpers/user_alert.dart';
+import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 class AlertManagementItem extends StatelessWidget {
-  final UserAlert alert;
-  final Function(UserAlert) onDelete;
+  final UserAlertCompanion alert;
+  final Function(UserAlertCompanion) onDelete;
 
   const AlertManagementItem({
     super.key,
@@ -39,7 +40,7 @@ class AlertManagementItem extends StatelessWidget {
                         children: [
                           TextSpan(
                             text:
-                                '${alert.parameter.toShortString(context).capitalize()} ${alert.comparisson.toShortString(context)} ',
+                                '${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize()} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -49,11 +50,11 @@ class AlertManagementItem extends StatelessWidget {
                       maxLines: 2,
                       text: TextSpan(
                         text:
-                            '${alert.comparisson == AlertComparissons.equal ? localizations.to : localizations.than} ',
+                            '${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ',
                         style: theme.textTheme.bodyLarge,
                         children: [
                           TextSpan(
-                            text: alert.value.toString(),
+                            text: alert.value.value.toString(),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -66,7 +67,7 @@ class AlertManagementItem extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
-                    "${localizations.notification.capitalize()}: ${alert.hasNotification ? localizations.yes.capitalize() : localizations.no.capitalize()}",
+                    "${localizations.notification.capitalize()}: ${alert.hasNotification.value ? localizations.yes.capitalize() : localizations.no.capitalize()}",
                     style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),

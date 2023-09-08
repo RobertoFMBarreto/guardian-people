@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/user_alert_notification.dart';
+import 'package:guardian/models/helpers/user_alert.dart';
+import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 
 class AlertItem extends StatelessWidget {
-  final UserAlertNotification alertNotification;
+  final AlertNotification alertNotification;
   final Function() onRemove;
   const AlertItem({
     super.key,
@@ -30,9 +30,9 @@ class AlertItem extends StatelessWidget {
             size: 30,
             color: theme.colorScheme.secondary,
           ),
-          title: Text(alertNotification.device.imei),
+          title: Text(alertNotification.device.device.imei.value),
           subtitle: Text(
-              '${alertNotification.alert.parameter.toShortString(context).capitalize()} ${alertNotification.alert.comparisson.toShortString(context)} ${alertNotification.alert.comparisson == AlertComparissons.equal ? localizations.to : localizations.than} ${alertNotification.alert.value}'),
+              '${alertNotification.alert.parameter.value.capitalize()} ${alertNotification.alert.comparisson.value} ${alertNotification.alert.comparisson.value == AlertComparissons.equal.toShortString(context) ? localizations.to : localizations.than} ${alertNotification.alert.value}'),
           trailing: IconButton(
             onPressed: onRemove,
             icon: Icon(

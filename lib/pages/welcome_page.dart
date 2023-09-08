@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/operations/user_operations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

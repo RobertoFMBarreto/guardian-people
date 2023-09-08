@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/pages/admin/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/admin_home_page.dart';
 import 'package:guardian/pages/admin/admin_producer_page.dart';
@@ -57,13 +56,13 @@ Map<String, Widget Function(BuildContext)> routes = {
   },
   '/producer/fence/manage': (context) {
     return ManageFencePage(
-      fence: ModalRoute.of(context)!.settings.arguments as Fence,
+      fence: ModalRoute.of(context)!.settings.arguments as FenceData,
     );
   },
   '/producer/geofencing': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == Fence) {
+    if (ModalRoute.of(context)!.settings.arguments.runtimeType == FenceData) {
       return GeofencingPage(
-        fence: ModalRoute.of(context)!.settings.arguments as Fence,
+        fence: ModalRoute.of(context)!.settings.arguments as FenceData,
       );
     } else {
       return const GeofencingPage();
@@ -120,16 +119,19 @@ Map<String, Widget Function(BuildContext)> routes = {
       final data = args as Map<String, dynamic>;
       return AddAlertPage(
         isEdit: data['isEdit'] as bool,
-        alert: data['alert'] as UserAlert,
+        alert: data['alert'] as UserAlertCompanion,
       );
     } else {
       return const AddAlertPage();
     }
   },
   '/producer/alert/management': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    if (args != null) {
+      final data = args as Map<String, dynamic>;
       return AlertsManagementPage(
-        isSelect: ModalRoute.of(context)!.settings.arguments as bool,
+        isSelect: data['isSelect'] as bool,
+        deviceId: data['deviceId'] as String?,
       );
     } else {
       throw ErrorDescription('isSelect not provided');

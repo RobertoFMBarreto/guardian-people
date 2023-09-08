@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -97,7 +97,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         if (mounted) {
           setState(() {
             _devices = [];
-            _devices.addAll(searchDevices);
+            _devices.addAll(searchDevices as Iterable<Device>);
           });
         }
       });
@@ -114,11 +114,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           if (widget.notToShowDevices != null) {
             _devices.addAll(
               filteredDevices.where(
-                (device) => !widget.notToShowDevices!.contains(device.deviceId),
-              ),
+                (device) => !widget.notToShowDevices!.contains(
+                  device.device.deviceId.value,
+                ),
+              ) as Iterable<Device>,
             );
           } else {
-            _devices.addAll(filteredDevices);
+            _devices.addAll(filteredDevices as Iterable<Device>);
           }
         }),
       );
@@ -273,16 +275,22 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       ),
                                       child: widget.isSelect
                                           ? DeviceItemSelectable(
-                                              deviceImei: _devices[index].name,
-                                              deviceData: _devices[index].data!.first.dataUsage,
-                                              deviceBattery: _devices[index].data!.first.battery,
+                                              deviceImei: _devices[index].device.name.value,
+                                              deviceData: _devices[index].data.isNotEmpty
+                                                  ? _devices[index].data.first.dataUsage.value
+                                                  : null,
+                                              deviceBattery: _devices[index].data.isNotEmpty
+                                                  ? _devices[index].data.first.battery.value
+                                                  : null,
                                               isSelected: _selectedDevices
                                                   .where((element) =>
-                                                      element.deviceId == _devices[index].deviceId)
+                                                      element.device.deviceId ==
+                                                      _devices[index].device.deviceId)
                                                   .isNotEmpty,
                                               onSelected: () {
                                                 int i = _selectedDevices.indexWhere((element) =>
-                                                    element.deviceId == _devices[index].deviceId);
+                                                    element.device.deviceId ==
+                                                    _devices[index].device.deviceId);
                                                 setState(() {
                                                   if (i >= 0) {
                                                     _selectedDevices.removeAt(i);

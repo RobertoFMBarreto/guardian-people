@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/key_value_pair.dart';
+import 'package:guardian/models/helpers/key_value_pair.dart';
+import 'package:guardian/models/helpers/user_alert.dart';
 
 class AlertComparissonDropdown extends StatelessWidget {
   final AlertComparissons value;

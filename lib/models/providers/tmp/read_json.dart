@@ -1,26 +1,21 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Device/device_data.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/data_models/Fences/fence_devices.dart';
-import 'package:guardian/models/db/data_models/Fences/fence_points.dart';
-import 'package:guardian/models/db/data_models/user.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
-import 'package:guardian/models/db/operations/fence_devices_operations.dart';
-import 'package:guardian/models/db/operations/fence_operations.dart';
-import 'package:guardian/models/db/operations/device_data_operations.dart';
-import 'package:guardian/models/db/operations/fence_points_operations.dart';
-import 'package:guardian/models/db/operations/user_alert_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
+import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
 import 'package:guardian/models/providers/tmp/alerts_data.dart';
 import 'package:guardian/models/providers/tmp/devices_data.dart';
 import 'package:guardian/models/providers/tmp/fences_data.dart';
 import 'package:guardian/models/providers/tmp/users_data.dart';
 
-Future<List<User>> loadUsers() async {
+Future<List<UserCompanion>> loadUsers() async {
   String usersInput = '';
   if (!kIsWeb) {
     usersInput = await rootBundle.loadString('assets/data/users.json');
@@ -32,16 +27,16 @@ Future<List<User>> loadUsers() async {
   } else {
     usersMap = usersDataJson;
   }
-  List<User> users = [];
+  List<UserCompanion> users = [];
   usersMap['users']!.forEach(
     (user) {
       users.add(
-        User(
-          uid: user['id'],
-          name: user['name'],
-          email: user['email'],
-          isAdmin: user['role'] == 0,
-          phone: 999999999,
+        UserCompanion(
+          uid: Value(user['id']),
+          name: Value(user['name']),
+          email: Value(user['email']),
+          isAdmin: Value(user['role'] == 0),
+          phone: const Value(999999999),
         ),
       );
     },
@@ -49,7 +44,7 @@ Future<List<User>> loadUsers() async {
   return users;
 }
 
-Future<List<Device>> loadUserDevices(String uid) async {
+Future<List<DeviceCompanion>> loadUserDevices(String uid) async {
   String devicesInput = '';
   if (!kIsWeb) {
     devicesInput = await rootBundle.loadString('assets/data/devices.json');
@@ -61,48 +56,36 @@ Future<List<Device>> loadUserDevices(String uid) async {
     devicesMap = devicesDataJson;
   }
   List<dynamic> devicesMapList = devicesMap['devices'];
-  List<Device> devices = [];
+  List<DeviceCompanion> devices = [];
   for (var device in devicesMapList) {
     if (device['uid'] == uid) {
+      print('GdDebug> Device:$device');
       // load devices and their data
       await createDevice(
-        Device(
-          imei: device['imei'],
-          color: device['color'],
-          isActive: device['isBlocked'],
-          deviceId: device['imei'],
-          name: device['name'],
-          uid: device['uid'],
+        DeviceCompanion(
+          imei: Value(device['imei']),
+          color: Value(device['color']),
+          isActive: Value(device['isBlocked']),
+          deviceId: Value(device['imei']),
+          name: Value(device['name']),
+          uid: Value(device['uid']),
         ),
       );
       // load device packages
       for (var deviceData in device['data']) {
-        DeviceDataState state;
-        if (deviceData['state'] == '=') {
-          state = DeviceDataState.eating;
-        } else if (deviceData['state'] == 'fighting') {
-          state = DeviceDataState.fighting;
-        } else if (deviceData['state'] == 'ruminating') {
-          state = DeviceDataState.ruminating;
-        } else if (deviceData['state'] == 'running') {
-          state = DeviceDataState.running;
-        } else if (deviceData['state'] == 'stopped') {
-          state = DeviceDataState.stopped;
-        } else {
-          state = DeviceDataState.walking;
-        }
         await createDeviceData(
-          DeviceData(
-            deviceId: device['imei'],
-            dataUsage: 7,
-            battery: deviceData['battery'],
-            elevation: deviceData['altitude'],
-            temperature: 24,
-            lat: deviceData['lat'],
-            lon: deviceData['lon'],
-            accuracy: deviceData['accuracy'],
-            dateTime: DateTime.parse(deviceData['lteTime']),
-            state: state,
+          DeviceLocationsCompanion(
+            deviceDataId: Value(deviceData['id']),
+            deviceId: Value(device['imei']),
+            dataUsage: const Value(7),
+            battery: Value(deviceData['battery']),
+            elevation: Value(deviceData['altitude']),
+            temperature: const Value(24),
+            lat: Value(deviceData['lat']),
+            lon: Value(deviceData['lon']),
+            accuracy: Value(deviceData['accuracy']),
+            date: Value(DateTime.parse(deviceData['lteTime'])),
+            state: Value(deviceData['state']),
           ),
         );
       }
@@ -125,42 +108,20 @@ Future<List<UserAlert>> loadAlerts() async {
   List<dynamic> alertsMapList = alertsMap['alerts'];
   List<UserAlert> alerts = [];
   for (var alert in alertsMapList) {
-    // load alerts
-    AlertParameter parameter;
-    if (alert['parameter'] == 'tmp') {
-      parameter = AlertParameter.temperature;
-    } else if (alert['parameter'] == 'bat') {
-      parameter = AlertParameter.battery;
-    } else {
-      parameter = AlertParameter.dataUsage;
-    }
-    AlertComparissons comparisson;
-    if (alert['parameter'] == '=') {
-      comparisson = AlertComparissons.equal;
-    } else if (alert['parameter'] == '>') {
-      comparisson = AlertComparissons.greater;
-    } else if (alert['parameter'] == '<') {
-      comparisson = AlertComparissons.less;
-    } else if (alert['parameter'] == '>=') {
-      comparisson = AlertComparissons.greaterOrEqual;
-    } else {
-      comparisson = AlertComparissons.lessOrEqual;
-    }
-
     createAlert(
-      UserAlert(
-        hasNotification: alert['hasNotification'],
-        parameter: parameter,
-        comparisson: comparisson,
-        value: alert['value'],
-        alertId: alert['id'],
+      UserAlertCompanion(
+        hasNotification: Value(alert['hasNotification']),
+        parameter: Value(alert['parameter']),
+        comparisson: Value(alert['comparisson']),
+        value: Value(alert['value']),
+        alertId: Value(alert['id']),
       ),
     );
   }
   return alerts;
 }
 
-Future<List<Fence>> loadUserFences(String uid) async {
+Future<void> loadUserFences(String uid) async {
   String fencesInput = '';
   if (!kIsWeb) {
     fencesInput = await rootBundle.loadString('assets/data/fences.json');
@@ -172,40 +133,38 @@ Future<List<Fence>> loadUserFences(String uid) async {
     fencesMap = fencesDataJson;
   }
   List<dynamic> fencesMapList = fencesMap['fences'];
-  List<Fence> fences = [];
   for (var fence in fencesMapList) {
     if (fence['uid'] == uid) {
       // load fence points
       for (var point in fence['points']) {
         createFencePoint(
-          FencePoint(
-            fenceId: fence["id"],
-            lat: point['lat'],
-            lon: point['lon'],
+          FencePointsCompanion(
+            fenceId: Value(fence["id"]),
+            lat: Value(point['lat']),
+            lon: Value(point['lon']),
           ),
         );
       }
 
       for (var device in fence['devices']) {
         createFenceDevice(
-          FenceDevice(
-            fenceId: fence["id"],
-            deviceId: device['imei'],
+          FenceDevicesCompanion(
+            fenceId: Value(fence["id"]),
+            deviceId: Value(device['imei']),
           ),
         );
       }
 
       // load fences and their points
       createFence(
-        Fence(
-          name: fence["name"],
-          color: fence["color"],
-          fenceId: fence["id"],
+        FenceCompanion(
+          name: Value(fence["name"]),
+          color: Value(fence["color"]),
+          fenceId: Value(fence["id"]),
         ),
       );
     }
   }
-  return fences;
 }
 
 // Future<Device?> loadDevice(String deviceImei) async {

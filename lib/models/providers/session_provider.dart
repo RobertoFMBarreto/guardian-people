@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/guardian_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> setUserSession(String uid) async {
@@ -15,9 +14,6 @@ Future<void> clearUserSession() async {
 
   // remove all session data
   await prefs.clear();
-
-  // TODO call logout service
-  await GuardianDatabase.deleteDb();
 }
 
 Future<bool> hasUserSession() async {

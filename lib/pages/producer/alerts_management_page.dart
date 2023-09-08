@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/db/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/operations/user_alert_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
@@ -14,10 +14,12 @@ import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart'
 
 class AlertsManagementPage extends StatefulWidget {
   final bool isSelect;
+  final String? deviceId;
 
   const AlertsManagementPage({
     super.key,
     this.isSelect = false,
+    this.deviceId,
   });
 
   @override
@@ -27,8 +29,8 @@ class AlertsManagementPage extends StatefulWidget {
 class _AlertsManagementPageState extends State<AlertsManagementPage> {
   late Future _future;
 
-  List<UserAlert> _alerts = [];
-  final List<UserAlert> _selectedAlerts = [];
+  List<UserAlertCompanion> _alerts = [];
+  final List<UserAlertCompanion> _selectedAlerts = [];
 
   @override
   void initState() {
@@ -42,8 +44,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
 
   Future<void> _loadAlerts() async {
     if (widget.isSelect) {
-      await getDeviceUnselectedAlerts().then(
+      await getDeviceUnselectedAlerts(widget.deviceId!).then(
         (allAlerts) {
+          print('Gotten: $allAlerts');
           if (mounted) {
             setState(() {
               _alerts = [];
@@ -184,7 +187,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                             alert: _alerts[index],
                                             onDelete: (alert) {
                                               // TODO: Remove code
-                                              deleteAlert(_alerts[index].alertId);
+                                              deleteAlert(_alerts[index].alertId.value);
                                               setState(() {
                                                 _alerts.removeAt(index);
                                               });

@@ -2,9 +2,9 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Device/device_data.dart';
-import 'package:guardian/models/db/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
 
@@ -19,7 +19,7 @@ class DeviceHistoryPage extends StatefulWidget {
 class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
   late DateTime _selectedValue;
   final firstItemDataKey = GlobalKey();
-  List<DeviceData> deviceData = [];
+  List<DeviceLocationsCompanion> _deviceData = [];
 
   @override
   void initState() {
@@ -30,13 +30,14 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
   Future<void> _setup() async {
     final now = DateTime.now();
     _selectedValue = DateTime(now.year, now.month, now.day);
+
     await _getDeviceData();
   }
 
   Future<void> _getDeviceData() async {
     getDeviceData(
       isInterval: true,
-      deviceId: widget.device.deviceId,
+      deviceId: widget.device.device.deviceId.value,
       startDate: _selectedValue,
       endDate: DateTime(
         _selectedValue.year,
@@ -48,8 +49,8 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
       ),
     ).then((newDeviceData) {
       setState(() {
-        deviceData = [];
-        deviceData.addAll(newDeviceData);
+        _deviceData = [];
+        _deviceData.addAll(newDeviceData);
       });
     });
   }
@@ -128,7 +129,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                 _getDeviceData();
               },
             ),
-            deviceData.isEmpty
+            _deviceData.isEmpty
                 ? Expanded(
                     child: Center(
                       child: Text(
@@ -142,7 +143,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                       child: SingleChildScrollView(
                         child: DeviceDataInfoList(
                           mapKey: firstItemDataKey,
-                          deviceData: deviceData,
+                          deviceData: _deviceData,
                         ),
                       ),
                     ),

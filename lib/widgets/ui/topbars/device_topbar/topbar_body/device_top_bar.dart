@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/device_min_top_bar.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/no_background_device_top_bar.dart';
 
@@ -8,7 +8,7 @@ class DeviceTopBar extends StatelessWidget {
   final double extent;
   final Device device;
   final Widget? tailWidget;
-  final Function()? onColorChanged;
+  final Function(String)? onColorChanged;
   const DeviceTopBar({
     super.key,
     required this.device,

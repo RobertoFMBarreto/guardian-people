@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/data_models/user.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
-import 'package:guardian/models/db/operations/fence_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
-import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/device/square_devices_info.dart';
@@ -28,12 +27,12 @@ class ProducerHome extends StatefulWidget {
 }
 
 class _ProducerHomeState extends State<ProducerHome> {
-  late User _user;
+  late UserData _user;
   late Future<void> _loadData;
 
   List<Device> _devices = [];
-  List<Fence> _fences = [];
-  List<UserAlertNotification> _alertNotifications = [];
+  List<FenceData> _fences = [];
+  List<AlertNotification> _alertNotifications = [];
 
   int _reloadMap = 9999;
 

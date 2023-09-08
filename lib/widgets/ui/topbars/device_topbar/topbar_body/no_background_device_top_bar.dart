@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/color_circle.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:drift/drift.dart' as drift;
 
 class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Device device;
   final Widget? tailWidget;
-  final Function() onColorChanged;
+  final Function(String) onColorChanged;
   const NoBackgroundDeviceTopBar({
     super.key,
     required this.device,
@@ -30,7 +31,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
 
   @override
   void initState() {
-    deviceColor = HexColor(widget.device.color);
+    deviceColor = HexColor(widget.device.device.color.value);
     super.initState();
   }
 
@@ -51,13 +52,12 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
     // TODO: Logic to update device color
     setState(() {
       deviceColor = color;
-      widget.device.color = HexColor.toHex(color: deviceColor);
-      widget.onColorChanged();
+      widget.onColorChanged(HexColor.toHex(color: deviceColor));
     });
 
     await updateDevice(
-      widget.device.copy(
-        color: HexColor.toHex(color: deviceColor),
+      widget.device.device.copyWith(
+        color: drift.Value(HexColor.toHex(color: deviceColor)),
       ),
     );
   }
@@ -122,13 +122,13 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        widget.device.name,
+                        widget.device.device.name.value,
                         style: theme.textTheme.headlineMedium!.copyWith(
                           color: theme.colorScheme.onSecondary,
                           fontSize: 40,
                         ),
                       ),
-                      if (widget.device.data == null)
+                      if (widget.device.data.isEmpty)
                         Text(
                           localizations.no_device_data.capitalize(),
                           style: theme.textTheme.bodyLarge!.copyWith(
@@ -137,14 +137,14 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                      if (widget.device.data != null)
+                      if (widget.device.data.isNotEmpty)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconText(
                               icon: Icons.sim_card,
                               iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data!.first.dataUsage}/10MB',
+                              text: '${widget.device.data.first.dataUsage.value}/10MB',
                               fontSize: 23,
                               iconSize: 25,
                               textColor: theme.colorScheme.onSecondary,
@@ -153,21 +153,21 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                               isInverted: true,
                               icon: Icons.landscape,
                               iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data!.first.elevation.round()}m',
+                              text: '${widget.device.data.first.elevation.value.round()}m',
                               fontSize: 23,
                               iconSize: 30,
                               textColor: theme.colorScheme.onSecondary,
                             ),
                           ],
                         ),
-                      if (widget.device.data != null)
+                      if (widget.device.data.isNotEmpty)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconText(
                               icon: Icons.device_thermostat,
                               iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data!.first.temperature}ºC',
+                              text: '${widget.device.data.first.temperature.value}ºC',
                               fontSize: 23,
                               iconSize: 30,
                               textColor: theme.colorScheme.onSecondary,
@@ -179,7 +179,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                               ),
                               isInverted: true,
                               iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data!.first.battery}%',
+                              text: '${widget.device.data.first.battery.value}%',
                               fontSize: 23,
                               iconSize: 30,
                               textColor: theme.colorScheme.onSecondary,

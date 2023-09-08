@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:guardian/models/custom_floating_btn_option.dart';
+import 'package:guardian/models/helpers/custom_floating_btn_option.dart';
 
 class CustomFloatingActionButton extends StatelessWidget {
   final List<CustomFloatingActionButtonOption> options;

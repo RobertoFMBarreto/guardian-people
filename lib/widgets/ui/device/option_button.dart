@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 class OptionButton extends StatelessWidget {
@@ -49,11 +49,11 @@ class OptionButton extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: onBlock,
                 icon: Icon(
-                  device.isActive ? Icons.lock_open : Icons.lock,
+                  device.device.isActive.value ? Icons.lock_open : Icons.lock,
                   color: theme.colorScheme.error,
                 ),
                 label: Text(
-                  '${device.isActive ? localizations.unblock.capitalize() : localizations.block.capitalize()} ${localizations.device.capitalize()}',
+                  '${device.device.isActive.value ? localizations.unblock.capitalize() : localizations.block.capitalize()} ${localizations.device.capitalize()}',
                   style: theme.textTheme.bodyLarge!.copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),

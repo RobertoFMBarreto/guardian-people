@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/key_value_pair.dart';
+import 'package:guardian/models/helpers/key_value_pair.dart';
 
 class CustomDropdown extends StatelessWidget {
   final Object value;

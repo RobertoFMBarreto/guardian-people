@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/operations/admin/admin_devices_operations.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-
+import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/device/device_item.dart';
 import 'package:guardian/widgets/ui/device/option_button.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.dart';
@@ -48,7 +48,8 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
     await getProducerDevices(widget.producerId).then((allDevices) {
       if (mounted) {
         setState(() {
-          _devices.addAll(allDevices.where((element) => element.deviceId != _device.deviceId));
+          _devices.addAll(
+              allDevices.where((element) => element.device.deviceId != _device.device.deviceId));
         });
       }
     });
@@ -94,22 +95,23 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                   ),
                   if (hasConnection)
                     OptionButton(
-                      key: Key(_device.isActive.toString()),
+                      key: Key(_device.device.isActive.value.toString()),
                       device: _device,
                       onRemove: () {
                         //TODO: Remove device
-                        deleteDevice(_device.deviceId).then((_) {
+                        deleteDevice(_device.device.deviceId.value).then((_) {
                           Navigator.of(context).pop();
                         });
                       },
                       onBlock: () {
                         //TODO: block device
 
-                        final newDevice = _device.copy(isActive: !_device.isActive);
+                        final newDevice = _device.device
+                            .copyWith(isActive: drift.Value(!_device.device.isActive.value));
                         updateDevice(newDevice).then((_) {
                           setState(
                             () {
-                              _device = newDevice;
+                              _device = Device(device: newDevice, data: _device.data);
                             },
                           );
                         });

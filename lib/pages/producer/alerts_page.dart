@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/operations/alert_notifications_operations.dart';
+import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
+import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/tmp/read_json.dart';
 
-import 'package:guardian/models/user_alert_notification.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,7 +23,7 @@ class AlertsPage extends StatefulWidget {
 class _AlertsPageState extends State<AlertsPage> {
   late Future _future;
 
-  List<UserAlertNotification> alerts = [];
+  List<AlertNotification> alerts = [];
 
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _AlertsPageState extends State<AlertsPage> {
           onPressed: () {
             Navigator.of(context).pushNamed(
               '/producer/alert/management',
-              arguments: false,
+              arguments: {'isSelect': false, 'deviceId': null},
             );
           },
           label: Text(
@@ -133,7 +133,7 @@ class _AlertsPageState extends State<AlertsPage> {
                                     alertNotification: alerts[index],
                                     onRemove: () async {
                                       await removeNotification(
-                                        alerts[index].notificationId,
+                                        alerts[index].alertNotificationId,
                                       ).then(
                                         (_) async => await _loadAlerts(),
                                       );

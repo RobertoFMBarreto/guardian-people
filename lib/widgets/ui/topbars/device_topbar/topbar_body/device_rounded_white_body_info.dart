@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
@@ -68,20 +68,20 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                       localizations.device_data.capitalize(),
                       style: theme.textTheme.headlineMedium,
                     ),
-                    if (device.data == null)
+                    if (device.data.isNotEmpty)
                       Text(
                         localizations.no_device_data.capitalize(),
                         style: theme.textTheme.bodyLarge!.copyWith(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
-                    if (device.data != null)
+                    if (device.data.isNotEmpty)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconText(
                             icon: Icons.sim_card,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${device.data!.first.dataUsage}/10MB',
+                            text: '${device.data.first.dataUsage}/10MB',
                             fontSize: 23,
                             iconSize: 25,
                           ),
@@ -89,20 +89,20 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                             isInverted: true,
                             icon: Icons.landscape,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${device.data!.first.elevation.round()}m',
+                            text: '${device.data.first.elevation.value.round()}m',
                             fontSize: 23,
                             iconSize: 30,
                           ),
                         ],
                       ),
-                    if (device.data != null)
+                    if (device.data.isNotEmpty)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconText(
                             icon: Icons.device_thermostat,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${device.data!.first.temperature}ºC',
+                            text: '${device.data.first.temperature}ºC',
                             fontSize: 23,
                             iconSize: 30,
                           ),
@@ -113,7 +113,7 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                             ),
                             isInverted: true,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${device.data!.first.battery}%',
+                            text: '${device.data.first.battery}%',
                             fontSize: 23,
                             iconSize: 30,
                           ),

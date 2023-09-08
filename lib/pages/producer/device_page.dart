@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-
+import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/device/device_map_widget.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -64,11 +64,15 @@ class _DevicePageState extends State<DevicePage> {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
-              key: Key("${_device.name}$hasConnection${theme.brightness}"),
+              key: Key("${_device.device.name.value}$hasConnection${theme.brightness}"),
               pinned: true,
               delegate: SliverDeviceAppBar(
-                onColorChanged: () {
-                  setState(() {});
+                onColorChanged: (newColor) {
+                  setState(() {
+                    _device = Device(
+                        device: _device.device.copyWith(color: drift.Value(newColor)),
+                        data: _device.data);
+                  });
                 },
                 title: Padding(
                   padding: const EdgeInsets.only(right: 20.0),

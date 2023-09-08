@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Device/device_data.dart';
-import 'package:guardian/models/db/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/range_date_time_input.dart';
@@ -23,7 +23,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   final _firstItemDataKey = GlobalKey();
   late Future _future;
 
-  List<DeviceData> _deviceData = [];
+  List<DeviceLocationsCompanion> _deviceData = [];
 
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
@@ -41,6 +41,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   }
 
   Future<void> _setup() async {
+    setState(() {
+      _deviceData = widget.device.data;
+    });
     await _getDeviceData();
   }
 
@@ -48,7 +51,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     await getDeviceData(
       startDate: _startDate,
       endDate: _endDate,
-      deviceId: widget.device.deviceId,
+      deviceId: widget.device.device.deviceId.value,
       isInterval: widget.isInterval,
     ).then(
       (data) async {
@@ -72,13 +75,14 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               child: RangeDateTimeInput(
                 startDate: _startDate,
                 endDate: _endDate,
-                onConfirm: (newStartDate, newEndDate) {
+                onConfirm: (newStartDate, newEndDate) async {
                   setState(() {
                     _startDate = newStartDate;
                     _endDate = newEndDate;
                   });
-                  _getDeviceData();
-                  Navigator.of(context).pop();
+                  await _getDeviceData().then(
+                    (_) => Navigator.of(context).pop(),
+                  );
                 },
               ),
             ),
@@ -213,11 +217,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                     borderRadius: BorderRadius.circular(20),
                     child: SingleDeviceLocationMap(
                       key: Key(
-                          '${_showFence}_${_showHeatMap}_${widget.device.color}${widget.isInterval}'),
+                          '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'),
                       showCurrentPosition: true,
                       deviceData: _deviceData,
-                      imei: widget.device.imei,
-                      deviceColor: widget.device.color,
+                      imei: widget.device.device.imei.value,
+                      deviceColor: widget.device.device.color.value,
                       showFence: _showFence,
                       isInterval: widget.isInterval,
                       endDate: _endDate,

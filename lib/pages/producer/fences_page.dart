@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/operations/fence_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
@@ -30,8 +30,8 @@ class _FencesPageState extends State<FencesPage> {
   late Future _future;
 
   String _searchString = '';
-  List<Fence> _fences = [];
-  Fence? _selectedFence;
+  List<FenceData> _fences = [];
+  FenceData? _selectedFence;
 
   @override
   void initState() {
@@ -171,7 +171,7 @@ class _FencesPageState extends State<FencesPage> {
                                               color: HexColor(_fences[index].color),
                                               onRemove: () {
                                                 // TODO remove item from list
-                                                removeFence(_fences[index])
+                                                removeFence(_fences[index].toCompanion(true))
                                                     .then((_) => _searchFences());
                                               },
                                             ),

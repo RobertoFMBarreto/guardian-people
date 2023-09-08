@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/user.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/operations/admin/admin_users_operations.dart';
+import 'package:guardian/models/db/drift/operations/admin/admin_users_operations.dart';
+import 'package:guardian/models/db/drift/query_models/producer_with_devices_amount.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -26,7 +26,7 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   late Future _future;
 
-  List<User> _users = [];
+  List<ProducerWithDevicesAmount> _users = [];
   String _searchString = '';
 
   @override

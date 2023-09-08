@@ -1,9 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/user.dart';
-import 'package:guardian/models/db/operations/user_operations.dart';
 import 'package:guardian/main.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/tmp/read_json.dart';
@@ -25,17 +24,16 @@ class _LoginFormState extends State<LoginForm> {
   String _email = '';
   String _password = '';
 
-  Future<void> _loadDataRemoveThisLater(List<User> users, User user) async {
+  Future<void> _loadDataRemoveThisLater(List<UserCompanion> users, UserCompanion user) async {
     // TODO: To Remove it
-    if (user.isAdmin) {
+    if (user.isAdmin.value) {
       for (var u in users) {
-        await createUser(u);
-        await loadUserDevices(u.uid);
-        await loadUserFences(u.uid);
+        await loadUserDevices(u.uid.value);
+        await loadUserFences(u.uid.value);
       }
     } else {
-      await loadUserDevices(user.uid);
-      await loadUserFences(user.uid);
+      await loadUserDevices(user.uid.value);
+      await loadUserFences(user.uid.value);
     }
   }
 
@@ -50,9 +48,9 @@ class _LoginFormState extends State<LoginForm> {
         // TODO: Change to services
         loadUsers().then(
           (allUsers) async {
-            List<User> users = allUsers;
-            List<User> user = users
-                .where((element) => element.email == _email && _password == 'teste123@')
+            List<UserCompanion> users = allUsers;
+            List<UserCompanion> user = users
+                .where((element) => element.email.value == _email && _password == 'teste123@')
                 .toList();
             if (user.isEmpty) {
               Navigator.of(context).pop();
@@ -64,13 +62,14 @@ class _LoginFormState extends State<LoginForm> {
                 // pop loading dialog
                 Navigator.of(context).pop();
                 // store session data
-                setUserSession(user.first.uid);
-                // store user profile
-                createUser(user.first).then((_) {
-                  // send to admin or producer
-                  Navigator.of(context).popAndPushNamed(
-                    user.first.isAdmin ? '/admin' : '/producer',
-                  );
+                setUserSession(user.first.uid.value).then((_) {
+                  // store user profile
+                  createUser(user.first).then((_) {
+                    // send to admin or producer
+                    Navigator.of(context).popAndPushNamed(
+                      user.first.isAdmin.value ? '/admin' : '/producer',
+                    );
+                  });
                 });
               });
             }

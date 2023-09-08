@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 
 class DeviceMinTopBar extends StatelessWidget {
   final Device device;
@@ -23,7 +23,7 @@ class DeviceMinTopBar extends StatelessWidget {
             icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSecondary),
           ),
           Text(
-            device.name,
+            device.device.name.value,
             style: theme.textTheme.bodyMedium!.copyWith(color: theme.colorScheme.onSecondary),
           ),
         ],

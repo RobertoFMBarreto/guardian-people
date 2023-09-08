@@ -2,22 +2,22 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Alerts/alert_devices.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/alert_devices_operations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/db/operations/user_alert_operations.dart';
+import 'package:guardian/models/helpers/key_value_pair.dart';
+import 'package:guardian/models/helpers/user_alert.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/key_value_pair.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-
+import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
 import 'package:guardian/widgets/ui/device/device_item_removable.dart';
 
 class AddAlertPage extends StatefulWidget {
-  final UserAlert? alert;
+  final UserAlertCompanion? alert;
   final bool? isEdit;
   const AddAlertPage({
     super.key,
@@ -31,10 +31,10 @@ class AddAlertPage extends StatefulWidget {
 
 class _AddAlertPageState extends State<AddAlertPage> {
   final _formKey = GlobalKey<FormState>();
-  final List<Device> _alertDevices = [];
 
   late Future _future;
 
+  List<Device> _alertDevices = [];
   AlertComparissons _alertComparisson = AlertComparissons.equal;
   AlertParameter _alertParameter = AlertParameter.temperature;
   double _comparissonValue = 0;
@@ -48,11 +48,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _setup() async {
     if (widget.alert != null) {
-      _alertComparisson = widget.alert!.comparisson;
-      _alertParameter = widget.alert!.parameter;
-      _comparissonValue = widget.alert!.value;
-      _sendNotification = widget.alert!.hasNotification;
-      await _getAlertDevices(widget.alert!.alertId);
+      _alertComparisson = parseComparissonFromString(widget.alert!.comparisson.value);
+      _alertParameter = parseAlertParameterFromString(widget.alert!.parameter.value);
+      _comparissonValue = widget.alert!.value.value;
+      _sendNotification = widget.alert!.hasNotification.value;
+      await _getAlertDevices(widget.alert!.alertId.value);
     }
   }
 
@@ -67,9 +67,10 @@ class _AddAlertPageState extends State<AddAlertPage> {
   Future<void> _addAlertDevices(String alertId) async {
     for (var device in _alertDevices) {
       await addAlertDevice(
-        AlertDevice(
-          deviceId: device.deviceId,
-          alertId: alertId,
+        AlertDevicesCompanion(
+          alertDeviceId: drift.Value(Random().nextInt(9999).toString()),
+          deviceId: device.device.deviceId,
+          alertId: drift.Value(alertId),
         ),
       );
     }
@@ -77,16 +78,17 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _updateAlert() async {
     await updateUserAlert(
-      widget.alert!.copy(
-        parameter: _alertParameter,
-        comparisson: _alertComparisson,
-        value: _comparissonValue,
-        hasNotification: _sendNotification,
+      widget.alert!.copyWith(
+        parameter: drift.Value(_alertParameter.toString()),
+        comparisson: drift.Value(_alertComparisson.toString()),
+        value: drift.Value(_comparissonValue),
+        hasNotification: drift.Value(_sendNotification),
       ),
     ).then(
-      (_) async => await removeAllAlertDevices(widget.alert!.alertId).then(
+      (_) async => await removeAllAlertDevices(widget.alert!.alertId.value).then(
         (_) async {
-          _addAlertDevices(widget.alert!.alertId).then(
+          await getAlertDevices(widget.alert!.alertId.value).then((val) => print('Val: $val'));
+          await _addAlertDevices(widget.alert!.alertId.value).then(
             (_) => Navigator.of(context).pop(),
           );
         },
@@ -96,12 +98,12 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _createAlert() async {
     final alertId = Random().nextInt(9999).toString();
-    final newAlert = UserAlert(
-      alertId: alertId,
-      hasNotification: _sendNotification,
-      parameter: _alertParameter,
-      comparisson: _alertComparisson,
-      value: _comparissonValue,
+    final newAlert = UserAlertCompanion(
+      alertId: drift.Value(alertId),
+      hasNotification: drift.Value(_sendNotification),
+      parameter: drift.Value(_alertParameter.toString()),
+      comparisson: drift.Value(_alertComparisson.toString()),
+      value: drift.Value(_comparissonValue),
     );
     await createAlert(
       newAlert,
@@ -114,13 +116,13 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _removeAlert(int index) async {
     await removeAlertDevice(
-      widget.alert!.alertId,
-      _alertDevices[index].deviceId,
+      widget.alert!.alertId.value,
+      _alertDevices[index].device.deviceId.value,
     ).then(
       (_) {
         setState(() {
           _alertDevices.removeWhere(
-            (element) => element.deviceId == _alertDevices[index].deviceId,
+            (element) => element.device.deviceId == _alertDevices[index].device.deviceId,
           );
         });
       },
@@ -199,9 +201,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              _alertComparisson != AlertComparissons.equal
-                                  ? localizations.than
-                                  : localizations.to,
+                              _alertComparisson == AlertComparissons.equal
+                                  ? localizations.to
+                                  : localizations.than,
                               style: theme.textTheme.bodyLarge!.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 18,
@@ -299,14 +301,16 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 arguments: widget.alert != null
                                     ? {
                                         'isSelect': true,
-                                        'alertId': widget.alert!.alertId,
-                                        'notToShowDevices':
-                                            _alertDevices.map((e) => e.deviceId).toList(),
+                                        'alertId': widget.alert!.alertId.value,
+                                        'notToShowDevices': _alertDevices
+                                            .map((e) => e.device.deviceId.value)
+                                            .toList(),
                                       }
                                     : {
                                         'isSelect': true,
-                                        'notToShowDevices':
-                                            _alertDevices.map((e) => e.deviceId).toList(),
+                                        'notToShowDevices': _alertDevices
+                                            .map((e) => e.device.deviceId.value)
+                                            .toList(),
                                       },
                               )
                                   .then((selectedDevices) async {
@@ -338,7 +342,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         child: ListView.builder(
                           itemCount: _alertDevices.length,
                           itemBuilder: (context, index) => DeviceItemRemovable(
-                            key: Key(_alertDevices[index].deviceId),
+                            key: Key(_alertDevices[index].device.deviceId.value),
                             device: _alertDevices[index],
                             onRemoveDevice: () {
                               // TODO: On remove device
@@ -347,7 +351,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               } else {
                                 setState(() {
                                   _alertDevices.removeWhere(
-                                    (element) => element.deviceId == _alertDevices[index].deviceId,
+                                    (element) =>
+                                        element.device.deviceId ==
+                                        _alertDevices[index].device.deviceId,
                                   );
                                 });
                               }

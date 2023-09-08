@@ -1,16 +1,18 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
-import 'package:guardian/models/db/operations/fence_operations.dart';
-import 'package:guardian/models/db/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/models/helpers/fence.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/color_circle.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -22,7 +24,7 @@ import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GeofencingPage extends StatefulWidget {
-  final Fence? fence;
+  final FenceData? fence;
   const GeofencingPage({super.key, this.fence});
 
   @override
@@ -30,7 +32,7 @@ class GeofencingPage extends StatefulWidget {
 }
 
 class _GeofencingPageState extends State<GeofencingPage> {
-  final _polygons = <Polygon>[];
+  List<Polygon> _polygons = <Polygon>[];
   final TextEditingController _nameController = TextEditingController();
 
   late PolyEditor _polyEditor;
@@ -55,6 +57,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
 
   @override
   void initState() {
+    print(widget.fence);
     _future = _setup();
     super.initState();
   }
@@ -96,23 +99,41 @@ class _GeofencingPageState extends State<GeofencingPage> {
   }
 
   void _changePolygonColor() {
-    _editingPolygon = Polygon(
-      color: widget.fence != null
-          ? HexColor(widget.fence!.color).withOpacity(0.5)
-          : _fenceColor.withOpacity(0.5),
-      borderColor: widget.fence != null ? HexColor(widget.fence!.color) : _fenceColor,
-      borderStrokeWidth: 2,
-      isFilled: true,
-      points: _editingPolygon.points,
-    );
+    print(widget.fence != null && HexColor.toHex(color: _fenceColor) == widget.fence!.color);
+    setState(() {
+      _editingPolygon = Polygon(
+        color: widget.fence != null && HexColor.toHex(color: _fenceColor) == widget.fence!.color
+            ? HexColor(widget.fence!.color).withOpacity(0.5)
+            : _fenceColor.withOpacity(0.5),
+        borderColor:
+            widget.fence != null && HexColor.toHex(color: _fenceColor) == widget.fence!.color
+                ? HexColor(widget.fence!.color)
+                : _fenceColor,
+        borderStrokeWidth: 2,
+        isFilled: true,
+        points: _editingPolygon.points,
+      );
+      _polygons = [];
+      _polygons.add(_editingPolygon);
+    });
   }
 
   void _initPolyEditor() {
     _polyEditor = PolyEditor(
       addClosePathMarker: true,
       points: _editingPolygon.points,
-      pointIcon: const Icon(Icons.circle, size: 23),
-      intermediateIcon: _isCircle ? null : const Icon(Icons.square_rounded, size: 23),
+      pointIcon: const Icon(
+        Icons.circle,
+        size: 23,
+        color: Colors.black,
+      ),
+      intermediateIcon: _isCircle
+          ? null
+          : const Icon(
+              Icons.square_rounded,
+              size: 23,
+              color: Colors.black,
+            ),
       intermediateIconSize: const Size(50, 50),
       pointIconSize: const Size(50, 50),
       callbackRefresh: () {
@@ -153,7 +174,12 @@ class _GeofencingPageState extends State<GeofencingPage> {
 
   Future<void> _loadFencePoints() async {
     await getFencePoints(widget.fence!.fenceId).then(
-      (allPoints) => fencePoints.addAll(allPoints),
+      (allPoints) {
+        setState(() {
+          fencePoints = [];
+          fencePoints.addAll(allPoints);
+        });
+      },
     );
   }
 
@@ -170,18 +196,20 @@ class _GeofencingPageState extends State<GeofencingPage> {
       fenceId = widget.fence!.fenceId;
       // first udpate the fence
       await updateFence(
-        widget.fence!.copy(
-          name: _fenceName,
-          color: HexColor.toHex(color: _fenceColor),
-        ),
+        widget.fence!
+            .copyWith(
+              name: _fenceName,
+              color: HexColor.toHex(color: _fenceColor),
+            )
+            .toCompanion(true),
       );
     } else {
       fenceId = _fenceName;
       await createFence(
-        Fence(
-          fenceId: _fenceName,
-          name: _fenceName,
-          color: HexColor.toHex(color: _fenceColor),
+        FenceCompanion(
+          fenceId: drift.Value(_fenceName),
+          name: drift.Value(_fenceName),
+          color: drift.Value(HexColor.toHex(color: _fenceColor)),
         ),
       );
     }
@@ -247,14 +275,15 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                 MarkerLayer(
                                   markers: [
                                     ..._devices
+                                        .where((element) => element.data.isNotEmpty)
                                         .map(
                                           (device) => Marker(
-                                            point: LatLng(
-                                                device.data!.first.lat, device.data!.first.lon),
+                                            point: LatLng(device.data.first.lat.value,
+                                                device.data.first.lon.value),
                                             builder: (context) {
                                               return Icon(
                                                 Icons.location_on,
-                                                color: HexColor(device.color),
+                                                color: HexColor(device.device.color.value),
                                                 size: 30,
                                               );
                                             },

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/instance_manager.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,7 +15,7 @@ import 'package:latlong2/latlong.dart';
 class DevicesLocationsMap extends StatefulWidget {
   final bool showCurrentPosition;
   final List<Device> devices;
-  final List<Fence>? fences;
+  final List<FenceData>? fences;
   final String? reloadMap;
   final bool centerOnPoly;
   final bool centerOnDevice;
@@ -35,6 +36,7 @@ class DevicesLocationsMap extends StatefulWidget {
 class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
+  final db = Get.find<GuardianDb>();
 
   late Future _future;
 
@@ -64,11 +66,11 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     }
     await _loadFences();
     for (var device in widget.devices) {
-      if (device.data != null && device.data!.isNotEmpty) {
+      if (device.data.isNotEmpty) {
         devicesDataPoints.add(
           LatLng(
-            device.data!.first.lat,
-            device.data!.first.lon,
+            device.data.first.lat.value,
+            device.data.first.lon.value,
           ),
         );
       }
@@ -80,7 +82,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     List<Polygon> allCircles = [];
 
     if (widget.fences != null) {
-      for (Fence fence in widget.fences!) {
+      for (FenceData fence in widget.fences!) {
         await getFencePoints(fence.fenceId).then(
           (points) => points.length == 2
               ? allCircles.add(
@@ -129,9 +131,11 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       _currentPosition!.longitude,
                     )
                   : null,
-              bounds: widget.centerOnPoly
+              bounds: widget.centerOnPoly && devicesDataPoints.isNotEmpty
                   ? LatLngBounds.fromPoints(_polygons.first.points)
-                  : LatLngBounds.fromPoints(devicesDataPoints),
+                  : devicesDataPoints.isNotEmpty
+                      ? LatLngBounds.fromPoints(devicesDataPoints)
+                      : null,
               boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
               zoom: 17,
               minZoom: 3,
@@ -155,13 +159,17 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       },
                     ),
                   ...widget.devices
+                      .where((element) => element.data.isNotEmpty)
                       .map(
                         (device) => Marker(
-                          point: LatLng(device.data!.first.lat, device.data!.first.lon),
+                          point: LatLng(
+                            device.data.first.lat.value,
+                            device.data.first.lon.value,
+                          ),
                           builder: (context) {
                             return Icon(
                               Icons.location_on,
-                              color: HexColor(device.color),
+                              color: HexColor(device.device.color.value),
                               size: 30,
                             );
                           },

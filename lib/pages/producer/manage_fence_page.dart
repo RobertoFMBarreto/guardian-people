@@ -1,16 +1,16 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/data_models/Fences/fence_devices.dart';
-import 'package:guardian/models/db/operations/fence_devices_operations.dart';
-import 'package:guardian/models/db/operations/fence_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/hex_color.dart';
-import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/device/device_item_removable.dart';
@@ -18,7 +18,7 @@ import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class ManageFencePage extends StatefulWidget {
-  final Fence fence;
+  final FenceData fence;
 
   const ManageFencePage({
     super.key,
@@ -36,9 +36,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   String fenceHexColor = '';
   List<LatLng> points = [];
 
-  late Fence fence;
-
-  late String uid;
+  late FenceData fence;
 
   bool isLoading = true;
 
@@ -49,28 +47,32 @@ class _ManageFencePageState extends State<ManageFencePage> {
     fenceColor = HexColor(fence.color);
     fenceHexColor = fence.color;
     _loadDevices();
+    _reloadFence();
+  }
+
+  Future<void> _loadFencePoints() async {
+    await getFencePoints(fence.fenceId).then((fencePoints) {
+      setState(() {
+        points = [];
+        points.addAll(fencePoints);
+      });
+    });
   }
 
   Future<void> _loadDevices() async {
-    getUid(context).then((userId) {
-      if (userId != null) {
-        uid = userId;
-        getFenceDevices(fence.fenceId).then(
-          (allDevices) => setState(() {
-            devices.addAll(allDevices);
-            isLoading = false;
-          }),
-        );
-      }
-    });
+    await getFenceDevices(fence.fenceId).then(
+      (allDevices) => setState(() {
+        devices.addAll(allDevices);
+        isLoading = false;
+      }),
+    );
   }
 
   Future<void> _reloadFence() async {
-    getFence(widget.fence.fenceId).then((newFence) {
-      if (newFence != null) {
-        setState(() => fence = newFence);
-      }
+    await getFence(widget.fence.fenceId).then((newFence) {
+      setState(() => fence = newFence);
     });
+    _loadFencePoints();
   }
 
   Future<void> _selectDevices() async {
@@ -88,9 +90,9 @@ class _ManageFencePageState extends State<ManageFencePage> {
         });
         for (var device in selected) {
           await createFenceDevice(
-            FenceDevice(
-              fenceId: fence.fenceId,
-              deviceId: device.deviceId,
+            FenceDevicesCompanion(
+              fenceId: drift.Value(fence.fenceId),
+              deviceId: device.device.deviceId,
             ),
           );
         }
@@ -116,7 +118,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   TextButton(
                     onPressed: () {
                       // TODO call service to delete fence
-                      removeFence(fence).then((_) => Navigator.of(context).pop());
+                      removeFence(fence.toCompanion(true)).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
                       localizations.remove.capitalize(),
@@ -209,15 +211,19 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             child: ListView.builder(
                               itemCount: devices.length,
                               itemBuilder: (context, index) => DeviceItemRemovable(
-                                key: Key(devices[index].deviceId),
+                                key: Key(devices[index].device.deviceId.value),
                                 device: devices[index],
                                 onRemoveDevice: () {
                                   // TODO: On remove device
-                                  removeDeviceFence(fence.fenceId, devices[index].deviceId).then(
+                                  removeDeviceFence(
+                                          fence.fenceId, devices[index].device.deviceId.value)
+                                      .then(
                                     (_) {
                                       setState(() {
                                         devices.removeWhere(
-                                          (element) => element.deviceId == devices[index].deviceId,
+                                          (element) =>
+                                              element.device.deviceId ==
+                                              devices[index].device.deviceId,
                                         );
                                       });
                                     },

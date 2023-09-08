@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/db/data_models/user.dart';
+import 'package:guardian/models/db/drift/query_models/producer_with_devices_amount.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'producer.dart';
 
 class Producers extends StatelessWidget {
-  final List<User> producers;
+  final List<ProducerWithDevicesAmount> producers;
   const Producers({super.key, required this.producers});
 
   @override
@@ -32,10 +32,10 @@ class Producers extends StatelessWidget {
                           maxHeight: 150,
                         ),
                         child: Producer(
-                          producerName: e.name,
+                          producerName: e.user.name,
                           devicesInfo: '${e.devicesAmount} ${localizations.devices}',
                           imageUrl: '',
-                          uid: e.uid,
+                          uid: e.user.uid,
                         ),
                       ),
                     )

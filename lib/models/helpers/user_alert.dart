@@ -80,6 +80,7 @@ AlertParameter parseAlertParameterFromString(String text) {
 
 AlertComparissons parseComparissonFromString(String text) {
   String value = text.toString().split('.').last;
+  print(text);
 
   switch (value) {
     case 'equal':
@@ -99,68 +100,5 @@ AlertComparissons parseComparissonFromString(String text) {
 
     default:
       throw Exception('Invalid alert comparisson');
-  }
-}
-
-const String tableUserAlerts = 'user_alerts';
-
-class UserAlertFields {
-  static const String alertId = 'alert_id';
-  static const String hasNotification = 'has_notification';
-  static const String parameter = 'parameter';
-  static const String comparisson = 'comparisson';
-  static const String value = 'value';
-}
-
-class UserAlert {
-  final String alertId;
-  final bool hasNotification;
-  final AlertParameter parameter;
-  final AlertComparissons comparisson;
-  final double value;
-
-  UserAlert({
-    required this.alertId,
-    required this.hasNotification,
-    required this.parameter,
-    required this.comparisson,
-    required this.value,
-  });
-
-  UserAlert copy({
-    String? alertId,
-    String? deviceId,
-    String? uid,
-    bool? hasNotification,
-    AlertParameter? parameter,
-    AlertComparissons? comparisson,
-    double? value,
-  }) =>
-      UserAlert(
-        alertId: alertId ?? this.alertId,
-        hasNotification: hasNotification ?? this.hasNotification,
-        parameter: parameter ?? this.parameter,
-        comparisson: comparisson ?? this.comparisson,
-        value: value ?? this.value,
-      );
-
-  Map<String, Object?> toJson() => {
-        UserAlertFields.alertId: alertId,
-        UserAlertFields.hasNotification: hasNotification ? 1 : 0,
-        UserAlertFields.parameter: parameter.toString(),
-        UserAlertFields.comparisson: comparisson.toString(),
-        UserAlertFields.value: value,
-      };
-
-  static UserAlert fromJson(Map<String, Object?> json) {
-    final parameter = parseAlertParameterFromString(json[UserAlertFields.parameter] as String);
-    final comparisson = parseComparissonFromString(json[UserAlertFields.comparisson] as String);
-    return UserAlert(
-      alertId: json[UserAlertFields.alertId] as String,
-      hasNotification: json[UserAlertFields.hasNotification] == 1,
-      parameter: parameter,
-      comparisson: comparisson,
-      value: json[UserAlertFields.value] as double,
-    );
   }
 }

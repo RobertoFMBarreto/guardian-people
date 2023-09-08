@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/operations/user_operations.dart';
+import 'package:guardian/models/db/drift/operations/user_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
 class DeviceItem extends StatelessWidget {
@@ -57,26 +57,26 @@ class DeviceItem extends StatelessWidget {
             leading: Icon(
               Icons.sensors,
               size: 35,
-              color: HexColor(device.color),
+              color: HexColor(device.device.color.value),
             ),
             title: Text(
-              device.name.toString(),
+              device.device.name.value,
               style: theme.textTheme.bodyLarge!.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
               ),
             ),
-            trailing: device.data != null && device.data!.isNotEmpty
+            trailing: device.data.isNotEmpty
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DeviceWidgetProvider.getBatteryWidget(
-                        deviceBattery: device.data!.first.battery,
+                        deviceBattery: device.data.first.battery.value,
                         color: theme.colorScheme.secondary,
                       ),
                       Text(
-                        '${device.data!.first.battery.toString()}%',
+                        '${device.data.first.battery.value.toString()}%',
                         style: theme.textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w500,
                         ),

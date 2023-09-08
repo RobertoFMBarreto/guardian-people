@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device_data.dart';
-import 'package:guardian/models/db/operations/fence_devices_operations.dart';
-import 'package:guardian/models/db/operations/fence_points_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
+import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:latlong2/latlong.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
   final bool showCurrentPosition;
-  final List<DeviceData> deviceData;
+  final List<DeviceLocationsCompanion> deviceData;
   final String imei;
   final String deviceColor;
   final bool showFence;
@@ -52,6 +54,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   late Future _future;
 
   bool _showFence = true;
+  Position? _currentPosition;
 
   @override
   void initState() {
@@ -66,6 +69,14 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   }
 
   Future<void> _setup() async {
+    await getCurrentPosition(
+      context,
+      (position) {
+        if (mounted) {
+          setState(() => _currentPosition = position);
+        }
+      },
+    );
     await _loadDeviceFences();
     _showFence = widget.showFence;
   }
@@ -96,9 +107,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   @override
   Widget build(BuildContext context) {
-    List<DeviceData> data = widget.isInterval && widget.deviceData.isNotEmpty
+    List<DeviceLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
         ? widget.deviceData
-        : [widget.deviceData.first];
+        : widget.deviceData.isNotEmpty
+            ? [widget.deviceData.first]
+            : [];
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
@@ -110,10 +123,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
             options: MapOptions(
               center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
                   ? LatLng(
-                      data.first.lat,
-                      data.first.lon,
+                      data.first.lat.value,
+                      data.first.lon.value,
                     )
-                  : null,
+                  : LatLng(
+                      _currentPosition!.latitude,
+                      _currentPosition!.longitude,
+                    ),
               onMapReady: () {
                 _mapController.mapEventStream.listen((evt) {
                   widget.onZoomChange(_mapController.zoom);
@@ -143,7 +159,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                       strokeWidth: 5,
                       points: data
                           .map(
-                            (e) => LatLng(e.lat, e.lon),
+                            (e) => LatLng(e.lat.value, e.lon.value),
                           )
                           .toList(),
                     ),
@@ -154,7 +170,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                   heatMapDataSource: InMemoryHeatMapDataSource(
                     data: data
                         .map(
-                          (e) => WeightedLatLng(LatLng(e.lat, e.lon), 1),
+                          (e) => WeightedLatLng(LatLng(e.lat.value, e.lon.value), 1),
                         )
                         .toList(),
                   ),
@@ -169,25 +185,38 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                       padding: EdgeInsets.all(50),
                       maxZoom: 15,
                     ),
-                    markers: data
-                        .map(
-                          (e) => Marker(
-                            point: LatLng(e.lat, e.lon),
-                            anchorPos: AnchorPos.align(AnchorAlign.top),
-                            builder: (context) {
-                              return Transform.rotate(
-                                angle: _mapController.rotation * -pi / 180,
-                                alignment: Alignment.bottomCenter,
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: HexColor(widget.deviceColor),
-                                  size: 30,
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                        .toList(),
+                    markers: [
+                      if (_currentPosition != null)
+                        Marker(
+                          point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                          builder: (context) {
+                            return const Icon(
+                              Icons.circle,
+                              color: gdMapLocationPointColor,
+                              size: 30,
+                            );
+                          },
+                        ),
+                      ...data
+                          .map(
+                            (e) => Marker(
+                              point: LatLng(e.lat.value, e.lon.value),
+                              anchorPos: AnchorPos.align(AnchorAlign.top),
+                              builder: (context) {
+                                return Transform.rotate(
+                                  angle: _mapController.rotation * -pi / 180,
+                                  alignment: Alignment.bottomCenter,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: HexColor(widget.deviceColor),
+                                    size: 30,
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                          .toList()
+                    ],
                     builder: (context, markers) {
                       return Transform.rotate(
                         angle: _mapController.rotation * -pi / 180,

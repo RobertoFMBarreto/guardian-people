@@ -1,17 +1,17 @@
+import 'dart:math';
+
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Alerts/alert_devices.dart';
-import 'package:guardian/models/db/data_models/Alerts/user_alert.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/Fences/fence.dart';
-import 'package:guardian/models/db/data_models/Fences/fence_devices.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
-import 'package:guardian/models/db/operations/fence_devices_operations.dart';
-import 'package:guardian/models/db/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
@@ -29,8 +29,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   late Future _future;
 
   String _deviceName = '';
-  final List<UserAlert> _alerts = [];
-  final List<Fence> _fences = [];
+  List<UserAlertCompanion> _alerts = [];
+  List<FenceData> _fences = [];
   TextEditingController controller = TextEditingController();
 
   @override
@@ -46,24 +46,26 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _setup() async {
-    _deviceName = widget.device.name;
+    _deviceName = widget.device.device.name.value;
     await _getDeviceAlerts();
     await _getDeviceFences();
-    controller.text = widget.device.name;
+    controller.text = widget.device.device.name.value;
   }
 
   Future<void> _getDeviceAlerts() async {
-    await getDeviceAlerts(widget.device.deviceId).then((allAlerts) {
+    await getDeviceAlerts(widget.device.device.deviceId.value).then((allAlerts) {
       if (mounted) {
+        _alerts = [];
         setState(() => _alerts.addAll(allAlerts));
       }
     });
   }
 
   Future<void> _getDeviceFences() async {
-    getDeviceFence(widget.device.deviceId).then((deviceFence) {
+    getDeviceFence(widget.device.device.deviceId.value).then((deviceFence) {
       if (deviceFence != null) {
         if (mounted) {
+          _fences = [];
           setState(() => _fences.add(deviceFence));
         }
       }
@@ -113,23 +115,27 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(
+                            Navigator.of(context).pushNamed(
                               '/producer/alert/management',
-                              arguments: true,
-                            )
-                                .then(
+                              arguments: {
+                                'isSelect': true,
+                                'deviceId': widget.device.device.deviceId.value
+                              },
+                            ).then(
                               (gottenAlerts) async {
-                                if (gottenAlerts.runtimeType == List<UserAlert>) {
-                                  final selectedAlerts = gottenAlerts as List<UserAlert>;
+                                if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
+                                  final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
                                   setState(() {
                                     _alerts.addAll(selectedAlerts);
                                   });
                                   for (var selectedAlert in selectedAlerts) {
                                     await addAlertDevice(
-                                      AlertDevice(
-                                          deviceId: widget.device.deviceId,
-                                          alertId: selectedAlert.alertId),
+                                      AlertDevicesCompanion(
+                                        alertDeviceId:
+                                            drift.Value(Random().nextInt(9999).toString()),
+                                        deviceId: widget.device.device.deviceId,
+                                        alertId: selectedAlert.alertId,
+                                      ),
                                     );
                                   }
                                   // TODO: add service call
@@ -162,7 +168,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     alert: _alerts[index],
                                     onDelete: (alert) {
                                       // TODO: Delete code for alert
-                                      removeAlertDevice(alert.alertId, widget.device.deviceId);
+                                      removeAlertDevice(
+                                          alert.alertId.value, widget.device.device.deviceId.value);
                                       setState(() {
                                         _alerts.removeWhere(
                                             (element) => element.alertId == alert.alertId);
@@ -179,15 +186,16 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             Navigator.of(context)
                                 .pushNamed('/producer/fences', arguments: true)
                                 .then((newFenceData) {
-                              if (newFenceData != null && newFenceData.runtimeType == Fence) {
-                                final newFence = newFenceData as Fence;
+                              // TODO: Check if its wright
+                              if (newFenceData != null && newFenceData.runtimeType == FenceData) {
+                                final newFence = newFenceData as FenceData;
                                 setState(() {
                                   _fences.add(newFence);
                                 });
                                 createFenceDevice(
-                                  FenceDevice(
-                                    fenceId: newFence.fenceId,
-                                    deviceId: widget.device.deviceId,
+                                  FenceDevicesCompanion(
+                                    fenceId: drift.Value(newFence.fenceId),
+                                    deviceId: widget.device.device.deviceId,
                                   ),
                                 );
                               }
@@ -219,8 +227,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     name: _fences[index].name,
                                     color: HexColor(_fences[index].color),
                                     onRemove: () {
-                                      removeDeviceFence(
-                                          _fences[index].fenceId, widget.device.deviceId);
+                                      removeDeviceFence(_fences[index].fenceId,
+                                          widget.device.device.deviceId.value);
                                       setState(() {
                                         _fences.removeWhere(
                                           (element) => element.fenceId == _fences[index].fenceId,
@@ -232,7 +240,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                 ),
                               ),
                       ),
-                      if (widget.device.name != _deviceName)
+                      if (widget.device.device.name.value != _deviceName)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -241,7 +249,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    _deviceName = widget.device.name;
+                                    _deviceName = widget.device.device.name.value;
                                     controller.text = _deviceName;
                                   });
                                 },
@@ -255,7 +263,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                final newDevice = widget.device.copy(name: _deviceName);
+                                final newDevice = widget.device.device.copyWith(
+                                  name: drift.Value(_deviceName),
+                                );
                                 updateDevice(newDevice)
                                     .then((value) => Navigator.of(context).pop(newDevice));
                               },

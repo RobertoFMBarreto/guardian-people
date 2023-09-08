@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 
 class DeviceItemRemovable extends StatelessWidget {
@@ -35,23 +35,23 @@ class DeviceItemRemovable extends StatelessWidget {
                 )
               : null,
           title: Text(
-            device.name.toString(),
+            device.device.name.value.toString(),
             style: theme.textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
           ),
-          trailing: device.data != null && device.data!.isNotEmpty
+          trailing: device.data.isNotEmpty
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     DeviceWidgetProvider.getBatteryWidget(
-                      deviceBattery: device.data!.first.battery,
+                      deviceBattery: device.data.first.battery.value,
                       color: theme.colorScheme.secondary,
                     ),
                     Text(
-                      '${device.data!.first.battery.toString()}%',
+                      '${device.data.first.battery.value.toString()}%',
                       style: theme.textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w500,
                       ),

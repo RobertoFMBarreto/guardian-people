@@ -2,18 +2,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
-import 'package:guardian/models/db/data_models/Device/device.dart';
-import 'package:guardian/models/db/data_models/user.dart';
-import 'package:guardian/models/db/operations/admin/admin_devices_operations.dart';
-import 'package:guardian/models/db/operations/admin/admin_users_operations.dart';
-import 'package:guardian/models/db/operations/device_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/custom_floating_btn_option.dart';
+import 'package:guardian/models/helpers/custom_floating_btn_option.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/admin/admin_users_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/hex_color.dart';
+import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-
+import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/device/device_item.dart';
 import 'package:guardian/widgets/ui/device/device_item_removable.dart';
 import 'package:guardian/widgets/ui/interactables/floating_action_button.dart';
@@ -42,7 +42,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
 
   late double _maxElevation;
   late double _maxTemperature;
-  late User _producer;
+  late UserData _producer;
   late Future _future;
 
   String _searchString = '';
@@ -69,11 +69,9 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
       });
       await getProducer(widget.producerId).then((user) {
         if (mounted) {
-          if (user != null) {
-            setState(() {
-              _producer = user;
-            });
-          }
+          setState(() {
+            _producer = user;
+          });
         }
       });
     });
@@ -199,16 +197,14 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                           builder: (context) => AddDeviceBottomSheet(
                             onAddDevice: (imei, name) {
                               //TODO: Add device code
-                              createDevice(
-                                Device(
-                                  uid: widget.producerId,
-                                  deviceId: Random().nextInt(90000).toString(),
-                                  imei: imei,
-                                  color: HexColor.toHex(color: Colors.red),
-                                  isActive: true,
-                                  name: name,
-                                ),
-                              ).then((newDevice) {
+                              createDevice(DeviceCompanion(
+                                uid: drift.Value(widget.producerId),
+                                deviceId: drift.Value(Random().nextInt(90000).toString()),
+                                imei: drift.Value(imei),
+                                color: drift.Value(HexColor.toHex(color: Colors.red)),
+                                isActive: const drift.Value(true),
+                                name: drift.Value(name),
+                              )).then((newDevice) {
                                 Navigator.of(context).pop();
                                 _filterDevices().then((newDevices) {
                                   setState(() {
@@ -342,7 +338,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                       device: _devices[index],
                                       onRemoveDevice: () {
                                         // TODO: On remove device code
-                                        deleteDevice(_devices[index].deviceId).then((_) {
+                                        deleteDevice(_devices[index].device.deviceId.value)
+                                            .then((_) {
                                           setState(() {
                                             _devices.removeAt(index);
                                           });
