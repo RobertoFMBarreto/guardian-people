@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+// import 'package:get/get.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
+// import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
@@ -24,7 +26,9 @@ Future<void> main() async {
   // if (!kIsWeb) {
   //   await MapCaching().initMapCaching();
   // }
-  Get.put(GuardianDb());
+  if (!kIsWeb) {
+    Get.put(GuardianDb());
+  }
   runApp(const MyApp());
 }
 

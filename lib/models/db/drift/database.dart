@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/alert_notifications.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/alert_devices.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
@@ -11,8 +8,7 @@ import 'package:guardian/models/db/drift/tables/Fences/fence.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_devices.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_points.dart';
 import 'package:guardian/models/db/drift/tables/user.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'connection.dart';
 
 part 'database.g.dart';
 
@@ -28,17 +24,8 @@ part 'database.g.dart';
   AlertDevices,
 ])
 class GuardianDb extends _$GuardianDb {
-  GuardianDb() : super(_openConnection());
+  GuardianDb() : super(openConnection());
 
   @override
   int get schemaVersion => 1;
-}
-
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
-
-    return NativeDatabase.createInBackground(file);
-  });
 }
