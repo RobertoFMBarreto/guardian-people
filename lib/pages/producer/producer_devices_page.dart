@@ -97,7 +97,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         if (mounted) {
           setState(() {
             _devices = [];
-            _devices.addAll(searchDevices as Iterable<Device>);
+            _devices.addAll(searchDevices);
           });
         }
       });
@@ -117,10 +117,10 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                 (device) => !widget.notToShowDevices!.contains(
                   device.device.deviceId.value,
                 ),
-              ) as Iterable<Device>,
+              ),
             );
           } else {
-            _devices.addAll(filteredDevices as Iterable<Device>);
+            _devices.addAll(filteredDevices);
           }
         }),
       );

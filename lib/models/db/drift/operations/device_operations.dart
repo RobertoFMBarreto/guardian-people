@@ -123,7 +123,6 @@ Future<List<Device>> getUserDevicesWithData() async {
   List<Device> devices = [];
 
   for (var deviceData in data) {
-    print('GdDebug> All:${deviceData.data}');
     Device device = Device(
         device: DeviceCompanion(
           color: drift.Value(deviceData.data['color']),

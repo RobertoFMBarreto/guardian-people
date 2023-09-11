@@ -42,7 +42,6 @@ Future<List<DeviceLocationsCompanion>> getDeviceData({
   bool isInterval = false,
 }) async {
   final db = Get.find<GuardianDb>();
-  print('GdDebug> $startDate | $endDate');
   List<DeviceLocation> data = [];
   if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
     data = await (db.select(db.deviceLocations)

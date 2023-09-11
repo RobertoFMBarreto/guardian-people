@@ -109,12 +109,12 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                               children: [
                                 TextSpan(
                                   text: '${from.toString()}:00 ',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 TextSpan(text: '${localizations.until_time} '),
                                 TextSpan(
                                   text: '${to.toString()}:00 ',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 TextSpan(text: '${localizations.was} '),
                                 TextSpan(

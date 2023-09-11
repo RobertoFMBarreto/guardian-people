@@ -149,8 +149,6 @@ Future<List<UserAlertCompanion>> getDeviceUnselectedAlerts(String deviceId) asyn
       WHERE ${db.alertDevices.actualTableName}.${db.alertDevices.deviceId.name} != ? OR ${db.alertDevices.actualTableName}.${db.alertDevices.deviceId.name} IS NULL
 ''', variables: [drift.Variable(deviceId)])).get();
 
-  print('data: ${data.first.data}');
-
   List<UserAlertCompanion> alerts = [];
 
   alerts.addAll(

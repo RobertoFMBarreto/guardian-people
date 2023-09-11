@@ -59,7 +59,6 @@ Future<List<DeviceCompanion>> loadUserDevices(String uid) async {
   List<DeviceCompanion> devices = [];
   for (var device in devicesMapList) {
     if (device['uid'] == uid) {
-      print('GdDebug> Device:$device');
       // load devices and their data
       await createDevice(
         DeviceCompanion(

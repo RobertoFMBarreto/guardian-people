@@ -125,7 +125,7 @@ Map<String, Widget Function(BuildContext)> routes = {
       return const AddAlertPage();
     }
   },
-  '/producer/alert/management': (context) {
+  '/producer/alerts/management': (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     if (args != null) {
       final data = args as Map<String, dynamic>;

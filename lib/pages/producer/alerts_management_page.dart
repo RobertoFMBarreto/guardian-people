@@ -47,7 +47,6 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     if (widget.isSelect) {
       await getDeviceUnselectedAlerts(widget.deviceId!).then(
         (allAlerts) {
-          print('Gotten: $allAlerts');
           if (mounted) {
             setState(() {
               _alerts = [];

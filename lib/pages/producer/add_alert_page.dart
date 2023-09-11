@@ -34,7 +34,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   late Future _future;
 
-  List<Device> _alertDevices = [];
+  final List<Device> _alertDevices = [];
   AlertComparissons _alertComparisson = AlertComparissons.equal;
   AlertParameter _alertParameter = AlertParameter.temperature;
   double _comparissonValue = 0;
@@ -87,7 +87,6 @@ class _AddAlertPageState extends State<AddAlertPage> {
     ).then(
       (_) async => await removeAllAlertDevices(widget.alert!.alertId.value).then(
         (_) async {
-          await getAlertDevices(widget.alert!.alertId.value).then((val) => print('Val: $val'));
           await _addAlertDevices(widget.alert!.alertId.value).then(
             (_) => Navigator.of(context).pop(),
           );

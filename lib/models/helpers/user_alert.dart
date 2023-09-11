@@ -80,7 +80,6 @@ AlertParameter parseAlertParameterFromString(String text) {
 
 AlertComparissons parseComparissonFromString(String text) {
   String value = text.toString().split('.').last;
-  print(text);
 
   switch (value) {
     case 'equal':

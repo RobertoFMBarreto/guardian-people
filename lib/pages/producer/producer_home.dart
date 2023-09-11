@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -11,7 +10,6 @@ import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
-import 'package:guardian/routes.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';

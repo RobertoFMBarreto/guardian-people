@@ -119,7 +119,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             Navigator.push(
                               context,
                               CustomPageRouter(
-                                  page: '/producer/alert/management',
+                                  page: '/producer/alerts/management',
                                   settings: RouteSettings(
                                     arguments: {
                                       'isSelect': true,

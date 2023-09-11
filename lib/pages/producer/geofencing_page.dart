@@ -47,7 +47,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
   Color _fenceColor = Colors.red;
 
   List<LatLng> fencePoints = [];
-  List<Device> _devices = [];
+  final List<Device> _devices = [];
 
   @override
   void dispose() {
@@ -57,7 +57,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
 
   @override
   void initState() {
-    print(widget.fence);
     _future = _setup();
     super.initState();
   }
@@ -99,7 +98,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
   }
 
   void _changePolygonColor() {
-    print(widget.fence != null && HexColor.toHex(color: _fenceColor) == widget.fence!.color);
     setState(() {
       _editingPolygon = Polygon(
         color: widget.fence != null && HexColor.toHex(color: _fenceColor) == widget.fence!.color
