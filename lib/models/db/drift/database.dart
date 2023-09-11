@@ -8,7 +8,7 @@ import 'package:guardian/models/db/drift/tables/Fences/fence.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_devices.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_points.dart';
 import 'package:guardian/models/db/drift/tables/user.dart';
-import 'connection.dart';
+import 'connection/connection.dart';
 
 part 'database.g.dart';
 
