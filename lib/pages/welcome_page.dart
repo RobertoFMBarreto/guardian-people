@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
@@ -33,13 +34,22 @@ class _WelcomePageState extends State<WelcomePage> {
 
             // if there is stored data use it for getting his role
             if (user != null) {
-              Navigator.of(context).popAndPushNamed(user.isAdmin ? '/admin' : '/producer');
+              Navigator.pushReplacement(
+                context,
+                CustomPageRouter(page: user.isAdmin ? '/admin' : '/producer'),
+              );
             } else {
-              Navigator.of(context).pushReplacementNamed('/login');
+              Navigator.pushReplacement(
+                context,
+                CustomPageRouter(page: '/login'),
+              );
             }
           });
         } else {
-          Navigator.of(context).pushReplacementNamed('/login');
+          Navigator.pushReplacement(
+            context,
+            CustomPageRouter(page: '/login'),
+          );
         }
       },
     );

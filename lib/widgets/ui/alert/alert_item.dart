@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,8 +21,13 @@ class AlertItem extends StatelessWidget {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed('/producer/device',
-            arguments: {'device': alertNotification.device, 'producerId': null});
+        Navigator.push(
+          context,
+          CustomPageRouter(
+              page: '/producer/device',
+              settings: RouteSettings(
+                  arguments: {'device': alertNotification.device, 'producerId': null})),
+        );
       },
       child: Card(
         child: ListTile(

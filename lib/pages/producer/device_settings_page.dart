@@ -4,6 +4,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
@@ -115,33 +116,34 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed(
-                              '/producer/alert/management',
-                              arguments: {
-                                'isSelect': true,
-                                'deviceId': widget.device.device.deviceId.value
-                              },
-                            ).then(
-                              (gottenAlerts) async {
-                                if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
-                                  final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
-                                  setState(() {
-                                    _alerts.addAll(selectedAlerts);
-                                  });
-                                  for (var selectedAlert in selectedAlerts) {
-                                    await addAlertDevice(
-                                      AlertDevicesCompanion(
-                                        alertDeviceId:
-                                            drift.Value(Random().nextInt(9999).toString()),
-                                        deviceId: widget.device.device.deviceId,
-                                        alertId: selectedAlert.alertId,
-                                      ),
-                                    );
-                                  }
-                                  // TODO: add service call
+                            Navigator.push(
+                              context,
+                              CustomPageRouter(
+                                  page: '/producer/alert/management',
+                                  settings: RouteSettings(
+                                    arguments: {
+                                      'isSelect': true,
+                                      'deviceId': widget.device.device.deviceId.value
+                                    },
+                                  )),
+                            ).then((gottenAlerts) async {
+                              if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
+                                final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
+                                setState(() {
+                                  _alerts.addAll(selectedAlerts);
+                                });
+                                for (var selectedAlert in selectedAlerts) {
+                                  await addAlertDevice(
+                                    AlertDevicesCompanion(
+                                      alertDeviceId: drift.Value(Random().nextInt(9999).toString()),
+                                      deviceId: widget.device.device.deviceId,
+                                      alertId: selectedAlert.alertId,
+                                    ),
+                                  );
                                 }
-                              },
-                            );
+                                // TODO: add service call
+                              }
+                            });
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

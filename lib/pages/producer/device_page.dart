@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -48,7 +49,14 @@ class _DevicePageState extends State<DevicePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).pushNamed('/producer/device/history', arguments: widget.device);
+          Navigator.push(
+            context,
+            CustomPageRouter(
+                page: '/producer/alerts/history',
+                settings: RouteSettings(
+                  arguments: widget.device,
+                )),
+          );
         },
         backgroundColor: theme.colorScheme.secondary,
         label: Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> setUserSession(String uid) async {
@@ -48,7 +49,10 @@ Future<String?> getUid(BuildContext context) async {
     return uid;
   } else {
     // ignore: use_build_context_synchronously
-    Navigator.of(context).pushReplacementNamed('/login');
+    Navigator.pushReplacement(
+      context,
+      CustomPageRouter(page: '/login'),
+    );
   }
   return null;
 }

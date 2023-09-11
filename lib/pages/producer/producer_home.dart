@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -10,6 +11,8 @@ import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
+import 'package:guardian/routes.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/device/square_devices_info.dart';
@@ -114,9 +117,12 @@ class _ProducerHomeState extends State<ProducerHome> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamed('/producer/fences').then((_) {
-                                _loadFences();
-                              });
+                              Navigator.push(
+                                context,
+                                CustomPageRouter(page: '/producer/fences'),
+                              ).then(
+                                (_) => _loadFences(),
+                              );
                             },
                             child: Text(localizations.fences.capitalize()),
                           ),
@@ -141,9 +147,12 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 title: localizations.devices.capitalize(),
                                 description: '${_devices.length}',
                                 onTap: () {
-                                  Navigator.of(context).pushNamed('/producer/devices').then(
-                                        (_) => _loadDevices(),
-                                      );
+                                  Navigator.push(
+                                    context,
+                                    CustomPageRouter(page: '/producer/devices'),
+                                  ).then(
+                                    (_) => _loadDevices(),
+                                  );
                                 },
                               ),
                             ),
@@ -156,9 +165,12 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 description: '${_alertNotifications.length}',
                                 isAlert: true,
                                 onTap: () {
-                                  Navigator.of(context).pushNamed('/producer/alerts').then(
-                                        (_) => _loadAlertNotifications(),
-                                      );
+                                  Navigator.push(
+                                    context,
+                                    CustomPageRouter(page: '/producer/alerts'),
+                                  ).then(
+                                    (_) => _loadAlertNotifications(),
+                                  );
                                 },
                               ),
                             ),

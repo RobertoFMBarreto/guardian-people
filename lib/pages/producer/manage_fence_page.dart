@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
@@ -76,12 +77,16 @@ class _ManageFencePageState extends State<ManageFencePage> {
   }
 
   Future<void> _selectDevices() async {
-    Navigator.of(context).pushNamed(
-      '/producer/devices',
-      arguments: {
-        'isSelect': true,
-        'fenceId': fence.fenceId,
-      },
+    Navigator.push(
+      context,
+      CustomPageRouter(
+          page: '/producer/devices',
+          settings: RouteSettings(
+            arguments: {
+              'isSelect': true,
+              'fenceId': fence.fenceId,
+            },
+          )),
     ).then((selectedDevices) async {
       if (selectedDevices != null && selectedDevices.runtimeType == List<Device>) {
         final selected = selectedDevices as List<Device>;

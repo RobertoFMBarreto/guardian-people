@@ -141,7 +141,6 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: DeviceItem(
                             device: _devices[index],
-                            isPopPush: true,
                             producerId: widget.producerId,
                           ),
                         ),

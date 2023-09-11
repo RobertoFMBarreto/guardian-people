@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
+import 'package:guardian/custom_page_router.dart';
 
 import 'circle_avatar_border.dart';
 
@@ -20,7 +21,10 @@ class Producer extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed('/admin/producer', arguments: uid),
+      onTap: () => Navigator.push(
+        context,
+        CustomPageRouter(page: '/admin/producer', settings: RouteSettings(arguments: uid)),
+      ),
       child: Container(
         height: 150,
         constraints: const BoxConstraints(

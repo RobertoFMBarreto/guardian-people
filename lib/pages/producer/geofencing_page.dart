@@ -175,10 +175,12 @@ class _GeofencingPageState extends State<GeofencingPage> {
   Future<void> _loadFencePoints() async {
     await getFencePoints(widget.fence!.fenceId).then(
       (allPoints) {
-        setState(() {
-          fencePoints = [];
-          fencePoints.addAll(allPoints);
-        });
+        if (mounted) {
+          setState(() {
+            fencePoints = [];
+            fencePoints.addAll(allPoints);
+          });
+        }
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
@@ -172,15 +173,19 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                         child: GestureDetector(
                                           onTap: () {
                                             if (hasConnection) {
-                                              Navigator.of(context).pushNamed(
-                                                '/producer/alerts/add',
-                                                arguments: {
-                                                  'isEdit': true,
-                                                  'alert': _alerts[index],
-                                                },
-                                              ).then((_) {
-                                                _loadAlerts();
-                                              });
+                                              Navigator.push(
+                                                context,
+                                                CustomPageRouter(
+                                                    page: '/producer/alerts/add',
+                                                    settings: RouteSettings(
+                                                      arguments: {
+                                                        'isEdit': true,
+                                                        'alert': _alerts[index],
+                                                      },
+                                                    )),
+                                              ).then(
+                                                (_) => _loadAlerts(),
+                                              );
                                             }
                                           },
                                           child: AlertManagementItem(
@@ -212,9 +217,14 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                   backgroundColor: theme.colorScheme.secondary,
                   onPressed: () {
                     if (!widget.isSelect) {
-                      Navigator.of(context).pushNamed('/producer/alerts/add').then((_) {
-                        _loadAlerts();
-                      });
+                      Navigator.push(
+                        context,
+                        CustomPageRouter(
+                          page: '/producer/alerts/add',
+                        ),
+                      ).then(
+                        (_) => _loadAlerts(),
+                      );
                     } else {
                       Navigator.of(context).pop(_selectedAlerts);
                     }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
@@ -91,10 +92,14 @@ class _FencesPageState extends State<FencesPage> {
                       shape: const CircleBorder(),
                       backgroundColor: theme.colorScheme.secondary,
                       onPressed: () {
-                        // TODO:code to add a new fence
-                        Navigator.of(context).pushNamed('/producer/geofencing').then(
-                              (_) => _searchFences(),
-                            );
+                        Navigator.push(
+                          context,
+                          CustomPageRouter(
+                            page: '/producer/geofencing',
+                          ),
+                        ).then(
+                          (_) => _searchFences(),
+                        );
                       },
                       child: Icon(
                         Icons.add,

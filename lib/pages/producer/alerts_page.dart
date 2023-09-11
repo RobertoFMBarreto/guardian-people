@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
@@ -67,9 +68,15 @@ class _AlertsPageState extends State<AlertsPage> {
           ),
           backgroundColor: theme.colorScheme.secondary,
           onPressed: () {
-            Navigator.of(context).pushNamed(
-              '/producer/alert/management',
-              arguments: {'isSelect': false, 'deviceId': null},
+            Navigator.push(
+              context,
+              CustomPageRouter(
+                  page: '/producer/alerts/management',
+                  settings: const RouteSettings(
+                    arguments: {'isSelect': false, 'deviceId': null},
+                  )),
+            ).then(
+              (_) => _loadAlerts(),
             );
           },
           label: Text(

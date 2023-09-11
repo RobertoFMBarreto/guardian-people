@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
@@ -10,7 +11,13 @@ class HomeDropDown extends StatelessWidget {
   void _onSelectedItem(int item, BuildContext context) {
     switch (item) {
       case 0:
-        Navigator.of(context).pushNamed('/profile');
+        Navigator.push(
+          context,
+          CustomPageRouter(
+            page: '/profile',
+          ),
+        );
+
         break;
       case 1:
         //! Logout code

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
@@ -8,14 +9,12 @@ import 'package:guardian/models/providers/session_provider.dart';
 class DeviceItem extends StatelessWidget {
   final Device device;
   final bool isBlocked;
-  final bool isPopPush;
   final Function? onBackFromDeviceScreen;
   final String producerId;
 
   const DeviceItem({
     super.key,
     this.isBlocked = false,
-    this.isPopPush = false,
     required this.device,
     this.producerId = '',
     this.onBackFromDeviceScreen,
@@ -25,18 +24,14 @@ class DeviceItem extends StatelessWidget {
     getUid(context).then((uid) {
       if (uid != null) {
         userIsAdmin(uid).then((isAdmin) {
-          if (isPopPush) {
-            Navigator.of(context).popAndPushNamed(
-                isAdmin ? '/admin/producer/device' : '/producer/device',
-                arguments: {'device': device, 'producerId': producerId}).then((_) {
-              if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
-            });
-          } else {
-            Navigator.of(context).pushNamed(isAdmin ? '/admin/producer/device' : '/producer/device',
-                arguments: {'device': device, 'producerId': producerId}).then((_) {
-              if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
-            });
-          }
+          Navigator.push(
+            context,
+            CustomPageRouter(
+                page: isAdmin ? '/admin/producer/device' : '/producer/device',
+                settings: RouteSettings(arguments: {'device': device, 'producerId': producerId})),
+          ).then((_) {
+            if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
+          });
         });
       }
     });
