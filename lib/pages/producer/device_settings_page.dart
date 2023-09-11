@@ -168,6 +168,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: AlertManagementItem(
                                     alert: _alerts[index],
+                                    onTap: () {},
                                     onDelete: (alert) {
                                       // TODO: Delete code for alert
                                       removeAlertDevice(
@@ -227,6 +228,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: FenceItem(
                                     name: _fences[index].name,
+                                    onTap: () {},
                                     color: HexColor(_fences[index].color),
                                     onRemove: () {
                                       removeDeviceFence(_fences[index].fenceId,

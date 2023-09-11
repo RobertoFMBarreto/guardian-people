@@ -108,12 +108,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (widget.isInterval)
-                  GestureDetector(
-                    onTap: () {
-                      _showDateSelector();
-                    },
+                  InkWell(
+                    onTap: _showDateSelector,
+                    borderRadius: BorderRadius.circular(8),
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
+                      padding: const EdgeInsets.only(top: 10.0, left: 8, right: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

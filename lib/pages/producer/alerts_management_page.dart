@@ -169,7 +169,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                         })
                                     : Padding(
                                         padding: const EdgeInsets.only(bottom: 8.0),
-                                        child: GestureDetector(
+                                        child: AlertManagementItem(
                                           onTap: () {
                                             if (hasConnection) {
                                               Navigator.push(
@@ -187,16 +187,14 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                               );
                                             }
                                           },
-                                          child: AlertManagementItem(
-                                            alert: _alerts[index],
-                                            onDelete: (alert) {
-                                              // TODO: Remove code
-                                              deleteAlert(_alerts[index].alertId.value);
-                                              setState(() {
-                                                _alerts.removeAt(index);
-                                              });
-                                            },
-                                          ),
+                                          alert: _alerts[index],
+                                          onDelete: (alert) {
+                                            // TODO: Remove code
+                                            deleteAlert(_alerts[index].alertId.value);
+                                            setState(() {
+                                              _alerts.removeAt(index);
+                                            });
+                                          },
                                         ),
                                       ),
                               ),

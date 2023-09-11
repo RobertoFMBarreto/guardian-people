@@ -41,11 +41,12 @@ class DeviceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    return GestureDetector(
-      onTap: () {
-        _onTapDevice(context);
-      },
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: () {
+          _onTapDevice(context);
+        },
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ListTile(

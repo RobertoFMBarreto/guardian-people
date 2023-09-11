@@ -19,17 +19,18 @@ class AlertItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          CustomPageRouter(
-              page: '/producer/device',
-              settings: RouteSettings(
-                  arguments: {'device': alertNotification.device, 'producerId': null})),
-        );
-      },
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            CustomPageRouter(
+                page: '/producer/device',
+                settings: RouteSettings(
+                    arguments: {'device': alertNotification.device, 'producerId': null})),
+          );
+        },
+        borderRadius: BorderRadius.circular(8),
         child: ListTile(
           leading: Icon(
             Icons.sensors,

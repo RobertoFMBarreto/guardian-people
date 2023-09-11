@@ -24,9 +24,10 @@ class DeviceItemSelectable extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    return GestureDetector(
-      onTap: onSelected,
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: onSelected,
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: deviceData != null
               ? const EdgeInsets.all(4.0)

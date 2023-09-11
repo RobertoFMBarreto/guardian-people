@@ -16,9 +16,10 @@ class SelectableAlertManagementItem extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    return GestureDetector(
-      onTap: onSelected,
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: onSelected,
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0),
           child: Row(

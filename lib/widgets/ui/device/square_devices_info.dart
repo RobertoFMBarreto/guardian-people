@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:guardian/colors.dart';
 
 class SquareDevicesInfo extends StatelessWidget {
@@ -17,73 +18,69 @@ class SquareDevicesInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: isAlert
-                ? [
-                    const Color.fromRGBO(231, 75, 75, 1),
-                    const Color.fromRGBO(231, 130, 130, 1),
-                  ]
-                : [
-                    theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
-                    theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
-                  ],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: isAlert
+              ? [
+                  const Color.fromRGBO(231, 75, 75, 1),
+                  const Color.fromRGBO(231, 130, 130, 1),
+                ]
+              : [
+                  theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+                  theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
+                ],
         ),
-        child: Stack(
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.only(top: 10.0, left: 20),
+              child: Text(
+                title,
+                style:
+                    theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.onSecondary),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    title,
-                    style: theme.textTheme.headlineSmall!
-                        .copyWith(color: theme.colorScheme.onSecondary),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      description,
-                      style: theme.textTheme.headlineLarge!.copyWith(
-                        fontSize: 45,
-                        fontWeight: FontWeight.w500,
-                        color: theme.colorScheme.onSecondary,
-                      ),
+                    description,
+                    style: theme.textTheme.headlineLarge!.copyWith(
+                      fontSize: 45,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSecondary,
                     ),
                   ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                clipBehavior: Clip.hardEdge,
-                child: isAlert
-                    ? Icon(
-                        Icons.warning,
-                        size: 75,
-                        color: theme.colorScheme.onSecondary.withOpacity(0.8),
-                      )
-                    : Transform.rotate(
-                        angle: -35,
-                        child: Icon(
-                          Icons.sensors,
+                  isAlert
+                      ? Icon(
+                          Icons.warning,
                           size: 75,
                           color: theme.colorScheme.onSecondary.withOpacity(0.8),
+                        )
+                      : Transform.rotate(
+                          angle: -35,
+                          child: Icon(
+                            Icons.sensors,
+                            size: 75,
+                            color: theme.colorScheme.onSecondary.withOpacity(0.8),
+                          ),
                         ),
-                      ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),

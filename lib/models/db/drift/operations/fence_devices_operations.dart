@@ -48,10 +48,10 @@ Future<List<Device>> getFenceDevices(String fenceId) async {
   final data = await db.customSelect(
     '''
       SELECT
-        ${db.device.actualTableName}.${db.device.uid.name},
+        ${db.device.actualTableName}.${db.device.uid.name} as deviceUid,
         ${db.device.imei.name},
         ${db.device.actualTableName}.${db.device.color.name} as deviceColor,
-        ${db.device.actualTableName}.${db.device.name.name},
+        ${db.device.actualTableName}.${db.device.name.name} as deviceName,
         ${db.device.isActive.name},
         ${db.deviceLocations.deviceDataId.name},
         ${db.deviceLocations.dataUsage.name},
@@ -63,11 +63,11 @@ Future<List<Device>> getFenceDevices(String fenceId) async {
         ${db.deviceLocations.accuracy.name},
         ${db.deviceLocations.date.name},
         ${db.deviceLocations.state.name},
-        ${db.device.actualTableName}.${db.device.deviceId.name}
+        ${db.device.actualTableName}.${db.device.deviceId.name} as deviceId
       FROM ${db.fence.actualTableName}
       LEFT JOIN ${db.fenceDevices.actualTableName} ON ${db.fenceDevices.actualTableName}.${db.fenceDevices.fenceId.name} = ${db.fence.actualTableName}.${db.fence.fenceId.name}
-      LEFT JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.deviceId.name} = ${db.fenceDevices.actualTableName}.${db.fenceDevices.deviceId.name}
-      LEFT JOIN (
+      JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.deviceId.name} = ${db.fenceDevices.actualTableName}.${db.fenceDevices.deviceId.name}
+      JOIN (
         SELECT * FROM
           (
             SELECT * FROM ${db.deviceLocations.actualTableName}
@@ -87,31 +87,35 @@ Future<List<Device>> getFenceDevices(String fenceId) async {
 
   List<Device> fenceDevices = [];
 
+  for (var dt in data) {
+    print(dt.data);
+  }
   fenceDevices.addAll(
     data.map(
       (deviceData) => Device(
         device: DeviceCompanion(
           color: drift.Value(deviceData.data['deviceColor']),
-          deviceId: drift.Value(deviceData.data['device_id']),
-          imei: drift.Value(deviceData.data['imei']),
-          isActive: drift.Value(deviceData.data['is_active'] == 1),
-          name: drift.Value(deviceData.data['name']),
-          uid: drift.Value(deviceData.data['uid']),
+          deviceId: drift.Value(deviceData.data['deviceId']),
+          imei: drift.Value(deviceData.data[db.device.imei.name]),
+          isActive: drift.Value(deviceData.data[db.device.isActive.name] == 1),
+          name: drift.Value(deviceData.data['deviceName']),
+          uid: drift.Value(deviceData.data['deviceUid']),
         ),
         data: [
-          if (deviceData.data['accuracy'] != null)
+          if (deviceData.data[db.deviceLocations.accuracy.name] != null)
             DeviceLocationsCompanion(
-              accuracy: drift.Value(deviceData.data['accuracy']),
-              battery: drift.Value(deviceData.data['battery']),
-              dataUsage: drift.Value(deviceData.data['data_usage']),
-              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(deviceData.data['date'])),
-              deviceDataId: drift.Value(deviceData.data['device_data_id']),
-              deviceId: drift.Value(deviceData.data['device_id']),
-              elevation: drift.Value(deviceData.data['elevation']),
-              lat: drift.Value(deviceData.data['lat']),
-              lon: drift.Value(deviceData.data['lon']),
-              state: drift.Value(deviceData.data['state']),
-              temperature: drift.Value(deviceData.data['temperature']),
+              accuracy: drift.Value(deviceData.data[db.deviceLocations.accuracy.name]),
+              battery: drift.Value(deviceData.data[db.deviceLocations.battery.name]),
+              dataUsage: drift.Value(deviceData.data[db.deviceLocations.dataUsage.name]),
+              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                  deviceData.data[db.deviceLocations.date.name])),
+              deviceDataId: drift.Value(deviceData.data[db.deviceLocations.deviceDataId.name]),
+              deviceId: drift.Value(deviceData.data['deviceId']),
+              elevation: drift.Value(deviceData.data[db.deviceLocations.elevation.name]),
+              lat: drift.Value(deviceData.data[db.deviceLocations.lat.name]),
+              lon: drift.Value(deviceData.data[db.deviceLocations.lon.name]),
+              state: drift.Value(deviceData.data[db.deviceLocations.state.name]),
+              temperature: drift.Value(deviceData.data[db.deviceLocations.temperature.name]),
             ),
         ],
       ),

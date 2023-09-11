@@ -52,7 +52,7 @@ class _DevicePageState extends State<DevicePage> {
           Navigator.push(
             context,
             CustomPageRouter(
-                page: '/producer/alerts/history',
+                page: '/producer/device/history',
                 settings: RouteSettings(
                   arguments: widget.device,
                 )),

@@ -302,18 +302,22 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
             SELECT * FROM ${db.deviceLocations.actualTableName}
             ORDER BY ${db.deviceLocations.date.name} DESC
           ) as deviceDt
-        GROUP BY deviceDt.${db.deviceLocations.deviceId}
+        GROUP BY deviceDt.${db.deviceLocations.deviceId.name}
       ) deviceData ON ${db.device.actualTableName}.${db.device.deviceId.name} = deviceData.${db.deviceLocations.deviceId.name}
       WHERE
-        (deviceData.${db.deviceLocations.dataUsage.name} >= ? AND  deviceData.${db.deviceLocations.dataUsage.name} <= ? AND
-        deviceData.${db.deviceLocations.temperature.name} >= ? AND deviceData.${db.deviceLocations.temperature.name} <= ? AND
-        deviceData.${db.deviceLocations.battery.name} >= ? AND deviceData.${db.deviceLocations.battery.name} <= ? AND
-        deviceData.${db.deviceLocations.elevation.name} >= ? AND deviceData.${db.deviceLocations.elevation.name} <= ?
-        ${db.device.name.name} LIKE ?) OR 
-        (${db.device.name.name} LIKE ? AND deviceData.${db.deviceLocations.temperature.name} IS NULL) AND
-        ${db.device.actualTableName}.${db.device.deviceId.name} NOT IN (SELECT ${db.device.deviceId.name} FROM ${db.fenceDevices.actualTableName})
+        ((deviceData.${db.deviceLocations.dataUsage.name} >= ? AND  deviceData.${db.deviceLocations.dataUsage.name} <= ? AND
+          deviceData.${db.deviceLocations.temperature.name} >= ? AND deviceData.${db.deviceLocations.temperature.name} <= ? AND
+          deviceData.${db.deviceLocations.battery.name} >= ? AND deviceData.${db.deviceLocations.battery.name} <= ? AND
+          deviceData.${db.deviceLocations.elevation.name} >= ? AND deviceData.${db.deviceLocations.elevation.name} <= ? AND
+          ${db.device.name.name} LIKE ?) OR 
+        (${db.device.name.name} LIKE ? AND deviceData.${db.deviceLocations.temperature.name} IS NULL))
+        AND
+        ${db.device.actualTableName}.${db.device.deviceId.name} NOT IN (
+            SELECT ${db.device.deviceId.name} FROM ${db.fenceDevices.actualTableName} 
+            WHERE ${db.fenceDevices.actualTableName}.${db.fenceDevices.fenceId.name} = ?
+        )
       ORDER BY
-        ${db.device.name.name}
+        ${db.device.actualTableName}.${db.device.name.name}
     ''',
     variables: [
       drift.Variable.withInt(dtUsageRangeValues.start.toInt()),
@@ -326,6 +330,7 @@ Future<List<Device>> getUserFenceUnselectedDevicesFiltered({
       drift.Variable.withReal(elevationRangeValues.end),
       drift.Variable.withString('%$searchString%'),
       drift.Variable.withString('%$searchString%'),
+      drift.Variable.withString(fenceId),
     ],
   ).get();
 

@@ -86,6 +86,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
+    ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
@@ -114,6 +115,11 @@ class _ProducerHomeState extends State<ProducerHome> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ElevatedButton(
+                            style: theme.elevatedButtonTheme.style!.copyWith(
+                              overlayColor: MaterialStatePropertyAll(
+                                Colors.white.withOpacity(0.2),
+                              ),
+                            ),
                             onPressed: () {
                               Navigator.push(
                                 context,
