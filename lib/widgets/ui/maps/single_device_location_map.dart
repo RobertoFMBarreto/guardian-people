@@ -122,10 +122,14 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
             mapController: _mapController,
             options: MapOptions(
               center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
-                  ? LatLng(
-                      data.first.lat.value,
-                      data.first.lon.value,
-                    )
+                  ? widget.isInterval && data.isEmpty
+                      ? LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        )
+                      : widget.isInterval
+                          ? null
+                          : LatLng(data.first.lat.value, data.first.lon.value)
                   : LatLng(
                       _currentPosition!.latitude,
                       _currentPosition!.longitude,
@@ -143,7 +147,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
                   ? LatLngBounds.fromPoints(
                       _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
-                  : null,
+                  : widget.isInterval && data.isNotEmpty
+                      ? LatLngBounds.fromPoints(
+                          data.map((e) => LatLng(e.lat.value, e.lon.value)).toList(),
+                        )
+                      : null,
             ),
             children: [
               getTileLayer(context),

@@ -22,26 +22,35 @@ class DateTimeInput extends StatefulWidget {
   State<DateTimeInput> createState() => _DateTimeInputState();
 }
 
-class _DateTimeInputState extends State<DateTimeInput> with AutomaticKeepAliveClientMixin {
-  // Prevent widget from rebuilding on tab swap
+class _DateTimeInputState extends State<DateTimeInput> {
+  DateTime date = DateTime.now();
   @override
-  bool get wantKeepAlive => true;
+  void initState() {
+    date = widget.date;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         DateSelectorInput(
-          onSelectionChanged: widget.onSelectionChanged,
+          onSelectionChanged: (args) {
+            if (args.value is DateTime) {
+              setState(() {
+                date = args.value;
+              });
+              widget.onSelectionChanged(args);
+            }
+          },
           maxDate: widget.maxDate,
           initialDate: widget.date,
           minDate: widget.minDate,
         ),
         TimeSelectorInput(
           onTimeChange: widget.onTimeChange,
-          time: widget.date,
+          time: date,
           key: Key('${widget.date}'),
         ),
       ],

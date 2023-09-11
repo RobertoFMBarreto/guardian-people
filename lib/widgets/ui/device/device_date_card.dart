@@ -1,0 +1,73 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:intl/intl.dart';
+
+class DeviceDateCard extends StatelessWidget {
+  final DateTime date;
+  final Function() onTap;
+  const DeviceDateCard({super.key, required this.date, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: InkWell(
+        onTap: onTap,
+        splashFactory: InkSplash.splashFactory,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${date.day}',
+                    style: theme.textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          DateFormat.MMMM(localizations.localeName).format(date).capitalize(),
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '${date.year}',
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              const Divider(thickness: 0.1),
+              Text(
+                '${date.hour <= 9 ? "0${date.hour}" : date.hour}:${date.minute <= 9 ? "0${date.minute}" : date.minute}',
+                style: theme.textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

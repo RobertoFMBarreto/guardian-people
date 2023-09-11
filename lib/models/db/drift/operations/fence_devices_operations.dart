@@ -87,9 +87,6 @@ Future<List<Device>> getFenceDevices(String fenceId) async {
 
   List<Device> fenceDevices = [];
 
-  for (var dt in data) {
-    print(dt.data);
-  }
   fenceDevices.addAll(
     data.map(
       (deviceData) => Device(

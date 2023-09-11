@@ -33,7 +33,6 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
     super.initState();
 
     startDate = widget.startDate;
-    endDate = widget.startDate;
     endDate = widget.endDate;
     _tabController = TabController(
       initialIndex: 0,

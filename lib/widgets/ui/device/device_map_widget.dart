@@ -5,7 +5,6 @@ import 'package:guardian/models/db/drift/operations/device_data_operations.dart'
 import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/inputs/range_date_time_input.dart';
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
@@ -65,31 +64,6 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     );
   }
 
-  void _showDateSelector() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: RangeDateTimeInput(
-                startDate: _startDate,
-                endDate: _endDate,
-                onConfirm: (newStartDate, newEndDate) async {
-                  setState(() {
-                    _startDate = newStartDate;
-                    _endDate = newEndDate;
-                  });
-                  await _getDeviceData().then(
-                    (_) => Navigator.of(context).pop(),
-                  );
-                },
-              ),
-            ),
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -108,26 +82,21 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (widget.isInterval)
-                  InkWell(
-                    onTap: _showDateSelector,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0, left: 8, right: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          DeviceTimeRangeWidget(
-                            startDate: _startDate,
-                            endDate: _endDate,
-                          ),
-                          Icon(
-                            Icons.calendar_month,
-                            size: 50,
-                            color: theme.colorScheme.secondary,
-                          )
-                        ],
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: DeviceTimeRangeWidget(
+                        startDate: _startDate,
+                        endDate: _endDate,
+                        onStartDateChanged: (newStartDate) {
+                          setState(() {
+                            _startDate = newStartDate;
+                          });
+                        },
+                        onEndDateChanged: (newEndDate) {
+                          setState(() {
+                            _endDate = newEndDate;
+                          });
+                        }),
                   ),
                 if (widget.isInterval)
                   Row(
@@ -151,64 +120,61 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       ),
                     ],
                   ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (widget.isInterval)
-                        DropdownButton(
-                          isDense: true,
-                          borderRadius: BorderRadius.circular(20),
-                          underline: const SizedBox(),
-                          value: _dropDownValue,
-                          items: [
-                            DropdownMenuItem(
-                              value: 0,
-                              child: Text(
-                                localizations.normal_map.capitalize(),
-                              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (widget.isInterval)
+                      DropdownButton(
+                        isDense: true,
+                        borderRadius: BorderRadius.circular(20),
+                        underline: const SizedBox(),
+                        value: _dropDownValue,
+                        items: [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text(
+                              localizations.normal_map.capitalize(),
                             ),
-                            DropdownMenuItem(
-                              value: 1,
-                              child: Text(
-                                localizations.heatmap.capitalize(),
-                              ),
+                          ),
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Text(
+                              localizations.heatmap.capitalize(),
                             ),
-                          ],
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            if (value != null) {
+                              _showHeatMap = value == 1;
+                              _dropDownValue = value;
+                              _showFence = false;
+                            }
+                          });
+                        },
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${localizations.show.capitalize()} ${localizations.fence.capitalize()}:",
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        Switch(
+                          activeTrackColor: theme.colorScheme.secondary,
+                          inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                              ? gdToggleGreyArea
+                              : gdDarkToggleGreyArea,
+                          value: _showFence,
                           onChanged: (value) {
                             setState(() {
-                              if (value != null) {
-                                _showHeatMap = value == 1;
-                                _dropDownValue = value;
-                                _showFence = false;
-                              }
+                              _showFence = value;
                             });
                           },
                         ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "${localizations.show.capitalize()} ${localizations.fence.capitalize()}:",
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                          Switch(
-                            activeTrackColor: theme.colorScheme.secondary,
-                            inactiveTrackColor: Theme.of(context).brightness == Brightness.light
-                                ? gdToggleGreyArea
-                                : gdDarkToggleGreyArea,
-                            value: _showFence,
-                            onChanged: (value) {
-                              setState(() {
-                                _showFence = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
                 Expanded(
                   key: _firstItemDataKey,

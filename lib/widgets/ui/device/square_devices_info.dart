@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:guardian/colors.dart';
 
 class SquareDevicesInfo extends StatelessWidget {
@@ -36,7 +35,7 @@ class SquareDevicesInfo extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(20),
         ),
         onTap: onTap,
