@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -31,7 +32,11 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   bool _showRoute = false;
   double _currentZoom = 17;
   bool _showHeatMap = false;
-  int _dropDownValue = 0;
+  List<String> dropdownItems = [
+    'normal',
+    'heatmap',
+  ];
+  late String _dropDownValue;
 
   @override
   void initState() {
@@ -41,6 +46,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   Future<void> _setup() async {
     setState(() {
+      _dropDownValue = dropdownItems.first;
+
       _deviceData = widget.device.data;
     });
     await _getDeviceData();
@@ -67,9 +74,9 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    _dropDownValue = !widget.isInterval ? 0 : _dropDownValue;
     _showHeatMap = !widget.isInterval ? false : _showHeatMap;
     AppLocalizations localizations = AppLocalizations.of(context)!;
+    print(_deviceData);
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
@@ -90,115 +97,186 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                         onStartDateChanged: (newStartDate) {
                           setState(() {
                             _startDate = newStartDate;
+                            _getDeviceData();
                           });
                         },
                         onEndDateChanged: (newEndDate) {
                           setState(() {
                             _endDate = newEndDate;
+                            _getDeviceData();
                           });
                         }),
                   ),
-                if (widget.isInterval)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${localizations.show.capitalize()} ${localizations.route}",
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                      Switch(
-                        activeTrackColor: theme.colorScheme.secondary,
-                        inactiveTrackColor: Theme.of(context).brightness == Brightness.light
-                            ? gdToggleGreyArea
-                            : gdDarkToggleGreyArea,
-                        value: _showRoute,
-                        onChanged: (value) {
-                          setState(() {
-                            _showRoute = value;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (widget.isInterval)
-                      DropdownButton(
-                        isDense: true,
-                        borderRadius: BorderRadius.circular(20),
-                        underline: const SizedBox(),
-                        value: _dropDownValue,
-                        items: [
-                          DropdownMenuItem(
-                            value: 0,
-                            child: Text(
-                              localizations.normal_map.capitalize(),
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 1,
-                            child: Text(
-                              localizations.heatmap.capitalize(),
-                            ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            if (value != null) {
-                              _showHeatMap = value == 1;
-                              _dropDownValue = value;
-                              _showFence = false;
-                            }
-                          });
-                        },
-                      ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${localizations.show.capitalize()} ${localizations.fence.capitalize()}:",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        Switch(
-                          activeTrackColor: theme.colorScheme.secondary,
-                          inactiveTrackColor: Theme.of(context).brightness == Brightness.light
-                              ? gdToggleGreyArea
-                              : gdDarkToggleGreyArea,
-                          value: _showFence,
-                          onChanged: (value) {
-                            setState(() {
-                              _showFence = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
                 Expanded(
                   key: _firstItemDataKey,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: SingleDeviceLocationMap(
-                      key: Key(
-                          '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'),
-                      showCurrentPosition: true,
-                      deviceData: _deviceData,
-                      imei: widget.device.device.imei.value,
-                      deviceColor: widget.device.device.color.value,
-                      showFence: _showFence,
-                      isInterval: widget.isInterval,
-                      endDate: _endDate,
-                      startDate: _startDate,
-                      showRoute: _showRoute,
-                      onZoomChange: (newZoom) {
-                        // No need to setstate because we dont need to update the screen
-                        // just need to store the value in case the map restarts to keep zoom
-                        _currentZoom = newZoom;
-                      },
-                      startingZoom: _currentZoom,
-                      showHeatMap: _showHeatMap,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SingleDeviceLocationMap(
+                            key: Key(
+                                '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'),
+                            showCurrentPosition: true,
+                            deviceData: _deviceData,
+                            imei: widget.device.device.imei.value,
+                            deviceColor: widget.device.device.color.value,
+                            showFence: _showFence,
+                            isInterval: widget.isInterval,
+                            endDate: _endDate,
+                            startDate: _startDate,
+                            showRoute: _showRoute,
+                            onZoomChange: (newZoom) {
+                              // No need to setstate because we dont need to update the screen
+                              // just need to store the value in case the map restarts to keep zoom
+                              _currentZoom = newZoom;
+                            },
+                            startingZoom: _currentZoom,
+                            showHeatMap: _showHeatMap,
+                          ),
+                        ),
+                        if (widget.isInterval)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  iconStyleData: const IconStyleData(
+                                    iconEnabledColor: gdOnMapColor,
+                                    iconDisabledColor: gdOnMapColor,
+                                  ),
+                                  isExpanded: true,
+                                  selectedItemBuilder: (context) {
+                                    return [
+                                      Center(
+                                        child: Text(
+                                          localizations.normal_map.capitalize(),
+                                          style: theme.textTheme.bodyLarge!.copyWith(
+                                              color: gdOnMapColor, fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                      Center(
+                                        child: Text(
+                                          localizations.heatmap.capitalize(),
+                                          style: theme.textTheme.bodyLarge!.copyWith(
+                                              color: gdOnMapColor, fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ];
+                                  },
+                                  items: dropdownItems
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e == dropdownItems.first
+                                                ? localizations.normal_map.capitalize()
+                                                : localizations.heatmap.capitalize(),
+                                            style: TextStyle(color: theme.colorScheme.onBackground),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  value: _dropDownValue,
+                                  onChanged: (String? value) {
+                                    print(value);
+                                    if (value != null) {
+                                      setState(() {
+                                        _showHeatMap = value == dropdownItems.last;
+                                        _dropDownValue = value;
+                                        _showFence = false;
+                                      });
+                                    }
+                                  },
+                                  buttonStyleData: const ButtonStyleData(
+                                    padding: EdgeInsets.symmetric(horizontal: 0),
+                                    height: 40,
+                                    width: 150,
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: PopupMenuButton(
+                            onSelected: (value) {
+                              switch (value) {
+                                case '/show_fence':
+                                  setState(() {
+                                    _showFence = !_showFence;
+                                  });
+                                  break;
+                                case '/show_route':
+                                  setState(() {
+                                    _showRoute = !_showRoute;
+                                  });
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: '/show_fence',
+                                child: StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "${localizations.show.capitalize()} ${localizations.fence.capitalize()}:",
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
+                                        Switch(
+                                          activeTrackColor: theme.colorScheme.secondary,
+                                          inactiveTrackColor:
+                                              Theme.of(context).brightness == Brightness.light
+                                                  ? gdToggleGreyArea
+                                                  : gdDarkToggleGreyArea,
+                                          value: _showFence,
+                                          onChanged: (value) {},
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                              if (widget.isInterval)
+                                PopupMenuItem(
+                                  value: '/show_route',
+                                  child: StatefulBuilder(builder: (context, setState) {
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${localizations.show.capitalize()} ${localizations.route}",
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
+                                        Switch(
+                                          activeTrackColor: theme.colorScheme.secondary,
+                                          inactiveTrackColor:
+                                              Theme.of(context).brightness == Brightness.light
+                                                  ? gdToggleGreyArea
+                                                  : gdDarkToggleGreyArea,
+                                          value: _showRoute,
+                                          onChanged: (value) {},
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                                ),
+                            ],
+                            color: gdOnMapColor,
+                            icon: const Icon(Icons.tune),
+                            iconSize: 30,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

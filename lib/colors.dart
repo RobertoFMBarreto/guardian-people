@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const gdOnMapColor = Colors.black;
+
 const gdPrimaryColor = Colors.white;
 const gdBackgroundColor = Colors.white;
 const gdtOnBackgroundColor = Colors.black;
