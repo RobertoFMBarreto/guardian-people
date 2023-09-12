@@ -119,6 +119,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
+                    flex: 2,
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
                       child: Text(
@@ -135,7 +136,6 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                       child: Text(
                         localizations.no_device_data.capitalize(),
                         style: theme.textTheme.bodyLarge!.copyWith(
-                          fontSize: 20,
                           color: theme.colorScheme.onSecondary,
                         ),
                         textAlign: TextAlign.center,
@@ -168,7 +168,8 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 isInverted: true,
                                 icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.device.data.first.elevation.value.round()}m',
+                                text: '10000m',
+                                // text: '${widget.device.data.first.elevation.value.round()}m',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),

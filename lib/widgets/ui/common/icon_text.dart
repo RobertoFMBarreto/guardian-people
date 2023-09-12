@@ -29,51 +29,57 @@ class IconText extends StatelessWidget {
             ? gdDarkTextColor
             : textColor!;
     return isInverted
-        ? Row(
-            children: [
-              FittedBox(
-                fit: BoxFit.fitHeight,
-                child: Text(
-                  text,
-                  style: theme.textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontSize: fontSize,
-                    color: color,
+        ? Container(
+            constraints: BoxConstraints(maxWidth: 65, maxHeight: 17),
+            child: Row(
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    text,
+                    style: theme.textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: fontSize,
+                      color: color,
+                    ),
                   ),
                 ),
-              ),
-              FittedBox(
-                fit: BoxFit.fitHeight,
-                child: Icon(
-                  icon,
-                  color: iconColor,
-                  size: iconSize,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: 15,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           )
-        : Row(
-            children: [
-              FittedBox(
-                fit: BoxFit.fitHeight,
-                child: Icon(
-                  icon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
-              ),
-              FittedBox(
-                fit: BoxFit.fitHeight,
-                child: Text(
-                  text,
-                  style: theme.textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontSize: fontSize,
-                    color: color,
+        : Container(
+            constraints: BoxConstraints(maxWidth: 65, maxHeight: 17),
+            child: Row(
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: iconSize,
                   ),
                 ),
-              ),
-            ],
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    text,
+                    style: theme.textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: fontSize,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
   }
 }

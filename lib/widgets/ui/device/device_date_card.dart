@@ -29,16 +29,19 @@ class DeviceDateCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      '${date.day}',
-                      style: theme.textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.w500,
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        '${date.day}',
+                        style: theme.textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
                   Expanded(
+                    flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Column(
