@@ -117,8 +117,6 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: SingleDeviceLocationMap(
-                            key: Key(
-                                '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'),
                             showCurrentPosition: true,
                             deviceData: _deviceData,
                             imei: widget.device.device.imei.value,
@@ -246,7 +244,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                                   },
                                 ),
                               ),
-                              if (widget.isInterval)
+                              if (widget.isInterval && !_showHeatMap)
                                 PopupMenuItem(
                                   value: '/show_route',
                                   child: StatefulBuilder(builder: (context, setState) {

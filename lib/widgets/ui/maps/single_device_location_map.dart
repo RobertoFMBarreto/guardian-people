@@ -112,6 +112,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
         : widget.deviceData.isNotEmpty
             ? [widget.deviceData.first]
             : [];
+    // '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
@@ -161,6 +162,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
               ],
               if (widget.isInterval && !widget.showHeatMap && widget.showRoute)
                 PolylineLayer(
+                  key: Key('${widget.showRoute}'),
                   polylines: [
                     Polyline(
                       color: gdErrorColor,
@@ -175,6 +177,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 ),
               if (data.isNotEmpty && widget.showHeatMap)
                 HeatMapLayer(
+                  key: Key('${widget.showHeatMap}'),
                   heatMapDataSource: InMemoryHeatMapDataSource(
                     data: data
                         .map(
