@@ -11,6 +11,7 @@ import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/device/square_devices_info.dart';
@@ -109,8 +110,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                     imageUrl: '',
                     name: _user.name,
                     isHomeShape: true,
+                    maxHeight: MediaQuery.of(context).size.height * gdTopBarHeightRatio,
                     title: Padding(
-                      padding: const EdgeInsets.only(right: 20.0, bottom: 5),
+                      padding: const EdgeInsets.only(right: 20.0, bottom: 5, top: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -128,7 +130,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 (_) => _loadFences(),
                               );
                             },
-                            child: Text(localizations.fences.capitalize()),
+                            child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(localizations.fences.capitalize())),
                           ),
                         ],
                       ),
@@ -151,11 +155,13 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 title: localizations.devices.capitalize(),
                                 description: '${_devices.length}',
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    CustomPageRouter(page: '/producer/devices'),
-                                  ).then(
-                                    (_) => _loadDevices(),
+                                  Future.delayed(const Duration(milliseconds: 300)).then(
+                                    (value) => Navigator.push(
+                                      context,
+                                      CustomPageRouter(page: '/producer/devices'),
+                                    ).then(
+                                      (_) => _loadDevices(),
+                                    ),
                                   );
                                 },
                               ),
@@ -169,11 +175,13 @@ class _ProducerHomeState extends State<ProducerHome> {
                                 description: '${_alertNotifications.length}',
                                 isAlert: true,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    CustomPageRouter(page: '/producer/alerts'),
-                                  ).then(
-                                    (_) => _loadAlertNotifications(),
+                                  Future.delayed(const Duration(milliseconds: 300)).then(
+                                    (value) => Navigator.push(
+                                      context,
+                                      CustomPageRouter(page: '/producer/alerts'),
+                                    ).then(
+                                      (_) => _loadAlertNotifications(),
+                                    ),
                                   );
                                 },
                               ),

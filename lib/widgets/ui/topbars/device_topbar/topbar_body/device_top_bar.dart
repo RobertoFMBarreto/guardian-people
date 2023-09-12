@@ -9,9 +9,11 @@ class DeviceTopBar extends StatelessWidget {
   final Device device;
   final Widget? tailWidget;
   final Function(String)? onColorChanged;
+  final double maxHeight;
   const DeviceTopBar({
     super.key,
     required this.device,
+    required this.maxHeight,
     required this.extent,
     required this.tailWidget,
     this.onColorChanged,
@@ -22,7 +24,7 @@ class DeviceTopBar extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 350,
+      height: maxHeight,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
@@ -41,6 +43,7 @@ class DeviceTopBar extends StatelessWidget {
               device: device,
               tailWidget: tailWidget,
               onColorChanged: onColorChanged!,
+              maxHeight: maxHeight,
             ),
     );
   }

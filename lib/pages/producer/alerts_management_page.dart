@@ -99,6 +99,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton.icon(
+                                style: const ButtonStyle(
+                                    minimumSize: MaterialStatePropertyAll(Size(200, 100))),
                                 onPressed: () {
                                   if (widget.isSelect) {
                                     if (_selectedAlerts.length == _alerts.length) {
@@ -131,7 +133,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                   widget.isSelect
                                       ? localizations.select_all.capitalize()
                                       : localizations.remove_all.capitalize(),
-                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                  style: theme.textTheme.bodyMedium!.copyWith(
                                     color: widget.isSelect
                                         ? theme.colorScheme.secondary
                                         : theme.colorScheme.error,
@@ -143,7 +145,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                           ),
                         ),
                       Expanded(
-                        flex: 15,
+                        flex: 12,
                         child: _alerts.isEmpty
                             ? Center(
                                 child: Text(localizations.no_alerts.capitalize()),
@@ -172,19 +174,20 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                         child: AlertManagementItem(
                                           onTap: () {
                                             if (hasConnection) {
-                                              Navigator.push(
-                                                context,
-                                                CustomPageRouter(
-                                                    page: '/producer/alerts/add',
-                                                    settings: RouteSettings(
-                                                      arguments: {
-                                                        'isEdit': true,
-                                                        'alert': _alerts[index],
-                                                      },
-                                                    )),
-                                              ).then(
-                                                (_) => _loadAlerts(),
-                                              );
+                                              Future.delayed(const Duration(milliseconds: 300))
+                                                  .then((value) => Navigator.push(
+                                                        context,
+                                                        CustomPageRouter(
+                                                            page: '/producer/alerts/add',
+                                                            settings: RouteSettings(
+                                                              arguments: {
+                                                                'isEdit': true,
+                                                                'alert': _alerts[index],
+                                                              },
+                                                            )),
+                                                      ).then(
+                                                        (_) => _loadAlerts(),
+                                                      ));
                                             }
                                           },
                                           alert: _alerts[index],

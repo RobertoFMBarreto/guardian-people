@@ -74,6 +74,7 @@ class _DevicePageState extends State<DevicePage> {
               key: Key("${_device.device.name.value}$hasConnection${theme.brightness}"),
               pinned: true,
               delegate: SliverDeviceAppBar(
+                maxHeight: MediaQuery.of(context).size.height * 0.4,
                 onColorChanged: (newColor) {
                   setState(() {
                     _device = Device(
@@ -82,14 +83,17 @@ class _DevicePageState extends State<DevicePage> {
                   });
                 },
                 title: Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        localizations.localization.capitalize(),
-                        style: theme.textTheme.headlineSmall!.copyWith(
-                          fontWeight: FontWeight.w500,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          localizations.localization.capitalize(),
+                          style: theme.textTheme.headlineSmall!.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                       ToggleSwitch(

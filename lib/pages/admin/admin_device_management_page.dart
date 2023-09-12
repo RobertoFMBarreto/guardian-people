@@ -79,6 +79,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: SliverDeviceAppBar(
+                      maxHeight: MediaQuery.of(context).size.height * 0.45,
                       isWhiteBody: true,
                       leadingWidget: IconButton(
                         icon: Icon(

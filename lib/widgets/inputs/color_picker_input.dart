@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:guardian/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 
 class CustomColorPickerInput extends StatefulWidget {
   final Color pickerColor;
@@ -24,6 +26,7 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return AlertDialog(
       actions: [
         TextButton(
@@ -31,7 +34,7 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
             Navigator.of(context).pop();
           },
           child: Text(
-            'Cancelar',
+            localizations.cancel.capitalize(),
             style: theme.textTheme.bodyLarge!.copyWith(color: Colors.grey),
           ),
         ),
@@ -41,7 +44,7 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
             Navigator.of(context).pop();
           },
           child: Text(
-            'Guardar',
+            localizations.confirm.capitalize(),
             style: theme.textTheme.bodyLarge!.copyWith(
               color: theme.colorScheme.secondary,
               fontWeight: FontWeight.bold,
@@ -54,6 +57,7 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
         children: [
           ColorPicker(
             pickerColor: pickedColor,
+            colorPickerWidth: MediaQuery.of(context).size.width * 0.6,
             onColorChanged: (color) {
               setState(() {
                 pickedColor = color;

@@ -121,7 +121,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
         : widget.deviceData.isNotEmpty
             ? [widget.deviceData.first]
             : [];
-    print([data.first, data.last]);
     // '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'
     return FutureBuilder(
       future: _future,
@@ -309,10 +308,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         selectedItemBuilder: (context) {
                           return [
                             Center(
-                              child: Text(
-                                localizations.normal_map.capitalize(),
-                                style: theme.textTheme.bodyLarge!
-                                    .copyWith(color: gdOnMapColor, fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  localizations.normal_map.capitalize(),
+                                  style: theme.textTheme.bodyLarge!
+                                      .copyWith(color: gdOnMapColor, fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
                             Center(
@@ -425,9 +427,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         }),
                       ),
                   ],
-                  color: gdOnMapColor,
                   icon: const Icon(Icons.tune),
-                  iconSize: 30,
                 ),
               ),
             ],

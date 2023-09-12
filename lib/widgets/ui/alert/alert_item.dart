@@ -22,13 +22,13 @@ class AlertItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            CustomPageRouter(
-                page: '/producer/device',
-                settings: RouteSettings(
-                    arguments: {'device': alertNotification.device, 'producerId': null})),
-          );
+          Future.delayed(const Duration(milliseconds: 300)).then((value) => Navigator.push(
+                context,
+                CustomPageRouter(
+                    page: '/producer/device',
+                    settings: RouteSettings(
+                        arguments: {'device': alertNotification.device, 'producerId': null})),
+              ));
         },
         borderRadius: BorderRadius.circular(8),
         child: ListTile(

@@ -235,6 +235,16 @@ class _GeofencingPageState extends State<GeofencingPage> {
               style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
             ),
             centerTitle: true,
+            // actions: [
+            //   TextButton(
+            //       onPressed: () {},
+            //       child: Text(
+            //         localizations.confirm.capitalize(),
+            //         style: theme.textTheme.bodyMedium!.copyWith(
+            //           color: gdSecondaryColor,
+            //         ),
+            //       ))
+            // ],
           ),
           body: FutureBuilder(
               future: _future,
@@ -245,7 +255,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                   return Column(
                     children: [
                       Expanded(
-                        flex: 2,
+                        flex: 5,
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: [
@@ -307,145 +317,142 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                 )
                               ],
                             ),
-                            Row(
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                FloatingActionButton.small(
-                                  heroTag: 'polygon',
-                                  backgroundColor: _isCircle
-                                      ? Colors.white
-                                      : const Color.fromRGBO(182, 255, 199, 1),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isCircle = false;
-                                      _resetPolygon();
-                                    });
-                                  },
-                                  child: const Icon(Icons.square_outlined),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => CustomColorPickerInput(
+                                          pickerColor: _fenceColor,
+                                          onSave: (color) {
+                                            // TODO: Logic to update device color
+                                            setState(() {
+                                              _fenceColor = color;
+                                            });
+
+                                            // TODO update fence
+                                            _changePolygonColor();
+                                          },
+                                          hexColor: HexColor.toHex(color: _fenceColor),
+                                        ),
+                                      );
+                                    },
+                                    child: ColorCircle(
+                                      color: _fenceColor,
+                                      radius: 15,
+                                    ),
+                                  ),
                                 ),
-                                FloatingActionButton.small(
-                                  heroTag: 'circle',
-                                  backgroundColor: _isCircle
-                                      ? const Color.fromRGBO(182, 255, 199, 1)
-                                      : Colors.white,
-                                  onPressed: () {
-                                    setState(() {
-                                      _isCircle = true;
-                                      _resetPolygon();
-                                    });
-                                  },
-                                  child: const Icon(Icons.circle_outlined),
-                                ),
-                                FloatingActionButton.small(
-                                  heroTag: 'reset',
-                                  child: const Icon(Icons.replay),
-                                  onPressed: () {
-                                    setState(() {
-                                      _resetPolygon();
-                                    });
-                                  },
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    FloatingActionButton.small(
+                                      heroTag: 'polygon',
+                                      backgroundColor: _isCircle
+                                          ? Colors.white
+                                          : const Color.fromRGBO(182, 255, 199, 1),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isCircle = false;
+                                          _resetPolygon();
+                                        });
+                                      },
+                                      child: const Icon(Icons.square_outlined),
+                                    ),
+                                    FloatingActionButton.small(
+                                      heroTag: 'circle',
+                                      backgroundColor: _isCircle
+                                          ? const Color.fromRGBO(182, 255, 199, 1)
+                                          : Colors.white,
+                                      onPressed: () {
+                                        setState(() {
+                                          _isCircle = true;
+                                          _resetPolygon();
+                                        });
+                                      },
+                                      child: const Icon(Icons.circle_outlined),
+                                    ),
+                                    FloatingActionButton.small(
+                                      heroTag: 'reset',
+                                      child: const Icon(Icons.replay),
+                                      onPressed: () {
+                                        setState(() {
+                                          _resetPolygon();
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
                       Expanded(
+                        flex: 2,
                         child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TextField(
-                                onChanged: (newValue) {
-                                  _fenceName = newValue;
-                                },
-                                controller: _nameController,
-                                decoration: InputDecoration(
-                                  label: Text(
-                                    localizations.fence_name.capitalize(),
+                          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Center(
+                            child: SingleChildScrollView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: TextField(
+                                      onChanged: (newValue) {
+                                        _fenceName = newValue;
+                                      },
+                                      controller: _nameController,
+                                      decoration: InputDecoration(
+                                        label: Text(
+                                          localizations.fence_name.capitalize(),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        localizations.fence_color.capitalize(),
-                                        style: theme.textTheme.bodyLarge,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => CustomColorPickerInput(
-                                              pickerColor: _fenceColor,
-                                              onSave: (color) {
-                                                // TODO: Logic to update device color
-                                                setState(() {
-                                                  _fenceColor = color;
-                                                });
-
-                                                // TODO update fence
-                                                _changePolygonColor();
-                                              },
-                                              hexColor: HexColor.toHex(color: _fenceColor),
-                                            ),
-                                          );
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
                                         },
-                                        child: ColorCircle(
-                                          color: _fenceColor,
-                                          radius: 15,
+                                        style: const ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(gdDarkCancelBtnColor),
+                                        ),
+                                        child: Text(
+                                          localizations.cancel.capitalize(),
+                                          style: theme.textTheme.bodyLarge!.copyWith(
+                                            color: theme.colorScheme.onSecondary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _confirmGeofence();
+                                        },
+                                        child: Text(
+                                          localizations.confirm.capitalize(),
+                                          style: theme.textTheme.bodyLarge!.copyWith(
+                                            color: theme.colorScheme.onSecondary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(gdDarkCancelBtnColor),
-                                      ),
-                                      child: Text(
-                                        localizations.cancel.capitalize(),
-                                        style: theme.textTheme.bodyLarge!.copyWith(
-                                          color: theme.colorScheme.onSecondary,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _confirmGeofence();
-                                      },
-                                      child: Text(
-                                        localizations.confirm.capitalize(),
-                                        style: theme.textTheme.bodyLarge!.copyWith(
-                                          color: theme.colorScheme.onSecondary,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       )

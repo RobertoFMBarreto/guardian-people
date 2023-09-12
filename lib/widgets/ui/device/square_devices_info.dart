@@ -17,6 +17,7 @@ class SquareDevicesInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    double deviceHeight = MediaQuery.of(context).size.height;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -66,14 +67,14 @@ class SquareDevicesInfo extends StatelessWidget {
                   isAlert
                       ? Icon(
                           Icons.warning,
-                          size: 75,
+                          size: deviceHeight * 0.08,
                           color: theme.colorScheme.onSecondary.withOpacity(0.8),
                         )
                       : Transform.rotate(
                           angle: -35,
                           child: Icon(
                             Icons.sensors,
-                            size: 75,
+                            size: deviceHeight * 0.08,
                             color: theme.colorScheme.onSecondary.withOpacity(0.8),
                           ),
                         ),

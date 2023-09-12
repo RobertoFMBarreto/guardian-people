@@ -3,6 +3,7 @@ import 'package:guardian/colors.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/settings.dart';
 
 import '../widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
 
@@ -45,6 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   imageUrl: '',
                   name: 'Admin',
                   isHomeShape: true,
+                  maxHeight: MediaQuery.of(context).size.height * gdTopBarHeightRatio,
                   leadingWidget: IconButton(
                     icon: Icon(
                       Icons.arrow_back,

@@ -4,8 +4,8 @@ import 'package:guardian/colors.dart';
 class IconText extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
-  final double iconSize;
-  final double fontSize;
+  final double? iconSize;
+  final double? fontSize;
   final String text;
   final bool isInverted;
   final Color? textColor;
@@ -14,8 +14,8 @@ class IconText extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     required this.text,
-    required this.iconSize,
-    required this.fontSize,
+    this.iconSize,
+    this.fontSize,
     this.textColor,
     this.isInverted = false,
   });
@@ -31,34 +31,46 @@ class IconText extends StatelessWidget {
     return isInverted
         ? Row(
             children: [
-              Text(
-                text,
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: fontSize,
-                  color: color,
+              FittedBox(
+                fit: BoxFit.fitHeight,
+                child: Text(
+                  text,
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: fontSize,
+                    color: color,
+                  ),
                 ),
               ),
-              Icon(
-                icon,
-                color: iconColor,
-                size: iconSize,
+              FittedBox(
+                fit: BoxFit.fitHeight,
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: iconSize,
+                ),
               ),
             ],
           )
         : Row(
             children: [
-              Icon(
-                icon,
-                color: iconColor,
-                size: iconSize,
+              FittedBox(
+                fit: BoxFit.fitHeight,
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: iconSize,
+                ),
               ),
-              Text(
-                text,
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: fontSize,
-                  color: color,
+              FittedBox(
+                fit: BoxFit.fitHeight,
+                child: Text(
+                  text,
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: fontSize,
+                    color: color,
+                  ),
                 ),
               ),
             ],

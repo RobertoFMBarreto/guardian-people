@@ -20,7 +20,9 @@ class FenceItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     return Card(
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          Future.delayed(const Duration(milliseconds: 300)).then((value) => onTap());
+        },
         borderRadius: BorderRadius.circular(10),
         child: ClipPath(
           clipper: ShapeBorderClipper(

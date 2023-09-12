@@ -1,13 +1,9 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 
 class DeviceMapWidget extends StatefulWidget {
@@ -66,7 +62,6 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   @override
   Widget build(BuildContext context) {
     _showHeatMap = !widget.isInterval ? false : _showHeatMap;
-    print(_deviceData);
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {

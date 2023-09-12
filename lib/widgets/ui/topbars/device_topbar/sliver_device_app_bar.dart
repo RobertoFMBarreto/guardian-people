@@ -12,6 +12,8 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Device device;
   bool isWhiteBody;
   Function(String)? onColorChanged;
+
+  double maxHeight;
   SliverDeviceAppBar({
     this.leadingWidget,
     this.tailWidget,
@@ -19,20 +21,21 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
     this.onColorChanged,
     this.isWhiteBody = false,
     required this.device,
+    required this.maxHeight,
   });
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     var adjustedShrinkOffset = shrinkOffset > minExtent ? minExtent : shrinkOffset;
 
     return SizedBox(
-      height: isWhiteBody ? 300 : 350,
+      height: maxHeight,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
           Align(
             alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
               child: title ?? const SizedBox(),
             ),
           ),
@@ -47,6 +50,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
                     extent: adjustedShrinkOffset,
                     tailWidget: tailWidget,
                     onColorChanged: onColorChanged,
+                    maxHeight: maxHeight,
                   ),
           ),
         ],
@@ -55,7 +59,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => isWhiteBody ? 300 : 350;
+  double get maxExtent => maxHeight; // isWhiteBody ? 300 : 350;
 
   @override
   double get minExtent => 70;

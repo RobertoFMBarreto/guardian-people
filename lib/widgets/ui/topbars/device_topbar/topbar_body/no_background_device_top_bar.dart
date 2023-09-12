@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/colors.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
@@ -15,9 +16,11 @@ class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Device device;
   final Widget? tailWidget;
   final Function(String) onColorChanged;
+  final double maxHeight;
   const NoBackgroundDeviceTopBar({
     super.key,
     required this.device,
+    required this.maxHeight,
     required this.tailWidget,
     required this.onColorChanged,
   });
@@ -70,7 +73,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Container(
       width: deviceWidth,
-      height: 350,
+      height: widget.maxHeight,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
@@ -81,143 +84,188 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
           ],
         ),
       ),
-      child: FittedBox(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: deviceWidth,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: theme.colorScheme.onSecondary,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: deviceWidth,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: theme.colorScheme.onSecondary,
+                    size: 30,
                   ),
-                  widget.tailWidget ?? const SizedBox()
-                ],
-              ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                widget.tailWidget ?? const SizedBox()
+              ],
             ),
-            Padding(
+          ),
+          Expanded(
+            child: Padding(
               padding: const EdgeInsets.only(
                 left: 20.0,
                 right: 20.0,
-                bottom: 20.0,
               ),
-              child: SizedBox(
-                width: deviceWidth,
-                height: 300,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 25.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
                         widget.device.device.name.value,
+                        textAlign: TextAlign.center,
                         style: theme.textTheme.headlineMedium!.copyWith(
                           color: theme.colorScheme.onSecondary,
-                          fontSize: 40,
                         ),
                       ),
-                      if (widget.device.data.isEmpty)
-                        Text(
-                          localizations.no_device_data.capitalize(),
-                          style: theme.textTheme.bodyLarge!.copyWith(
-                            fontSize: 20,
-                            color: theme.colorScheme.onSecondary,
-                          ),
-                          textAlign: TextAlign.center,
+                    ),
+                  ),
+                  if (widget.device.data.isEmpty)
+                    Expanded(
+                      child: Text(
+                        localizations.no_device_data.capitalize(),
+                        style: theme.textTheme.bodyLarge!.copyWith(
+                          fontSize: 20,
+                          color: theme.colorScheme.onSecondary,
                         ),
-                      if (widget.device.data.isNotEmpty)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconText(
-                              icon: Icons.sim_card,
-                              iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data.first.dataUsage.value}/10MB',
-                              fontSize: 23,
-                              iconSize: 25,
-                              textColor: theme.colorScheme.onSecondary,
-                            ),
-                            IconText(
-                              isInverted: true,
-                              icon: Icons.landscape,
-                              iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data.first.elevation.value.round()}m',
-                              fontSize: 23,
-                              iconSize: 30,
-                              textColor: theme.colorScheme.onSecondary,
-                            ),
-                          ],
-                        ),
-                      if (widget.device.data.isNotEmpty)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconText(
-                              icon: Icons.device_thermostat,
-                              iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data.first.temperature.value}ºC',
-                              fontSize: 23,
-                              iconSize: 30,
-                              textColor: theme.colorScheme.onSecondary,
-                            ),
-                            IconText(
-                              icon: DeviceWidgetProvider.getBatteryIcon(
-                                deviceBattery: 80,
-                                color: theme.colorScheme.onSecondary,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  if (widget.device.data.isNotEmpty)
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Expanded(child: SizedBox()),
+                          Expanded(
+                            flex: 3,
+                            child: FittedBox(
+                              fit: BoxFit.fitHeight,
+                              child: IconText(
+                                icon: Icons.sim_card,
+                                iconColor: theme.colorScheme.onSecondary,
+                                text: '${widget.device.data.first.dataUsage.value}/10MB',
+                                textColor: theme.colorScheme.onSecondary,
                               ),
-                              isInverted: true,
-                              iconColor: theme.colorScheme.onSecondary,
-                              text: '${widget.device.data.first.battery.value}%',
-                              fontSize: 23,
-                              iconSize: 30,
-                              textColor: theme.colorScheme.onSecondary,
                             ),
-                          ],
-                        ),
-                      Row(
+                          ),
+                          const Expanded(child: SizedBox()),
+                          Expanded(
+                            flex: 3,
+                            child: FittedBox(
+                              fit: BoxFit.fitHeight,
+                              child: IconText(
+                                isInverted: true,
+                                icon: Icons.landscape,
+                                iconColor: theme.colorScheme.onSecondary,
+                                text: '${widget.device.data.first.elevation.value.round()}m',
+                                textColor: theme.colorScheme.onSecondary,
+                              ),
+                            ),
+                          ),
+                          const Expanded(child: SizedBox()),
+                        ],
+                      ),
+                    ),
+                  if (widget.device.data.isNotEmpty)
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Expanded(child: SizedBox()),
+                          Expanded(
+                            flex: 2,
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: IconText(
+                                icon: Icons.device_thermostat,
+                                iconColor: theme.colorScheme.onSecondary,
+                                text: '${widget.device.data.first.temperature.value}ºC',
+                                textColor: theme.colorScheme.onSecondary,
+                              ),
+                            ),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          Expanded(
+                            flex: 2,
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: IconText(
+                                icon: DeviceWidgetProvider.getBatteryIcon(
+                                  deviceBattery: 80,
+                                  color: theme.colorScheme.onSecondary,
+                                ),
+                                isInverted: true,
+                                iconColor: theme.colorScheme.onSecondary,
+                                text: '${widget.device.data.first.battery.value}%',
+                                textColor: theme.colorScheme.onSecondary,
+                              ),
+                            ),
+                          ),
+                          const Expanded(child: SizedBox()),
+                        ],
+                      ),
+                    ),
+                  Expanded(
+                    child: Center(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              _showColorPicker();
-                            },
-                            child: ColorCircle(
-                              color: deviceColor,
-                              radius: 15,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              localizations.device_color.capitalize(),
-                              style: theme.textTheme.bodyLarge!.copyWith(
-                                color: theme.colorScheme.onSecondary,
-                                fontSize: 20,
+                          const Expanded(child: SizedBox()),
+                          Expanded(
+                            flex: 2,
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Center(
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showColorPicker();
+                                      },
+                                      child: ColorCircle(
+                                        color: deviceColor,
+                                        radius: 10,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: AutoSizeText(
+                                        localizations.device_color.capitalize(),
+                                        style: theme.textTheme.bodyLarge!.copyWith(
+                                          color: theme.colorScheme.onSecondary,
+                                        ),
+                                        minFontSize: 15,
+                                        maxFontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
+                          const Expanded(child: SizedBox()),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.06)),
+        ],
       ),
     );
   }

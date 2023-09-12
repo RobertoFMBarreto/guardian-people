@@ -10,10 +10,12 @@ class CustomMainTopBar extends StatelessWidget {
   String imageUrl;
   Widget? leadingWidget;
   Widget? tailWidget;
+  double maxHeight;
   CustomMainTopBar({
     required this.extent,
     required this.name,
     required this.imageUrl,
+    required this.maxHeight,
     this.leadingWidget,
     this.tailWidget,
     super.key,
@@ -26,7 +28,7 @@ class CustomMainTopBar extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 300,
+      height: maxHeight,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,

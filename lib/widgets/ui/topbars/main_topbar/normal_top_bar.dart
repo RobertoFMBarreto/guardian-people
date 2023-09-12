@@ -24,7 +24,6 @@ class NormalTopBar extends StatelessWidget {
           ),
           const CircleAvatar(
             backgroundColor: Colors.grey,
-            radius: 25,
           ),
         ],
       ),

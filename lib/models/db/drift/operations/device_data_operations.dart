@@ -43,7 +43,6 @@ Future<List<DeviceLocationsCompanion>> getDeviceData({
 }) async {
   final db = Get.find<GuardianDb>();
   List<DeviceLocation> data = [];
-  print(isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60);
   if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
     data = await (db.select(db.deviceLocations)
           ..orderBy([(tbl) => OrderingTerm.desc(db.deviceLocations.date)])

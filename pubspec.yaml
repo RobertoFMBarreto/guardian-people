@@ -64,6 +64,7 @@ dependencies:
   uuid: ^3.0.7
   get: ^4.6.5
   dropdown_button2: ^2.3.9
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   drift_dev: ^2.11.1

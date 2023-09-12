@@ -12,6 +12,7 @@ import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
+import 'package:guardian/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/device/device_item.dart';
@@ -245,6 +246,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                           key: ValueKey('$_isRemoveMode'),
                           pinned: true,
                           delegate: SliverMainAppBar(
+                            maxHeight: MediaQuery.of(context).size.height * gdTopBarHeightRatio,
                             imageUrl: '',
                             name: _producer.name,
                             title: Padding(

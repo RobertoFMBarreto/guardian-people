@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CircleAvatarBorder extends StatelessWidget {
-  final double radius;
-  const CircleAvatarBorder({super.key, required this.radius});
+  final double? radius;
+  const CircleAvatarBorder({super.key, this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class CircleAvatarBorder extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           CircleAvatar(
-            radius: radius + 2,
+            radius: radius != null ? radius! + 2 : null,
             backgroundColor: Colors.white,
           ),
           CircleAvatar(

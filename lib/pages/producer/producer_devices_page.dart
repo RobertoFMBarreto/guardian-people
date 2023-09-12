@@ -291,13 +291,16 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                                 int i = _selectedDevices.indexWhere((element) =>
                                                     element.device.deviceId ==
                                                     _devices[index].device.deviceId);
-                                                setState(() {
-                                                  if (i >= 0) {
-                                                    _selectedDevices.removeAt(i);
-                                                  } else {
-                                                    _selectedDevices.add(_devices[index]);
-                                                  }
-                                                });
+
+                                                if (mounted) {
+                                                  setState(() {
+                                                    if (i >= 0) {
+                                                      _selectedDevices.removeAt(i);
+                                                    } else {
+                                                      _selectedDevices.add(_devices[index]);
+                                                    }
+                                                  });
+                                                }
                                               },
                                             )
                                           : DeviceItem(

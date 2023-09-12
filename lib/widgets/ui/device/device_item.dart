@@ -21,20 +21,21 @@ class DeviceItem extends StatelessWidget {
   });
 
   void _onTapDevice(BuildContext context) {
-    getUid(context).then((uid) {
-      if (uid != null) {
-        userIsAdmin(uid).then((isAdmin) {
-          Navigator.push(
-            context,
-            CustomPageRouter(
-                page: isAdmin ? '/admin/producer/device' : '/producer/device',
-                settings: RouteSettings(arguments: {'device': device, 'producerId': producerId})),
-          ).then((_) {
-            if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
-          });
-        });
-      }
-    });
+    Future.delayed(const Duration(milliseconds: 300)).then((value) => getUid(context).then((uid) {
+          if (uid != null) {
+            userIsAdmin(uid).then((isAdmin) {
+              Navigator.push(
+                context,
+                CustomPageRouter(
+                    page: isAdmin ? '/admin/producer/device' : '/producer/device',
+                    settings:
+                        RouteSettings(arguments: {'device': device, 'producerId': producerId})),
+              ).then((_) {
+                if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
+              });
+            });
+          }
+        }));
   }
 
   @override

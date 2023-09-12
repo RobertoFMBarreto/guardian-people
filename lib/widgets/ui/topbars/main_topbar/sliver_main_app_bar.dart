@@ -10,20 +10,23 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
   Widget? title;
   String name;
   String imageUrl;
+  double maxHeight;
   SliverMainAppBar({
     this.leadingWidget,
     this.tailWidget,
     this.title,
     required this.name,
     required this.imageUrl,
+    required this.maxHeight,
     this.isHomeShape = false,
   });
+
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     var adjustedShrinkOffset = shrinkOffset > minExtent ? minExtent : shrinkOffset;
 
     return SizedBox(
-      height: 300,
+      height: maxHeight,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -31,7 +34,10 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: const EdgeInsets.only(left: 20),
-              child: title ?? const SizedBox(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.08,
+                child: title ?? const SizedBox(),
+              ),
             ),
           ),
           ClipPath(
@@ -42,6 +48,7 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
               extent: adjustedShrinkOffset,
               leadingWidget: leadingWidget,
               tailWidget: tailWidget,
+              maxHeight: maxHeight,
             ),
           ),
         ],
@@ -50,7 +57,7 @@ class SliverMainAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 300;
+  double get maxExtent => maxHeight;
 
   @override
   double get minExtent => 70;

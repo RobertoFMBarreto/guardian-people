@@ -113,83 +113,85 @@ class _LoginFormState extends State<LoginForm> {
           padding: const EdgeInsets.all(15),
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Text(
-                    'Guardian',
-                    style: theme.textTheme.headlineMedium,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Text(
+                      'Guardian',
+                      style: theme.textTheme.headlineMedium,
+                    ),
                   ),
-                ),
-                errorString.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: gdAltErrorColor,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5),
+                  errorString.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: gdAltErrorColor,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              errorString,
-                              style: theme.textTheme.bodyMedium!.copyWith(
-                                color: gdOnErrorColor,
-                                fontWeight: FontWeight.bold,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                errorString,
+                                style: theme.textTheme.bodyMedium!.copyWith(
+                                  color: gdOnErrorColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    : const SizedBox(),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      label: Text('Email'),
+                        )
+                      : const SizedBox(),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        label: Text('Email'),
+                      ),
+                      validator: (value) {
+                        return _validateEmail(value, localizations);
+                      },
+                      onChanged: (newValue) {
+                        _email = newValue;
+                      },
                     ),
-                    validator: (value) {
-                      return _validateEmail(value, localizations);
-                    },
-                    onChanged: (newValue) {
-                      _email = newValue;
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: TextFormField(
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                      label: Text('Password'),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      decoration: const InputDecoration(
+                        label: Text('Password'),
+                      ),
+                      validator: (value) {
+                        return _validatePassword(value, localizations);
+                      },
+                      onChanged: (newValue) {
+                        _password = newValue;
+                      },
+                      onFieldSubmitted: (text) {
+                        _onLogin(localizations);
+                      },
                     ),
-                    validator: (value) {
-                      return _validatePassword(value, localizations);
-                    },
-                    onChanged: (newValue) {
-                      _password = newValue;
-                    },
-                    onFieldSubmitted: (text) {
-                      _onLogin(localizations);
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      _onLogin(localizations);
-                    },
-                    child: const Text('Login'),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        _onLogin(localizations);
+                      },
+                      child: const Text('Login'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

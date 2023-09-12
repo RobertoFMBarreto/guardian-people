@@ -134,285 +134,288 @@ class _AddAlertPageState extends State<AddAlertPage> {
     double deviceWidth = MediaQuery.of(context).size.width;
     AppLocalizations localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${widget.isEdit! ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.warnings.capitalize()}',
-          style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
+    return GestureDetector(
+      onTap: () {
+        CustomFocusManager.unfocus(context);
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text(
+            '${widget.isEdit! ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.warnings.capitalize()}',
+            style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CustomCircularProgressIndicator();
-          } else {
-            return SafeArea(
-              child: Form(
-                key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        localizations.when.capitalize(),
-                        style: theme.textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
+        body: FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CustomCircularProgressIndicator();
+            } else {
+              return SafeArea(
+                child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          localizations.when.capitalize(),
+                          style: theme.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: CustomDropdown(
-                          value: _alertParameter,
-                          values: AlertParameter.values
-                              .map((e) => KeyValuePair(
-                                  key: e.toShortString(context).capitalize(), value: e))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value != null) {
-                                _alertParameter = value as AlertParameter;
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          CustomDropdown(
-                            value: _alertComparisson,
-                            values: AlertComparissons.values
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: CustomDropdown(
+                            value: _alertParameter,
+                            values: AlertParameter.values
                                 .map((e) => KeyValuePair(
                                     key: e.toShortString(context).capitalize(), value: e))
                                 .toList(),
                             onChanged: (value) {
                               setState(() {
                                 if (value != null) {
-                                  _alertComparisson = value as AlertComparissons;
+                                  _alertParameter = value as AlertParameter;
                                 }
                               });
                             },
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              _alertComparisson == AlertComparissons.equal
-                                  ? localizations.to
-                                  : localizations.than,
-                              style: theme.textTheme.bodyLarge!.copyWith(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                label: Text(localizations.value.capitalize()),
-                              ),
-                              keyboardType: TextInputType.number,
-                              initialValue:
-                                  _comparissonValue != 0 ? _comparissonValue.toString() : null,
-                              validator: (value) {
-                                if (value == null) {
-                                  return localizations.insert_value.capitalize();
-                                } else {
-                                  double? inputValue = double.tryParse(value);
-                                  if (inputValue != null) {
-                                    switch (_alertParameter) {
-                                      case AlertParameter.battery:
-                                        if (inputValue < 0 || inputValue > 100) {
-                                          return localizations.invalid_value.capitalize();
-                                        }
-                                        break;
-                                      case AlertParameter.dataUsage:
-                                        if (inputValue < 0 || inputValue > 10) {
-                                          return localizations.invalid_value.capitalize();
-                                        }
-                                        break;
-                                      case AlertParameter.temperature:
-                                        break;
-                                    }
-                                  } else {
-                                    return localizations.invalid_value.capitalize();
-                                  }
-                                  return null;
-                                }
-                              },
-                              onChanged: (value) {
-                                double? inputValue = double.tryParse(value);
-                                if (inputValue != null) {
-                                  _comparissonValue = inputValue;
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          localizations.what_to_do.capitalize(),
-                          style: theme.textTheme.bodyLarge!.copyWith(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Row(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(
-                              '${localizations.send.capitalize()} ${localizations.notification.capitalize()}:',
-                              style: theme.textTheme.bodyLarge,
+                            CustomDropdown(
+                              value: _alertComparisson,
+                              values: AlertComparissons.values
+                                  .map((e) => KeyValuePair(
+                                      key: e.toShortString(context).capitalize(), value: e))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value != null) {
+                                    _alertComparisson = value as AlertComparissons;
+                                  }
+                                });
+                              },
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Switch(
-                                  activeTrackColor: theme.colorScheme.secondary,
-                                  inactiveTrackColor:
-                                      Theme.of(context).brightness == Brightness.light
-                                          ? gdToggleGreyArea
-                                          : gdDarkToggleGreyArea,
-                                  value: _sendNotification,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _sendNotification = value;
-                                    });
-                                  }),
+                              child: Text(
+                                _alertComparisson == AlertComparissons.equal
+                                    ? localizations.to
+                                    : localizations.than,
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  label: Text(localizations.value.capitalize()),
+                                ),
+                                keyboardType: TextInputType.number,
+                                initialValue:
+                                    _comparissonValue != 0 ? _comparissonValue.toString() : null,
+                                validator: (value) {
+                                  if (value == null) {
+                                    return localizations.insert_value.capitalize();
+                                  } else {
+                                    double? inputValue = double.tryParse(value);
+                                    if (inputValue != null) {
+                                      switch (_alertParameter) {
+                                        case AlertParameter.battery:
+                                          if (inputValue < 0 || inputValue > 100) {
+                                            return localizations.invalid_value.capitalize();
+                                          }
+                                          break;
+                                        case AlertParameter.dataUsage:
+                                          if (inputValue < 0 || inputValue > 10) {
+                                            return localizations.invalid_value.capitalize();
+                                          }
+                                          break;
+                                        case AlertParameter.temperature:
+                                          break;
+                                      }
+                                    } else {
+                                      return localizations.invalid_value.capitalize();
+                                    }
+                                    return null;
+                                  }
+                                },
+                                onChanged: (value) {
+                                  double? inputValue = double.tryParse(value);
+                                  if (inputValue != null) {
+                                    _comparissonValue = inputValue;
+                                  }
+                                },
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed(
-                                '/producer/devices',
-                                arguments: widget.alert != null
-                                    ? {
-                                        'isSelect': true,
-                                        'alertId': widget.alert!.alertId.value,
-                                        'notToShowDevices': _alertDevices
-                                            .map((e) => e.device.deviceId.value)
-                                            .toList(),
-                                      }
-                                    : {
-                                        'isSelect': true,
-                                        'notToShowDevices': _alertDevices
-                                            .map((e) => e.device.deviceId.value)
-                                            .toList(),
-                                      },
-                              )
-                                  .then((selectedDevices) async {
-                                if (selectedDevices != null &&
-                                    selectedDevices.runtimeType == List<Device>) {
-                                  final selected = selectedDevices as List<Device>;
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            localizations.what_to_do.capitalize(),
+                            style: theme.textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                '${localizations.send.capitalize()} ${localizations.notification.capitalize()}:',
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Switch(
+                                    activeTrackColor: theme.colorScheme.secondary,
+                                    inactiveTrackColor:
+                                        Theme.of(context).brightness == Brightness.light
+                                            ? gdToggleGreyArea
+                                            : gdDarkToggleGreyArea,
+                                    value: _sendNotification,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _sendNotification = value;
+                                      });
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton.icon(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pushNamed(
+                                  '/producer/devices',
+                                  arguments: widget.alert != null
+                                      ? {
+                                          'isSelect': true,
+                                          'alertId': widget.alert!.alertId.value,
+                                          'notToShowDevices': _alertDevices
+                                              .map((e) => e.device.deviceId.value)
+                                              .toList(),
+                                        }
+                                      : {
+                                          'isSelect': true,
+                                          'notToShowDevices': _alertDevices
+                                              .map((e) => e.device.deviceId.value)
+                                              .toList(),
+                                        },
+                                )
+                                    .then((selectedDevices) async {
+                                  if (selectedDevices != null &&
+                                      selectedDevices.runtimeType == List<Device>) {
+                                    final selected = selectedDevices as List<Device>;
+                                    setState(() {
+                                      _alertDevices.addAll(selected);
+                                    });
+                                  }
+                                });
+                              },
+                              icon: Icon(
+                                Icons.add,
+                                color: theme.colorScheme.secondary,
+                              ),
+                              label: Text(
+                                '${localizations.add.capitalize()} ${localizations.devices.capitalize()}',
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  color: theme.colorScheme.secondary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: ListView.builder(
+                            itemCount: _alertDevices.length,
+                            itemBuilder: (context, index) => DeviceItemRemovable(
+                              key: Key(_alertDevices[index].device.deviceId.value),
+                              device: _alertDevices[index],
+                              onRemoveDevice: () {
+                                // TODO: On remove device
+                                if (widget.alert != null) {
+                                  _removeAlert(index);
+                                } else {
                                   setState(() {
-                                    _alertDevices.addAll(selected);
+                                    _alertDevices.removeWhere(
+                                      (element) =>
+                                          element.device.deviceId ==
+                                          _alertDevices[index].device.deviceId,
+                                    );
                                   });
                                 }
-                              });
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: theme.colorScheme.secondary,
+                              },
                             ),
-                            label: Text(
-                              '${localizations.add.capitalize()} ${localizations.devices.capitalize()}',
-                              style: theme.textTheme.bodyLarge!.copyWith(
-                                color: theme.colorScheme.secondary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: ListView.builder(
-                          itemCount: _alertDevices.length,
-                          itemBuilder: (context, index) => DeviceItemRemovable(
-                            key: Key(_alertDevices[index].device.deviceId.value),
-                            device: _alertDevices[index],
-                            onRemoveDevice: () {
-                              // TODO: On remove device
-                              if (widget.alert != null) {
-                                _removeAlert(index);
-                              } else {
-                                setState(() {
-                                  _alertDevices.removeWhere(
-                                    (element) =>
-                                        element.device.deviceId ==
-                                        _alertDevices[index].device.deviceId,
-                                  );
-                                });
-                              }
-                            },
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 40.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                CustomFocusManager.unfocus(context);
-                                Navigator.of(context).pop();
-                              },
-                              style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(gdDarkCancelBtnColor),
-                              ),
-                              child: Text(
-                                localizations.cancel.capitalize(),
-                                style: theme.textTheme.bodyMedium!.copyWith(
-                                  color: theme.colorScheme.onSecondary,
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 40.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  CustomFocusManager.unfocus(context);
+                                  Navigator.of(context).pop();
+                                },
+                                style: const ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(gdDarkCancelBtnColor),
+                                ),
+                                child: Text(
+                                  localizations.cancel.capitalize(),
+                                  style: theme.textTheme.bodyMedium!.copyWith(
+                                    color: theme.colorScheme.onSecondary,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: deviceWidth * 0.05,
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  if (widget.alert != null && widget.isEdit!) {
-                                    _updateAlert();
-                                  } else {
-                                    _createAlert();
+                              SizedBox(
+                                width: deviceWidth * 0.05,
+                              ),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    if (widget.alert != null && widget.isEdit!) {
+                                      _updateAlert();
+                                    } else {
+                                      _createAlert();
+                                    }
                                   }
-                                }
-                              },
-                              child: Text(
-                                widget.isEdit!
-                                    ? localizations.confirm.capitalize()
-                                    : localizations.add.capitalize(),
-                                style: theme.textTheme.bodyMedium!.copyWith(
-                                  color: theme.colorScheme.onSecondary,
+                                },
+                                child: Text(
+                                  widget.isEdit!
+                                      ? localizations.confirm.capitalize()
+                                      : localizations.add.capitalize(),
+                                  style: theme.textTheme.bodyMedium!.copyWith(
+                                    color: theme.colorScheme.onSecondary,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }
-        },
+              );
+            }
+          },
+        ),
       ),
     );
   }
