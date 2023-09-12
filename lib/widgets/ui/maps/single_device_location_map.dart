@@ -120,6 +120,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
           return const CustomCircularProgressIndicator();
         } else {
           return FlutterMap(
+            key: Key('${widget.deviceData}'),
             mapController: _mapController,
             options: MapOptions(
               center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
