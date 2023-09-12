@@ -92,6 +92,9 @@ class _MyAppState extends State<MyApp> {
             Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
       ),
     );
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Guardian',
