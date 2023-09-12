@@ -28,7 +28,6 @@ class _DevicePageState extends State<DevicePage> {
   bool _isInterval = false;
   late Device _device;
   int _reloadNum = 0;
-
   @override
   void initState() {
     _device = widget.device;
