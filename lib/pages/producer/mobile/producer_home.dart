@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';
@@ -11,7 +11,7 @@ import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/custom_page_router.dart';
-import 'package:guardian/settings.dart';
+import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/device/square_devices_info.dart';

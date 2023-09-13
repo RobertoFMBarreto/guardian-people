@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/settings.dart';
+import 'package:guardian/settings/settings.dart';
 
 import '../widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
 

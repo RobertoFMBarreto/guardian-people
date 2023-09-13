@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';

@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:guardian/routes/mobile_routes.dart';
+import 'package:guardian/routes/web_routes.dart';
 // import 'package:get/get.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 // import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
@@ -13,7 +15,6 @@ import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/routes.dart';
 import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
 // import 'package:guardian/models/providers/caching/stub.dart'
@@ -26,9 +27,8 @@ Future<void> main() async {
   // if (!kIsWeb) {
   //   await MapCaching().initMapCaching();
   // }
-  if (!kIsWeb) {
-    Get.put(GuardianDb());
-  }
+  Get.put(GuardianDb());
+
   runApp(const MyApp());
 }
 
@@ -92,20 +92,22 @@ class _MyAppState extends State<MyApp> {
             Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
       ),
     );
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    if (!kIsWeb) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    }
+    print('Is web: $kIsWeb');
     return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'Guardian',
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
-      initialRoute: '/',
-      routes: routes,
-    );
+        navigatorKey: navigatorKey,
+        title: 'Guardian',
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.system,
+        initialRoute: '/',
+        routes: kIsWeb ? webRoutes : mobileRoutes);
   }
 }

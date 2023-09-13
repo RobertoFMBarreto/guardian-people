@@ -1,25 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';
-import 'package:guardian/pages/admin/admin_device_management_page.dart';
-import 'package:guardian/pages/admin/admin_home_page.dart';
-import 'package:guardian/pages/admin/admin_producer_page.dart';
+import 'package:guardian/pages/admin/mobile/admin_device_management_page.dart';
+import 'package:guardian/pages/admin/mobile/admin_home_page.dart';
+import 'package:guardian/pages/admin/mobile/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
-import 'package:guardian/pages/producer/add_alert_page.dart';
-import 'package:guardian/pages/producer/alerts_management_page.dart';
-import 'package:guardian/pages/producer/alerts_page.dart';
-import 'package:guardian/pages/producer/device_history_page.dart';
-import 'package:guardian/pages/producer/device_page.dart';
-import 'package:guardian/pages/producer/device_settings_page.dart';
-import 'package:guardian/pages/producer/fences_page.dart';
-import 'package:guardian/pages/producer/geofencing_page.dart';
-import 'package:guardian/pages/producer/manage_fence_page.dart';
-import 'package:guardian/pages/producer/producer_devices_page.dart';
-import 'package:guardian/pages/producer/producer_home.dart';
+import 'package:guardian/pages/producer/mobile/add_alert_page.dart';
+import 'package:guardian/pages/producer/mobile/alerts_management_page.dart';
+import 'package:guardian/pages/producer/mobile/alerts_page.dart';
+import 'package:guardian/pages/producer/mobile/device_history_page.dart';
+import 'package:guardian/pages/producer/mobile/device_page.dart';
+import 'package:guardian/pages/producer/mobile/device_settings_page.dart';
+import 'package:guardian/pages/producer/mobile/fences_page.dart';
+import 'package:guardian/pages/producer/mobile/geofencing_page.dart';
+import 'package:guardian/pages/producer/mobile/manage_fence_page.dart';
+import 'package:guardian/pages/producer/mobile/producer_devices_page.dart';
+import 'package:guardian/pages/producer/mobile/producer_home.dart';
+import 'package:guardian/pages/producer/web/web_producer_page.dart';
 import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';
 
-Map<String, Widget Function(BuildContext)> routes = {
+Map<String, Widget Function(BuildContext)> mobileRoutes = {
   '/': (context) => const WelcomePage(),
   '/login': (context) => const LoginPage(),
   '/profile': (context) => const ProfilePage(),
@@ -44,7 +46,7 @@ Map<String, Widget Function(BuildContext)> routes = {
       throw ErrorDescription('Device not provided');
     }
   },
-  '/producer': (context) => const ProducerHome(),
+  '/producer': (context) => kIsWeb ? const WebProducerPage() : const ProducerHome(),
   '/producer/fences': (context) {
     if (ModalRoute.of(context)!.settings.arguments.runtimeType == bool) {
       return FencesPage(

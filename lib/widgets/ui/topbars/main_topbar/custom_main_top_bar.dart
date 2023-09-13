@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/extended_top_bar.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/normal_top_bar.dart';
 

@@ -10,7 +10,7 @@ import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/device/device_item.dart';
 import 'package:guardian/widgets/ui/device/device_item_selectable.dart';
 
-import '../../widgets/ui/drawers/producer_page_drawer.dart';
+import '../../../widgets/ui/drawers/producer_page_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerDevicesPage extends StatefulWidget {

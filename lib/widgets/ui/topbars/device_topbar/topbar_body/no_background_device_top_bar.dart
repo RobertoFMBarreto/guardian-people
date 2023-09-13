@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';

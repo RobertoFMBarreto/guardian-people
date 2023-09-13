@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/bottom_sheets/default_bottom_sheet.dart';

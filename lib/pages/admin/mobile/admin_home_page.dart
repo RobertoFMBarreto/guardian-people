@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_users_operations.dart';
 import 'package:guardian/models/db/drift/query_models/producer_with_devices_amount.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/settings.dart';
+import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';

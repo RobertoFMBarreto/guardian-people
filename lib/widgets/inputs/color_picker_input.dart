@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';

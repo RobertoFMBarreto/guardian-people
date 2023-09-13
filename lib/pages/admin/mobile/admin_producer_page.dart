@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/custom_floating_btn_option.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -12,7 +12,7 @@ import 'package:guardian/models/db/drift/query_models/device.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
-import 'package:guardian/settings.dart';
+import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/device/device_item.dart';

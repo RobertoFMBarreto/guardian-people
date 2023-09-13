@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
-import 'package:guardian/colors.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
