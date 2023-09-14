@@ -66,11 +66,13 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     }
     await _loadFences();
     for (var device in widget.devices) {
-      if (device.data.isNotEmpty) {
+      if (device.data.isNotEmpty &&
+          device.data.first.lat.value != null &&
+          device.data.first.lon.value != null) {
         devicesDataPoints.add(
           LatLng(
-            device.data.first.lat.value,
-            device.data.first.lon.value,
+            device.data.first.lat.value!,
+            device.data.first.lon.value!,
           ),
         );
       }
@@ -159,12 +161,15 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       },
                     ),
                   ...widget.devices
-                      .where((element) => element.data.isNotEmpty)
+                      .where((element) =>
+                          element.data.isNotEmpty &&
+                          element.data.first.lat.value != null &&
+                          element.data.first.lon.value != null)
                       .map(
                         (device) => Marker(
                           point: LatLng(
-                            device.data.first.lat.value,
-                            device.data.first.lon.value,
+                            device.data.first.lat.value!,
+                            device.data.first.lon.value!,
                           ),
                           builder: (context) {
                             return Icon(

@@ -63,13 +63,13 @@ class DeviceItem extends StatelessWidget {
                 fontSize: 18,
               ),
             ),
-            trailing: device.data.isNotEmpty
+            trailing: device.data.isNotEmpty && device.data.first.battery.value != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DeviceWidgetProvider.getBatteryWidget(
-                        deviceBattery: device.data.first.battery.value,
+                        deviceBattery: device.data.first.battery.value!,
                         color: theme.colorScheme.secondary,
                       ),
                       Text(

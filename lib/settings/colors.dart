@@ -11,7 +11,7 @@ const gdSecondaryAltColor = Color.fromRGBO(147, 215, 166, 0.5);
 const gdOnSecondaryColor = Colors.white;
 const gdErrorColor = Color.fromRGBO(252, 118, 118, 1);
 const gdAltErrorColor = Color.fromRGBO(252, 118, 118, 0.5);
-const gdOnErrorColor = Color.fromRGBO(128, 65, 65, 1);
+const gdOnErrorColor = Color.fromRGBO(215, 215, 215, 1);
 
 const gdGradientStart = Color.fromRGBO(88, 200, 160, 1);
 const gdGradientEnd = Color.fromRGBO(147, 215, 166, 1);

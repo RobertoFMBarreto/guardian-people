@@ -1285,51 +1285,51 @@ class $DeviceLocationsTable extends DeviceLocations
       const VerificationMeta('deviceId');
   @override
   late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
-      'device_id', aliasedName, false,
+      'device_id', aliasedName, true,
       type: DriftSqlType.string,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES device (device_id)'));
   static const VerificationMeta _dataUsageMeta =
       const VerificationMeta('dataUsage');
   @override
   late final GeneratedColumn<int> dataUsage = GeneratedColumn<int>(
-      'data_usage', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      'data_usage', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _temperatureMeta =
       const VerificationMeta('temperature');
   @override
   late final GeneratedColumn<double> temperature = GeneratedColumn<double>(
-      'temperature', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      'temperature', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _batteryMeta =
       const VerificationMeta('battery');
   @override
   late final GeneratedColumn<int> battery = GeneratedColumn<int>(
-      'battery', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      'battery', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _latMeta = const VerificationMeta('lat');
   @override
   late final GeneratedColumn<double> lat = GeneratedColumn<double>(
-      'lat', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      'lat', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _lonMeta = const VerificationMeta('lon');
   @override
   late final GeneratedColumn<double> lon = GeneratedColumn<double>(
-      'lon', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      'lon', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _elevationMeta =
       const VerificationMeta('elevation');
   @override
   late final GeneratedColumn<double> elevation = GeneratedColumn<double>(
-      'elevation', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      'elevation', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _accuracyMeta =
       const VerificationMeta('accuracy');
   @override
   late final GeneratedColumn<double> accuracy = GeneratedColumn<double>(
-      'accuracy', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      'accuracy', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
@@ -1338,8 +1338,8 @@ class $DeviceLocationsTable extends DeviceLocations
   static const VerificationMeta _stateMeta = const VerificationMeta('state');
   @override
   late final GeneratedColumn<String> state = GeneratedColumn<String>(
-      'state', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'state', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         deviceDataId,
@@ -1374,52 +1374,36 @@ class $DeviceLocationsTable extends DeviceLocations
     if (data.containsKey('device_id')) {
       context.handle(_deviceIdMeta,
           deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta));
-    } else if (isInserting) {
-      context.missing(_deviceIdMeta);
     }
     if (data.containsKey('data_usage')) {
       context.handle(_dataUsageMeta,
           dataUsage.isAcceptableOrUnknown(data['data_usage']!, _dataUsageMeta));
-    } else if (isInserting) {
-      context.missing(_dataUsageMeta);
     }
     if (data.containsKey('temperature')) {
       context.handle(
           _temperatureMeta,
           temperature.isAcceptableOrUnknown(
               data['temperature']!, _temperatureMeta));
-    } else if (isInserting) {
-      context.missing(_temperatureMeta);
     }
     if (data.containsKey('battery')) {
       context.handle(_batteryMeta,
           battery.isAcceptableOrUnknown(data['battery']!, _batteryMeta));
-    } else if (isInserting) {
-      context.missing(_batteryMeta);
     }
     if (data.containsKey('lat')) {
       context.handle(
           _latMeta, lat.isAcceptableOrUnknown(data['lat']!, _latMeta));
-    } else if (isInserting) {
-      context.missing(_latMeta);
     }
     if (data.containsKey('lon')) {
       context.handle(
           _lonMeta, lon.isAcceptableOrUnknown(data['lon']!, _lonMeta));
-    } else if (isInserting) {
-      context.missing(_lonMeta);
     }
     if (data.containsKey('elevation')) {
       context.handle(_elevationMeta,
           elevation.isAcceptableOrUnknown(data['elevation']!, _elevationMeta));
-    } else if (isInserting) {
-      context.missing(_elevationMeta);
     }
     if (data.containsKey('accuracy')) {
       context.handle(_accuracyMeta,
           accuracy.isAcceptableOrUnknown(data['accuracy']!, _accuracyMeta));
-    } else if (isInserting) {
-      context.missing(_accuracyMeta);
     }
     if (data.containsKey('date')) {
       context.handle(
@@ -1430,8 +1414,6 @@ class $DeviceLocationsTable extends DeviceLocations
     if (data.containsKey('state')) {
       context.handle(
           _stateMeta, state.isAcceptableOrUnknown(data['state']!, _stateMeta));
-    } else if (isInserting) {
-      context.missing(_stateMeta);
     }
     return context;
   }
@@ -1445,25 +1427,25 @@ class $DeviceLocationsTable extends DeviceLocations
       deviceDataId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}device_data_id'])!,
       deviceId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}device_id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}device_id']),
       dataUsage: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}data_usage'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}data_usage']),
       temperature: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}temperature'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}temperature']),
       battery: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}battery'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}battery']),
       lat: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}lat'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}lat']),
       lon: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}lon'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}lon']),
       elevation: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}elevation'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}elevation']),
       accuracy: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}accuracy'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}accuracy']),
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       state: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}state'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}state']),
     );
   }
 
@@ -1475,58 +1457,89 @@ class $DeviceLocationsTable extends DeviceLocations
 
 class DeviceLocation extends DataClass implements Insertable<DeviceLocation> {
   final String deviceDataId;
-  final String deviceId;
-  final int dataUsage;
-  final double temperature;
-  final int battery;
-  final double lat;
-  final double lon;
-  final double elevation;
-  final double accuracy;
+  final String? deviceId;
+  final int? dataUsage;
+  final double? temperature;
+  final int? battery;
+  final double? lat;
+  final double? lon;
+  final double? elevation;
+  final double? accuracy;
   final DateTime date;
-  final String state;
+  final String? state;
   const DeviceLocation(
       {required this.deviceDataId,
-      required this.deviceId,
-      required this.dataUsage,
-      required this.temperature,
-      required this.battery,
-      required this.lat,
-      required this.lon,
-      required this.elevation,
-      required this.accuracy,
+      this.deviceId,
+      this.dataUsage,
+      this.temperature,
+      this.battery,
+      this.lat,
+      this.lon,
+      this.elevation,
+      this.accuracy,
       required this.date,
-      required this.state});
+      this.state});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['device_data_id'] = Variable<String>(deviceDataId);
-    map['device_id'] = Variable<String>(deviceId);
-    map['data_usage'] = Variable<int>(dataUsage);
-    map['temperature'] = Variable<double>(temperature);
-    map['battery'] = Variable<int>(battery);
-    map['lat'] = Variable<double>(lat);
-    map['lon'] = Variable<double>(lon);
-    map['elevation'] = Variable<double>(elevation);
-    map['accuracy'] = Variable<double>(accuracy);
+    if (!nullToAbsent || deviceId != null) {
+      map['device_id'] = Variable<String>(deviceId);
+    }
+    if (!nullToAbsent || dataUsage != null) {
+      map['data_usage'] = Variable<int>(dataUsage);
+    }
+    if (!nullToAbsent || temperature != null) {
+      map['temperature'] = Variable<double>(temperature);
+    }
+    if (!nullToAbsent || battery != null) {
+      map['battery'] = Variable<int>(battery);
+    }
+    if (!nullToAbsent || lat != null) {
+      map['lat'] = Variable<double>(lat);
+    }
+    if (!nullToAbsent || lon != null) {
+      map['lon'] = Variable<double>(lon);
+    }
+    if (!nullToAbsent || elevation != null) {
+      map['elevation'] = Variable<double>(elevation);
+    }
+    if (!nullToAbsent || accuracy != null) {
+      map['accuracy'] = Variable<double>(accuracy);
+    }
     map['date'] = Variable<DateTime>(date);
-    map['state'] = Variable<String>(state);
+    if (!nullToAbsent || state != null) {
+      map['state'] = Variable<String>(state);
+    }
     return map;
   }
 
   DeviceLocationsCompanion toCompanion(bool nullToAbsent) {
     return DeviceLocationsCompanion(
       deviceDataId: Value(deviceDataId),
-      deviceId: Value(deviceId),
-      dataUsage: Value(dataUsage),
-      temperature: Value(temperature),
-      battery: Value(battery),
-      lat: Value(lat),
-      lon: Value(lon),
-      elevation: Value(elevation),
-      accuracy: Value(accuracy),
+      deviceId: deviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deviceId),
+      dataUsage: dataUsage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dataUsage),
+      temperature: temperature == null && nullToAbsent
+          ? const Value.absent()
+          : Value(temperature),
+      battery: battery == null && nullToAbsent
+          ? const Value.absent()
+          : Value(battery),
+      lat: lat == null && nullToAbsent ? const Value.absent() : Value(lat),
+      lon: lon == null && nullToAbsent ? const Value.absent() : Value(lon),
+      elevation: elevation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(elevation),
+      accuracy: accuracy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accuracy),
       date: Value(date),
-      state: Value(state),
+      state:
+          state == null && nullToAbsent ? const Value.absent() : Value(state),
     );
   }
 
@@ -1535,16 +1548,16 @@ class DeviceLocation extends DataClass implements Insertable<DeviceLocation> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DeviceLocation(
       deviceDataId: serializer.fromJson<String>(json['deviceDataId']),
-      deviceId: serializer.fromJson<String>(json['deviceId']),
-      dataUsage: serializer.fromJson<int>(json['dataUsage']),
-      temperature: serializer.fromJson<double>(json['temperature']),
-      battery: serializer.fromJson<int>(json['battery']),
-      lat: serializer.fromJson<double>(json['lat']),
-      lon: serializer.fromJson<double>(json['lon']),
-      elevation: serializer.fromJson<double>(json['elevation']),
-      accuracy: serializer.fromJson<double>(json['accuracy']),
+      deviceId: serializer.fromJson<String?>(json['deviceId']),
+      dataUsage: serializer.fromJson<int?>(json['dataUsage']),
+      temperature: serializer.fromJson<double?>(json['temperature']),
+      battery: serializer.fromJson<int?>(json['battery']),
+      lat: serializer.fromJson<double?>(json['lat']),
+      lon: serializer.fromJson<double?>(json['lon']),
+      elevation: serializer.fromJson<double?>(json['elevation']),
+      accuracy: serializer.fromJson<double?>(json['accuracy']),
       date: serializer.fromJson<DateTime>(json['date']),
-      state: serializer.fromJson<String>(json['state']),
+      state: serializer.fromJson<String?>(json['state']),
     );
   }
   @override
@@ -1552,43 +1565,43 @@ class DeviceLocation extends DataClass implements Insertable<DeviceLocation> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'deviceDataId': serializer.toJson<String>(deviceDataId),
-      'deviceId': serializer.toJson<String>(deviceId),
-      'dataUsage': serializer.toJson<int>(dataUsage),
-      'temperature': serializer.toJson<double>(temperature),
-      'battery': serializer.toJson<int>(battery),
-      'lat': serializer.toJson<double>(lat),
-      'lon': serializer.toJson<double>(lon),
-      'elevation': serializer.toJson<double>(elevation),
-      'accuracy': serializer.toJson<double>(accuracy),
+      'deviceId': serializer.toJson<String?>(deviceId),
+      'dataUsage': serializer.toJson<int?>(dataUsage),
+      'temperature': serializer.toJson<double?>(temperature),
+      'battery': serializer.toJson<int?>(battery),
+      'lat': serializer.toJson<double?>(lat),
+      'lon': serializer.toJson<double?>(lon),
+      'elevation': serializer.toJson<double?>(elevation),
+      'accuracy': serializer.toJson<double?>(accuracy),
       'date': serializer.toJson<DateTime>(date),
-      'state': serializer.toJson<String>(state),
+      'state': serializer.toJson<String?>(state),
     };
   }
 
   DeviceLocation copyWith(
           {String? deviceDataId,
-          String? deviceId,
-          int? dataUsage,
-          double? temperature,
-          int? battery,
-          double? lat,
-          double? lon,
-          double? elevation,
-          double? accuracy,
+          Value<String?> deviceId = const Value.absent(),
+          Value<int?> dataUsage = const Value.absent(),
+          Value<double?> temperature = const Value.absent(),
+          Value<int?> battery = const Value.absent(),
+          Value<double?> lat = const Value.absent(),
+          Value<double?> lon = const Value.absent(),
+          Value<double?> elevation = const Value.absent(),
+          Value<double?> accuracy = const Value.absent(),
           DateTime? date,
-          String? state}) =>
+          Value<String?> state = const Value.absent()}) =>
       DeviceLocation(
         deviceDataId: deviceDataId ?? this.deviceDataId,
-        deviceId: deviceId ?? this.deviceId,
-        dataUsage: dataUsage ?? this.dataUsage,
-        temperature: temperature ?? this.temperature,
-        battery: battery ?? this.battery,
-        lat: lat ?? this.lat,
-        lon: lon ?? this.lon,
-        elevation: elevation ?? this.elevation,
-        accuracy: accuracy ?? this.accuracy,
+        deviceId: deviceId.present ? deviceId.value : this.deviceId,
+        dataUsage: dataUsage.present ? dataUsage.value : this.dataUsage,
+        temperature: temperature.present ? temperature.value : this.temperature,
+        battery: battery.present ? battery.value : this.battery,
+        lat: lat.present ? lat.value : this.lat,
+        lon: lon.present ? lon.value : this.lon,
+        elevation: elevation.present ? elevation.value : this.elevation,
+        accuracy: accuracy.present ? accuracy.value : this.accuracy,
         date: date ?? this.date,
-        state: state ?? this.state,
+        state: state.present ? state.value : this.state,
       );
   @override
   String toString() {
@@ -1630,16 +1643,16 @@ class DeviceLocation extends DataClass implements Insertable<DeviceLocation> {
 
 class DeviceLocationsCompanion extends UpdateCompanion<DeviceLocation> {
   final Value<String> deviceDataId;
-  final Value<String> deviceId;
-  final Value<int> dataUsage;
-  final Value<double> temperature;
-  final Value<int> battery;
-  final Value<double> lat;
-  final Value<double> lon;
-  final Value<double> elevation;
-  final Value<double> accuracy;
+  final Value<String?> deviceId;
+  final Value<int?> dataUsage;
+  final Value<double?> temperature;
+  final Value<int?> battery;
+  final Value<double?> lat;
+  final Value<double?> lon;
+  final Value<double?> elevation;
+  final Value<double?> accuracy;
   final Value<DateTime> date;
-  final Value<String> state;
+  final Value<String?> state;
   final Value<int> rowid;
   const DeviceLocationsCompanion({
     this.deviceDataId = const Value.absent(),
@@ -1657,28 +1670,19 @@ class DeviceLocationsCompanion extends UpdateCompanion<DeviceLocation> {
   });
   DeviceLocationsCompanion.insert({
     required String deviceDataId,
-    required String deviceId,
-    required int dataUsage,
-    required double temperature,
-    required int battery,
-    required double lat,
-    required double lon,
-    required double elevation,
-    required double accuracy,
+    this.deviceId = const Value.absent(),
+    this.dataUsage = const Value.absent(),
+    this.temperature = const Value.absent(),
+    this.battery = const Value.absent(),
+    this.lat = const Value.absent(),
+    this.lon = const Value.absent(),
+    this.elevation = const Value.absent(),
+    this.accuracy = const Value.absent(),
     required DateTime date,
-    required String state,
+    this.state = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : deviceDataId = Value(deviceDataId),
-        deviceId = Value(deviceId),
-        dataUsage = Value(dataUsage),
-        temperature = Value(temperature),
-        battery = Value(battery),
-        lat = Value(lat),
-        lon = Value(lon),
-        elevation = Value(elevation),
-        accuracy = Value(accuracy),
-        date = Value(date),
-        state = Value(state);
+        date = Value(date);
   static Insertable<DeviceLocation> custom({
     Expression<String>? deviceDataId,
     Expression<String>? deviceId,
@@ -1711,16 +1715,16 @@ class DeviceLocationsCompanion extends UpdateCompanion<DeviceLocation> {
 
   DeviceLocationsCompanion copyWith(
       {Value<String>? deviceDataId,
-      Value<String>? deviceId,
-      Value<int>? dataUsage,
-      Value<double>? temperature,
-      Value<int>? battery,
-      Value<double>? lat,
-      Value<double>? lon,
-      Value<double>? elevation,
-      Value<double>? accuracy,
+      Value<String?>? deviceId,
+      Value<int?>? dataUsage,
+      Value<double?>? temperature,
+      Value<int?>? battery,
+      Value<double?>? lat,
+      Value<double?>? lon,
+      Value<double?>? elevation,
+      Value<double?>? accuracy,
       Value<DateTime>? date,
-      Value<String>? state,
+      Value<String?>? state,
       Value<int>? rowid}) {
     return DeviceLocationsCompanion(
       deviceDataId: deviceDataId ?? this.deviceDataId,

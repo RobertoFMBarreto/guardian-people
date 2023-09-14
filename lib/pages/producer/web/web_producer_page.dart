@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_home_page.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/ui/user/circle_avatar_border.dart';
@@ -15,6 +16,10 @@ class _WebProducerPageState extends State<WebProducerPage> {
   int _selectedDestination = 0;
   List<Widget> pages = [
     const WebProducerHomePage(),
+    Placeholder(),
+    const WebProducerDevicePage(),
+    Placeholder(),
+    Placeholder(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -58,18 +63,18 @@ class _WebProducerPageState extends State<WebProducerPage> {
                     label: Text('First'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.sen),
-                    selectedIcon: Icon(Icons.home),
+                    icon: Icon(Icons.sensors),
+                    selectedIcon: Icon(Icons.sensors),
                     label: Text('First'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home),
+                    icon: Icon(Icons.fence),
+                    selectedIcon: Icon(Icons.fence),
                     label: Text('First'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home),
+                    icon: Icon(Icons.warning_amber_sharp),
+                    selectedIcon: Icon(Icons.warning_outlined),
                     label: Text('First'),
                   ),
                 ],

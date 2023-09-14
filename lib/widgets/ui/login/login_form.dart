@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
+import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -45,6 +49,33 @@ class _LoginFormState extends State<LoginForm> {
         showLoadingDialog(context);
 
         // search user and verify if its correct
+
+        // AuthProvider.login(_email, _password).then((resp) {
+        //   if (resp.statusCode != 500) {
+        //     final body = jsonDecode(resp.body);
+        //     setUserSession(body['id'], body['token']).then((_) {
+        //       // store user profile
+        //       createUser(UserCompanion(
+        //         uid: drift.Value(body['id']),
+        //         email: drift.Value(body['email']),
+        //         name: drift.Value(body['name']),
+        //         phone: drift.Value(999999999),
+        //         isAdmin: drift.Value(body['isProducer'] == false),
+        //       )).then((_) {
+        //         // send to admin or producer
+        //         Navigator.of(context).popAndPushNamed(
+        //           body['isProducer'] == false ? '/admin' : '/producer',
+        //         );
+        //       });
+        //     });
+        //   } else {
+        //     setState(() {
+        //       errorString = resp.body;
+        //     });
+        //     Navigator.pop(context);
+        //   }
+        // });
+
         // TODO: Change to services
         loadUsers().then(
           (allUsers) async {
@@ -62,7 +93,7 @@ class _LoginFormState extends State<LoginForm> {
                 // pop loading dialog
                 Navigator.of(context).pop();
                 // store session data
-                setUserSession(user.first.uid.value).then((_) {
+                setUserSession(user.first.uid.value, '').then((_) {
                   // store user profile
                   createUser(user.first).then((_) {
                     // send to admin or producer

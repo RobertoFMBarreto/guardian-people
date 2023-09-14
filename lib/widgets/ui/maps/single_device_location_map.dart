@@ -118,8 +118,14 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     List<DeviceLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
         ? widget.deviceData
+            .where((element) => element.lat.value != null && element.lon.value != null)
+            .toList()
         : widget.deviceData.isNotEmpty
-            ? [widget.deviceData.first]
+            ? [
+                widget.deviceData
+                    .where((element) => element.lat.value != null && element.lon.value != null)
+                    .first
+              ]
             : [];
     // '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'
     return FutureBuilder(
@@ -141,9 +147,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                               _currentPosition!.latitude,
                               _currentPosition!.longitude,
                             )
-                          : widget.isInterval
+                          : widget.isInterval ||
+                                  data.first.lat.value == null ||
+                                  data.first.lon.value == null
                               ? null
-                              : LatLng(data.first.lat.value, data.first.lon.value)
+                              : LatLng(data.first.lat.value!, data.first.lon.value!)
                       : LatLng(
                           _currentPosition!.latitude,
                           _currentPosition!.longitude,
@@ -163,7 +171,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                           _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
                       : widget.isInterval && data.isNotEmpty
                           ? LatLngBounds.fromPoints(
-                              data.map((e) => LatLng(e.lat.value, e.lon.value)).toList(),
+                              data.map((e) => LatLng(e.lat.value!, e.lon.value!)).toList(),
                             )
                           : null,
                 ),
@@ -182,7 +190,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                           strokeWidth: 5,
                           points: data
                               .map(
-                                (e) => LatLng(e.lat.value, e.lon.value),
+                                (e) => LatLng(e.lat.value!, e.lon.value!),
                               )
                               .toList(),
                         ),
@@ -194,7 +202,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                       heatMapDataSource: InMemoryHeatMapDataSource(
                         data: data
                             .map(
-                              (e) => WeightedLatLng(LatLng(e.lat.value, e.lon.value), 1),
+                              (e) => WeightedLatLng(LatLng(e.lat.value!, e.lon.value!), 1),
                             )
                             .toList(),
                       ),
@@ -226,7 +234,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                 ...data
                                     .map(
                                       (e) => Marker(
-                                        point: LatLng(e.lat.value, e.lon.value),
+                                        point: LatLng(e.lat.value!, e.lon.value!),
                                         anchorPos: AnchorPos.align(AnchorAlign.top),
                                         builder: (context) {
                                           return Transform.rotate(
@@ -272,7 +280,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                               ...[data.first, data.last]
                                   .map(
                                     (e) => Marker(
-                                      point: LatLng(e.lat.value, e.lon.value),
+                                      point: LatLng(e.lat.value!, e.lon.value!),
                                       anchorPos: AnchorPos.align(AnchorAlign.top),
                                       builder: (context) {
                                         return Transform.rotate(

@@ -285,11 +285,14 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                 MarkerLayer(
                                   markers: [
                                     ..._devices
-                                        .where((element) => element.data.isNotEmpty)
+                                        .where((element) =>
+                                            element.data.isNotEmpty &&
+                                            element.data.first.lat.value != null &&
+                                            element.data.first.lon.value != null)
                                         .map(
                                           (device) => Marker(
-                                            point: LatLng(device.data.first.lat.value,
-                                                device.data.first.lon.value),
+                                            point: LatLng(device.data.first.lat.value!,
+                                                device.data.first.lon.value!),
                                             builder: (context) {
                                               return Icon(
                                                 Icons.location_on,

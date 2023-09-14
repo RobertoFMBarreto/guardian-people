@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> setUserSession(String uid) async {
+Future<void> setUserSession(String uid, String token) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // !TODO: Store jwt token
-  // await prefs.setString("token", token);
+  await prefs.setString("token", token);
   await prefs.setString("uid", uid);
 }
 
@@ -41,6 +41,12 @@ Future<void> setShownNoWifiDialog(bool value) async {
   prefs.setBool('showedNoWifi', value);
 }
 
+Future<void> setSessionToken(String value) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  prefs.setString('token', value);
+}
+
 Future<String?> getUid(BuildContext context) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -55,4 +61,11 @@ Future<String?> getUid(BuildContext context) async {
     );
   }
   return null;
+}
+
+Future<String?> getToken() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  String? token = prefs.getString('token');
+  return token;
 }
