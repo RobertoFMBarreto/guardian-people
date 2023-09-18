@@ -97,17 +97,17 @@ class _MyAppState extends State<MyApp> {
         DeviceOrientation.portraitUp,
       ]);
     }
-    print('Is web: $kIsWeb');
     return MaterialApp(
-        navigatorKey: navigatorKey,
-        title: 'Guardian',
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: ThemeMode.system,
-        initialRoute: '/',
-        routes: kIsWeb ? webRoutes : mobileRoutes);
+      navigatorKey: navigatorKey,
+      title: 'Guardian',
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
+      initialRoute: '/',
+      routes: kIsWeb ? webRoutes : mobileRoutes,
+    );
   }
 }
