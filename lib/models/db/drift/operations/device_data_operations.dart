@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 
@@ -8,12 +8,12 @@ Future<DeviceLocationsCompanion> createDeviceData(DeviceLocationsCompanion devic
   return deviceData;
 }
 
-// Future<List<DeviceData>?> getAllDeviceData(String deviceId) async {
+// Future<List<DeviceData>?> getAllDeviceData(String idDevice) async {
 //   final db = await GuardianDatabase().database;
 //   final data = await db.query(
 //     tableDeviceData,
-//     where: '${DeviceDataFields.deviceId} = ?',
-//     whereArgs: [deviceId],
+//     where: '${DeviceDataFields.idDevice} = ?',
+//     whereArgs: [idDevice],
 //   );
 
 //   if (data.isNotEmpty) {
@@ -22,44 +22,66 @@ Future<DeviceLocationsCompanion> createDeviceData(DeviceLocationsCompanion devic
 //   return null;
 // }
 
-Future<DeviceLocationsCompanion?> getLastDeviceData(String deviceId) async {
+Future<DeviceLocationsCompanion?> getLastDeviceData(BigInt idDevice) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.deviceLocations)
         ..where(
-          (tbl) => tbl.deviceId.equals(deviceId),
+          (tbl) => tbl.idDevice.equals(idDevice),
         )
         ..orderBy(
-          [(tbl) => OrderingTerm.desc(tbl.date)],
+          [(tbl) => drift.OrderingTerm.desc(tbl.date)],
         ))
       .getSingleOrNull();
   return data?.toCompanion(true);
 }
 
-Future<List<DeviceLocationsCompanion>> getDeviceData({
+Future<double> getMaxElevation() async {
+  final db = Get.find<GuardianDb>();
+  final data = await db.customSelect('''
+      SELECT IFNULL(MAX(${db.deviceLocations.elevation.name}),0) AS maxElevation FROM ${db.device.actualTableName}
+      LEFT JOIN ${db.deviceLocations.actualTableName} ON ${db.deviceLocations.actualTableName}.${db.deviceLocations.idDevice.name} = ${db.device.actualTableName}.${db.deviceLocations.idDevice.name}
+    ''').getSingle();
+
+  return data.data['maxElevation'];
+}
+
+Future<double> getMaxTemperature() async {
+  final db = Get.find<GuardianDb>();
+  final data = await db.customSelect('''
+      SELECT IFNULL(MAX(${db.deviceLocations.temperature.name}),0) AS maxTemperature FROM ${db.device.actualTableName}
+      LEFT JOIN ${db.deviceLocations.actualTableName} ON ${db.deviceLocations.actualTableName}.${db.deviceLocations.idDevice.name} = ${db.device.actualTableName}.${db.deviceLocations.idDevice.name}
+    ''').getSingle();
+
+  return data.data['maxTemperature'];
+}
+
+Future<List<DeviceLocationsCompanion>> getAnimalData({
   DateTime? startDate,
   DateTime? endDate,
-  required String deviceId,
+  required BigInt idAnimal,
   bool isInterval = false,
 }) async {
   final db = Get.find<GuardianDb>();
   List<DeviceLocation> data = [];
   if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
     data = await (db.select(db.deviceLocations)
-          ..orderBy([(tbl) => OrderingTerm.desc(db.deviceLocations.date)])
-          ..where(
-            (tbl) =>
-                tbl.deviceId.equals(deviceId) &
-                tbl.date.isBiggerOrEqualValue(startDate) &
-                tbl.date.isSmallerOrEqualValue(endDate),
-          ))
+          ..join([
+            drift.innerJoin(db.device, db.device.idDevice.equalsExp(db.deviceLocations.idDevice))
+          ])
+          ..join([drift.innerJoin(db.animal, db.animal.idDevice.equalsExp(db.device.idDevice))])
+          ..orderBy([(tbl) => drift.OrderingTerm.desc(db.deviceLocations.date)])
+          ..where((tbl) =>
+              db.animal.idAnimal.equals(idAnimal) &
+              db.deviceLocations.date.isBiggerOrEqualValue(startDate) &
+              db.deviceLocations.date.isSmallerOrEqualValue(endDate)))
         .get();
   } else {
     final dt = await (db.select(db.deviceLocations)
           ..orderBy(
-            [(tbl) => OrderingTerm.desc(db.deviceLocations.date)],
+            [(tbl) => drift.OrderingTerm.desc(db.deviceLocations.date)],
           )
           ..where(
-            (tbl) => tbl.deviceId.equals(deviceId),
+            (tbl) => tbl.idDevice.equals(idAnimal),
           ))
         .get();
     if (dt.isNotEmpty) {

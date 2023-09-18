@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 
 Future<AlertDevicesCompanion> addAlertDevice(AlertDevicesCompanion alertDevice) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.alertDevices)
         ..where((tbl) =>
-            tbl.deviceId.equals(alertDevice.deviceId.value) &
-            tbl.alertId.equals(alertDevice.alertId.value)))
+            tbl.idDevice.equals(alertDevice.idDevice.value) &
+            tbl.idAlert.equals(alertDevice.idAlert.value)))
       .get();
   if (data.isEmpty) {
     db.into(db.alertDevices).insertOnConflictUpdate(alertDevice);
@@ -16,30 +16,30 @@ Future<AlertDevicesCompanion> addAlertDevice(AlertDevicesCompanion alertDevice) 
   return alertDevice;
 }
 
-Future<void> removeAllAlertDevices(String alertId) async {
+Future<void> removeAllAlertDevices(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
-  (db.delete(db.alertDevices)..where((tbl) => tbl.alertId.equals(alertId))).go();
+  (db.delete(db.alertDevices)..where((tbl) => tbl.idAlert.equals(idAlert))).go();
 }
 
-Future<void> removeAlertDevice(String alertId, String deviceId) async {
+Future<void> removeAlertDevice(BigInt idAlert, BigInt idDevice) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertDevices)
         ..where(
-          (tbl) => tbl.alertId.equals(alertId) & tbl.deviceId.equals(deviceId),
+          (tbl) => tbl.idAlert.equals(idAlert) & tbl.idDevice.equals(idDevice),
         ))
       .go();
 }
 
-Future<List<Device>> getAlertDevices(String alertId) async {
+Future<List<Animal>> getAlertDevices(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.customSelect(
     '''
       SELECT 
-        ${db.device.uid.name},
-        ${db.device.imei.name},
-        ${db.device.color.name},
-        ${db.device.name.name},
-        ${db.device.isActive.name},
+        ${db.animal.idUser.name},
+        ${db.animal.animalName.name},
+        ${db.animal.animalIdentification.name},
+        ${db.animal.animalColor.name},
+        ${db.animal.isActive.name},
         ${db.deviceLocations.deviceDataId.name},
         ${db.deviceLocations.dataUsage.name},
         ${db.deviceLocations.temperature.name},
@@ -50,51 +50,53 @@ Future<List<Device>> getAlertDevices(String alertId) async {
         ${db.deviceLocations.accuracy.name},
         ${db.deviceLocations.date.name},
         ${db.deviceLocations.state.name},
-        ${db.device.actualTableName}.${db.device.deviceId.name}
+        ${db.device.actualTableName}.${db.device.idDevice.name}
       FROM ${db.alertDevices.actualTableName}
-      LEFT JOIN ${db.userAlert.actualTableName} ON ${db.userAlert.actualTableName}.${db.userAlert.alertId.name} = ${db.alertDevices.actualTableName}.${db.alertDevices.alertId.name}
-      LEFT JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.deviceId.name} = ${db.alertDevices.actualTableName}.${db.alertDevices.deviceId.name}
+      LEFT JOIN ${db.userAlert.actualTableName} ON ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name} = ${db.alertDevices.actualTableName}.${db.alertDevices.idAlert.name}
+      LEFT JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.idDevice.name} = ${db.alertDevices.actualTableName}.${db.alertDevices.idDevice.name}
+      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idDevice.name} = ${db.device.actualTableName}.${db.device.idDevice.name}
       LEFT JOIN (
         SELECT * FROM 
           (
             SELECT * FROM ${db.deviceLocations.actualTableName}
             ORDER BY ${db.deviceLocations.date.name} DESC 
           ) as deviceDt
-        GROUP BY deviceDt.${db.deviceLocations.deviceId.name}
-      ) deviceData ON ${db.device.actualTableName}.${db.device.deviceId.name} = deviceData.${db.deviceLocations.deviceId.name}
-      WHERE ${db.alertDevices.actualTableName}.${db.alertDevices.alertId.name} = ?
+        GROUP BY deviceDt.${db.deviceLocations.idDevice.name}
+      ) deviceData ON ${db.device.actualTableName}.${db.device.idDevice.name} = deviceData.${db.deviceLocations.idDevice.name}
+      WHERE ${db.alertDevices.actualTableName}.${db.alertDevices.idAlert.name} = ?
     ''',
     variables: [
-      drift.Variable.withString(alertId),
+      drift.Variable.withBigInt(idAlert),
     ],
   )).get();
 
-  List<Device> devices = [];
+  List<Animal> devices = [];
   devices.addAll(
     data.map(
-      (deviceData) => Device(
-        device: DeviceCompanion(
-          color: drift.Value(deviceData.data['color']),
-          deviceId: drift.Value(deviceData.data['device_id']),
-          imei: drift.Value(deviceData.data['imei']),
-          isActive: drift.Value(deviceData.data['is_active'] == 1),
-          name: drift.Value(deviceData.data['name']),
-          uid: drift.Value(deviceData.data['uid']),
+      (deviceData) => Animal(
+        animal: AnimalCompanion(
+          animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
+          idDevice: drift.Value(deviceData.data[db.animal.idDevice.name]),
+          isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
+          animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
+          animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
         ),
         data: [
-          if (deviceData.data['accuracy'] != null)
+          if (deviceData.data[db.deviceLocations.accuracy.name] != null)
             DeviceLocationsCompanion(
-              accuracy: drift.Value(deviceData.data['accuracy']),
-              battery: drift.Value(deviceData.data['battery']),
-              dataUsage: drift.Value(deviceData.data['data_usage']),
-              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(deviceData.data['date'])),
-              deviceDataId: drift.Value(deviceData.data['device_data_id']),
-              deviceId: drift.Value(deviceData.data['device_id']),
-              elevation: drift.Value(deviceData.data['elevation']),
-              lat: drift.Value(deviceData.data['lat']),
-              lon: drift.Value(deviceData.data['lon']),
-              state: drift.Value(deviceData.data['state']),
-              temperature: drift.Value(deviceData.data['temperature']),
+              accuracy: drift.Value(deviceData.data[db.deviceLocations.accuracy.name]),
+              battery: drift.Value(deviceData.data[db.deviceLocations.battery.name]),
+              dataUsage: drift.Value(deviceData.data[db.deviceLocations.dataUsage.name]),
+              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                  deviceData.data[db.deviceLocations.date.name])),
+              deviceDataId: drift.Value(deviceData.data[db.deviceLocations.deviceDataId.name]),
+              idDevice: drift.Value(deviceData.data[db.deviceLocations.idDevice.name]),
+              elevation: drift.Value(deviceData.data[db.deviceLocations.elevation.name]),
+              lat: drift.Value(deviceData.data[db.deviceLocations.lat.name]),
+              lon: drift.Value(deviceData.data[db.deviceLocations.lon.name]),
+              state: drift.Value(deviceData.data[db.deviceLocations.state.name]),
+              temperature: drift.Value(deviceData.data[db.deviceLocations.temperature.name]),
             ),
         ],
       ),
@@ -103,19 +105,19 @@ Future<List<Device>> getAlertDevices(String alertId) async {
   return devices;
 }
 
-Future<List<UserAlertCompanion>> getDeviceAlerts(String deviceId) async {
+Future<List<UserAlertCompanion>> getDeviceAlerts(BigInt idDevice) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.alertDevices).join([
-    drift.innerJoin(db.userAlert, db.userAlert.alertId.equalsExp(db.alertDevices.alertId)),
+    drift.innerJoin(db.userAlert, db.userAlert.idAlert.equalsExp(db.alertDevices.idAlert)),
   ])
-        ..where(db.alertDevices.deviceId.equals(deviceId)))
+        ..where(db.alertDevices.idDevice.equals(idDevice)))
       .get();
   List<UserAlertCompanion> alerts = [];
 
   alerts.addAll(
     data.map(
       (e) => UserAlertCompanion(
-        alertId: drift.Value(e.readTable(db.userAlert).alertId),
+        idAlert: drift.Value(e.readTable(db.userAlert).idAlert),
         comparisson: drift.Value(e.readTable(db.userAlert).comparisson),
         hasNotification: drift.Value(e.readTable(db.userAlert).hasNotification),
         parameter: drift.Value(e.readTable(db.userAlert).parameter),
@@ -127,34 +129,34 @@ Future<List<UserAlertCompanion>> getDeviceAlerts(String deviceId) async {
   return alerts;
 }
 
-Future<List<UserAlertCompanion>> getDeviceUnselectedAlerts(String deviceId) async {
+Future<List<UserAlertCompanion>> getDeviceUnselectedAlerts(String idDevice) async {
   final db = Get.find<GuardianDb>();
   // final data = await (db.select(db.userAlert).join(
   //   [
   //     drift.leftOuterJoin(
-  //         db.alertDevices, db.alertDevices.alertId.equalsExp(db.alertDevices.alertId))
+  //         db.alertDevices, db.alertDevices.idAlert.equalsExp(db.alertDevices.idAlert))
   //   ],
-  // )..where(db.alertDevices.deviceId.isNotValue(deviceId)))
+  // )..where(db.alertDevices.idDevice.isNotValue(idDevice)))
   //     .get();
 
   final data = await (db.customSelect('''
       SELECT 
-        ${db.userAlert.actualTableName}.${db.userAlert.alertId.name},
+        ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name},
         ${db.userAlert.comparisson.name},
         ${db.userAlert.parameter.name},
         ${db.userAlert.hasNotification.name},
         ${db.userAlert.value.name}
       FROM ${db.userAlert.actualTableName}
-      LEFT JOIN ${db.alertDevices.actualTableName} ON ${db.alertDevices.actualTableName}.${db.alertDevices.alertId.name} = ${db.userAlert.actualTableName}.${db.userAlert.alertId.name}
-      WHERE ${db.alertDevices.actualTableName}.${db.alertDevices.deviceId.name} != ? OR ${db.alertDevices.actualTableName}.${db.alertDevices.deviceId.name} IS NULL
-''', variables: [drift.Variable(deviceId)])).get();
+      LEFT JOIN ${db.alertDevices.actualTableName} ON ${db.alertDevices.actualTableName}.${db.alertDevices.idAlert.name} = ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name}
+      WHERE ${db.alertDevices.actualTableName}.${db.alertDevices.idDevice.name} != ? OR ${db.alertDevices.actualTableName}.${db.alertDevices.idDevice.name} IS NULL
+''', variables: [drift.Variable(idDevice)])).get();
 
   List<UserAlertCompanion> alerts = [];
 
   alerts.addAll(
     data.map(
       (e) => UserAlertCompanion(
-        alertId: drift.Value(e.data[db.userAlert.alertId.name]),
+        idAlert: drift.Value(e.data[db.userAlert.idAlert.name]),
         comparisson: drift.Value(e.data[db.userAlert.comparisson.name]),
         hasNotification: drift.Value(e.data[db.userAlert.hasNotification.name] == 1),
         parameter: drift.Value(e.data[db.userAlert.parameter.name]),

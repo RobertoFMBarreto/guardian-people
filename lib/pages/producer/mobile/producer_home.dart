@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
@@ -32,7 +33,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   late UserData _user;
   late Future<void> _loadData;
 
-  List<Device> _devices = [];
+  List<Animal> _devices = [];
   List<FenceData> _fences = [];
   List<AlertNotification> _alertNotifications = [];
 
@@ -61,7 +62,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   }
 
   Future<void> _loadDevices() async {
-    await getUserDevicesWithData().then((allDevices) {
+    await getUserAnimalsWithData().then((allDevices) {
       _devices = [];
       setState(() => _devices.addAll(allDevices));
     });
@@ -201,7 +202,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                       child: DevicesLocationsMap(
                         key: Key(_reloadMap.toString()),
                         showCurrentPosition: true,
-                        devices: _devices,
+                        animals: _devices,
                         fences: _fences,
                         reloadMap: _reloadMap.toString(),
                       ),

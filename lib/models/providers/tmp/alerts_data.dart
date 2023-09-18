@@ -6,7 +6,7 @@ Map<String, dynamic> alertsDataJson = {
       "comparisson": "=",
       "value": 20.0,
       "device": "350457790679797",
-      "uid": "1",
+      "idUser": "1",
       "id": "1"
     }
   ]

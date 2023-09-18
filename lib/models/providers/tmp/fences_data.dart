@@ -1,7 +1,7 @@
 Map<String, dynamic> fencesDataJson = {
   "fences": [
     {
-      "uid": "1",
+      "idUser": "1",
       "id": "1",
       "color": "#f542ef",
       "name": "teste",
@@ -22,7 +22,7 @@ Map<String, dynamic> fencesDataJson = {
       ]
     },
     {
-      "uid": "1",
+      "idUser": "1",
       "id": "2",
       "color": "#3238a8",
       "name": "teste1",
@@ -40,7 +40,7 @@ Map<String, dynamic> fencesDataJson = {
       ]
     },
     {
-      "uid": "1",
+      "idUser": "1",
       "id": "3",
       "color": "#3238a8",
       "name": "teste1",

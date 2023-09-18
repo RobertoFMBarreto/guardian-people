@@ -19,7 +19,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SingleDeviceLocationMap extends StatefulWidget {
   final bool showCurrentPosition;
   final List<DeviceLocationsCompanion> deviceData;
-  final String imei;
+  final BigInt idAnimal;
   final String deviceColor;
   final Function(double) onZoomChange;
   final double startingZoom;
@@ -35,7 +35,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     required this.isInterval,
-    required this.imei,
+    required this.idAnimal,
     required this.deviceColor,
   });
 
@@ -90,10 +90,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   Future<void> _loadDeviceFences() async {
     List<Polygon> allFences = [];
-    await getDeviceFence(widget.imei).then((fence) async {
+    await getAnimalFence(widget.idAnimal).then((fence) async {
       if (fence != null) {
         List<LatLng> fencePoints = [];
-        fencePoints.addAll(await getFencePoints(fence.fenceId));
+        fencePoints.addAll(await getFencePoints(fence.idFence));
         allFences.add(
           Polygon(
             points: fencePoints,

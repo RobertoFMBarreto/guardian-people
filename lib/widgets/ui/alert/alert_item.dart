@@ -37,7 +37,7 @@ class AlertItem extends StatelessWidget {
             size: 30,
             color: theme.colorScheme.secondary,
           ),
-          title: Text(alertNotification.device.device.imei.value),
+          title: Text(alertNotification.device.animal.animalName.value),
           subtitle: Text(
               '${alertNotification.alert.parameter.value.capitalize()} ${alertNotification.alert.comparisson.value} ${alertNotification.alert.comparisson.value == AlertComparissons.equal.toShortString(context) ? localizations.to : localizations.than} ${alertNotification.alert.value}'),
           trailing: IconButton(

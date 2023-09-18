@@ -2,8 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:guardian/models/db/drift/tables/Device/device.dart';
 
 class DeviceLocations extends Table {
-  TextColumn get deviceDataId => text()();
-  TextColumn get deviceId => text().references(Device, #deviceId).nullable()();
+  Int64Column get deviceDataId => int64()();
+  Int64Column get idDevice => int64().references(Device, #idDevice).nullable()();
   IntColumn get dataUsage => integer().nullable()();
   RealColumn get temperature => real().nullable()();
   IntColumn get battery => integer().nullable()();

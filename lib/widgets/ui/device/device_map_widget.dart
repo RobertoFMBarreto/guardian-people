@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 
 class DeviceMapWidget extends StatefulWidget {
-  final Device device;
+  final Animal animal;
   final bool isInterval;
-  const DeviceMapWidget({super.key, required this.device, required this.isInterval});
+  const DeviceMapWidget({super.key, required this.animal, required this.isInterval});
 
   @override
   State<DeviceMapWidget> createState() => _DeviceMapWidgetState();
@@ -36,16 +36,16 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
 
   Future<void> _setup() async {
     setState(() {
-      _deviceData = widget.device.data;
+      _deviceData = widget.animal.data;
     });
     await _getDeviceData();
   }
 
   Future<void> _getDeviceData() async {
-    await getDeviceData(
+    await getAnimalData(
       startDate: _startDate,
       endDate: _endDate,
-      deviceId: widget.device.device.deviceId.value,
+      idAnimal: widget.animal.animal.idAnimal.value,
       isInterval: widget.isInterval,
     ).then(
       (data) async {
@@ -101,8 +101,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                       child: SingleDeviceLocationMap(
                         showCurrentPosition: true,
                         deviceData: _deviceData,
-                        imei: widget.device.device.imei.value,
-                        deviceColor: widget.device.device.color.value,
+                        idAnimal: widget.animal.animal.idAnimal.value,
+                        deviceColor: widget.animal.animal.animalColor.value,
                         isInterval: widget.isInterval,
                         endDate: _endDate,
                         startDate: _startDate,

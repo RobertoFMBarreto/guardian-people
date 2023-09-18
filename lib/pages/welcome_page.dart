@@ -23,20 +23,20 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Future<void> _getToken(BuildContext context) async {
     await getUid(context).then(
-      (uid) async {
-        if (uid != null) {
+      (idUser) async {
+        if (idUser != null) {
           // get user data
-          getUser(uid).then((user) {
+          getUser(idUser).then((user) {
             // TODO: To Remove it
-            // loadUserDevices(uid);
-            // loadUserFences(uid);
+            // loadUserDevices(idUser);
+            // loadUserFences(idUser);
             // loadAlerts();
 
             // if there is stored data use it for getting his role
             if (user != null) {
               Navigator.pushReplacement(
                 context,
-                CustomPageRouter(page: user.isAdmin ? '/admin' : '/producer'),
+                CustomPageRouter(page: user.isSuperuser ? '/admin' : '/producer'),
               );
             } else {
               Navigator.pushReplacement(

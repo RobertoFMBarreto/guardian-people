@@ -3,9 +3,9 @@ import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
 import 'package:guardian/models/db/drift/tables/Device/device.dart';
 
 class AlertDevices extends Table {
-  TextColumn get alertDeviceId => text()();
-  TextColumn get deviceId => text().references(Device, #deviceId)();
-  TextColumn get alertId => text().references(UserAlert, #alertId)();
+  Int64Column get alertDeviceId => int64()();
+  Int64Column get idDevice => int64().references(Device, #idDevice)();
+  Int64Column get idAlert => int64().references(UserAlert, #idAlert)();
   @override
   Set<Column> get primaryKey => {alertDeviceId};
 }

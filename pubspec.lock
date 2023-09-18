@@ -93,10 +93,10 @@ packages:
     dependency: transitive
     description:
       name: build_resolvers
-      sha256: d912852cce27c9e80a93603db721c267716894462e7033165178b91138587972
+      sha256: a7417cc44d9edb3f2c8760000270c99dba8c72ff66d0146772b8326565780745
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.2"
+    version: "2.3.1"
   build_runner:
     dependency: "direct dev"
     description:
@@ -261,10 +261,10 @@ packages:
     dependency: "direct dev"
     description:
       name: drift_dev
-      sha256: "544f2d34635bb62887068a05348cc7a29ecc310d10aefefd4a9cf07242b4cd0a"
+      sha256: e6b0705b118366d2202117734442701ac1521e8deed51b9fda2e817395b1bb96
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.2"
+    version: "2.11.1"
   dropdown_button2:
     dependency: "direct main"
     description:
@@ -375,10 +375,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_map_heatmap
-      sha256: "9f8f6441b1512918c53751afe2660c00fb59a823c59ebf6ce779e51196b10aa3"
+      sha256: "2d16cf5bf41f40a79ae79bcdf2afc92ec45fea0cc311b3a51e3eae661392df88"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.5"
+    version: "0.0.4+2"
   flutter_map_line_editor:
     dependency: "direct main"
     description:
@@ -457,10 +457,10 @@ packages:
     dependency: transitive
     description:
       name: geolocator_android
-      sha256: db75aacf93fcdc2c0ba20066019da30e3fde7b102cf579d4bd4ea542e8a8cf17
+      sha256: "835ff5b4888a2f8eba128996494faf9c5d422785322a81dc0565b99e0f6c379d"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.4"
+    version: "4.2.2"
   geolocator_apple:
     dependency: transitive
     description:
@@ -473,10 +473,10 @@ packages:
     dependency: transitive
     description:
       name: geolocator_platform_interface
-      sha256: b2a0c09d2cfe8ad6a8cc44fada5c1092c49286e8c30922914dfe2b23799a682f
+      sha256: af4d69231452f9620718588f41acc4cb58312368716bfff2e92e770b46ce6386
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.8"
+    version: "4.0.7"
   geolocator_web:
     dependency: transitive
     description:
@@ -497,10 +497,10 @@ packages:
     dependency: "direct main"
     description:
       name: get
-      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
+      sha256: "2ba20a47c8f1f233bed775ba2dd0d3ac97b4cf32fc17731b3dfc672b06b0e92a"
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.6"
+    version: "4.6.5"
   glob:
     dependency: transitive
     description:
@@ -705,10 +705,10 @@ packages:
     dependency: "direct main"
     description:
       name: omni_datetime_picker
-      sha256: d13f237b7fe8a849203563e4e95ca2a43fe3b357364ad9b224899e0710fd72fb
+      sha256: "4f58fb64f1295cb4be1c7b2a78a4d23674c6afa834d366115b5f0ef557ac051d"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.9"
+    version: "1.0.8"
   package_config:
     dependency: transitive
     description:
@@ -966,10 +966,10 @@ packages:
     dependency: "direct main"
     description:
       name: sqlite3_flutter_libs
-      sha256: "11a41f380fbcbda5bbba03ddcdbe0545e46094ab043783c46c70e8335831df03"
+      sha256: fb115050b0c2589afe2085a62d77f5deda4db65db20a5c65a6e0c92fda89b45e
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.17"
+    version: "0.5.16"
   sqlparser:
     dependency: transitive
     description:
@@ -1172,4 +1172,4 @@ packages:
     version: "3.1.2"
 sdks:
   dart: ">=3.1.0-185.0.dev <4.0.0"
-  flutter: ">=3.13.0"
+  flutter: ">=3.7.0"

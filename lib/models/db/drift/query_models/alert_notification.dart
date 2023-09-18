@@ -1,10 +1,10 @@
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 
 class AlertNotification {
-  final String alertNotificationId;
+  final BigInt alertNotificationId;
   final UserAlertCompanion alert;
-  final Device device;
+  final Animal device;
 
   const AlertNotification(
       {required this.alertNotificationId, required this.alert, required this.device});

@@ -4,13 +4,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
 
 class DeviceHistoryPage extends StatefulWidget {
-  final Device device;
-  const DeviceHistoryPage({super.key, required this.device});
+  final Animal animal;
+  const DeviceHistoryPage({super.key, required this.animal});
 
   @override
   State<DeviceHistoryPage> createState() => _DeviceHistoryPageState();
@@ -35,9 +35,8 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
   }
 
   Future<void> _getDeviceData() async {
-    getDeviceData(
+    getAnimalData(
       isInterval: true,
-      deviceId: widget.device.device.deviceId.value,
       startDate: _selectedValue,
       endDate: DateTime(
         _selectedValue.year,
@@ -47,6 +46,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
         59, // minute
         59, // second
       ),
+      idAnimal: widget.animal.animal.idAnimal.value,
     ).then((newDeviceData) {
       setState(() {
         _deviceData = [];

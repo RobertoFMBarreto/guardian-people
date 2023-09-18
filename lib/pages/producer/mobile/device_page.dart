@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/device/device_map_widget.dart';
@@ -13,11 +13,11 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DevicePage extends StatefulWidget {
-  final Device device;
+  final Animal animal;
 
   const DevicePage({
     super.key,
-    required this.device,
+    required this.animal,
   });
 
   @override
@@ -26,11 +26,11 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> {
   bool _isInterval = false;
-  late Device _device;
+  late Animal _animal;
   int _reloadNum = 0;
   @override
   void initState() {
-    _device = widget.device;
+    _animal = widget.animal;
 
     super.initState();
   }
@@ -53,7 +53,7 @@ class _DevicePageState extends State<DevicePage> {
             CustomPageRouter(
                 page: '/producer/device/history',
                 settings: RouteSettings(
-                  arguments: widget.device,
+                  arguments: widget.animal,
                 )),
           );
         },
@@ -71,15 +71,15 @@ class _DevicePageState extends State<DevicePage> {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverPersistentHeader(
-              key: Key("${_device.device.name.value}$hasConnection${theme.brightness}"),
+              key: Key("${_animal.animal.animalName.value}$hasConnection${theme.brightness}"),
               pinned: true,
               delegate: SliverDeviceAppBar(
                 maxHeight: MediaQuery.of(context).size.height * 0.4,
                 onColorChanged: (newColor) {
                   setState(() {
-                    _device = Device(
-                        device: _device.device.copyWith(color: drift.Value(newColor)),
-                        data: _device.data);
+                    _animal = Animal(
+                        animal: _animal.animal.copyWith(animalColor: drift.Value(newColor)),
+                        data: _animal.data);
                   });
                 },
                 title: Padding(
@@ -126,7 +126,7 @@ class _DevicePageState extends State<DevicePage> {
                     ],
                   ),
                 ),
-                device: _device,
+                device: _animal,
                 leadingWidget: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
@@ -149,11 +149,11 @@ class _DevicePageState extends State<DevicePage> {
                           Navigator.of(context)
                               .pushNamed(
                             '/producer/device/settings',
-                            arguments: _device,
+                            arguments: _animal,
                           )
                               .then((newDevice) {
-                            if (newDevice != null && newDevice.runtimeType == Device) {
-                              setState(() => _device = (newDevice as Device));
+                            if (newDevice != null && newDevice.runtimeType == Animal) {
+                              setState(() => _animal = (newDevice as Animal));
                             } else {
                               // Force reload map
                               setState(() {
@@ -169,7 +169,7 @@ class _DevicePageState extends State<DevicePage> {
             SliverFillRemaining(
               child: DeviceMapWidget(
                 key: Key(_reloadNum.toString()),
-                device: _device,
+                animal: _animal,
                 isInterval: _isInterval,
               ),
             ),

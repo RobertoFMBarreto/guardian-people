@@ -9,7 +9,7 @@ import 'package:guardian/models/db/drift/operations/fence_devices_operations.dar
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 
@@ -31,7 +31,7 @@ class ManageFencePage extends StatefulWidget {
 }
 
 class _ManageFencePageState extends State<ManageFencePage> {
-  List<Device> devices = [];
+  List<Animal> devices = [];
   // color picker values
   Color fenceColor = gdMapGeofenceFillColor;
   String fenceHexColor = '';
@@ -52,7 +52,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   }
 
   Future<void> _loadFencePoints() async {
-    await getFencePoints(fence.fenceId).then((fencePoints) {
+    await getFencePoints(fence.idFence).then((fencePoints) {
       setState(() {
         points = [];
         points.addAll(fencePoints);
@@ -61,7 +61,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   }
 
   Future<void> _loadDevices() async {
-    await getFenceDevices(fence.fenceId).then(
+    await getFenceAnimals(fence.idFence).then(
       (allDevices) => setState(() {
         devices.addAll(allDevices);
         isLoading = false;
@@ -70,7 +70,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
   }
 
   Future<void> _reloadFence() async {
-    await getFence(widget.fence.fenceId).then((newFence) {
+    await getFence(widget.fence.idFence).then((newFence) {
       setState(() => fence = newFence);
     });
     _loadFencePoints();
@@ -84,20 +84,20 @@ class _ManageFencePageState extends State<ManageFencePage> {
           settings: RouteSettings(
             arguments: {
               'isSelect': true,
-              'fenceId': fence.fenceId,
+              'idFence': fence.idFence,
             },
           )),
     ).then((selectedDevices) async {
-      if (selectedDevices != null && selectedDevices.runtimeType == List<Device>) {
-        final selected = selectedDevices as List<Device>;
+      if (selectedDevices != null && selectedDevices.runtimeType == List<Animal>) {
+        final selected = selectedDevices as List<Animal>;
         setState(() {
           devices.addAll(selected);
         });
         for (var device in selected) {
           await createFenceDevice(
-            FenceDevicesCompanion(
-              fenceId: drift.Value(fence.fenceId),
-              deviceId: device.device.deviceId,
+            FenceAnimalsCompanion(
+              idFence: drift.Value(fence.idFence),
+              idAnimal: device.animal.idAnimal,
             ),
           );
         }
@@ -156,7 +156,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             child: DevicesLocationsMap(
                               key: Key('${fence.color}$points'),
                               showCurrentPosition: true,
-                              devices: devices,
+                              animals: devices,
                               centerOnPoly: true,
                               fences: [fence],
                             ),
@@ -216,19 +216,19 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             child: ListView.builder(
                               itemCount: devices.length,
                               itemBuilder: (context, index) => DeviceItemRemovable(
-                                key: Key(devices[index].device.deviceId.value),
-                                device: devices[index],
+                                key: Key(devices[index].animal.idAnimal.value.toString()),
+                                animal: devices[index],
                                 onRemoveDevice: () {
                                   // TODO: On remove device
-                                  removeDeviceFence(
-                                          fence.fenceId, devices[index].device.deviceId.value)
+                                  removeAnimalFence(
+                                          fence.idFence, devices[index].animal.idAnimal.value)
                                       .then(
                                     (_) {
                                       setState(() {
                                         devices.removeWhere(
                                           (element) =>
-                                              element.device.deviceId ==
-                                              devices[index].device.deviceId,
+                                              element.animal.idAnimal ==
+                                              devices[index].animal.idAnimal,
                                         );
                                       });
                                     },

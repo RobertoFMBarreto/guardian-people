@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
@@ -47,7 +50,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
   Color _fenceColor = Colors.red;
 
   List<LatLng> fencePoints = [];
-  final List<Device> _devices = [];
+  final List<Animal> _devices = [];
 
   @override
   void dispose() {
@@ -171,7 +174,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
   }
 
   Future<void> _loadFencePoints() async {
-    await getFencePoints(widget.fence!.fenceId).then(
+    await getFencePoints(widget.fence!.idFence).then(
       (allPoints) {
         if (mounted) {
           setState(() {
@@ -184,16 +187,16 @@ class _GeofencingPageState extends State<GeofencingPage> {
   }
 
   Future<void> _loadDevices() async {
-    await getUserDevicesWithData().then(
+    await getUserAnimalsWithData().then(
       (allDevices) => _devices.addAll(allDevices),
     );
   }
 
   Future<void> _confirmGeofence() async {
-    String fenceId;
+    BigInt idFence;
     // if is edit mode
     if (widget.fence != null) {
-      fenceId = widget.fence!.fenceId;
+      idFence = widget.fence!.idFence;
       // first udpate the fence
       await updateFence(
         widget.fence!
@@ -204,10 +207,10 @@ class _GeofencingPageState extends State<GeofencingPage> {
             .toCompanion(true),
       );
     } else {
-      fenceId = _fenceName;
+      idFence = BigInt.from(Random().nextInt(999999));
       await createFence(
         FenceCompanion(
-          fenceId: drift.Value(_fenceName),
+          idFence: drift.Value(idFence),
           name: drift.Value(_fenceName),
           color: drift.Value(HexColor.toHex(color: _fenceColor)),
         ),
@@ -215,7 +218,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
     }
 
     // second update fence points
-    createFencePointFromList(_editingPolygon.points, fenceId).then(
+    createFencePointFromList(_editingPolygon.points, idFence).then(
       (value) => Navigator.of(context).pop(_editingPolygon.points),
     );
   }
@@ -296,7 +299,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
                                             builder: (context) {
                                               return Icon(
                                                 Icons.location_on,
-                                                color: HexColor(device.device.color.value),
+                                                color: HexColor(device.animal.animalColor.value),
                                                 size: 30,
                                               );
                                             },

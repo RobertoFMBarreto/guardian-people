@@ -103,5 +103,6 @@
   "no_alerts": "there are no warnings",
   "no_fences": "there are no fences",
   "no_notifications": "there are no notifications",
-  "than": "than"
+  "than": "than",
+  "there_is_no_animal_data": "no animal data available"
 }

@@ -97,7 +97,6 @@ class _MyAppState extends State<MyApp> {
         DeviceOrientation.portraitUp,
       ]);
     }
-    print('Is web: $kIsWeb');
     return MaterialApp(
         navigatorKey: navigatorKey,
         title: 'Guardian',

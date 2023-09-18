@@ -1,41 +1,52 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
 class DeviceItem extends StatelessWidget {
-  final Device device;
+  final Animal animal;
   final bool isBlocked;
   final Function? onBackFromDeviceScreen;
-  final String producerId;
+  final BigInt? producerId;
+  final Function(Animal)? onTap;
+  final bool isSelected;
 
   const DeviceItem({
     super.key,
     this.isBlocked = false,
-    required this.device,
-    this.producerId = '',
+    required this.animal,
+    this.producerId,
     this.onBackFromDeviceScreen,
+    this.onTap,
+    this.isSelected = false,
   });
 
   void _onTapDevice(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 300)).then((value) => getUid(context).then((uid) {
-          if (uid != null) {
-            userIsAdmin(uid).then((isAdmin) {
+    Future.delayed(const Duration(milliseconds: 300)).then((value) {
+      if (!kIsWeb) {
+        getUid(context).then((idUser) {
+          if (idUser != null) {
+            userIsAdmin(idUser).then((isAdmin) {
               Navigator.push(
                 context,
                 CustomPageRouter(
                     page: isAdmin ? '/admin/producer/device' : '/producer/device',
                     settings:
-                        RouteSettings(arguments: {'device': device, 'producerId': producerId})),
+                        RouteSettings(arguments: {'device': animal, 'producerId': producerId})),
               ).then((_) {
                 if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
               });
             });
           }
-        }));
+        });
+      } else {
+        onTap!(animal);
+      }
+    });
   }
 
   @override
@@ -43,6 +54,7 @@ class DeviceItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return Card(
+      color: isSelected ? theme.colorScheme.secondary : null,
       child: InkWell(
         onTap: () {
           _onTapDevice(context);
@@ -54,26 +66,26 @@ class DeviceItem extends StatelessWidget {
             leading: Icon(
               Icons.sensors,
               size: 35,
-              color: HexColor(device.device.color.value),
+              color: HexColor(animal.animal.animalColor.value),
             ),
             title: Text(
-              device.device.name.value,
+              animal.animal.animalName.value,
               style: theme.textTheme.bodyLarge!.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
               ),
             ),
-            trailing: device.data.isNotEmpty && device.data.first.battery.value != null
+            trailing: animal.data.isNotEmpty && animal.data.first.battery.value != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DeviceWidgetProvider.getBatteryWidget(
-                        deviceBattery: device.data.first.battery.value!,
+                        deviceBattery: animal.data.first.battery.value!,
                         color: theme.colorScheme.secondary,
                       ),
                       Text(
-                        '${device.data.first.battery.value.toString()}%',
+                        '${animal.data.first.battery.value.toString()}%',
                         style: theme.textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w500,
                         ),

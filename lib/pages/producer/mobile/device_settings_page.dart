@@ -3,13 +3,14 @@ import 'dart:math';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
@@ -19,8 +20,8 @@ import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 
 class DeviceSettingsPage extends StatefulWidget {
-  final Device device;
-  const DeviceSettingsPage({super.key, required this.device});
+  final Animal animal;
+  const DeviceSettingsPage({super.key, required this.animal});
 
   @override
   State<DeviceSettingsPage> createState() => _DeviceSettingsPageState();
@@ -29,7 +30,7 @@ class DeviceSettingsPage extends StatefulWidget {
 class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   late Future _future;
 
-  String _deviceName = '';
+  String _animalName = '';
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
   TextEditingController controller = TextEditingController();
@@ -47,14 +48,14 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _setup() async {
-    _deviceName = widget.device.device.name.value;
+    _animalName = widget.animal.animal.animalName.value;
     await _getDeviceAlerts();
     await _getDeviceFences();
-    controller.text = widget.device.device.name.value;
+    controller.text = widget.animal.animal.animalName.value;
   }
 
   Future<void> _getDeviceAlerts() async {
-    await getDeviceAlerts(widget.device.device.deviceId.value).then((allAlerts) {
+    await getDeviceAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
       if (mounted) {
         _alerts = [];
         setState(() => _alerts.addAll(allAlerts));
@@ -63,7 +64,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _getDeviceFences() async {
-    getDeviceFence(widget.device.device.deviceId.value).then((deviceFence) {
+    getAnimalFence(widget.animal.animal.idAnimal.value).then((deviceFence) {
       if (deviceFence != null) {
         if (mounted) {
           _fences = [];
@@ -108,7 +109,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                         ),
                         onChanged: (value) {
                           setState(() {
-                            _deviceName = value;
+                            _animalName = value;
                           });
                         },
                       ),
@@ -123,7 +124,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   settings: RouteSettings(
                                     arguments: {
                                       'isSelect': true,
-                                      'deviceId': widget.device.device.deviceId.value
+                                      'idAnimal': widget.animal.animal.idAnimal.value
                                     },
                                   )),
                             ).then((gottenAlerts) async {
@@ -135,9 +136,10 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                 for (var selectedAlert in selectedAlerts) {
                                   await addAlertDevice(
                                     AlertDevicesCompanion(
-                                      alertDeviceId: drift.Value(Random().nextInt(9999).toString()),
-                                      deviceId: widget.device.device.deviceId,
-                                      alertId: selectedAlert.alertId,
+                                      alertDeviceId:
+                                          drift.Value(BigInt.from(Random().nextInt(999999))),
+                                      idDevice: widget.animal.animal.idAnimal,
+                                      idAlert: selectedAlert.idAlert,
                                     ),
                                   );
                                 }
@@ -172,10 +174,10 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     onDelete: (alert) {
                                       // TODO: Delete code for alert
                                       removeAlertDevice(
-                                          alert.alertId.value, widget.device.device.deviceId.value);
+                                          alert.idAlert.value, widget.animal.animal.idAnimal.value);
                                       setState(() {
                                         _alerts.removeWhere(
-                                            (element) => element.alertId == alert.alertId);
+                                            (element) => element.idAlert == alert.idAlert);
                                       });
                                     },
                                   ),
@@ -196,9 +198,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   _fences.add(newFence);
                                 });
                                 createFenceDevice(
-                                  FenceDevicesCompanion(
-                                    fenceId: drift.Value(newFence.fenceId),
-                                    deviceId: widget.device.device.deviceId,
+                                  FenceAnimalsCompanion(
+                                    idFence: drift.Value(newFence.idFence),
+                                    idAnimal: widget.animal.animal.idAnimal,
                                   ),
                                 );
                               }
@@ -231,11 +233,11 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     onTap: () {},
                                     color: HexColor(_fences[index].color),
                                     onRemove: () {
-                                      removeDeviceFence(_fences[index].fenceId,
-                                          widget.device.device.deviceId.value);
+                                      removeAnimalFence(_fences[index].idFence,
+                                          widget.animal.animal.idAnimal.value);
                                       setState(() {
                                         _fences.removeWhere(
-                                          (element) => element.fenceId == _fences[index].fenceId,
+                                          (element) => element.idFence == _fences[index].idFence,
                                         );
                                       });
                                       // TODO remove item service call
@@ -244,7 +246,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                 ),
                               ),
                       ),
-                      if (widget.device.device.name.value != _deviceName)
+                      if (widget.animal.animal.animalName.value != _animalName)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -253,8 +255,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    _deviceName = widget.device.device.name.value;
-                                    controller.text = _deviceName;
+                                    _animalName = widget.animal.animal.animalName.value;
+                                    controller.text = _animalName;
                                   });
                                 },
                                 style: theme.elevatedButtonTheme.style!.copyWith(
@@ -267,11 +269,11 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                final newDevice = widget.device.device.copyWith(
-                                  name: drift.Value(_deviceName),
+                                final newAnimal = widget.animal.animal.copyWith(
+                                  animalName: drift.Value(_animalName),
                                 );
-                                updateDevice(newDevice)
-                                    .then((value) => Navigator.of(context).pop(newDevice));
+                                updateAnimal(newAnimal)
+                                    .then((value) => Navigator.of(context).pop(newAnimal));
                               },
                               child: Text(
                                 localizations.confirm.capitalize(),

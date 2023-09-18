@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -15,16 +17,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
-  final String? fenceId;
-  final String? alertId;
-  final List<String>? notToShowDevices;
+  final BigInt? idFence;
+  final BigInt? idAlert;
+  final List<BigInt>? notToShowAnimals;
 
   const ProducerDevicesPage({
     super.key,
     this.isSelect = false,
-    this.fenceId,
-    this.alertId,
-    this.notToShowDevices,
+    this.idFence,
+    this.idAlert,
+    this.notToShowAnimals,
   });
 
   @override
@@ -44,8 +46,8 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   RangeValues _elevationRangeValues = const RangeValues(0, 1000);
   RangeValues _tmpRangeValues = const RangeValues(0, 25);
 
-  List<Device> _selectedDevices = [];
-  List<Device> _devices = [];
+  List<Animal> _selectedDevices = [];
+  List<Animal> _devices = [];
 
   @override
   void initState() {
@@ -85,14 +87,14 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   }
 
   Future<void> _filterDevices() async {
-    if (widget.isSelect && widget.fenceId != null) {
-      await getUserFenceUnselectedDevicesFiltered(
+    if (widget.isSelect && widget.idFence != null) {
+      await getUserFenceUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
         searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
-        fenceId: widget.fenceId!,
+        idFence: widget.idFence!,
       ).then((searchDevices) {
         if (mounted) {
           setState(() {
@@ -102,7 +104,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         }
       });
     } else {
-      getUserDevicesFiltered(
+      getUserAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
@@ -111,11 +113,11 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
       ).then(
         (filteredDevices) => setState(() {
           _devices = [];
-          if (widget.notToShowDevices != null) {
+          if (widget.notToShowAnimals != null) {
             _devices.addAll(
               filteredDevices.where(
-                (device) => !widget.notToShowDevices!.contains(
-                  device.device.deviceId.value,
+                (device) => !widget.notToShowAnimals!.contains(
+                  device.animal.idAnimal.value,
                 ),
               ),
             );
@@ -275,7 +277,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       ),
                                       child: widget.isSelect
                                           ? DeviceItemSelectable(
-                                              deviceImei: _devices[index].device.name.value,
+                                              deviceImei: _devices[index].animal.animalName.value,
                                               deviceData: _devices[index].data.isNotEmpty
                                                   ? _devices[index].data.first.dataUsage.value
                                                   : null,
@@ -284,13 +286,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                                   : null,
                                               isSelected: _selectedDevices
                                                   .where((element) =>
-                                                      element.device.deviceId ==
-                                                      _devices[index].device.deviceId)
+                                                      element.animal.idAnimal ==
+                                                      _devices[index].animal.idAnimal)
                                                   .isNotEmpty,
                                               onSelected: () {
                                                 int i = _selectedDevices.indexWhere((element) =>
-                                                    element.device.deviceId ==
-                                                    _devices[index].device.deviceId);
+                                                    element.animal.idAnimal ==
+                                                    _devices[index].animal.idAnimal);
 
                                                 if (mounted) {
                                                   setState(() {
@@ -304,7 +306,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                               },
                                             )
                                           : DeviceItem(
-                                              device: _devices[index],
+                                              animal: _devices[index],
                                               onBackFromDeviceScreen: () {
                                                 _filterDevices();
                                               },

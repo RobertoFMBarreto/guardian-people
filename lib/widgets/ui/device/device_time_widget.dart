@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
@@ -110,41 +111,44 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
         return Transform.scale(
           scale: curve,
           child: Dialog(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DateTimeInput(
-                    onSelectionChanged: _onStartDateChanged,
-                    date: widget.startDate,
-                    onTimeChange: _onStartTimeChanged,
-                    maxDate: widget.endDate,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          localizations.cancel.capitalize(),
+            child: Container(
+              constraints: kIsWeb ? BoxConstraints(maxWidth: 400) : null,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DateTimeInput(
+                      onSelectionChanged: _onStartDateChanged,
+                      date: widget.startDate,
+                      onTimeChange: _onStartTimeChanged,
+                      maxDate: widget.endDate,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            localizations.cancel.capitalize(),
+                          ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          widget.onStartDateChanged(_startDate);
-                          Navigator.of(context).pop(true);
-                        },
-                        child: Text(
-                          localizations.confirm.capitalize(),
+                        TextButton(
+                          onPressed: () {
+                            widget.onStartDateChanged(_startDate);
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text(
+                            localizations.confirm.capitalize(),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -168,42 +172,45 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
         return Transform.scale(
           scale: curve,
           child: Dialog(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DateTimeInput(
-                    onSelectionChanged: _onEndDateChanged,
-                    date: widget.startDate,
-                    onTimeChange: _onEndTimeChanged,
-                    maxDate: widget.endDate,
-                    minDate: widget.startDate,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          localizations.cancel.capitalize(),
+            child: Container(
+              constraints: kIsWeb ? BoxConstraints(maxWidth: 400) : null,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DateTimeInput(
+                      onSelectionChanged: _onEndDateChanged,
+                      date: widget.startDate,
+                      onTimeChange: _onEndTimeChanged,
+                      maxDate: widget.endDate,
+                      minDate: widget.startDate,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            localizations.cancel.capitalize(),
+                          ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          widget.onEndDateChanged(_endDate);
-                          Navigator.of(context).pop(true);
-                        },
-                        child: Text(
-                          localizations.confirm.capitalize(),
+                        TextButton(
+                          onPressed: () {
+                            widget.onEndDateChanged(_endDate);
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text(
+                            localizations.confirm.capitalize(),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

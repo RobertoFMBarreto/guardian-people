@@ -30,15 +30,15 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _loadDataRemoveThisLater(List<UserCompanion> users, UserCompanion user) async {
     // TODO: To Remove it
-    if (user.isAdmin.value) {
-      for (var u in users) {
-        await loadUserDevices(u.uid.value);
-        await loadUserFences(u.uid.value);
-      }
-    } else {
-      await loadUserDevices(user.uid.value);
-      await loadUserFences(user.uid.value);
-    }
+    // if (user.isSuperuser.value) {
+    //   for (var u in users) {
+    //     await loadUserDevices(u.idUser.value);
+    //     await loadUserFences(u.idUser.value);
+    //   }
+    // } else {
+    //   await loadUserDevices(user.idUser.value);
+    //   await loadUserFences(user.idUser.value);
+    // }
   }
 
   void _onLogin(AppLocalizations localizations) {
@@ -50,62 +50,64 @@ class _LoginFormState extends State<LoginForm> {
 
         // search user and verify if its correct
 
-        // AuthProvider.login(_email, _password).then((resp) {
-        //   if (resp.statusCode != 500) {
-        //     final body = jsonDecode(resp.body);
-        //     setUserSession(body['id'], body['token']).then((_) {
-        //       // store user profile
-        //       createUser(UserCompanion(
-        //         uid: drift.Value(body['id']),
-        //         email: drift.Value(body['email']),
-        //         name: drift.Value(body['name']),
-        //         phone: drift.Value(999999999),
-        //         isAdmin: drift.Value(body['isProducer'] == false),
-        //       )).then((_) {
-        //         // send to admin or producer
-        //         Navigator.of(context).popAndPushNamed(
-        //           body['isProducer'] == false ? '/admin' : '/producer',
-        //         );
-        //       });
-        //     });
-        //   } else {
-        //     setState(() {
-        //       errorString = resp.body;
-        //     });
-        //     Navigator.pop(context);
-        //   }
-        // });
+        AuthProvider.login(_email, _password).then((resp) {
+          if (resp.statusCode == 200) {
+            final body = jsonDecode(resp.body);
+
+            setUserSession(BigInt.from(int.parse(body['id'])), body['token']).then((_) {
+              // store user profile
+              createUser(UserCompanion(
+                idUser: drift.Value(BigInt.from(int.parse(body['id']))),
+                email: drift.Value(body['email']),
+                name: drift.Value(body['name']),
+                phone: drift.Value(999999999),
+                isProducer: drift.Value(body['isProducer'] == true),
+                isSuperuser: drift.Value(body['isSuperuser'] == true),
+              )).then((_) {
+                // send to admin or producer
+                Navigator.of(context).popAndPushNamed(
+                  body['isProducer'] == false ? '/admin' : '/producer',
+                );
+              });
+            });
+          } else {
+            setState(() {
+              errorString = resp.body;
+            });
+            Navigator.pop(context);
+          }
+        });
 
         // TODO: Change to services
-        loadUsers().then(
-          (allUsers) async {
-            List<UserCompanion> users = allUsers;
-            List<UserCompanion> user = users
-                .where((element) => element.email.value == _email && _password == 'teste123@')
-                .toList();
-            if (user.isEmpty) {
-              Navigator.of(context).pop();
-              setState(() {
-                errorString = localizations.login_error.capitalize();
-              });
-            } else {
-              _loadDataRemoveThisLater(users, user.first).then((_) {
-                // pop loading dialog
-                Navigator.of(context).pop();
-                // store session data
-                setUserSession(user.first.uid.value, '').then((_) {
-                  // store user profile
-                  createUser(user.first).then((_) {
-                    // send to admin or producer
-                    Navigator.of(context).popAndPushNamed(
-                      user.first.isAdmin.value ? '/admin' : '/producer',
-                    );
-                  });
-                });
-              });
-            }
-          },
-        );
+        // loadUsers().then(
+        //   (allUsers) async {
+        //     List<UserCompanion> users = allUsers;
+        //     List<UserCompanion> user = users
+        //         .where((element) => element.email.value == _email && _password == 'teste123@')
+        //         .toList();
+        //     if (user.isEmpty) {
+        //       Navigator.of(context).pop();
+        //       setState(() {
+        //         errorString = localizations.login_error.capitalize();
+        //       });
+        //     } else {
+        //       _loadDataRemoveThisLater(users, user.first).then((_) {
+        //         // pop loading dialog
+        //         Navigator.of(context).pop();
+        //         // store session data
+        //         setUserSession(user.first.idUser.value, '').then((_) {
+        //           // store user profile
+        //           createUser(user.first).then((_) {
+        //             // send to admin or producer
+        //             Navigator.of(context).popAndPushNamed(
+        //               user.first.isAdmin.value ? '/admin' : '/producer',
+        //             );
+        //           });
+        //         });
+        //       });
+        //     }
+        //   },
+        // );
       } else {
         setState(() {
           errorString = localizations.no_wifi.capitalize();

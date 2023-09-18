@@ -35,7 +35,7 @@ class Producers extends StatelessWidget {
                           producerName: e.user.name,
                           devicesInfo: '${e.devicesAmount} ${localizations.devices}',
                           imageUrl: '',
-                          uid: e.user.uid,
+                          idUser: e.user.idUser,
                         ),
                       ),
                     )

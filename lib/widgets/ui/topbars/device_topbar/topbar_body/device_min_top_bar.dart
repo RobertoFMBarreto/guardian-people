@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 
 class DeviceMinTopBar extends StatelessWidget {
-  final Device device;
+  final Animal animal;
   const DeviceMinTopBar({
     super.key,
-    required this.device,
+    required this.animal,
   });
 
   @override
@@ -23,7 +23,7 @@ class DeviceMinTopBar extends StatelessWidget {
             icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSecondary),
           ),
           Text(
-            device.device.name.value,
+            animal.animal.animalName.value,
             style: theme.textTheme.bodyMedium!.copyWith(color: theme.colorScheme.onSecondary),
           ),
         ],

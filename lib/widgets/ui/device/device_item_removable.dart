@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 
 class DeviceItemRemovable extends StatelessWidget {
-  final Device device;
+  final Animal animal;
   final Function() onRemoveDevice;
   final bool isPopPush;
 
   const DeviceItemRemovable({
     super.key,
-    required this.device,
+    required this.animal,
     required this.onRemoveDevice,
     this.isPopPush = false,
   });
@@ -35,23 +35,23 @@ class DeviceItemRemovable extends StatelessWidget {
                 )
               : null,
           title: Text(
-            device.device.name.value.toString(),
+            animal.animal.animalName.value.toString(),
             style: theme.textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
           ),
-          trailing: device.data.isNotEmpty && device.data.first.battery.value != null
+          trailing: animal.data.isNotEmpty && animal.data.first.battery.value != null
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     DeviceWidgetProvider.getBatteryWidget(
-                      deviceBattery: device.data.first.battery.value!,
+                      deviceBattery: animal.data.first.battery.value!,
                       color: theme.colorScheme.secondary,
                     ),
                     Text(
-                      '${device.data.first.battery.value.toString()}%',
+                      '${animal.data.first.battery.value.toString()}%',
                       style: theme.textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
