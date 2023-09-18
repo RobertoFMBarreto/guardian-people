@@ -66,104 +66,106 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    return FutureBuilder(builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const CustomCircularProgressIndicator();
-      } else {
-        return Column(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Text(
-                            localizations.devices.capitalize(),
-                            style: theme.textTheme.headlineMedium,
-                          ),
-                        ),
-                        Expanded(
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: ListView.builder(
-                                  itemCount: _devices.length,
-                                  itemBuilder: (context, index) =>
-                                      DeviceItem(device: _devices[index]),
+    return FutureBuilder(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CustomCircularProgressIndicator();
+          } else {
+            return Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Text(
+                                localizations.devices.capitalize(),
+                                style: theme.textTheme.headlineMedium,
+                              ),
+                            ),
+                            Expanded(
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: ListView.builder(
+                                      itemCount: _devices.length,
+                                      itemBuilder: (context, index) =>
+                                          DeviceItem(device: _devices[index]),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text(
-                              localizations.warnings.capitalize(),
-                              style: theme.textTheme.headlineMedium,
-                            ),
-                          ),
-                          Expanded(
-                            child: Card(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: _notifications.isEmpty
-                                    ? Center(
-                                        child: Text(localizations.no_alerts.capitalize()),
-                                      )
-                                    : ListView.builder(
-                                        itemCount: _notifications.length,
-                                        itemBuilder: (context, index) => AlertItem(
-                                          alertNotification: _notifications[index],
-                                          onRemove: () async {
-                                            await removeNotification(
-                                              _notifications[index].alertNotificationId,
-                                            ).then(
-                                              (_) async => await _loadAlerts(),
-                                            );
-                                          },
-                                        ),
-                                      ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Text(
+                                  localizations.warnings.capitalize(),
+                                  style: theme.textTheme.headlineMedium,
+                                ),
                               ),
-                            ),
-                          )
-                        ],
+                              Expanded(
+                                child: Card(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: _notifications.isEmpty
+                                        ? Center(
+                                            child: Text(localizations.no_alerts.capitalize()),
+                                          )
+                                        : ListView.builder(
+                                            itemCount: _notifications.length,
+                                            itemBuilder: (context, index) => AlertItem(
+                                              alertNotification: _notifications[index],
+                                              onRemove: () async {
+                                                await removeNotification(
+                                                  _notifications[index].alertNotificationId,
+                                                ).then(
+                                                  (_) async => await _loadAlerts(),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: DevicesLocationsMap(
+                        showCurrentPosition: true,
+                        devices: _devices,
+                        fences: _fences,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: DevicesLocationsMap(
-                    showCurrentPosition: true,
-                    devices: _devices,
-                    fences: _fences,
-                  ),
                 ),
-              ),
-            ),
-          ],
-        );
-      }
-    });
+              ],
+            );
+          }
+        });
   }
 }

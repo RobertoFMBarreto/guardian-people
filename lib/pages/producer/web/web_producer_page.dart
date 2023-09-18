@@ -57,21 +57,21 @@ class _WebProducerPageState extends State<WebProducerPage> {
                     selectedIcon: Icon(Icons.account_circle),
                     label: Text('First'),
                   ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.sen),
-                    selectedIcon: Icon(Icons.home),
-                    label: Text('First'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home),
-                    label: Text('First'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home),
-                    label: Text('First'),
-                  ),
+                  // NavigationRailDestination(
+                  //   icon: Icon(Icons.sen),
+                  //   selectedIcon: Icon(Icons.home),
+                  //   label: Text('First'),
+                  // ),
+                  // NavigationRailDestination(
+                  //   icon: Icon(Icons.home_outlined),
+                  //   selectedIcon: Icon(Icons.home),
+                  //   label: Text('First'),
+                  // ),
+                  // NavigationRailDestination(
+                  //   icon: Icon(Icons.home_outlined),
+                  //   selectedIcon: Icon(Icons.home),
+                  //   label: Text('First'),
+                  // ),
                 ],
                 selectedIndex: _selectedDestination,
               ),
