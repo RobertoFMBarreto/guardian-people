@@ -80,7 +80,6 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
 
           final date = (dt['last_device_data']['read_date'] as String).split('T')[0];
           final time = dt['last_device_data']['read_time'] as String;
-
           await createDeviceData(
             DeviceLocationsCompanion(
               accuracy: dt['last_device_data']['accuracy'] != null

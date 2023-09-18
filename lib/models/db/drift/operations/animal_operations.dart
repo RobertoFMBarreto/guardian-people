@@ -134,7 +134,7 @@ Future<List<Animal>> getUserAnimalsWithData() async {
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
         ),
         data: [
-          if (deviceData.data[db.deviceLocations.date] != null)
+          if (deviceData.data[db.deviceLocations.date.name] != null)
             DeviceLocationsCompanion(
               accuracy: drift.Value(deviceData.data[db.deviceLocations.accuracy.name]),
               battery: drift.Value(deviceData.data[db.deviceLocations.battery.name]),
@@ -228,7 +228,7 @@ Future<List<Animal>> getUserAnimalsFiltered({
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
         ),
         data: [
-          if (deviceData.data[db.deviceLocations.date] != null)
+          if (deviceData.data[db.deviceLocations.date.name] != null)
             DeviceLocationsCompanion(
               accuracy: drift.Value(deviceData.data[db.deviceLocations.accuracy.name]),
               battery: drift.Value(deviceData.data[db.deviceLocations.battery.name]),
@@ -334,7 +334,7 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
           ),
           data: [
-            if (deviceData.data[db.deviceLocations.date] != null)
+            if (deviceData.data[db.deviceLocations.date.name] != null)
               DeviceLocationsCompanion(
                 accuracy: drift.Value(deviceData.data[db.deviceLocations.accuracy.name]),
                 battery: drift.Value(deviceData.data[db.deviceLocations.battery.name]),
@@ -434,7 +434,7 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
           ),
           data: [
-            if (deviceData.data[db.deviceLocations.date] != null)
+            if (deviceData.data[db.deviceLocations.date.name] != null)
               DeviceLocationsCompanion(
                 accuracy: drift.Value(deviceData.data[db.deviceLocations.accuracy.name]),
                 battery: drift.Value(deviceData.data[db.deviceLocations.battery.name]),

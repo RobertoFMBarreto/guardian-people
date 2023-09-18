@@ -117,7 +117,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
           );
         }
         getUserAnimalsWithData().then((allDevices) {
-          print(allDevices.first.data);
           if (mounted) {
             setState(() {
               _animals = [];
@@ -144,21 +143,21 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   }
 
   Future<void> _getDeviceData() async {
-    await getAnimalData(
-      startDate: _startDate,
-      endDate: _endDate,
-      idAnimal: _selectedAnimal!.animal.idDevice.value,
-      isInterval: _isInterval,
-    ).then(
-      (data) async {
-        _animalData = [];
-        if (mounted) {
-          setState(() {
-            _animalData.addAll(data);
-          });
-        }
-      },
-    );
+    // await getAnimalData(
+    //   startDate: _startDate,
+    //   endDate: _endDate,
+    //   idAnimal: _selectedAnimal!.animal.idAnimal.value,
+    //   isInterval: _isInterval,
+    // ).then(
+    //   (data) async {
+    //     _animalData = [];
+    //     if (mounted) {
+    //       setState(() {
+    //         _animalData.addAll(data);
+    //       });
+    //     }
+    //   },
+    // );
   }
 
   @override
@@ -200,12 +199,13 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                         itemBuilder: (context, index) => DeviceItem(
                                           animal: _animals[index],
                                           isSelected: _selectedAnimal != null &&
-                                              _animals[index].animal.idAnimal ==
-                                                  _selectedAnimal!.animal.idAnimal,
+                                              _animals[index].animal.idAnimal.value ==
+                                                  _selectedAnimal!.animal.idAnimal.value,
                                           onTap: (device) {
                                             setState(() {
                                               _selectedAnimal = device;
                                             });
+
                                             if (_selectedAnimal!.data.isEmpty) {
                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                                 content: Text(
