@@ -7,7 +7,6 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
@@ -21,7 +20,8 @@ import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 
 class WebProducerDevicePage extends StatefulWidget {
-  const WebProducerDevicePage({super.key});
+  final Animal? selectedAnimal;
+  const WebProducerDevicePage({super.key, this.selectedAnimal});
 
   @override
   State<WebProducerDevicePage> createState() => _WebProducerDevicePageState();
@@ -33,12 +33,12 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   Animal? _selectedAnimal;
 
   List<Animal> _animals = [];
-  List<FenceData> _fences = [];
+  final List<FenceData> _fences = [];
   List<DeviceLocationsCompanion> _animalData = [];
 
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
-  bool _isInterval = false;
+  final bool _isInterval = false;
 
   double _currentZoom = 17;
 
@@ -50,6 +50,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   }
 
   Future<void> _setup() async {
+    setState(() {
+      _selectedAnimal = widget.selectedAnimal;
+    });
     await _loadDevices();
   }
 
@@ -65,7 +68,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
-      print(response.statusCode);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
@@ -75,7 +77,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['is_active'] == true),
           ));
-          print(data);
           await createAnimal(AnimalCompanion(
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['animal_is_active'] == true),
@@ -135,30 +136,22 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     });
   }
 
-  Future<void> _loadFences() async {
-    getUserFences().then((allFences) {
-      setState(() {
-        _fences.addAll(allFences);
-      });
-    });
-  }
-
   Future<void> _getDeviceData() async {
-    // await getAnimalData(
-    //   startDate: _startDate,
-    //   endDate: _endDate,
-    //   idAnimal: _selectedAnimal!.animal.idAnimal.value,
-    //   isInterval: _isInterval,
-    // ).then(
-    //   (data) async {
-    //     _animalData = [];
-    //     if (mounted) {
-    //       setState(() {
-    //         _animalData.addAll(data);
-    //       });
-    //     }
-    //   },
-    // );
+    await getAnimalData(
+      startDate: _startDate,
+      endDate: _endDate,
+      idAnimal: _selectedAnimal!.animal.idAnimal.value,
+      isInterval: _isInterval,
+    ).then(
+      (data) async {
+        _animalData = [];
+        if (mounted) {
+          setState(() {
+            _animalData.addAll(data);
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -203,9 +196,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                               isSelected: _selectedAnimal != null &&
                                                   _animals[index].animal.idAnimal.value ==
                                                       _selectedAnimal!.animal.idAnimal.value,
-                                              onTap: (device) {
+                                              onTap: () {
                                                 setState(() {
-                                                  _selectedAnimal = device;
+                                                  _selectedAnimal = _animals[index];
                                                 });
 
                                                 if (_selectedAnimal!.data.isEmpty) {
@@ -234,18 +227,20 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 startDate: _startDate,
                                 endDate: _endDate,
                                 onStartDateChanged: (newStartDate) {
-                                  if (_selectedAnimal != null)
+                                  if (_selectedAnimal != null) {
                                     setState(() {
                                       _startDate = newStartDate;
                                       _getDeviceData();
                                     });
+                                  }
                                 },
                                 onEndDateChanged: (newEndDate) {
-                                  if (_selectedAnimal != null)
+                                  if (_selectedAnimal != null) {
                                     setState(() {
                                       _endDate = newEndDate;
                                       _getDeviceData();
                                     });
+                                  }
                                 }),
                           ),
                         ),

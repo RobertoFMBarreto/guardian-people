@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:drift/drift.dart' as drift;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -23,7 +22,8 @@ import 'package:guardian/widgets/ui/device/device_item.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
 class WebProducerHomePage extends StatefulWidget {
-  const WebProducerHomePage({super.key});
+  final Function(Animal) onSelectAnimal;
+  const WebProducerHomePage({super.key, required this.onSelectAnimal});
 
   @override
   State<WebProducerHomePage> createState() => _WebProducerHomePageState();
@@ -33,8 +33,8 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   late Future _future;
 
   List<Animal> _animals = [];
-  List<AlertNotification> _notifications = [];
-  List<FenceData> _fences = [];
+  final List<AlertNotification> _notifications = [];
+  final List<FenceData> _fences = [];
 
   @override
   void initState() {
@@ -107,7 +107,6 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
             ),
           );
         }
-        print('Device data created');
         getUserAnimalsWithData().then((allDevices) {
           if (mounted) {
             setState(() {
@@ -175,8 +174,12 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                                     borderRadius: BorderRadius.circular(8),
                                     child: ListView.builder(
                                       itemCount: _animals.length,
-                                      itemBuilder: (context, index) =>
-                                          DeviceItem(animal: _animals[index]),
+                                      itemBuilder: (context, index) => DeviceItem(
+                                        animal: _animals[index],
+                                        onTap: () {
+                                          widget.onSelectAnimal(_animals[index]);
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),

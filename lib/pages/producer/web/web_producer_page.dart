@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_home_page.dart';
 import 'package:guardian/settings/colors.dart';
@@ -13,14 +13,60 @@ class WebProducerPage extends StatefulWidget {
 }
 
 class _WebProducerPageState extends State<WebProducerPage> {
+  late Widget _currentPage;
+  Animal? _selectedAnimal;
   int _selectedDestination = 0;
-  List<Widget> pages = [
-    const WebProducerHomePage(),
-    Placeholder(),
-    const WebProducerDevicePage(),
-    Placeholder(),
-    Placeholder(),
-  ];
+  List<Widget> pages = [];
+
+  @override
+  void initState() {
+    pages = [
+      WebProducerHomePage(
+        onSelectAnimal: (animal) {
+          setState(() {
+            _selectedAnimal = animal;
+            _selectedDestination = 2;
+          });
+        },
+      ),
+      const Placeholder(),
+      const WebProducerDevicePage(),
+      const Placeholder(),
+      const Placeholder(),
+    ];
+    goToPage(0);
+
+    super.initState();
+  }
+
+  void goToPage(int index) {
+    setState(() {
+      _selectedDestination = index;
+    });
+    _currentPage = pages[index];
+    switch (index) {
+      case 0:
+        _currentPage = WebProducerHomePage(
+          onSelectAnimal: (animal) {
+            setState(() {
+              _selectedAnimal = animal;
+            });
+            goToPage(2);
+          },
+        );
+      case 1:
+        _currentPage = const Placeholder();
+      case 2:
+        _currentPage = WebProducerDevicePage(
+          selectedAnimal: _selectedAnimal,
+        );
+      case 3:
+        _currentPage = const Placeholder();
+      case 4:
+        _currentPage = const Placeholder();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -44,9 +90,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
               child: NavigationRail(
                 backgroundColor: Colors.transparent,
                 onDestinationSelected: (value) {
-                  setState(() {
-                    _selectedDestination = value;
-                  });
+                  goToPage(value);
                 },
                 leading: const CircleAvatarBorder(
                   radius: 30,
@@ -85,7 +129,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: pages[_selectedDestination],
+              child: _currentPage,
             ),
           )
         ],

@@ -1,8 +1,5 @@
-import 'package:drift/drift.dart' as drift;
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/query_models/animal.dart';
 
 Future<DeviceCompanion> createDevice(
   DeviceCompanion device,

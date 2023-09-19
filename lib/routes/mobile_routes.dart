@@ -17,7 +17,6 @@ import 'package:guardian/pages/producer/mobile/geofencing_page.dart';
 import 'package:guardian/pages/producer/mobile/manage_fence_page.dart';
 import 'package:guardian/pages/producer/mobile/producer_devices_page.dart';
 import 'package:guardian/pages/producer/mobile/producer_home.dart';
-import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_page.dart';
 import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';

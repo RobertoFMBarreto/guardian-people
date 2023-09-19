@@ -8,7 +8,6 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';

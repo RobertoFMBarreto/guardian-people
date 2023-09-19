@@ -12,7 +12,7 @@ class DeviceItem extends StatelessWidget {
   final bool isBlocked;
   final Function? onBackFromDeviceScreen;
   final BigInt? producerId;
-  final Function(Animal)? onTap;
+  final Function()? onTap;
   final bool isSelected;
 
   const DeviceItem({
@@ -44,7 +44,7 @@ class DeviceItem extends StatelessWidget {
           }
         });
       } else {
-        onTap!(animal);
+        onTap!();
       }
     });
   }

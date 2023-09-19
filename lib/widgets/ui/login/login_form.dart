@@ -9,7 +9,6 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
-import 'package:guardian/models/providers/tmp/read_json.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -60,7 +59,7 @@ class _LoginFormState extends State<LoginForm> {
                 idUser: drift.Value(BigInt.from(int.parse(body['id']))),
                 email: drift.Value(body['email']),
                 name: drift.Value(body['name']),
-                phone: drift.Value(999999999),
+                phone: const drift.Value(999999999),
                 isProducer: drift.Value(body['isProducer'] == true),
                 isSuperuser: drift.Value(body['isSuperuser'] == true),
               )).then((_) {

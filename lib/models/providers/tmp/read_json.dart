@@ -3,17 +3,9 @@ import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
 import 'package:guardian/models/providers/tmp/alerts_data.dart';
-import 'package:guardian/models/providers/tmp/devices_data.dart';
-import 'package:guardian/models/providers/tmp/fences_data.dart';
-import 'package:guardian/models/providers/tmp/users_data.dart';
 
 // Future<List<UserCompanion>> loadUsers() async {
 //   String usersInput = '';

@@ -13,7 +13,6 @@ import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;

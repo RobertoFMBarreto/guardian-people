@@ -112,7 +112,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           scale: curve,
           child: Dialog(
             child: Container(
-              constraints: kIsWeb ? BoxConstraints(maxWidth: 400) : null,
+              constraints: kIsWeb ? const BoxConstraints(maxWidth: 400) : null,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -173,7 +173,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           scale: curve,
           child: Dialog(
             child: Container(
-              constraints: kIsWeb ? BoxConstraints(maxWidth: 400) : null,
+              constraints: kIsWeb ? const BoxConstraints(maxWidth: 400) : null,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

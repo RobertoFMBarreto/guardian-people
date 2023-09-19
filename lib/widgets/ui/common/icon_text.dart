@@ -30,7 +30,7 @@ class IconText extends StatelessWidget {
             : textColor!;
     return isInverted
         ? Container(
-            constraints: BoxConstraints(maxWidth: 65, maxHeight: 17),
+            constraints: const BoxConstraints(maxWidth: 65, maxHeight: 17),
             child: Row(
               children: [
                 FittedBox(
@@ -56,7 +56,7 @@ class IconText extends StatelessWidget {
             ),
           )
         : Container(
-            constraints: BoxConstraints(maxWidth: 65, maxHeight: 17),
+            constraints: const BoxConstraints(maxWidth: 65, maxHeight: 17),
             child: Row(
               children: [
                 FittedBox(
