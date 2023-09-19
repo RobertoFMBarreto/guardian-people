@@ -26,7 +26,7 @@ class DeviceItemSelectable extends StatelessWidget {
 
     return Card(
       child: InkWell(
-        onTap: onSelected(),
+        onTap: onSelected,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: deviceData != null

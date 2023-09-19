@@ -67,7 +67,6 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['is_active'] == true),
           ));
-
           await createAnimal(AnimalCompanion(
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['animal_is_active'] == true),

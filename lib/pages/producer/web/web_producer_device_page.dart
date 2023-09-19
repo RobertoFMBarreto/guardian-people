@@ -65,6 +65,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
@@ -74,7 +75,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['is_active'] == true),
           ));
-
+          print(data);
           await createAnimal(AnimalCompanion(
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['animal_is_active'] == true),
@@ -195,28 +196,30 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: ListView.builder(
-                                        itemCount: _animals.length,
-                                        itemBuilder: (context, index) => DeviceItem(
-                                          animal: _animals[index],
-                                          isSelected: _selectedAnimal != null &&
-                                              _animals[index].animal.idAnimal.value ==
-                                                  _selectedAnimal!.animal.idAnimal.value,
-                                          onTap: (device) {
-                                            setState(() {
-                                              _selectedAnimal = device;
-                                            });
+                                          itemCount: _animals.length,
+                                          itemBuilder: (context, index) {
+                                            return DeviceItem(
+                                              animal: _animals[index],
+                                              isSelected: _selectedAnimal != null &&
+                                                  _animals[index].animal.idAnimal.value ==
+                                                      _selectedAnimal!.animal.idAnimal.value,
+                                              onTap: (device) {
+                                                setState(() {
+                                                  _selectedAnimal = device;
+                                                });
 
-                                            if (_selectedAnimal!.data.isEmpty) {
-                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                content: Text(
-                                                  localizations.there_is_no_animal_data
-                                                      .capitalize(),
-                                                ),
-                                              ));
-                                            }
-                                          },
-                                        ),
-                                      ),
+                                                if (_selectedAnimal!.data.isEmpty) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                      localizations.there_is_no_animal_data
+                                                          .capitalize(),
+                                                    ),
+                                                  ));
+                                                }
+                                              },
+                                            );
+                                          }),
                                     ),
                                   ),
                                 ),
