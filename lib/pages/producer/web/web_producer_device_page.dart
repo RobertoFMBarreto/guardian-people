@@ -36,17 +36,16 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   Animal? _selectedAnimal;
 
   List<Animal> _animals = [];
-  List<DeviceLocationsCompanion> _animalData = [];
 
   bool _isInterval = false;
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
   double _currentZoom = 17;
   String _searchString = '';
-  RangeValues _batteryRangeValues = const RangeValues(0, 100);
-  RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
-  RangeValues _elevationRangeValues = const RangeValues(0, 1000);
-  RangeValues _tmpRangeValues = const RangeValues(0, 25);
+  final RangeValues _batteryRangeValues = const RangeValues(0, 100);
+  final RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
+  final RangeValues _elevationRangeValues = const RangeValues(0, 1000);
+  final RangeValues _tmpRangeValues = const RangeValues(0, 25);
 
   @override
   void initState() {
