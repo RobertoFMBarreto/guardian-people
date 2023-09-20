@@ -331,10 +331,14 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                               ),
                             ),
                             Center(
-                              child: Text(
-                                localizations.heatmap.capitalize(),
-                                style: theme.textTheme.bodyLarge!
-                                    .copyWith(color: gdOnMapColor, fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  localizations.heatmap.capitalize(),
+                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                      color: theme.colorScheme.onBackground,
+                                      fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
                           ];
@@ -409,7 +413,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                     ? gdToggleGreyArea
                                     : gdDarkToggleGreyArea,
                                 value: _showFence,
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _showFence = value;
+                                  });
+                                  this.setState(() {});
+                                  Navigator.of(context).pop();
+                                },
                               ),
                             ],
                           );
@@ -421,7 +431,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         value: '/show_route',
                         child: StatefulBuilder(builder: (context, setState) {
                           return Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
                                 "${localizations.show.capitalize()} ${localizations.route}",
@@ -433,7 +443,13 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                     ? gdToggleGreyArea
                                     : gdDarkToggleGreyArea,
                                 value: _showRoute,
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _showRoute = value;
+                                  });
+                                  this.setState(() {});
+                                  Navigator.of(context).pop();
+                                },
                               ),
                             ],
                           );
