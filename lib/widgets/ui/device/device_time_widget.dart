@@ -182,9 +182,9 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
                   children: [
                     DateTimeInput(
                       onSelectionChanged: _onEndDateChanged,
-                      date: widget.startDate,
+                      date: widget.endDate,
                       onTimeChange: _onEndTimeChanged,
-                      maxDate: widget.endDate,
+                      maxDate: DateTime.now(),
                       minDate: widget.startDate,
                     ),
                     Row(

@@ -82,12 +82,15 @@ class DeviceItem extends StatelessWidget {
                     children: [
                       DeviceWidgetProvider.getBatteryWidget(
                         deviceBattery: animal.data.first.battery.value!,
-                        color: theme.colorScheme.secondary,
+                        color: isSelected
+                            ? theme.colorScheme.onSecondary
+                            : theme.colorScheme.secondary,
                       ),
                       Text(
                         '${animal.data.first.battery.value.toString()}%',
                         style: theme.textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w500,
+                          color: isSelected ? theme.colorScheme.onSecondary : null,
                         ),
                       ),
                     ],

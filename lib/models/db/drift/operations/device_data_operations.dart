@@ -62,19 +62,41 @@ Future<List<DeviceLocationsCompanion>> getAnimalData({
   bool isInterval = false,
 }) async {
   final db = Get.find<GuardianDb>();
+  List<DeviceLocationsCompanion> deviceData = [];
   List<DeviceLocation> data = [];
   if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
-    data = await (db.select(db.deviceLocations)
-          ..join([
-            drift.innerJoin(db.device, db.device.idDevice.equalsExp(db.deviceLocations.idDevice))
-          ])
-          ..join([drift.innerJoin(db.animal, db.animal.idDevice.equalsExp(db.device.idDevice))])
-          ..orderBy([(tbl) => drift.OrderingTerm.desc(db.deviceLocations.date)])
-          ..where((tbl) =>
-              db.animal.idAnimal.equals(idAnimal) &
-              db.deviceLocations.date.isBiggerOrEqualValue(startDate) &
-              db.deviceLocations.date.isSmallerOrEqualValue(endDate)))
-        .get();
+    final dt = await db.customSelect('''
+      SELECT * FROM ${db.deviceLocations.actualTableName}
+      JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.idDevice.name} = ${db.deviceLocations.actualTableName}.${db.deviceLocations.idDevice.name}
+      JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idDevice.name} = ${db.device.actualTableName}.${db.device.idDevice.name}
+      WHERE ${db.animal.idAnimal.name} = ? AND ${db.deviceLocations.date.name} BETWEEN ? AND ?
+      ORDER BY ${db.deviceLocations.date.name} DESC
+    ''', variables: [
+      drift.Variable.withBigInt(idAnimal),
+      drift.Variable.withDateTime(startDate),
+      drift.Variable.withDateTime(endDate)
+    ]).get();
+    if (dt.isNotEmpty) {
+      for (var locationData in dt) {
+        deviceData.add(
+          DeviceLocationsCompanion(
+            accuracy: drift.Value(locationData.data[db.deviceLocations.accuracy.name]),
+            battery: drift.Value(locationData.data[db.deviceLocations.battery.name]),
+            dataUsage: drift.Value(locationData.data[db.deviceLocations.dataUsage.name]),
+            date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                locationData.data[db.deviceLocations.date.name])),
+            deviceDataId:
+                drift.Value(BigInt.from(locationData.data[db.deviceLocations.deviceDataId.name])),
+            idDevice: drift.Value(BigInt.from(locationData.data[db.device.idDevice.name])),
+            elevation: drift.Value(locationData.data[db.deviceLocations.elevation.name]),
+            lat: drift.Value(locationData.data[db.deviceLocations.lat.name]),
+            lon: drift.Value(locationData.data[db.deviceLocations.lon.name]),
+            state: drift.Value(locationData.data[db.deviceLocations.state.name]),
+            temperature: drift.Value(locationData.data[db.deviceLocations.temperature.name]),
+          ),
+        );
+      }
+    }
   } else {
     final dt = await (db.select(db.deviceLocations)
           ..orderBy(
@@ -88,8 +110,6 @@ Future<List<DeviceLocationsCompanion>> getAnimalData({
       data.add(dt.first);
     }
   }
-
-  List<DeviceLocationsCompanion> deviceData = [];
 
   deviceData.addAll(data.map((e) => e.toCompanion(true)));
   return deviceData;

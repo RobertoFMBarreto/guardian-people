@@ -301,6 +301,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                   ]
                 ],
               ),
+              Container(
+                color: theme.colorScheme.background.withOpacity(0.5),
+                height: 50,
+              ),
               if (widget.isInterval)
                 Align(
                   alignment: Alignment.topLeft,
@@ -308,9 +312,9 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
-                        iconStyleData: const IconStyleData(
-                          iconEnabledColor: gdOnMapColor,
-                          iconDisabledColor: gdOnMapColor,
+                        iconStyleData: IconStyleData(
+                          iconEnabledColor: theme.colorScheme.onBackground,
+                          iconDisabledColor: theme.colorScheme.onBackground,
                         ),
                         isExpanded: true,
                         selectedItemBuilder: (context) {
@@ -320,8 +324,9 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   localizations.normal_map.capitalize(),
-                                  style: theme.textTheme.bodyLarge!
-                                      .copyWith(color: gdOnMapColor, fontWeight: FontWeight.w500),
+                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                      color: theme.colorScheme.onBackground,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ),
@@ -435,7 +440,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         }),
                       ),
                   ],
-                  icon: const Icon(Icons.tune),
+                  icon: Icon(
+                    Icons.tune,
+                    color: theme.colorScheme.onBackground,
+                    size: 30,
+                  ),
                 ),
               ),
             ],

@@ -70,15 +70,13 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
           await createAnimal(AnimalCompanion(
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['animal_is_active'] == true),
-            animalName: drift.Value(dt['device_name']),
+            animalName: drift.Value(dt['animal_name']),
             idUser: drift.Value(BigInt.from(int.parse(dt['id_user']))),
             animalColor: drift.Value(dt['animal_color']),
             animalIdentification: drift.Value(dt['animal_identification']),
             idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
           ));
 
-          final date = (dt['last_device_data']['read_date'] as String).split('T')[0];
-          final time = dt['last_device_data']['read_time'] as String;
           await createDeviceData(
             DeviceLocationsCompanion(
               accuracy: dt['last_device_data']['accuracy'] != null
@@ -88,8 +86,8 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                   ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
                   : const drift.Value.absent(),
               dataUsage: drift.Value(Random().nextInt(10)),
-              date: drift.Value(DateTime.parse('$date $time')),
-              deviceDataId: drift.Value(BigInt.from(Random().nextInt(999999999))),
+              date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
+              deviceDataId: drift.Value(BigInt.from(int.parse(dt['last_device_data']['id_data']))),
               idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
               elevation: dt['last_device_data']['altitude'] != null
                   ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))

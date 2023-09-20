@@ -43,6 +43,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
     setState(() {
       _selectedDestination = index;
     });
+
     _currentPage = pages[index];
     switch (index) {
       case 0:
@@ -52,6 +53,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
               _selectedAnimal = animal;
             });
             goToPage(2);
+            _selectedAnimal = null;
           },
         );
       case 1:

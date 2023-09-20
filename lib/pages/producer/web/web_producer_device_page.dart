@@ -13,6 +13,7 @@ import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/device/device_item.dart';
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
@@ -28,19 +29,24 @@ class WebProducerDevicePage extends StatefulWidget {
 }
 
 class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
+  final List<FenceData> _fences = [];
+
   late Future _future;
 
   Animal? _selectedAnimal;
 
   List<Animal> _animals = [];
-  final List<FenceData> _fences = [];
   List<DeviceLocationsCompanion> _animalData = [];
 
+  bool _isInterval = false;
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
-  final bool _isInterval = false;
-
   double _currentZoom = 17;
+  String _searchString = '';
+  RangeValues _batteryRangeValues = const RangeValues(0, 100);
+  RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
+  RangeValues _elevationRangeValues = const RangeValues(0, 1000);
+  RangeValues _tmpRangeValues = const RangeValues(0, 25);
 
   @override
   void initState() {
@@ -80,16 +86,12 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
           await createAnimal(AnimalCompanion(
             idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['animal_is_active'] == true),
-            animalName: drift.Value(dt['device_name']),
+            animalName: drift.Value(dt['animal_name']),
             idUser: drift.Value(BigInt.from(int.parse(dt['id_user']))),
             animalColor: drift.Value(dt['animal_color']),
             animalIdentification: drift.Value(dt['animal_identification']),
             idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
           ));
-
-          final date = (dt['last_device_data']['read_date'] as String).split('T')[0];
-          final time = dt['last_device_data']['read_time'] as String;
-
           await createDeviceData(
             DeviceLocationsCompanion(
               accuracy: dt['last_device_data']['accuracy'] != null
@@ -99,8 +101,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                   ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
                   : const drift.Value.absent(),
               dataUsage: drift.Value(Random().nextInt(10)),
-              date: drift.Value(DateTime.parse('$date $time')),
-              deviceDataId: drift.Value(BigInt.from(Random().nextInt(999999999))),
+              date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
+              deviceDataId: drift.Value(BigInt.from(int.parse(dt['last_device_data']['id_data']))),
               idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
               elevation: dt['last_device_data']['altitude'] != null
                   ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
@@ -136,6 +138,21 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     });
   }
 
+  Future<void> filterAnimals() async {
+    await getUserAnimalsFiltered(
+      batteryRangeValues: _batteryRangeValues,
+      elevationRangeValues: _elevationRangeValues,
+      dtUsageRangeValues: _dtUsageRangeValues,
+      searchString: _searchString,
+      tmpRangeValues: _tmpRangeValues,
+    ).then(
+      (filteredAnimals) => setState(() {
+        _animals = [];
+        _animals.addAll(filteredAnimals);
+      }),
+    );
+  }
+
   Future<void> _getDeviceData() async {
     await getAnimalData(
       startDate: _startDate,
@@ -144,12 +161,77 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       isInterval: _isInterval,
     ).then(
       (data) async {
-        _animalData = [];
-        if (mounted) {
-          setState(() {
-            _animalData.addAll(data);
-          });
-        }
+        setState(() {
+          _selectedAnimal = Animal(
+            animal: _selectedAnimal!.animal,
+            data: data,
+          );
+        });
+        AnimalProvider.getAnimalData(_selectedAnimal!.animal.idAnimal.value, _startDate, _endDate)
+            .then((response) async {
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
+            for (var dt in data) {
+              await createDeviceData(
+                DeviceLocationsCompanion(
+                  accuracy: dt['accuracy'] != null
+                      ? drift.Value(double.tryParse(dt['accuracy']))
+                      : const drift.Value.absent(),
+                  battery: dt['battery'] != null
+                      ? drift.Value(int.tryParse(dt['battery']))
+                      : const drift.Value.absent(),
+                  dataUsage: drift.Value(Random().nextInt(10)),
+                  date: drift.Value(DateTime.parse(dt['date'])),
+                  deviceDataId: drift.Value(BigInt.from(int.parse(dt['id_data']))),
+                  idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
+                  elevation: dt['altitude'] != null
+                      ? drift.Value(double.tryParse(dt['altitude']))
+                      : const drift.Value.absent(),
+                  lat: dt['lat'] != null
+                      ? drift.Value(double.tryParse(dt['lat']))
+                      : const drift.Value.absent(),
+                  lon: dt['lon'] != null
+                      ? drift.Value(double.tryParse(dt['lon']))
+                      : const drift.Value.absent(),
+                  state: drift.Value(states[Random().nextInt(states.length)]),
+                  temperature: dt['skinTemperature'] != null
+                      ? drift.Value(double.tryParse(dt['skinTemperature']))
+                      : const drift.Value.absent(),
+                ),
+              );
+            }
+
+            await getAnimalData(
+              startDate: _startDate,
+              endDate: _endDate,
+              idAnimal: _selectedAnimal!.animal.idAnimal.value,
+              isInterval: _isInterval,
+            ).then(
+              (data) async {
+                setState(() {
+                  _selectedAnimal = Animal(
+                    animal: _selectedAnimal!.animal,
+                    data: data,
+                  );
+                });
+                if (_selectedAnimal!.data.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.there_is_no_animal_data.capitalize(),
+                    ),
+                  ));
+                }
+              },
+            );
+          } else if (response.statusCode == 401) {
+            AuthProvider.refreshToken().then((resp) async {
+              final newToken = jsonDecode(resp.body)['token'];
+              await setSessionToken(newToken);
+              _getDevicesFromApi();
+            });
+          }
+        });
       },
     );
   }
@@ -188,31 +270,47 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                     padding: const EdgeInsets.all(2.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: ListView.builder(
-                                          itemCount: _animals.length,
-                                          itemBuilder: (context, index) {
-                                            return DeviceItem(
-                                              animal: _animals[index],
-                                              isSelected: _selectedAnimal != null &&
-                                                  _animals[index].animal.idAnimal.value ==
-                                                      _selectedAnimal!.animal.idAnimal.value,
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedAnimal = _animals[index];
-                                                });
-
-                                                if (_selectedAnimal!.data.isEmpty) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                    content: Text(
-                                                      localizations.there_is_no_animal_data
-                                                          .capitalize(),
-                                                    ),
-                                                  ));
-                                                }
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: SearchWithFilterInput(
+                                              onFilter: () {},
+                                              onSearchChanged: (value) {
+                                                _searchString = value;
+                                                filterAnimals();
                                               },
-                                            );
-                                          }),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                                itemCount: _animals.length,
+                                                itemBuilder: (context, index) {
+                                                  return DeviceItem(
+                                                    animal: _animals[index],
+                                                    isSelected: _selectedAnimal != null &&
+                                                        _animals[index].animal.idAnimal.value ==
+                                                            _selectedAnimal!.animal.idAnimal.value,
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _selectedAnimal = _animals[index];
+                                                      });
+
+                                                      if (_selectedAnimal!.data.isEmpty) {
+                                                        ScaffoldMessenger.of(context)
+                                                            .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                            localizations.there_is_no_animal_data
+                                                                .capitalize(),
+                                                          ),
+                                                        ));
+                                                      }
+                                                    },
+                                                  );
+                                                }),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -220,30 +318,33 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DeviceTimeRangeWidget(
-                                startDate: _startDate,
-                                endDate: _endDate,
-                                onStartDateChanged: (newStartDate) {
-                                  if (_selectedAnimal != null) {
-                                    setState(() {
-                                      _startDate = newStartDate;
-                                      _getDeviceData();
-                                    });
-                                  }
-                                },
-                                onEndDateChanged: (newEndDate) {
-                                  if (_selectedAnimal != null) {
-                                    setState(() {
-                                      _endDate = newEndDate;
-                                      _getDeviceData();
-                                    });
-                                  }
-                                }),
+                        if (_selectedAnimal != null)
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: DeviceTimeRangeWidget(
+                                  startDate: _startDate,
+                                  endDate: _endDate,
+                                  onStartDateChanged: (newStartDate) {
+                                    if (_selectedAnimal != null) {
+                                      setState(() {
+                                        _startDate = newStartDate;
+                                        _isInterval = true;
+                                        _getDeviceData();
+                                      });
+                                    }
+                                  },
+                                  onEndDateChanged: (newEndDate) {
+                                    if (_selectedAnimal != null) {
+                                      setState(() {
+                                        _endDate = newEndDate;
+                                        _isInterval = true;
+                                        _getDeviceData();
+                                      });
+                                    }
+                                  }),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -254,10 +355,12 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: _selectedAnimal != null && _selectedAnimal!.data.isNotEmpty
+                      child: _selectedAnimal != null
                           ? SingleDeviceLocationMap(
                               showCurrentPosition: true,
-                              deviceData: _selectedAnimal!.data,
+                              deviceData: _selectedAnimal!.data
+                                  .where((element) => element.lat.value != null)
+                                  .toList(),
                               onZoomChange: (newZoom) {
                                 // No need to setstate because we dont need to update the screen
                                 // just need to store the value in case the map restarts to keep zoom
