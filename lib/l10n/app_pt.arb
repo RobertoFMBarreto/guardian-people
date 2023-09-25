@@ -19,7 +19,7 @@
   "clean": "limpar",
   "search": "pesquisar",
   "device_data": "dados do dispositivo",
-  "device_color": "cor do dispositivo",
+  "animal_color": "cor do animal",
   "block": "bloquear",
   "unblock": "desbloquear",
   "profile": "perfil",
@@ -103,5 +103,8 @@
   "no_alerts": "não existem alertas",
   "no_fences": "não existem cercas",
   "no_notifications": "não existem notificações",
-  "than": "que"
+  "than": "que",
+  "there_is_no_animal_data": "não existem dados do animal",
+  "no_localization": "sem localização",
+  "no_localization_body": "não foi possível obter a sua localização"
 }

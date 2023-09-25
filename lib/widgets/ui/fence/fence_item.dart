@@ -6,6 +6,7 @@ class FenceItem extends StatelessWidget {
   final Color color;
   final Function() onRemove;
   final Function() onTap;
+  final bool isSelected;
 
   const FenceItem({
     super.key,
@@ -13,12 +14,14 @@ class FenceItem extends StatelessWidget {
     required this.name,
     required this.color,
     required this.onTap,
+    this.isSelected = false,
   });
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return Card(
+      color: isSelected ? theme.colorScheme.secondary : null,
       child: InkWell(
         onTap: () {
           Future.delayed(const Duration(milliseconds: 300)).then((value) => onTap());

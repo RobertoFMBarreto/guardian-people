@@ -1,4 +1,4 @@
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/path/custom_d_top_bar_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/path/custom_inverted_d_top_bar_clipper.dart';
@@ -9,7 +9,7 @@ class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;
   Widget? title;
-  Device device;
+  Animal device;
   bool isWhiteBody;
   Function(String)? onColorChanged;
 

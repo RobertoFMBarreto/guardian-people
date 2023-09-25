@@ -57,7 +57,7 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
         children: [
           ColorPicker(
             pickerColor: pickedColor,
-            colorPickerWidth: MediaQuery.of(context).size.width * 0.6,
+            colorPickerWidth: 300,
             onColorChanged: (color) {
               setState(() {
                 pickedColor = color;

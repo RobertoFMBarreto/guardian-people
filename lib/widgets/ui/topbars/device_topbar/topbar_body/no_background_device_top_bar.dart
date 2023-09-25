@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
@@ -13,13 +13,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:drift/drift.dart' as drift;
 
 class NoBackgroundDeviceTopBar extends StatefulWidget {
-  final Device device;
+  final Animal animal;
   final Widget? tailWidget;
   final Function(String) onColorChanged;
   final double maxHeight;
   const NoBackgroundDeviceTopBar({
     super.key,
-    required this.device,
+    required this.animal,
     required this.maxHeight,
     required this.tailWidget,
     required this.onColorChanged,
@@ -30,11 +30,11 @@ class NoBackgroundDeviceTopBar extends StatefulWidget {
 }
 
 class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
-  late Color deviceColor;
+  late Color animalColor;
 
   @override
   void initState() {
-    deviceColor = HexColor(widget.device.device.color.value);
+    animalColor = HexColor(widget.animal.animal.animalColor.value);
     super.initState();
   }
 
@@ -42,11 +42,11 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
     showDialog(
       context: context,
       builder: (context) => CustomColorPickerInput(
-        pickerColor: deviceColor,
+        pickerColor: animalColor,
         onSave: (color) {
           _onColorUpdate(color);
         },
-        hexColor: HexColor.toHex(color: deviceColor),
+        hexColor: HexColor.toHex(color: animalColor),
       ),
     );
   }
@@ -54,13 +54,13 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
   Future<void> _onColorUpdate(Color color) async {
     // TODO: Logic to update device color
     setState(() {
-      deviceColor = color;
-      widget.onColorChanged(HexColor.toHex(color: deviceColor));
+      animalColor = color;
+      widget.onColorChanged(HexColor.toHex(color: animalColor));
     });
 
-    await updateDevice(
-      widget.device.device.copyWith(
-        color: drift.Value(HexColor.toHex(color: deviceColor)),
+    await updateAnimal(
+      widget.animal.animal.copyWith(
+        animalColor: drift.Value(HexColor.toHex(color: animalColor)),
       ),
     );
   }
@@ -123,7 +123,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
                       child: Text(
-                        widget.device.device.name.value,
+                        widget.animal.animal.animalName.value,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.headlineMedium!.copyWith(
                           color: theme.colorScheme.onSecondary,
@@ -131,7 +131,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                       ),
                     ),
                   ),
-                  if (widget.device.data.isEmpty)
+                  if (widget.animal.data.isEmpty)
                     Expanded(
                       child: Text(
                         localizations.no_device_data.capitalize(),
@@ -141,7 +141,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  if (widget.device.data.isNotEmpty)
+                  if (widget.animal.data.isNotEmpty)
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -154,7 +154,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                               child: IconText(
                                 icon: Icons.sim_card,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.device.data.first.dataUsage.value}/10MB',
+                                text: '${widget.animal.data.first.dataUsage.value}/10MB',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -178,7 +178,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                         ],
                       ),
                     ),
-                  if (widget.device.data.isNotEmpty)
+                  if (widget.animal.data.isNotEmpty)
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -191,7 +191,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                               child: IconText(
                                 icon: Icons.device_thermostat,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.device.data.first.temperature.value}ºC',
+                                text: '${widget.animal.data.first.temperature.value}ºC',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -208,7 +208,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 ),
                                 isInverted: true,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.device.data.first.battery.value}%',
+                                text: '${widget.animal.data.first.battery.value}%',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -236,19 +236,17 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                         _showColorPicker();
                                       },
                                       child: ColorCircle(
-                                        color: deviceColor,
+                                        color: animalColor,
                                         radius: 10,
                                       ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
-                                      child: AutoSizeText(
-                                        localizations.device_color.capitalize(),
+                                      child: Text(
+                                        localizations.animal_color.capitalize(),
                                         style: theme.textTheme.bodyLarge!.copyWith(
                                           color: theme.colorScheme.onSecondary,
                                         ),
-                                        minFontSize: 15,
-                                        maxFontSize: 20,
                                       ),
                                     ),
                                   ],

@@ -5,7 +5,7 @@ import 'package:get/instance_manager.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/system_provider.dart';
@@ -14,7 +14,7 @@ import 'package:latlong2/latlong.dart';
 
 class DevicesLocationsMap extends StatefulWidget {
   final bool showCurrentPosition;
-  final List<Device> devices;
+  final List<Animal> animals;
   final List<FenceData>? fences;
   final String? reloadMap;
   final bool centerOnPoly;
@@ -22,7 +22,7 @@ class DevicesLocationsMap extends StatefulWidget {
   const DevicesLocationsMap({
     super.key,
     required this.showCurrentPosition,
-    required this.devices,
+    required this.animals,
     this.fences,
     this.centerOnPoly = false,
     this.centerOnDevice = false,
@@ -42,7 +42,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
 
   Position? _currentPosition;
 
-  List<LatLng> devicesDataPoints = [];
+  List<LatLng> animalsDataPoints = [];
+  List<LatLng> allFencesPoints = [];
 
   @override
   void initState() {
@@ -59,18 +60,16 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
         }
       },
     );
-    if (widget.fences != null) {
-      if (widget.fences!.length > 1 && widget.centerOnPoly) {
-        throw ErrorDescription("Can only center on poly with one poly");
-      }
-    }
+
     await _loadFences();
-    for (var device in widget.devices) {
-      if (device.data.isNotEmpty) {
-        devicesDataPoints.add(
+    for (var animal in widget.animals) {
+      if (animal.data.isNotEmpty &&
+          animal.data.first.lat.value != null &&
+          animal.data.first.lon.value != null) {
+        animalsDataPoints.add(
           LatLng(
-            device.data.first.lat.value,
-            device.data.first.lon.value,
+            animal.data.first.lat.value!,
+            animal.data.first.lon.value!,
           ),
         );
       }
@@ -80,11 +79,11 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   Future<void> _loadFences() async {
     List<Polygon> allPolygons = [];
     List<Polygon> allCircles = [];
-
     if (widget.fences != null) {
       for (FenceData fence in widget.fences!) {
-        await getFencePoints(fence.fenceId).then(
-          (points) => points.length == 2
+        await getFencePoints(fence.idFence).then((points) {
+          allFencesPoints.addAll(points);
+          return points.length == 2
               ? allCircles.add(
                   Polygon(
                     points: points,
@@ -102,8 +101,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                     borderStrokeWidth: 2,
                     isFilled: true,
                   ),
-                ),
-        );
+                );
+        });
       }
     }
     if (mounted) {
@@ -131,10 +130,10 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       _currentPosition!.longitude,
                     )
                   : null,
-              bounds: widget.centerOnPoly && devicesDataPoints.isNotEmpty
-                  ? LatLngBounds.fromPoints(_polygons.first.points)
-                  : devicesDataPoints.isNotEmpty
-                      ? LatLngBounds.fromPoints(devicesDataPoints)
+              bounds: widget.centerOnPoly
+                  ? LatLngBounds.fromPoints(allFencesPoints)
+                  : animalsDataPoints.isNotEmpty
+                      ? LatLngBounds.fromPoints(animalsDataPoints)
                       : null,
               boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
               zoom: 17,
@@ -158,18 +157,21 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                         );
                       },
                     ),
-                  ...widget.devices
-                      .where((element) => element.data.isNotEmpty)
+                  ...widget.animals
+                      .where((element) =>
+                          element.data.isNotEmpty &&
+                          element.data.first.lat.value != null &&
+                          element.data.first.lon.value != null)
                       .map(
-                        (device) => Marker(
+                        (animal) => Marker(
                           point: LatLng(
-                            device.data.first.lat.value,
-                            device.data.first.lon.value,
+                            animal.data.first.lat.value!,
+                            animal.data.first.lon.value!,
                           ),
                           builder: (context) {
                             return Icon(
                               Icons.location_on,
-                              color: HexColor(device.device.color.value),
+                              color: HexColor(animal.animal.animalColor.value),
                               size: 30,
                             );
                           },

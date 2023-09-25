@@ -18,8 +18,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
   final bool showCurrentPosition;
-  final List<DeviceLocationsCompanion> deviceData;
-  final String imei;
+  final List<AnimalLocationsCompanion> deviceData;
+  final BigInt idAnimal;
   final String deviceColor;
   final Function(double) onZoomChange;
   final double startingZoom;
@@ -35,7 +35,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     required this.isInterval,
-    required this.imei,
+    required this.idAnimal,
     required this.deviceColor,
   });
 
@@ -90,10 +90,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   Future<void> _loadDeviceFences() async {
     List<Polygon> allFences = [];
-    await getDeviceFence(widget.imei).then((fence) async {
+    await getAnimalFence(widget.idAnimal).then((fence) async {
       if (fence != null) {
         List<LatLng> fencePoints = [];
-        fencePoints.addAll(await getFencePoints(fence.fenceId));
+        fencePoints.addAll(await getFencePoints(fence.idFence));
         allFences.add(
           Polygon(
             points: fencePoints,
@@ -116,10 +116,16 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    List<DeviceLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
+    List<AnimalLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
         ? widget.deviceData
+            .where((element) => element.lat.value != null && element.lon.value != null)
+            .toList()
         : widget.deviceData.isNotEmpty
-            ? [widget.deviceData.first]
+            ? [
+                widget.deviceData
+                    .where((element) => element.lat.value != null && element.lon.value != null)
+                    .first
+              ]
             : [];
     // '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'
     return FutureBuilder(
@@ -136,18 +142,22 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 mapController: _mapController,
                 options: MapOptions(
                   center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
-                      ? widget.isInterval && data.isEmpty
+                      ? widget.isInterval && data.isEmpty && _currentPosition != null
                           ? LatLng(
                               _currentPosition!.latitude,
                               _currentPosition!.longitude,
                             )
-                          : widget.isInterval
+                          : widget.isInterval ||
+                                  data.first.lat.value == null ||
+                                  data.first.lon.value == null
                               ? null
-                              : LatLng(data.first.lat.value, data.first.lon.value)
-                      : LatLng(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                        ),
+                              : LatLng(data.first.lat.value!, data.first.lon.value!)
+                      : _currentPosition != null
+                          ? LatLng(
+                              _currentPosition!.latitude,
+                              _currentPosition!.longitude,
+                            )
+                          : null,
                   onMapReady: () {
                     _mapController.mapEventStream.listen((evt) {
                       widget.onZoomChange(_mapController.zoom);
@@ -163,7 +173,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                           _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
                       : widget.isInterval && data.isNotEmpty
                           ? LatLngBounds.fromPoints(
-                              data.map((e) => LatLng(e.lat.value, e.lon.value)).toList(),
+                              data.map((e) => LatLng(e.lat.value!, e.lon.value!)).toList(),
                             )
                           : null,
                 ),
@@ -182,7 +192,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                           strokeWidth: 5,
                           points: data
                               .map(
-                                (e) => LatLng(e.lat.value, e.lon.value),
+                                (e) => LatLng(e.lat.value!, e.lon.value!),
                               )
                               .toList(),
                         ),
@@ -194,7 +204,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                       heatMapDataSource: InMemoryHeatMapDataSource(
                         data: data
                             .map(
-                              (e) => WeightedLatLng(LatLng(e.lat.value, e.lon.value), 1),
+                              (e) => WeightedLatLng(LatLng(e.lat.value!, e.lon.value!), 1),
                             )
                             .toList(),
                       ),
@@ -226,7 +236,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                 ...data
                                     .map(
                                       (e) => Marker(
-                                        point: LatLng(e.lat.value, e.lon.value),
+                                        point: LatLng(e.lat.value!, e.lon.value!),
                                         anchorPos: AnchorPos.align(AnchorAlign.top),
                                         builder: (context) {
                                           return Transform.rotate(
@@ -272,7 +282,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                               ...[data.first, data.last]
                                   .map(
                                     (e) => Marker(
-                                      point: LatLng(e.lat.value, e.lon.value),
+                                      point: LatLng(e.lat.value!, e.lon.value!),
                                       anchorPos: AnchorPos.align(AnchorAlign.top),
                                       builder: (context) {
                                         return Transform.rotate(
@@ -293,6 +303,10 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                   ]
                 ],
               ),
+              Container(
+                color: theme.colorScheme.background.withOpacity(0.5),
+                height: 50,
+              ),
               if (widget.isInterval)
                 Align(
                   alignment: Alignment.topLeft,
@@ -300,9 +314,9 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
-                        iconStyleData: const IconStyleData(
-                          iconEnabledColor: gdOnMapColor,
-                          iconDisabledColor: gdOnMapColor,
+                        iconStyleData: IconStyleData(
+                          iconEnabledColor: theme.colorScheme.onBackground,
+                          iconDisabledColor: theme.colorScheme.onBackground,
                         ),
                         isExpanded: true,
                         selectedItemBuilder: (context) {
@@ -312,16 +326,21 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   localizations.normal_map.capitalize(),
-                                  style: theme.textTheme.bodyLarge!
-                                      .copyWith(color: gdOnMapColor, fontWeight: FontWeight.w500),
+                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                      color: theme.colorScheme.onBackground,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ),
                             Center(
-                              child: Text(
-                                localizations.heatmap.capitalize(),
-                                style: theme.textTheme.bodyLarge!
-                                    .copyWith(color: gdOnMapColor, fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  localizations.heatmap.capitalize(),
+                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                      color: theme.colorScheme.onBackground,
+                                      fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
                           ];
@@ -396,19 +415,25 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                     ? gdToggleGreyArea
                                     : gdDarkToggleGreyArea,
                                 value: _showFence,
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _showFence = value;
+                                  });
+                                  this.setState(() {});
+                                  Navigator.of(context).pop();
+                                },
                               ),
                             ],
                           );
                         },
                       ),
                     ),
-                    if (widget.isInterval && !_showHeatMap)
+                    if (widget.isInterval && !_showHeatMap && widget.deviceData.isNotEmpty)
                       PopupMenuItem(
                         value: '/show_route',
                         child: StatefulBuilder(builder: (context, setState) {
                           return Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
                                 "${localizations.show.capitalize()} ${localizations.route}",
@@ -420,14 +445,24 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                     ? gdToggleGreyArea
                                     : gdDarkToggleGreyArea,
                                 value: _showRoute,
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _showRoute = value;
+                                  });
+                                  this.setState(() {});
+                                  Navigator.of(context).pop();
+                                },
                               ),
                             ],
                           );
                         }),
                       ),
                   ],
-                  icon: const Icon(Icons.tune),
+                  icon: Icon(
+                    Icons.tune,
+                    color: theme.colorScheme.onBackground,
+                    size: 30,
+                  ),
                 ),
               ),
             ],

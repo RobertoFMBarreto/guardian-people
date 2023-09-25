@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> setUserSession(String uid) async {
+Future<void> setUserSession(BigInt idUser, String token) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // !TODO: Store jwt token
-  // await prefs.setString("token", token);
-  await prefs.setString("uid", uid);
+  await prefs.setString("token", token);
+  await prefs.setString("idUser", idUser.toString());
 }
 
 Future<void> clearUserSession() async {
@@ -20,8 +20,8 @@ Future<void> clearUserSession() async {
 Future<bool> hasUserSession() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  String? uid = prefs.getString('uid');
-  return uid != null;
+  String? idUser = prefs.getString('idUser');
+  return idUser != null;
 }
 
 Future<bool> hasShownNoWifiDialog() async {
@@ -41,12 +41,18 @@ Future<void> setShownNoWifiDialog(bool value) async {
   prefs.setBool('showedNoWifi', value);
 }
 
-Future<String?> getUid(BuildContext context) async {
+Future<void> setSessionToken(String value) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  String? uid = prefs.getString('uid');
-  if (uid != null) {
-    return uid;
+  prefs.setString('token', value);
+}
+
+Future<BigInt?> getUid(BuildContext context) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? dt = prefs.getString('idUser');
+  if (dt != null) {
+    BigInt? idUser = BigInt.from(int.parse(dt));
+    return idUser;
   } else {
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
@@ -55,4 +61,11 @@ Future<String?> getUid(BuildContext context) async {
     );
   }
   return null;
+}
+
+Future<String?> getToken() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  String? token = prefs.getString('token');
+  return token;
 }

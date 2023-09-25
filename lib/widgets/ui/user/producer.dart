@@ -5,7 +5,7 @@ import 'package:guardian/custom_page_router.dart';
 import 'circle_avatar_border.dart';
 
 class Producer extends StatelessWidget {
-  final String uid;
+  final BigInt idUser;
   final String producerName;
   final String devicesInfo;
   final String imageUrl;
@@ -14,7 +14,7 @@ class Producer extends StatelessWidget {
     required this.producerName,
     required this.devicesInfo,
     required this.imageUrl,
-    required this.uid,
+    required this.idUser,
   });
 
   @override
@@ -23,7 +23,7 @@ class Producer extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        CustomPageRouter(page: '/admin/producer', settings: RouteSettings(arguments: uid)),
+        CustomPageRouter(page: '/admin/producer', settings: RouteSettings(arguments: idUser)),
       ),
       child: Container(
         height: 150,

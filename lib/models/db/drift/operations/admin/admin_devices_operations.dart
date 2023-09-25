@@ -2,41 +2,41 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 
-Future<List<Device>> getProducerDevicesFiltered({
+Future<List<Animal>> getProducerDevicesFiltered({
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
   required RangeValues tmpRangeValues,
   required RangeValues elevationRangeValues,
   required String searchString,
-  required String uid,
+  required BigInt idUser,
 }) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
     '''
       SELECT
         *
-      FROM ${db.device.actualTableName}
+      FROM ${db.animal.actualTableName}
       LEFT JOIN (
         SELECT * FROM 
           (
-            SELECT * FROM ${db.deviceLocations.actualTableName}
-            ORDER BY ${db.deviceLocations.date.name} DESC 
+            SELECT * FROM ${db.animalLocations.actualTableName}
+            ORDER BY ${db.animalLocations.date.name} DESC 
           ) as deviceDt
-        GROUP BY deviceDt.${db.deviceLocations.deviceId}
-      ) deviceData ON ${db.device.actualTableName}.${db.device.deviceId.name} = deviceData.${db.deviceLocations.deviceId.name}
-      WHERE (${db.device.uid.name} = ? AND
-        deviceData.${db.deviceLocations.dataUsage.name} >= ? AND  deviceData.${db.deviceLocations.dataUsage.name} <= ? AND
-        deviceData.${db.deviceLocations.temperature.name} >= ? AND deviceData.${db.deviceLocations.temperature.name} <= ? AND
-        deviceData.${db.deviceLocations.battery.name} >= ? AND deviceData.${db.deviceLocations.battery.name} <= ? AND
-        deviceData.${db.deviceLocations.elevation.name} >= ? AND deviceData.${db.deviceLocations.elevation.name} <= ? AND
-        ${db.device.name.name} LIKE ?) OR (${db.device.uid.name} = ? AND ${db.device.name.name} LIKE ? AND deviceData.${db.deviceLocations.temperature.name} IS NULL)
+        GROUP BY deviceDt.${db.animalLocations.idAnimal}
+      ) deviceData ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = deviceData.${db.animalLocations.idAnimal.name}
+      WHERE (${db.animal.idUser.name} = ? AND
+        deviceData.${db.animalLocations.dataUsage.name} >= ? AND  deviceData.${db.animalLocations.dataUsage.name} <= ? AND
+        deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+        deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+        deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+        ${db.animal.animalName.name} LIKE ?) OR (${db.animal.idUser.name} = ? AND ${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL)
       ORDER BY
-        ${db.device.name.name}
+        ${db.animal.animalName.name}
     ''',
     variables: [
-      drift.Variable.withString(uid),
+      drift.Variable.withBigInt(idUser),
       drift.Variable.withInt(dtUsageRangeValues.start.toInt()),
       drift.Variable.withInt(dtUsageRangeValues.end.toInt()),
       drift.Variable.withReal(tmpRangeValues.start),
@@ -46,43 +46,44 @@ Future<List<Device>> getProducerDevicesFiltered({
       drift.Variable.withReal(elevationRangeValues.start),
       drift.Variable.withReal(elevationRangeValues.end),
       drift.Variable.withString('%$searchString%'),
-      drift.Variable.withString(uid),
+      drift.Variable.withBigInt(idUser),
       drift.Variable.withString('%$searchString%'),
     ],
   ).get();
-  List<Device> devices = [];
+  List<Animal> devices = [];
 
-  devices.addAll(data.map((deviceData) => Device(
-        device: DeviceCompanion(
-          color: drift.Value(deviceData.data['color']),
-          deviceId: drift.Value(deviceData.data['device_id']),
-          imei: drift.Value(deviceData.data['imei']),
-          isActive: drift.Value(deviceData.data['is_active'] == 1),
-          name: drift.Value(deviceData.data['name']),
-          uid: drift.Value(deviceData.data['uid']),
+  devices.addAll(data.map((deviceData) => Animal(
+        animal: AnimalCompanion(
+          animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+          isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
+          animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
+          animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
         ),
         data: [
-          if (deviceData.data['accuracy'] != null)
-            DeviceLocationsCompanion(
-              accuracy: drift.Value(deviceData.data['accuracy']),
-              battery: drift.Value(deviceData.data['battery']),
-              dataUsage: drift.Value(deviceData.data['data_usage']),
-              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(deviceData.data['date'])),
-              deviceDataId: drift.Value(deviceData.data['device_data_id']),
-              deviceId: drift.Value(deviceData.data['device_id']),
-              elevation: drift.Value(deviceData.data['elevation']),
-              lat: drift.Value(deviceData.data['lat']),
-              lon: drift.Value(deviceData.data['lon']),
-              state: drift.Value(deviceData.data['state']),
-              temperature: drift.Value(deviceData.data['temperature']),
+          if (deviceData.data[db.animalLocations.accuracy.name] != null)
+            AnimalLocationsCompanion(
+              accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
+              battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
+              dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
+              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                  deviceData.data[db.animalLocations.date.name])),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animalLocations.idAnimal.name]),
+              elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
+              lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
+              lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
+              state: drift.Value(deviceData.data[db.animalLocations.state.name]),
+              temperature: drift.Value(deviceData.data[db.animalLocations.temperature.name]),
             ),
         ],
       )));
   return devices;
 }
 
-Future<List<Device>> getProducerDevices(String uid) async {
+Future<List<Animal>> getProducerDevices(BigInt idUser) async {
   final db = Get.find<GuardianDb>();
-  final data = await (db.select(db.device)..where((tbl) => tbl.uid.equals(uid))).get();
-  return data.map((e) => Device(device: e.toCompanion(true), data: [])).toList();
+  final data = await (db.select(db.animal)..where((tbl) => tbl.idUser.equals(idUser))).get();
+  return data.map((e) => Animal(animal: e.toCompanion(true), data: [])).toList();
 }

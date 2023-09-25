@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;
@@ -13,8 +13,8 @@ import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {
-  final Device device;
-  final String producerId;
+  final Animal device;
+  final BigInt producerId;
 
   const AdminDeviceManagementPage({
     super.key,
@@ -27,10 +27,10 @@ class AdminDeviceManagementPage extends StatefulWidget {
 }
 
 class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
-  late Device _device;
+  late Animal _animal;
   late Future _future;
 
-  final List<Device> _devices = [];
+  final List<Animal> _animals = [];
 
   @override
   void initState() {
@@ -39,17 +39,17 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   }
 
   Future<void> _setup() async {
-    _device = widget.device;
-    await _loadDevices();
+    _animal = widget.device;
+    await _loadAnimals();
   }
 
-  Future<void> _loadDevices() async {
+  Future<void> _loadAnimals() async {
     // TODO : create operation for this
-    await getProducerDevices(widget.producerId).then((allDevices) {
+    await getProducerDevices(widget.producerId).then((allAnimals) {
       if (mounted) {
         setState(() {
-          _devices.addAll(
-              allDevices.where((element) => element.device.deviceId != _device.device.deviceId));
+          _animals.addAll(
+              allAnimals.where((element) => element.animal.idAnimal != _animal.animal.idAnimal));
         });
       }
     });
@@ -91,28 +91,28 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                           Navigator.of(context).pop();
                         },
                       ),
-                      device: _device,
+                      device: _animal,
                     ),
                   ),
                   if (hasConnection)
                     OptionButton(
-                      key: Key(_device.device.isActive.value.toString()),
-                      device: _device,
+                      key: Key(_animal.animal.isActive.value.toString()),
+                      animal: _animal,
                       onRemove: () {
                         //TODO: Remove device
-                        deleteDevice(_device.device.deviceId.value).then((_) {
+                        deleteAnimal(_animal.animal.idAnimal.value).then((_) {
                           Navigator.of(context).pop();
                         });
                       },
                       onBlock: () {
                         //TODO: block device
 
-                        final newDevice = _device.device
-                            .copyWith(isActive: drift.Value(!_device.device.isActive.value));
-                        updateDevice(newDevice).then((_) {
+                        final newAnimal = _animal.animal
+                            .copyWith(isActive: drift.Value(!_animal.animal.isActive.value));
+                        updateAnimal(newAnimal).then((_) {
                           setState(
                             () {
-                              _device = Device(device: newDevice, data: _device.data);
+                              _animal = Animal(animal: newAnimal, data: _animal.data);
                             },
                           );
                         });
@@ -130,18 +130,18 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                       ),
                     ),
                   ),
-                  if (_devices.isEmpty)
+                  if (_animals.isEmpty)
                     SliverFillRemaining(
                       child: Center(child: Text(localizations.no_devices.capitalize())),
                     ),
-                  if (_devices.isNotEmpty)
+                  if (_animals.isNotEmpty)
                     SliverFillRemaining(
                       child: ListView.builder(
-                        itemCount: _devices.length,
+                        itemCount: _animals.length,
                         itemBuilder: (context, index) => Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: DeviceItem(
-                            device: _devices[index],
+                            animal: _animals[index],
                             producerId: widget.producerId,
                           ),
                         ),

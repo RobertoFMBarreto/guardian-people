@@ -1,10 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
+import 'package:guardian/models/providers/api/animals_provider.dart';
+import 'package:guardian/models/providers/api/auth_provider.dart';
+import 'package:guardian/models/providers/api/translator/animals_translator.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/device/device_item.dart';
@@ -15,16 +21,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
-  final String? fenceId;
-  final String? alertId;
-  final List<String>? notToShowDevices;
+  final BigInt? idFence;
+  final BigInt? idAlert;
+  final List<BigInt>? notToShowAnimals;
 
   const ProducerDevicesPage({
     super.key,
     this.isSelect = false,
-    this.fenceId,
-    this.alertId,
-    this.notToShowDevices,
+    this.idFence,
+    this.idAlert,
+    this.notToShowAnimals,
   });
 
   @override
@@ -44,8 +50,8 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   RangeValues _elevationRangeValues = const RangeValues(0, 1000);
   RangeValues _tmpRangeValues = const RangeValues(0, 25);
 
-  List<Device> _selectedDevices = [];
-  List<Device> _devices = [];
+  List<Animal> _selectedDevices = [];
+  List<Animal> _animals = [];
 
   @override
   void initState() {
@@ -57,6 +63,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   Future<void> _setup() async {
     await _setupFilterRanges();
     await _filterDevices();
+    await _getDevicesFromApi();
   }
 
   Future<void> _setupFilterRanges() async {
@@ -84,25 +91,40 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     }
   }
 
+  Future<void> _getDevicesFromApi() async {
+    AnimalProvider.getAnimals().then((response) async {
+      if (response.statusCode == 200) {
+        await animalsFromJson(response.body);
+        await _filterDevices();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          final newToken = jsonDecode(resp.body)['token'];
+          await setSessionToken(newToken);
+          _getDevicesFromApi();
+        });
+      }
+    });
+  }
+
   Future<void> _filterDevices() async {
-    if (widget.isSelect && widget.fenceId != null) {
-      await getUserFenceUnselectedDevicesFiltered(
+    if (widget.isSelect && widget.idFence != null) {
+      await getUserFenceUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
         searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
-        fenceId: widget.fenceId!,
+        idFence: widget.idFence!,
       ).then((searchDevices) {
         if (mounted) {
           setState(() {
-            _devices = [];
-            _devices.addAll(searchDevices);
+            _animals = [];
+            _animals.addAll(searchDevices);
           });
         }
       });
     } else {
-      getUserDevicesFiltered(
+      getUserAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,
@@ -110,17 +132,17 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         tmpRangeValues: _tmpRangeValues,
       ).then(
         (filteredDevices) => setState(() {
-          _devices = [];
-          if (widget.notToShowDevices != null) {
-            _devices.addAll(
+          _animals = [];
+          if (widget.notToShowAnimals != null) {
+            _animals.addAll(
               filteredDevices.where(
-                (device) => !widget.notToShowDevices!.contains(
-                  device.device.deviceId.value,
+                (device) => !widget.notToShowAnimals!.contains(
+                  device.animal.idAnimal.value,
                 ),
               ),
             );
           } else {
-            _devices.addAll(filteredDevices);
+            _animals.addAll(filteredDevices);
           }
         }),
       );
@@ -145,7 +167,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
             ),
             centerTitle: true,
           ),
-          endDrawer: _devices.isNotEmpty
+          endDrawer: _animals.isNotEmpty
               ? SafeArea(
                   child: ProducerPageDrawer(
                     batteryRangeValues: _batteryRangeValues,
@@ -229,13 +251,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  if (_selectedDevices.length == _devices.length) {
+                                  if (_selectedDevices.length == _animals.length) {
                                     setState(() {
                                       _selectedDevices = [];
                                     });
                                   } else {
                                     setState(() {
-                                      _selectedDevices = _devices;
+                                      _selectedDevices = _animals;
                                     });
                                   }
                                 },
@@ -243,7 +265,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      _selectedDevices.length == _devices.length
+                                      _selectedDevices.length == _animals.length
                                           ? Icons.remove
                                           : Icons.add,
                                       color: theme.colorScheme.secondary,
@@ -260,7 +282,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                             ],
                           ),
                         Expanded(
-                          child: _devices.isEmpty
+                          child: _animals.isEmpty
                               ? Center(
                                   child: Text(localizations.no_devices.capitalize()),
                                 )
@@ -268,43 +290,43 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                   // TODO: get devices from fence data
                                   child: ListView.builder(
-                                    itemCount: _devices.length,
+                                    itemCount: _animals.length,
                                     itemBuilder: (context, index) => Padding(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 8.0,
                                       ),
                                       child: widget.isSelect
                                           ? DeviceItemSelectable(
-                                              deviceImei: _devices[index].device.name.value,
-                                              deviceData: _devices[index].data.isNotEmpty
-                                                  ? _devices[index].data.first.dataUsage.value
+                                              deviceImei: _animals[index].animal.animalName.value,
+                                              deviceData: _animals[index].data.isNotEmpty
+                                                  ? _animals[index].data.first.dataUsage.value
                                                   : null,
-                                              deviceBattery: _devices[index].data.isNotEmpty
-                                                  ? _devices[index].data.first.battery.value
+                                              deviceBattery: _animals[index].data.isNotEmpty
+                                                  ? _animals[index].data.first.battery.value
                                                   : null,
                                               isSelected: _selectedDevices
                                                   .where((element) =>
-                                                      element.device.deviceId ==
-                                                      _devices[index].device.deviceId)
+                                                      element.animal.idAnimal ==
+                                                      _animals[index].animal.idAnimal)
                                                   .isNotEmpty,
                                               onSelected: () {
                                                 int i = _selectedDevices.indexWhere((element) =>
-                                                    element.device.deviceId ==
-                                                    _devices[index].device.deviceId);
+                                                    element.animal.idAnimal ==
+                                                    _animals[index].animal.idAnimal);
 
                                                 if (mounted) {
                                                   setState(() {
                                                     if (i >= 0) {
                                                       _selectedDevices.removeAt(i);
                                                     } else {
-                                                      _selectedDevices.add(_devices[index]);
+                                                      _selectedDevices.add(_animals[index]);
                                                     }
                                                   });
                                                 }
                                               },
                                             )
                                           : DeviceItem(
-                                              device: _devices[index],
+                                              animal: _animals[index],
                                               onBackFromDeviceScreen: () {
                                                 _filterDevices();
                                               },

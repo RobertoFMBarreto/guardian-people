@@ -8,7 +8,7 @@ import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceDataInfoList extends StatefulWidget {
-  final List<DeviceLocationsCompanion> deviceData;
+  final List<AnimalLocationsCompanion> deviceData;
   final GlobalKey mapKey;
   const DeviceDataInfoList({super.key, required this.deviceData, required this.mapKey});
 

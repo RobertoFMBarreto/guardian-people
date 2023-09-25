@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
-  final Device device;
+  final Animal device;
   const DeviceRoundedWhiteBodyInfo({super.key, required this.device});
 
   @override
@@ -89,7 +89,7 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                             isInverted: true,
                             icon: Icons.landscape,
                             iconColor: theme.colorScheme.secondary,
-                            text: '${device.data.first.elevation.value.round()}m',
+                            text: '${device.data.first.elevation.value!.round()}m',
                             fontSize: 23,
                             iconSize: 30,
                           ),

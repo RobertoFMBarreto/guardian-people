@@ -16,10 +16,10 @@ Future<UserAlertCompanion> updateUserAlert(UserAlertCompanion alert) async {
   return alert;
 }
 
-Future<void> deleteAlert(String alertId) async {
+Future<void> deleteAlert(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
-  await removeAllAlertDevices(alertId);
-  (db.delete(db.userAlert)..where((tbl) => tbl.alertId.equals(alertId))).go();
+  await removeAllAlertDevices(idAlert);
+  (db.delete(db.userAlert)..where((tbl) => tbl.idAlert.equals(idAlert))).go();
 }
 
 Future<void> deleteAllAlerts() async {
@@ -27,11 +27,11 @@ Future<void> deleteAllAlerts() async {
   (db.delete(db.userAlert)).go();
 }
 
-Future<UserAlertData> getAlert(String alertId) async {
+Future<UserAlertData> getAlert(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.userAlert)
         ..where(
-          (tbl) => tbl.alertId.equals(alertId),
+          (tbl) => tbl.idAlert.equals(idAlert),
         ))
       .getSingle();
   return data;

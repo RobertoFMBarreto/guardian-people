@@ -8,10 +8,10 @@ Future<UserCompanion> createUser(UserCompanion user) async {
   return user;
 }
 
-Future<void> deleteUser(String uid) async {
+Future<void> deleteUser(BigInt idUser) async {
   final db = Get.find<GuardianDb>();
 
-  (db.delete(db.user)..where((tbl) => tbl.uid.equals(uid))).go();
+  (db.delete(db.user)..where((tbl) => tbl.idUser.equals(idUser))).go();
 }
 
 Future<UserCompanion> updateUser(UserCompanion user) async {
@@ -21,16 +21,17 @@ Future<UserCompanion> updateUser(UserCompanion user) async {
   return user;
 }
 
-Future<UserData?> getUser(String uid) async {
+Future<UserData?> getUser(BigInt idUser) async {
   final db = Get.find<GuardianDb>();
-  final data = await (db.select(db.user)..where((tbl) => tbl.uid.equals(uid))).getSingleOrNull();
+  final data =
+      await (db.select(db.user)..where((tbl) => tbl.idUser.equals(idUser))).getSingleOrNull();
 
   return data;
 }
 
-Future<bool> userIsAdmin(String uid) async {
+Future<bool> userIsAdmin(BigInt idUser) async {
   final db = Get.find<GuardianDb>();
-  final data = await (db.select(db.user)..where((tbl) => tbl.uid.equals(uid))).getSingle();
+  final data = await (db.select(db.user)..where((tbl) => tbl.idUser.equals(idUser))).getSingle();
 
-  return data.isAdmin;
+  return data.isSuperuser;
 }

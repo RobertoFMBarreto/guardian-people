@@ -5,7 +5,7 @@ Map<String, dynamic> devicesDataJson = {
       "color": "#f54260",
       "isBlocked": false,
       "name": "Dispositivo 1",
-      "uid": "1",
+      "idUser": "1",
       "alerts": [
         {
           "hasNotification": true,
@@ -53,7 +53,7 @@ Map<String, dynamic> devicesDataJson = {
       "color": "#f542ef",
       "isBlocked": false,
       "name": "Dispositivo 2",
-      "uid": "1",
+      "idUser": "1",
       "alerts": [
         {
           "hasNotification": true,
@@ -70,7 +70,7 @@ Map<String, dynamic> devicesDataJson = {
       "color": "#4287f5",
       "isBlocked": false,
       "name": "Dispositivo 3",
-      "uid": "1",
+      "idUser": "1",
       "alerts": [
         {
           "hasNotification": true,
@@ -128,7 +128,7 @@ Map<String, dynamic> devicesDataJson = {
       "color": "#32a852",
       "isBlocked": false,
       "name": "Dispositivo 4",
-      "uid": "1",
+      "idUser": "1",
       "alerts": [
         {
           "hasNotification": true,

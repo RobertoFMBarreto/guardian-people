@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
@@ -21,13 +22,14 @@ class SearchWithFilterInput extends StatelessWidget {
             onChanged: onSearchChanged,
           ),
         ),
-        Expanded(
-            flex: 2,
-            child: IconButton(
-              icon: const Icon(Icons.filter_alt_outlined),
-              onPressed: onFilter,
-              iconSize: 30,
-            )),
+        if (!kIsWeb)
+          Expanded(
+              flex: 2,
+              child: IconButton(
+                icon: const Icon(Icons.filter_alt_outlined),
+                onPressed: onFilter,
+                iconSize: 30,
+              )),
       ],
     );
   }

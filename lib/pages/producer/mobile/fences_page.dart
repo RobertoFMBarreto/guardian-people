@@ -27,7 +27,7 @@ class FencesPage extends StatefulWidget {
 }
 
 class _FencesPageState extends State<FencesPage> {
-  late String uid;
+  late String idUser;
   late Future _future;
 
   String _searchString = '';
@@ -175,7 +175,7 @@ class _FencesPageState extends State<FencesPage> {
                                             },
                                             onRemove: () {
                                               // TODO remove item from list
-                                              removeFence(_fences[index].toCompanion(true))
+                                              removeFence(_fences[index].idFence)
                                                   .then((_) => _searchFences());
                                             },
                                           ),

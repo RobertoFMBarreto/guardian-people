@@ -1,12 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
-import 'package:guardian/models/db/drift/tables/Device/device.dart';
+import 'package:guardian/models/db/drift/tables/animal.dart';
 
 class AlertNotification extends Table {
-  TextColumn get notificationId => text()();
-  TextColumn get deviceId => text().references(Device, #deviceId)();
-  TextColumn get alertId => text().references(UserAlert, #alertId)();
+  Int64Column get idNotification => int64()();
+  Int64Column get idAnimal => int64().references(Animal, #idAnimal)();
+  Int64Column get idAlert => int64().references(UserAlert, #idAlert)();
 
   @override
-  Set<Column> get primaryKey => {notificationId};
+  Set<Column> get primaryKey => {idNotification};
 }

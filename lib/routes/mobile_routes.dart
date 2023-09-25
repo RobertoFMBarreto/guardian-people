@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/query_models/device.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/pages/admin/mobile/admin_device_management_page.dart';
 import 'package:guardian/pages/admin/mobile/admin_home_page.dart';
 import 'package:guardian/pages/admin/mobile/admin_producer_page.dart';
@@ -27,9 +27,9 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
   '/profile': (context) => const ProfilePage(),
   '/admin': (context) => const AdminHomePage(),
   '/admin/producer': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == String) {
+    if (ModalRoute.of(context)!.settings.arguments.runtimeType == BigInt) {
       return AdminProducerPage(
-        producerId: ModalRoute.of(context)!.settings.arguments as String,
+        producerId: ModalRoute.of(context)!.settings.arguments as BigInt,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -39,8 +39,8 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       return AdminDeviceManagementPage(
-        device: args['device'] as Device,
-        producerId: args['producerId'] as String,
+        device: args['device'] as Animal,
+        producerId: args['producerId'] as BigInt,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -77,10 +77,10 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
 
       return ProducerDevicesPage(
         isSelect: data['isSelect'] as bool,
-        fenceId: data.containsKey('fenceId') ? data['fenceId'] as String : null,
-        alertId: data.containsKey('alertId') ? data['alertId'] as String : null,
-        notToShowDevices:
-            data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<String> : null,
+        idFence: data.containsKey('idFence') ? data['idFence'] as BigInt : null,
+        idAlert: data.containsKey('idAlert') ? data['idAlert'] as BigInt : null,
+        notToShowAnimals:
+            data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<BigInt> : null,
       );
     } else {
       return const ProducerDevicesPage();
@@ -90,25 +90,25 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       return DevicePage(
-        device: data['device'] as Device,
+        animal: data['device'] as Animal,
       );
     } else {
       throw ErrorDescription('Device not provided');
     }
   },
   '/producer/device/settings': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+    if (ModalRoute.of(context)!.settings.arguments.runtimeType == Animal) {
       return DeviceSettingsPage(
-        device: ModalRoute.of(context)!.settings.arguments as Device,
+        animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {
       throw ErrorDescription('Device not provided');
     }
   },
   '/producer/device/history': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == Device) {
+    if (ModalRoute.of(context)!.settings.arguments.runtimeType == Animal) {
       return DeviceHistoryPage(
-        device: ModalRoute.of(context)!.settings.arguments as Device,
+        animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -133,7 +133,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
       final data = args as Map<String, dynamic>;
       return AlertsManagementPage(
         isSelect: data['isSelect'] as bool,
-        deviceId: data['deviceId'] as String?,
+        idDevice: data['idDevice'] as String?,
       );
     } else {
       throw ErrorDescription('isSelect not provided');
