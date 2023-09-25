@@ -3,9 +3,13 @@ import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
 import 'package:guardian/models/providers/tmp/alerts_data.dart';
+import 'package:guardian/models/providers/tmp/fences_data.dart';
 
 // Future<List<UserCompanion>> loadUsers() async {
 //   String usersInput = '';
@@ -112,51 +116,52 @@ Future<List<UserAlert>> loadAlerts() async {
   return alerts;
 }
 
-// Future<void> loadUserFences(String idUser) async {
-//   String fencesInput = '';
-//   if (!kIsWeb) {
-//     fencesInput = await rootBundle.loadString('assets/data/fences.json');
-//   }
-//   Map fencesMap;
-//   if (!kIsWeb) {
-//     fencesMap = await json.decode(fencesInput);
-//   } else {
-//     fencesMap = fencesDataJson;
-//   }
-//   List<dynamic> fencesMapList = fencesMap['fences'];
-//   for (var fence in fencesMapList) {
-//     if (fence['idUser'] == idUser) {
-//       // load fence points
-//       for (var point in fence['points']) {
-//         createFencePoint(
-//           FencePointsCompanion(
-//             idFence: Value(fence["id"]),
-//             lat: Value(point['lat']),
-//             lon: Value(point['lon']),
-//           ),
-//         );
-//       }
+Future<void> loadUserFences(BigInt idUser) async {
+  String fencesInput = '';
+  if (!kIsWeb) {
+    fencesInput = await rootBundle.loadString('assets/data/fences.json');
+  }
+  Map fencesMap;
+  if (!kIsWeb) {
+    fencesMap = await json.decode(fencesInput);
+  } else {
+    fencesMap = fencesDataJson;
+  }
+  List<dynamic> fencesMapList = fencesMap['fences'];
+  for (var fence in fencesMapList) {
+    if (BigInt.from(fence['idUser']) == idUser) {
+      // load fence points
+      for (var point in fence['points']) {
+        createFencePoint(
+          FencePointsCompanion(
+            idFencePoint: Value(BigInt.from(point["idPoint"])),
+            idFence: Value(BigInt.from(fence["id"])),
+            lat: Value(point['lat']),
+            lon: Value(point['lon']),
+          ),
+        );
+      }
 
-//       for (var device in fence['devices']) {
-//         createFenceDevice(
-//           FenceAnimalsCompanion(
-//             idFence: Value(fence["id"]),
-//             idDevice: Value(device['imei']),
-//           ),
-//         );
-//       }
+      for (var animal in fence['animals']) {
+        createFenceDevice(
+          FenceAnimalsCompanion(
+            idFence: Value(BigInt.from(fence["id"])),
+            idAnimal: Value(BigInt.from(animal['idAnimal'])),
+          ),
+        );
+      }
 
-//       // load fences and their points
-//       createFence(
-//         FenceCompanion(
-//           name: Value(fence["name"]),
-//           color: Value(fence["color"]),
-//           idFence: Value(fence["id"]),
-//         ),
-//       );
-//     }
-//   }
-// }
+      // load fences and their points
+      createFence(
+        FenceCompanion(
+          name: Value(fence["name"]),
+          color: Value(fence["color"]),
+          idFence: Value(BigInt.from(fence["id"])),
+        ),
+      );
+    }
+  }
+}
 
 // Future<Device?> loadDevice(String deviceImei) async {
 //   String devicesInput = await rootBundle.loadString('assets/data/devices.json');

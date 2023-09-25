@@ -12,7 +12,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('localhost:7856', '/api/v1/animals');
+    var url = Uri.http('192.168.10.71:7856', '/api/v1/animals');
 
     var response = await http.get(
       url,
@@ -28,7 +28,7 @@ class AnimalProvider {
       //HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('localhost:7856', '/api/v1/animals/$idAnimal/data');
+    var url = Uri.http('192.168.10.71:7856', '/api/v1/animals/$idAnimal/data');
     var response = await http.post(url,
         headers: headers,
         body: {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()});

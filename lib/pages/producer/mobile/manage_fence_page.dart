@@ -123,7 +123,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   TextButton(
                     onPressed: () {
                       // TODO call service to delete fence
-                      removeFence(fence.toCompanion(true)).then((_) => Navigator.of(context).pop());
+                      removeFence(fence.idFence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
                       localizations.remove.capitalize(),

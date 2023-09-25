@@ -24,7 +24,7 @@ Future<void> createFencePointFromList(List<LatLng> points, BigInt idFence) async
 
 Future<FencePointsCompanion> createFencePoint(FencePointsCompanion point) async {
   final db = Get.find<GuardianDb>();
-  db.into(db.fencePoints).insert(point);
+  db.into(db.fencePoints).insertOnConflictUpdate(point);
 
   return point;
 }
@@ -39,6 +39,7 @@ Future<List<LatLng>> getFencePoints(BigInt idFence) async {
       return LatLng(e.lat, e.lon);
     }).toList(),
   );
+  print(fencePoints);
 
   return fencePoints;
 }

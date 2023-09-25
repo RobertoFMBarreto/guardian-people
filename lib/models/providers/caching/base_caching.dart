@@ -1,3 +1,3 @@
-// abstract class BaseCaching {
-//   void initMapCaching();
-// }
+abstract class BaseCaching {
+  void initMapCaching();
+}

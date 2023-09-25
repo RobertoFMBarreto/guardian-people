@@ -540,6 +540,12 @@ class $FencePointsTable extends FencePoints
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $FencePointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idFencePointMeta =
+      const VerificationMeta('idFencePoint');
+  @override
+  late final GeneratedColumn<BigInt> idFencePoint = GeneratedColumn<BigInt>(
+      'id_fence_point', aliasedName, false,
+      type: DriftSqlType.bigInt, requiredDuringInsert: false);
   static const VerificationMeta _idFenceMeta =
       const VerificationMeta('idFence');
   @override
@@ -560,7 +566,7 @@ class $FencePointsTable extends FencePoints
       'lon', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [idFence, lat, lon];
+  List<GeneratedColumn> get $columns => [idFencePoint, idFence, lat, lon];
   @override
   String get aliasedName => _alias ?? 'fence_points';
   @override
@@ -570,6 +576,12 @@ class $FencePointsTable extends FencePoints
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id_fence_point')) {
+      context.handle(
+          _idFencePointMeta,
+          idFencePoint.isAcceptableOrUnknown(
+              data['id_fence_point']!, _idFencePointMeta));
+    }
     if (data.containsKey('id_fence')) {
       context.handle(_idFenceMeta,
           idFence.isAcceptableOrUnknown(data['id_fence']!, _idFenceMeta));
@@ -592,11 +604,13 @@ class $FencePointsTable extends FencePoints
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {idFencePoint};
   @override
   FencePoint map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FencePoint(
+      idFencePoint: attachedDatabase.typeMapping
+          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_fence_point'])!,
       idFence: attachedDatabase.typeMapping
           .read(DriftSqlType.bigInt, data['${effectivePrefix}id_fence'])!,
       lat: attachedDatabase.typeMapping
@@ -613,14 +627,19 @@ class $FencePointsTable extends FencePoints
 }
 
 class FencePoint extends DataClass implements Insertable<FencePoint> {
+  final BigInt idFencePoint;
   final BigInt idFence;
   final double lat;
   final double lon;
   const FencePoint(
-      {required this.idFence, required this.lat, required this.lon});
+      {required this.idFencePoint,
+      required this.idFence,
+      required this.lat,
+      required this.lon});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['id_fence_point'] = Variable<BigInt>(idFencePoint);
     map['id_fence'] = Variable<BigInt>(idFence);
     map['lat'] = Variable<double>(lat);
     map['lon'] = Variable<double>(lon);
@@ -629,6 +648,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
 
   FencePointsCompanion toCompanion(bool nullToAbsent) {
     return FencePointsCompanion(
+      idFencePoint: Value(idFencePoint),
       idFence: Value(idFence),
       lat: Value(lat),
       lon: Value(lon),
@@ -639,6 +659,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FencePoint(
+      idFencePoint: serializer.fromJson<BigInt>(json['idFencePoint']),
       idFence: serializer.fromJson<BigInt>(json['idFence']),
       lat: serializer.fromJson<double>(json['lat']),
       lon: serializer.fromJson<double>(json['lon']),
@@ -648,14 +669,17 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'idFencePoint': serializer.toJson<BigInt>(idFencePoint),
       'idFence': serializer.toJson<BigInt>(idFence),
       'lat': serializer.toJson<double>(lat),
       'lon': serializer.toJson<double>(lon),
     };
   }
 
-  FencePoint copyWith({BigInt? idFence, double? lat, double? lon}) =>
+  FencePoint copyWith(
+          {BigInt? idFencePoint, BigInt? idFence, double? lat, double? lon}) =>
       FencePoint(
+        idFencePoint: idFencePoint ?? this.idFencePoint,
         idFence: idFence ?? this.idFence,
         lat: lat ?? this.lat,
         lon: lon ?? this.lon,
@@ -663,6 +687,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
   @override
   String toString() {
     return (StringBuffer('FencePoint(')
+          ..write('idFencePoint: $idFencePoint, ')
           ..write('idFence: $idFence, ')
           ..write('lat: $lat, ')
           ..write('lon: $lon')
@@ -671,65 +696,69 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
   }
 
   @override
-  int get hashCode => Object.hash(idFence, lat, lon);
+  int get hashCode => Object.hash(idFencePoint, idFence, lat, lon);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is FencePoint &&
+          other.idFencePoint == this.idFencePoint &&
           other.idFence == this.idFence &&
           other.lat == this.lat &&
           other.lon == this.lon);
 }
 
 class FencePointsCompanion extends UpdateCompanion<FencePoint> {
+  final Value<BigInt> idFencePoint;
   final Value<BigInt> idFence;
   final Value<double> lat;
   final Value<double> lon;
-  final Value<int> rowid;
   const FencePointsCompanion({
+    this.idFencePoint = const Value.absent(),
     this.idFence = const Value.absent(),
     this.lat = const Value.absent(),
     this.lon = const Value.absent(),
-    this.rowid = const Value.absent(),
   });
   FencePointsCompanion.insert({
+    this.idFencePoint = const Value.absent(),
     required BigInt idFence,
     required double lat,
     required double lon,
-    this.rowid = const Value.absent(),
   })  : idFence = Value(idFence),
         lat = Value(lat),
         lon = Value(lon);
   static Insertable<FencePoint> custom({
+    Expression<BigInt>? idFencePoint,
     Expression<BigInt>? idFence,
     Expression<double>? lat,
     Expression<double>? lon,
-    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (idFencePoint != null) 'id_fence_point': idFencePoint,
       if (idFence != null) 'id_fence': idFence,
       if (lat != null) 'lat': lat,
       if (lon != null) 'lon': lon,
-      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FencePointsCompanion copyWith(
-      {Value<BigInt>? idFence,
+      {Value<BigInt>? idFencePoint,
+      Value<BigInt>? idFence,
       Value<double>? lat,
-      Value<double>? lon,
-      Value<int>? rowid}) {
+      Value<double>? lon}) {
     return FencePointsCompanion(
+      idFencePoint: idFencePoint ?? this.idFencePoint,
       idFence: idFence ?? this.idFence,
       lat: lat ?? this.lat,
       lon: lon ?? this.lon,
-      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (idFencePoint.present) {
+      map['id_fence_point'] = Variable<BigInt>(idFencePoint.value);
+    }
     if (idFence.present) {
       map['id_fence'] = Variable<BigInt>(idFence.value);
     }
@@ -739,19 +768,16 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
     if (lon.present) {
       map['lon'] = Variable<double>(lon.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('FencePointsCompanion(')
+          ..write('idFencePoint: $idFencePoint, ')
           ..write('idFence: $idFence, ')
           ..write('lat: $lat, ')
-          ..write('lon: $lon, ')
-          ..write('rowid: $rowid')
+          ..write('lon: $lon')
           ..write(')'))
         .toString();
   }

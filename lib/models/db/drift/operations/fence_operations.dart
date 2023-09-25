@@ -17,11 +17,11 @@ Future<FenceCompanion> updateFence(FenceCompanion fence) async {
   return fence;
 }
 
-Future<void> removeFence(FenceCompanion fence) async {
+Future<void> removeFence(BigInt idFence) async {
   final db = Get.find<GuardianDb>();
-  await removeAllFenceAnimals(fence.idFence.value);
-  await removeAllFencePoints(fence.idFence.value);
-  (db.delete(db.fence)..where((tbl) => tbl.idFence.equals(fence.idFence.value))).go();
+  await removeAllFenceAnimals(idFence);
+  await removeAllFencePoints(idFence);
+  (db.delete(db.fence)..where((tbl) => tbl.idFence.equals(idFence))).go();
 }
 
 Future<FenceData> getFence(BigInt idFence) async {

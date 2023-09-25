@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class AuthProvider {
   static Future<http.Response> login(String email, String password) async {
     Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    var url = Uri.http('localhost:7856', '/api/v1/login');
+    var url = Uri.http('192.168.10.71:7856', '/api/v1/login');
 
     Map<String, dynamic> body = {"email": email, "password": password};
 
@@ -22,7 +22,7 @@ class AuthProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('localhost:7856', '/api/v1/session/refresh');
+    var url = Uri.http('192.168.10.71:7856', '/api/v1/session/refresh');
 
     var response = await http.get(url, headers: headers);
 

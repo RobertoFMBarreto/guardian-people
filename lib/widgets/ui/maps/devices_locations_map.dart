@@ -43,6 +43,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   Position? _currentPosition;
 
   List<LatLng> animalsDataPoints = [];
+  List<LatLng> allFencesPoints = [];
 
   @override
   void initState() {
@@ -59,11 +60,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
         }
       },
     );
-    if (widget.fences != null) {
-      if (widget.fences!.length > 1 && widget.centerOnPoly) {
-        throw ErrorDescription("Can only center on poly with one poly");
-      }
-    }
+
     await _loadFences();
     for (var animal in widget.animals) {
       if (animal.data.isNotEmpty &&
@@ -82,11 +79,11 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   Future<void> _loadFences() async {
     List<Polygon> allPolygons = [];
     List<Polygon> allCircles = [];
-
     if (widget.fences != null) {
       for (FenceData fence in widget.fences!) {
-        await getFencePoints(fence.idFence).then(
-          (points) => points.length == 2
+        await getFencePoints(fence.idFence).then((points) {
+          allFencesPoints.addAll(points);
+          return points.length == 2
               ? allCircles.add(
                   Polygon(
                     points: points,
@@ -104,8 +101,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                     borderStrokeWidth: 2,
                     isFilled: true,
                   ),
-                ),
-        );
+                );
+        });
       }
     }
     if (mounted) {
@@ -133,8 +130,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                       _currentPosition!.longitude,
                     )
                   : null,
-              bounds: widget.centerOnPoly && animalsDataPoints.isNotEmpty
-                  ? LatLngBounds.fromPoints(_polygons.first.points)
+              bounds: widget.centerOnPoly
+                  ? LatLngBounds.fromPoints(allFencesPoints)
                   : animalsDataPoints.isNotEmpty
                       ? LatLngBounds.fromPoints(animalsDataPoints)
                       : null,

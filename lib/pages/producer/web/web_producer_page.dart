@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
+import 'package:guardian/pages/producer/web/web_producer_fences_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_home_page.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/ui/user/circle_avatar_border.dart';
@@ -31,7 +32,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
       ),
       const Placeholder(),
       const WebProducerDevicePage(),
-      const Placeholder(),
+      const WebProducerFencesPage(),
       const Placeholder(),
     ];
     goToPage(0);
@@ -57,15 +58,15 @@ class _WebProducerPageState extends State<WebProducerPage> {
           },
         );
       case 1:
-        _currentPage = const Placeholder();
+        _currentPage = pages[1];
       case 2:
         _currentPage = WebProducerDevicePage(
           selectedAnimal: _selectedAnimal,
         );
       case 3:
-        _currentPage = const Placeholder();
+        _currentPage = pages[3];
       case 4:
-        _currentPage = const Placeholder();
+        _currentPage = pages[4];
     }
   }
 

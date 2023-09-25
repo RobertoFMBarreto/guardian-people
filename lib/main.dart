@@ -17,16 +17,14 @@ import 'package:guardian/models/providers/system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
-// import 'package:guardian/models/providers/caching/stub.dart'
-//     if (dart.library.io) 'package:guardian/models/providers/caching/caching_provider.dart'
-//     if (dart.library.html) 'package:guardian/models/providers/caching/stub.dart';
+import 'package:guardian/models/providers/caching/caching_provider.dart';
 
 late bool hasConnection;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // if (!kIsWeb) {
-  //   await MapCaching().initMapCaching();
-  // }
+  if (!kIsWeb) {
+    await MapCaching().initMapCaching();
+  }
   Get.put(GuardianDb());
 
   runApp(const MyApp());

@@ -76,34 +76,36 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
             animalIdentification: drift.Value(dt['animal_identification']),
             idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
           ));
-
-          await createDeviceData(
-            DeviceLocationsCompanion(
-              accuracy: dt['last_device_data']['accuracy'] != null
-                  ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
-                  : const drift.Value.absent(),
-              battery: dt['last_device_data']['battery'] != null
-                  ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
-                  : const drift.Value.absent(),
-              dataUsage: drift.Value(Random().nextInt(10)),
-              date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
-              deviceDataId: drift.Value(BigInt.from(int.parse(dt['last_device_data']['id_data']))),
-              idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
-              elevation: dt['last_device_data']['altitude'] != null
-                  ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
-                  : const drift.Value.absent(),
-              lat: dt['last_device_data']['lat'] != null
-                  ? drift.Value(double.tryParse(dt['last_device_data']['lat']))
-                  : const drift.Value.absent(),
-              lon: dt['last_device_data']['lon'] != null
-                  ? drift.Value(double.tryParse(dt['last_device_data']['lon']))
-                  : const drift.Value.absent(),
-              state: drift.Value(states[Random().nextInt(states.length)]),
-              temperature: dt['last_device_data']['skinTemperature'] != null
-                  ? drift.Value(double.tryParse(dt['last_device_data']['skinTemperature']))
-                  : const drift.Value.absent(),
-            ),
-          );
+          if (dt['last_device_data'] != null) {
+            await createDeviceData(
+              DeviceLocationsCompanion(
+                accuracy: dt['last_device_data']['accuracy'] != null
+                    ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
+                    : const drift.Value.absent(),
+                battery: dt['last_device_data']['battery'] != null
+                    ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
+                    : const drift.Value.absent(),
+                dataUsage: drift.Value(Random().nextInt(10)),
+                date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
+                deviceDataId:
+                    drift.Value(BigInt.from(int.parse(dt['last_device_data']['id_data']))),
+                idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
+                elevation: dt['last_device_data']['altitude'] != null
+                    ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
+                    : const drift.Value.absent(),
+                lat: dt['last_device_data']['lat'] != null
+                    ? drift.Value(double.tryParse(dt['last_device_data']['lat']))
+                    : const drift.Value.absent(),
+                lon: dt['last_device_data']['lon'] != null
+                    ? drift.Value(double.tryParse(dt['last_device_data']['lon']))
+                    : const drift.Value.absent(),
+                state: drift.Value(states[Random().nextInt(states.length)]),
+                temperature: dt['last_device_data']['skinTemperature'] != null
+                    ? drift.Value(double.tryParse(dt['last_device_data']['skinTemperature']))
+                    : const drift.Value.absent(),
+              ),
+            );
+          }
         }
         getUserAnimalsWithData().then((allDevices) {
           if (mounted) {

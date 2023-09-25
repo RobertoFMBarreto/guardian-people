@@ -39,9 +39,12 @@ Future<List<AlertNotification>> getUserNotifications() async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
     '''
-      SELECT * FROM ${db.alertNotification.actualTableName}
+      SELECT
+        *
+      FROM ${db.alertNotification.actualTableName}
       LEFT JOIN ${db.userAlert.actualTableName} ON ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAlert.name}
-      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idDevice.name} = ${db.device.idDevice.name}
+      LEFT JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.idDevice.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idDevice.name}
+      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idDevice.name} = ${db.device.actualTableName}.${db.device.idDevice.name}
     ''',
   ).get();
 

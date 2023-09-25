@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/providers/api/animals_provider.dart';
+import 'package:guardian/models/providers/api/auth_provider.dart';
+import 'package:guardian/models/providers/api/translator/animals_translator.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
@@ -32,7 +37,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   late UserData _user;
   late Future<void> _loadData;
 
-  List<Animal> _devices = [];
+  List<Animal> _animals = [];
   List<FenceData> _fences = [];
   List<AlertNotification> _alertNotifications = [];
 
@@ -61,9 +66,34 @@ class _ProducerHomeState extends State<ProducerHome> {
   }
 
   Future<void> _loadDevices() async {
-    await getUserAnimalsWithData().then((allDevices) {
-      _devices = [];
-      setState(() => _devices.addAll(allDevices));
+    await getUserAnimalsWithData().then((allAnimals) {
+      _animals = [];
+      setState(() {
+        _animals.addAll(allAnimals);
+      });
+      _getDevicesFromApi();
+    });
+  }
+
+  Future<void> _getDevicesFromApi() async {
+    AnimalProvider.getAnimals().then((response) async {
+      if (response.statusCode == 200) {
+        await animalsFromAnimalWithLastData(response.body);
+        getUserAnimalsWithData().then((allDevices) {
+          if (mounted) {
+            setState(() {
+              _animals = [];
+              _animals.addAll(allDevices);
+            });
+          }
+        });
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          final newToken = jsonDecode(resp.body)['token'];
+          await setSessionToken(newToken);
+          _getDevicesFromApi();
+        });
+      }
     });
   }
 
@@ -153,7 +183,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                               padding: const EdgeInsets.only(left: 20, right: 8),
                               child: SquareDevicesInfo(
                                 title: localizations.devices.capitalize(),
-                                description: '${_devices.length}',
+                                description: '${_animals.length}',
                                 onTap: () {
                                   Future.delayed(const Duration(milliseconds: 300)).then(
                                     (value) => Navigator.push(
@@ -201,7 +231,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                       child: DevicesLocationsMap(
                         key: Key(_reloadMap.toString()),
                         showCurrentPosition: true,
-                        animals: _devices,
+                        animals: _animals,
                         fences: _fences,
                         reloadMap: _reloadMap.toString(),
                       ),
