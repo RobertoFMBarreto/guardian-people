@@ -284,7 +284,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                 _showSettings = !_showSettings;
                                               });
                                             },
-                                            icon: Icon(Icons.settings),
+                                            icon: const Icon(Icons.settings),
                                             label: Text(
                                               localizations.device_settings.capitalize(),
                                             ),
@@ -430,7 +430,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                           _showSettings = false;
                                         });
                                       },
-                                      icon: Icon(Icons.close),
+                                      icon: const Icon(Icons.close),
                                     )
                                   ],
                                 ),
