@@ -19,7 +19,7 @@
   "clean": "clear",
   "search": "search",
   "device_data": "device data",
-  "device_color": "device color",
+  "animal_color": "animal color",
   "block": "block",
   "unblock": "unblock",
   "profile": "profile",

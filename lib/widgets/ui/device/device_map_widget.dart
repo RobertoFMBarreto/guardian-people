@@ -122,7 +122,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                   ),
                 Expanded(
                   key: _firstItemDataKey,
-                  flex: 3,
+                  flex: 5,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: ClipRRect(

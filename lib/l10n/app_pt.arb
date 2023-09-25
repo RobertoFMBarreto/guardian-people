@@ -19,7 +19,7 @@
   "clean": "limpar",
   "search": "pesquisar",
   "device_data": "dados do dispositivo",
-  "device_color": "cor do dispositivo",
+  "animal_color": "cor do animal",
   "block": "bloquear",
   "unblock": "desbloquear",
   "profile": "perfil",

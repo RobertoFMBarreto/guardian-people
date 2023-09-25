@@ -242,13 +242,11 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
-                                      child: AutoSizeText(
-                                        localizations.device_color.capitalize(),
+                                      child: Text(
+                                        localizations.animal_color.capitalize(),
                                         style: theme.textTheme.bodyLarge!.copyWith(
                                           color: theme.colorScheme.onSecondary,
                                         ),
-                                        minFontSize: 15,
-                                        maxFontSize: 20,
                                       ),
                                     ),
                                   ],
