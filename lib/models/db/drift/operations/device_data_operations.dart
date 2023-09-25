@@ -52,7 +52,7 @@ Future<double> getMaxTemperature() async {
       LEFT JOIN ${db.deviceLocations.actualTableName} ON ${db.deviceLocations.actualTableName}.${db.deviceLocations.idDevice.name} = ${db.device.actualTableName}.${db.deviceLocations.idDevice.name}
     ''').getSingle();
 
-  return data.data['maxTemperature'];
+  return double.parse(data.data['maxTemperature'].toString());
 }
 
 Future<List<DeviceLocationsCompanion>> getAnimalData({

@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/providers/api/animals_provider.dart';
+import 'package:guardian/models/providers/api/auth_provider.dart';
+import 'package:guardian/models/providers/api/translator/animals_translator.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
@@ -57,6 +64,28 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
         }
       },
     );
+  }
+
+  Future<void> _getDevicesFromApi() async {
+    AnimalProvider.getAnimals().then((response) async {
+      if (response.statusCode == 200) {
+        await animalsFromJson(response.body);
+        getAnimalData(idAnimal: widget.animal.animal.idAnimal.value).then((allDevices) {
+          if (mounted) {
+            setState(() {
+              _deviceData = [];
+              _deviceData.addAll(allDevices);
+            });
+          }
+        });
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          final newToken = jsonDecode(resp.body)['token'];
+          await setSessionToken(newToken);
+          _getDevicesFromApi();
+        });
+      }
+    });
   }
 
   @override

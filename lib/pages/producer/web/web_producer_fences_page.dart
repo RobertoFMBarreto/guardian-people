@@ -1,12 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
-import 'package:guardian/models/providers/tmp/read_json.dart';
 import 'package:guardian/pages/producer/web/widget/geofencing.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
@@ -48,7 +44,6 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
   Future<void> _loadFences() async {
     await getUserFences().then((allFences) => setState(() {
           _fences.addAll(allFences);
-          print(_fences);
         }));
   }
 

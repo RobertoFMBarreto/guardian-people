@@ -104,5 +104,7 @@
   "no_fences": "there are no fences",
   "no_notifications": "there are no notifications",
   "than": "than",
-  "there_is_no_animal_data": "no animal data available"
+  "there_is_no_animal_data": "no animal data available",
+  "no_localization": "no localization",
+  "no_localization_body": "it was not possible to obtain your location"
 }

@@ -78,7 +78,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
-        await animalsFromAnimalWithLastData(response.body);
+        await animalsFromJson(response.body);
         getUserAnimalsWithData().then((allDevices) {
           if (mounted) {
             setState(() {

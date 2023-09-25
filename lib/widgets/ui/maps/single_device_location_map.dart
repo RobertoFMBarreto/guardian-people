@@ -64,6 +64,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   @override
   void initState() {
     _future = _setup();
+    print(widget.deviceData);
     super.initState();
   }
 
@@ -142,7 +143,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                 mapController: _mapController,
                 options: MapOptions(
                   center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
-                      ? widget.isInterval && data.isEmpty
+                      ? widget.isInterval && data.isEmpty && _currentPosition != null
                           ? LatLng(
                               _currentPosition!.latitude,
                               _currentPosition!.longitude,
@@ -152,10 +153,12 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                                   data.first.lon.value == null
                               ? null
                               : LatLng(data.first.lat.value!, data.first.lon.value!)
-                      : LatLng(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                        ),
+                      : _currentPosition != null
+                          ? LatLng(
+                              _currentPosition!.latitude,
+                              _currentPosition!.longitude,
+                            )
+                          : null,
                   onMapReady: () {
                     _mapController.mapEventStream.listen((evt) {
                       widget.onZoomChange(_mapController.zoom);

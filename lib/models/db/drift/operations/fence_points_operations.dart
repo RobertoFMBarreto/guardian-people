@@ -39,7 +39,6 @@ Future<List<LatLng>> getFencePoints(BigInt idFence) async {
       return LatLng(e.lat, e.lon);
     }).toList(),
   );
-  print(fencePoints);
 
   return fencePoints;
 }
