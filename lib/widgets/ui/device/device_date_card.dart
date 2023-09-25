@@ -21,7 +21,7 @@ class DeviceDateCard extends StatelessWidget {
         splashFactory: InkSplash.splashFactory,
         borderRadius: BorderRadius.circular(20),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -45,32 +45,26 @@ class DeviceDateCard extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                        padding: const EdgeInsets.only(left: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Text(
-                                  DateFormat.MMMM(localizations.localeName)
-                                      .format(date)
-                                      .capitalize(),
-                                  style: theme.textTheme.bodyLarge!.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                            FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                DateFormat.MMMM(localizations.localeName).format(date).capitalize(),
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Text(
-                                  '${date.year}',
-                                  style: theme.textTheme.bodyLarge!.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                            FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                '${date.year}',
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),

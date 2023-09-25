@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
@@ -19,7 +19,7 @@ class DeviceHistoryPage extends StatefulWidget {
 class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
   late DateTime _selectedValue;
   final firstItemDataKey = GlobalKey();
-  List<DeviceLocationsCompanion> _deviceData = [];
+  List<AnimalLocationsCompanion> _deviceData = [];
 
   @override
   void initState() {

@@ -167,9 +167,9 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                           });
                           for (var selectedAlert in selectedAlerts) {
                             await addAlertDevice(
-                              AlertDevicesCompanion(
-                                alertDeviceId: drift.Value(BigInt.from(Random().nextInt(999999))),
-                                idDevice: widget.animal.animal.idAnimal,
+                              AlertAnimalsCompanion(
+                                alertAnimalId: drift.Value(BigInt.from(Random().nextInt(999999))),
+                                idAnimal: widget.animal.animal.idAnimal,
                                 idAlert: selectedAlert.idAlert,
                               ),
                             );

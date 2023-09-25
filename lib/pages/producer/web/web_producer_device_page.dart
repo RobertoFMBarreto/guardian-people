@@ -5,8 +5,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
@@ -79,13 +78,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
         final data = jsonDecode(response.body);
         List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
         for (var dt in data) {
-          await createDevice(DeviceCompanion(
-            deviceName: drift.Value(dt['device_name']),
-            idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
-            isActive: drift.Value(dt['is_active'] == true),
-          ));
           await createAnimal(AnimalCompanion(
-            idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
             isActive: drift.Value(dt['animal_is_active'] == true),
             animalName: drift.Value(dt['animal_name']),
             idUser: drift.Value(BigInt.from(int.parse(dt['id_user']))),
@@ -95,7 +88,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
           ));
           if (dt['last_device_data'] != null) {
             await createDeviceData(
-              DeviceLocationsCompanion(
+              AnimalLocationsCompanion(
                 accuracy: dt['last_device_data']['accuracy'] != null
                     ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
                     : const drift.Value.absent(),
@@ -104,9 +97,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                     : const drift.Value.absent(),
                 dataUsage: drift.Value(Random().nextInt(10)),
                 date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
-                deviceDataId:
+                animalDataId:
                     drift.Value(BigInt.from(int.parse(dt['last_device_data']['id_data']))),
-                idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
+                idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
                 elevation: dt['last_device_data']['altitude'] != null
                     ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
                     : const drift.Value.absent(),
@@ -178,7 +171,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
             for (var dt in data) {
               await createDeviceData(
-                DeviceLocationsCompanion(
+                AnimalLocationsCompanion(
                   accuracy: dt['accuracy'] != null
                       ? drift.Value(double.tryParse(dt['accuracy']))
                       : const drift.Value.absent(),
@@ -187,8 +180,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       : const drift.Value.absent(),
                   dataUsage: drift.Value(Random().nextInt(10)),
                   date: drift.Value(DateTime.parse(dt['date'])),
-                  deviceDataId: drift.Value(BigInt.from(int.parse(dt['id_data']))),
-                  idDevice: drift.Value(BigInt.from(int.parse(dt['id_device']))),
+                  animalDataId: drift.Value(BigInt.from(int.parse(dt['id_data']))),
+                  idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
                   elevation: dt['altitude'] != null
                       ? drift.Value(double.tryParse(dt['altitude']))
                       : const drift.Value.absent(),

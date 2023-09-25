@@ -18,7 +18,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SingleDeviceLocationMap extends StatefulWidget {
   final bool showCurrentPosition;
-  final List<DeviceLocationsCompanion> deviceData;
+  final List<AnimalLocationsCompanion> deviceData;
   final BigInt idAnimal;
   final String deviceColor;
   final Function(double) onZoomChange;
@@ -64,7 +64,6 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   @override
   void initState() {
     _future = _setup();
-    print(widget.deviceData);
     super.initState();
   }
 
@@ -117,7 +116,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    List<DeviceLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
+    List<AnimalLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
         ? widget.deviceData
             .where((element) => element.lat.value != null && element.lon.value != null)
             .toList()
@@ -429,7 +428,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         },
                       ),
                     ),
-                    if (widget.isInterval && !_showHeatMap)
+                    if (widget.isInterval && !_showHeatMap && widget.deviceData.isNotEmpty)
                       PopupMenuItem(
                         value: '/show_route',
                         child: StatefulBuilder(builder: (context, setState) {

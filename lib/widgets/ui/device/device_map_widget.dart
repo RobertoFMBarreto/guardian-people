@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/translator/animals_translator.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/tmp/devices_data.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
@@ -26,7 +27,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   final _firstItemDataKey = GlobalKey();
   late Future _future;
 
-  List<DeviceLocationsCompanion> _deviceData = [];
+  List<AnimalLocationsCompanion> _deviceData = [];
 
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
@@ -46,6 +47,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
       _deviceData = widget.animal.data;
     });
     await _getDeviceData();
+    await _getDeviceDataFromApi();
   }
 
   Future<void> _getDeviceData() async {
@@ -66,23 +68,20 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     );
   }
 
-  Future<void> _getDevicesFromApi() async {
-    AnimalProvider.getAnimals().then((response) async {
+  Future<void> _getDeviceDataFromApi() async {
+    AnimalProvider.getAnimalData(widget.animal.animal.idAnimal.value, _startDate, _endDate)
+        .then((response) async {
       if (response.statusCode == 200) {
-        await animalsFromJson(response.body);
-        getAnimalData(idAnimal: widget.animal.animal.idAnimal.value).then((allDevices) {
-          if (mounted) {
-            setState(() {
-              _deviceData = [];
-              _deviceData.addAll(allDevices);
-            });
-          }
-        });
+        final body = jsonDecode(response.body);
+        for (var dt in body['data']) {
+          await animalDataFromJson(dt, widget.animal.animal.idAnimal.value.toString());
+        }
+        _getDeviceData();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           final newToken = jsonDecode(resp.body)['token'];
           await setSessionToken(newToken);
-          _getDevicesFromApi();
+          _getDeviceDataFromApi();
         });
       }
     });
@@ -103,31 +102,35 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (widget.isInterval)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: DeviceTimeRangeWidget(
-                        startDate: _startDate,
-                        endDate: _endDate,
-                        onStartDateChanged: (newStartDate) {
-                          setState(() {
-                            _startDate = newStartDate;
-                            _getDeviceData();
-                          });
-                        },
-                        onEndDateChanged: (newEndDate) {
-                          setState(() {
-                            _endDate = newEndDate;
-                            _getDeviceData();
-                          });
-                        }),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: DeviceTimeRangeWidget(
+                          startDate: _startDate,
+                          endDate: _endDate,
+                          onStartDateChanged: (newStartDate) {
+                            setState(() {
+                              _startDate = newStartDate;
+                              _getDeviceDataFromApi();
+                            });
+                          },
+                          onEndDateChanged: (newEndDate) {
+                            setState(() {
+                              _endDate = newEndDate;
+                              _getDeviceDataFromApi();
+                            });
+                          }),
+                    ),
                   ),
                 Expanded(
                   key: _firstItemDataKey,
+                  flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: SingleDeviceLocationMap(
+                        key: Key(_deviceData.toString()),
                         showCurrentPosition: true,
                         deviceData: _deviceData,
                         idAnimal: widget.animal.animal.idAnimal.value,

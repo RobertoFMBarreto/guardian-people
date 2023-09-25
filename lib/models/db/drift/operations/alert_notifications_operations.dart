@@ -43,8 +43,7 @@ Future<List<AlertNotification>> getUserNotifications() async {
         *
       FROM ${db.alertNotification.actualTableName}
       LEFT JOIN ${db.userAlert.actualTableName} ON ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAlert.name}
-      LEFT JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.idDevice.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idDevice.name}
-      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idDevice.name} = ${db.device.actualTableName}.${db.device.idDevice.name}
+      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAnimal.name}
     ''',
   ).get();
 
@@ -65,7 +64,7 @@ Future<List<AlertNotification>> getUserNotifications() async {
         device: Animal(
           animal: AnimalCompanion(
             animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
-            idDevice: drift.Value(deviceData.data[db.animal.idDevice.name]),
+            idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
             isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
             animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
             idUser: drift.Value(deviceData.data[db.animal.idUser.name]),

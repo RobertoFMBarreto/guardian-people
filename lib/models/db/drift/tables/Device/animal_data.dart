@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
-import 'package:guardian/models/db/drift/tables/Device/device.dart';
+import 'package:guardian/models/db/drift/tables/animal.dart';
 
-class DeviceLocations extends Table {
-  Int64Column get deviceDataId => int64()();
-  Int64Column get idDevice => int64().references(Device, #idDevice).nullable()();
+class AnimalLocations extends Table {
+  Int64Column get animalDataId => int64()();
+  Int64Column get idAnimal => int64().references(Animal, #idAnimal).nullable()();
   IntColumn get dataUsage => integer().nullable()();
   RealColumn get temperature => real().nullable()();
   IntColumn get battery => integer().nullable()();
@@ -15,5 +15,5 @@ class DeviceLocations extends Table {
   TextColumn get state => text().nullable()();
 
   @override
-  Set<Column> get primaryKey => {deviceDataId};
+  Set<Column> get primaryKey => {animalDataId};
 }

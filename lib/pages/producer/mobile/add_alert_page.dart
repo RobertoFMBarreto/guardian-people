@@ -34,7 +34,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   late Future _future;
 
-  final List<Animal> _alertDevices = [];
+  final List<Animal> _alertAnimals = [];
   AlertComparissons _alertComparisson = AlertComparissons.equal;
   AlertParameter _alertParameter = AlertParameter.temperature;
   double _comparissonValue = 0;
@@ -59,17 +59,17 @@ class _AddAlertPageState extends State<AddAlertPage> {
   Future<void> _getAlertDevices(BigInt idAlert) async {
     await getAlertDevices(idAlert).then((allDevices) {
       if (mounted) {
-        setState(() => _alertDevices.addAll(allDevices));
+        setState(() => _alertAnimals.addAll(allDevices));
       }
     });
   }
 
   Future<void> _addAlertDevices(BigInt idAlert) async {
-    for (var device in _alertDevices) {
+    for (var device in _alertAnimals) {
       await addAlertDevice(
-        AlertDevicesCompanion(
-          alertDeviceId: drift.Value(BigInt.from(Random().nextInt(9999))),
-          idDevice: device.animal.idAnimal,
+        AlertAnimalsCompanion(
+          alertAnimalId: drift.Value(BigInt.from(Random().nextInt(9999))),
+          idAnimal: device.animal.idAnimal,
           idAlert: drift.Value(idAlert),
         ),
       );
@@ -116,12 +116,12 @@ class _AddAlertPageState extends State<AddAlertPage> {
   Future<void> _removeAlert(int index) async {
     await removeAlertDevice(
       widget.alert!.idAlert.value,
-      _alertDevices[index].animal.idAnimal.value,
+      _alertAnimals[index].animal.idAnimal.value,
     ).then(
       (_) {
         setState(() {
-          _alertDevices.removeWhere(
-            (element) => element.animal.idAnimal == _alertDevices[index].animal.idAnimal,
+          _alertAnimals.removeWhere(
+            (element) => element.animal.idAnimal == _alertAnimals[index].animal.idAnimal,
           );
         });
       },
@@ -303,13 +303,13 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                       ? {
                                           'isSelect': true,
                                           'idAlert': widget.alert!.idAlert.value,
-                                          'notToShowAnimals': _alertDevices
+                                          'notToShowAnimals': _alertAnimals
                                               .map((e) => e.animal.idAnimal.value)
                                               .toList(),
                                         }
                                       : {
                                           'isSelect': true,
-                                          'notToShowAnimals': _alertDevices
+                                          'notToShowAnimals': _alertAnimals
                                               .map((e) => e.animal.idAnimal.value)
                                               .toList(),
                                         },
@@ -319,7 +319,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                       selectedDevices.runtimeType == List<Animal>) {
                                     final selected = selectedDevices as List<Animal>;
                                     setState(() {
-                                      _alertDevices.addAll(selected);
+                                      _alertAnimals.addAll(selected);
                                     });
                                   }
                                 });
@@ -341,20 +341,20 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         Expanded(
                           flex: 2,
                           child: ListView.builder(
-                            itemCount: _alertDevices.length,
+                            itemCount: _alertAnimals.length,
                             itemBuilder: (context, index) => DeviceItemRemovable(
-                              key: Key(_alertDevices[index].animal.idAnimal.value.toString()),
-                              animal: _alertDevices[index],
+                              key: Key(_alertAnimals[index].animal.idAnimal.value.toString()),
+                              animal: _alertAnimals[index],
                               onRemoveDevice: () {
                                 // TODO: On remove device
                                 if (widget.alert != null) {
                                   _removeAlert(index);
                                 } else {
                                   setState(() {
-                                    _alertDevices.removeWhere(
+                                    _alertAnimals.removeWhere(
                                       (element) =>
                                           element.animal.idAnimal ==
-                                          _alertDevices[index].animal.idAnimal,
+                                          _alertAnimals[index].animal.idAnimal,
                                     );
                                   });
                                 }

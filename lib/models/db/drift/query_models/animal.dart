@@ -2,7 +2,7 @@ import 'package:guardian/models/db/drift/database.dart';
 
 class Animal {
   final AnimalCompanion animal;
-  final List<DeviceLocationsCompanion> data;
+  final List<AnimalLocationsCompanion> data;
 
   Animal({
     required this.animal,

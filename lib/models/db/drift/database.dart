@@ -1,9 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/alert_notifications.dart';
-import 'package:guardian/models/db/drift/tables/Alerts/alert_devices.dart';
+import 'package:guardian/models/db/drift/tables/Alerts/alert_animals.dart';
 import 'package:guardian/models/db/drift/tables/Alerts/user_alert.dart';
-import 'package:guardian/models/db/drift/tables/Device/device.dart';
-import 'package:guardian/models/db/drift/tables/Device/device_data.dart';
+import 'package:guardian/models/db/drift/tables/Device/animal_data.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_animals.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_points.dart';
@@ -19,11 +18,10 @@ part 'database.g.dart';
   FencePoints,
   FenceAnimals,
   Animal,
-  Device,
-  DeviceLocations,
+  AnimalLocations,
   UserAlert,
   AlertNotification,
-  AlertDevices,
+  AlertAnimals,
 ])
 class GuardianDb extends _$GuardianDb {
   GuardianDb() : super(openConnection());

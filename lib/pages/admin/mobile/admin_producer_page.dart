@@ -2,14 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/custom_floating_btn_option.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_users_operations.dart';
-import 'package:guardian/models/db/drift/operations/device_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
@@ -199,19 +198,19 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                           builder: (context) => AddDeviceBottomSheet(
                             onAddDevice: (imei, name) {
                               //TODO: Add device code
-                              createDevice(DeviceCompanion(
-                                idDevice: drift.Value(BigInt.from(Random().nextInt(90000))),
-                                isActive: const drift.Value(true),
-                                deviceName: drift.Value(name),
-                              )).then((newDevice) {
-                                Navigator.of(context).pop();
-                                _filterDevices().then((newDevices) {
-                                  setState(() {
-                                    _devices = [];
-                                    _devices.addAll(newDevices);
-                                  });
-                                });
-                              });
+                              // createAnimal(AnimalCompanion(
+                              //   idDevice: drift.Value(BigInt.from(Random().nextInt(90000))),
+                              //   isActive: const drift.Value(true),
+                              //   deviceName: drift.Value(name),
+                              // )).then((newDevice) {
+                              //   Navigator.of(context).pop();
+                              //   _filterDevices().then((newDevices) {
+                              //     setState(() {
+                              //       _devices = [];
+                              //       _devices.addAll(newDevices);
+                              //     });
+                              //   });
+                              // });
                             },
                           ),
                         );

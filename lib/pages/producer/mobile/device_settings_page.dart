@@ -134,10 +134,10 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                 });
                                 for (var selectedAlert in selectedAlerts) {
                                   await addAlertDevice(
-                                    AlertDevicesCompanion(
-                                      alertDeviceId:
+                                    AlertAnimalsCompanion(
+                                      alertAnimalId:
                                           drift.Value(BigInt.from(Random().nextInt(999999))),
-                                      idDevice: widget.animal.animal.idAnimal,
+                                      idAnimal: widget.animal.animal.idAnimal,
                                       idAlert: selectedAlert.idAlert,
                                     ),
                                   );
