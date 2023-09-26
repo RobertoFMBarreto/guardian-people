@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -20,9 +21,11 @@ class HomeDropDown extends StatelessWidget {
 
         break;
       case 1:
-        //! Logout code
         clearUserSession().then(
-          (value) => Navigator.of(context).popAndPushNamed('/login'),
+          (_) => deleteEverything().then(
+            (_) => Navigator.pushNamedAndRemoveUntil(
+                context, '/login', (Route<dynamic> route) => false),
+          ),
         );
 
         break;

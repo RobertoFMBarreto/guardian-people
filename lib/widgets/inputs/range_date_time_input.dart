@@ -18,22 +18,16 @@ class RangeDateTimeInput extends StatefulWidget {
 
 class _RangeDateTimeInputState extends State<RangeDateTimeInput>
     with SingleTickerProviderStateMixin {
-  late DateTime startDate;
-  late DateTime endDate;
+  late DateTime _startDate;
+  late DateTime _endDate;
   late TabController _tabController;
-  // List of Tabs
-  final List<Tab> myTabs = <Tab>[
-    const Tab(text: 'Data Inicial'),
-    const Tab(text: 'Data Final'),
-  ];
-  // controller object
 
   @override
   void initState() {
     super.initState();
 
-    startDate = widget.startDate;
-    endDate = widget.endDate;
+    _startDate = widget.startDate;
+    _endDate = widget.endDate;
     _tabController = TabController(
       initialIndex: 0,
       vsync: this,
@@ -51,11 +45,11 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
     setState(() {
       if (args.value is DateTime) {
         //store last date
-        DateTime backupDate = startDate;
+        DateTime backupDate = _startDate;
         //store new date
-        startDate = args.value;
+        _startDate = args.value;
         //add the backup date hours to the new date
-        startDate = startDate.add(
+        _startDate = _startDate.add(
           Duration(
             hours: backupDate.hour,
             minutes: backupDate.minute,
@@ -69,11 +63,11 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
     setState(() {
       if (args.value is DateTime) {
         //store last date
-        DateTime backupDate = endDate;
+        DateTime backupDate = _endDate;
         //store new date
-        endDate = args.value;
+        _endDate = args.value;
         //add the backup date hours to the new date
-        endDate = endDate.add(
+        _endDate = _endDate.add(
           Duration(
             hours: backupDate.hour,
             minutes: backupDate.minute,
@@ -113,11 +107,11 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
                 },
                 onTimeChange: (newDate) {
                   setState(() {
-                    startDate = newDate;
+                    _startDate = newDate;
                   });
                 },
-                date: startDate,
-                maxDate: endDate,
+                date: _startDate,
+                maxDate: _endDate,
               ),
               //endDate
               DateTimeInput(
@@ -126,12 +120,12 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
                 },
                 onTimeChange: (newDate) {
                   setState(() {
-                    endDate = newDate;
+                    _endDate = newDate;
                   });
                 },
-                date: endDate,
+                date: _endDate,
                 maxDate: DateTime.now(),
-                minDate: startDate,
+                minDate: _startDate,
               ),
             ],
           ),
@@ -152,7 +146,7 @@ class _RangeDateTimeInputState extends State<RangeDateTimeInput>
             ),
             TextButton(
               onPressed: () {
-                widget.onConfirm(startDate, endDate);
+                widget.onConfirm(_startDate, _endDate);
               },
               child: Text(
                 localizations.confirm.capitalize(),

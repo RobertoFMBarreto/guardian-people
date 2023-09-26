@@ -128,6 +128,58 @@ class _AddAlertPageState extends State<AddAlertPage> {
     );
   }
 
+  Future<void> _onAddAnimals() async {
+    Navigator.of(context)
+        .pushNamed(
+      '/producer/devices',
+      arguments: widget.alert != null
+          ? {
+              'isSelect': true,
+              'idAlert': widget.alert!.idAlert.value,
+              'notToShowAnimals': _alertAnimals.map((e) => e.animal.idAnimal.value).toList(),
+            }
+          : {
+              'isSelect': true,
+              'notToShowAnimals': _alertAnimals.map((e) => e.animal.idAnimal.value).toList(),
+            },
+    )
+        .then((selectedDevices) async {
+      if (selectedDevices != null && selectedDevices.runtimeType == List<Animal>) {
+        final selected = selectedDevices as List<Animal>;
+        setState(() {
+          _alertAnimals.addAll(selected);
+        });
+      }
+    });
+  }
+
+  String? _validateInputValue(String? value, AppLocalizations localizations) {
+    if (value == null) {
+      return localizations.insert_value.capitalize();
+    } else {
+      double? inputValue = double.tryParse(value);
+      if (inputValue != null) {
+        switch (_alertParameter) {
+          case AlertParameter.battery:
+            if (inputValue < 0 || inputValue > 100) {
+              return localizations.invalid_value.capitalize();
+            }
+            break;
+          case AlertParameter.dataUsage:
+            if (inputValue < 0 || inputValue > 10) {
+              return localizations.invalid_value.capitalize();
+            }
+            break;
+          case AlertParameter.temperature:
+            break;
+        }
+      } else {
+        return localizations.invalid_value.capitalize();
+      }
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -221,30 +273,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 initialValue:
                                     _comparissonValue != 0 ? _comparissonValue.toString() : null,
                                 validator: (value) {
-                                  if (value == null) {
-                                    return localizations.insert_value.capitalize();
-                                  } else {
-                                    double? inputValue = double.tryParse(value);
-                                    if (inputValue != null) {
-                                      switch (_alertParameter) {
-                                        case AlertParameter.battery:
-                                          if (inputValue < 0 || inputValue > 100) {
-                                            return localizations.invalid_value.capitalize();
-                                          }
-                                          break;
-                                        case AlertParameter.dataUsage:
-                                          if (inputValue < 0 || inputValue > 10) {
-                                            return localizations.invalid_value.capitalize();
-                                          }
-                                          break;
-                                        case AlertParameter.temperature:
-                                          break;
-                                      }
-                                    } else {
-                                      return localizations.invalid_value.capitalize();
-                                    }
-                                    return null;
-                                  }
+                                  return _validateInputValue(value, localizations);
                                 },
                                 onChanged: (value) {
                                   double? inputValue = double.tryParse(value);
@@ -295,35 +324,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton.icon(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pushNamed(
-                                  '/producer/devices',
-                                  arguments: widget.alert != null
-                                      ? {
-                                          'isSelect': true,
-                                          'idAlert': widget.alert!.idAlert.value,
-                                          'notToShowAnimals': _alertAnimals
-                                              .map((e) => e.animal.idAnimal.value)
-                                              .toList(),
-                                        }
-                                      : {
-                                          'isSelect': true,
-                                          'notToShowAnimals': _alertAnimals
-                                              .map((e) => e.animal.idAnimal.value)
-                                              .toList(),
-                                        },
-                                )
-                                    .then((selectedDevices) async {
-                                  if (selectedDevices != null &&
-                                      selectedDevices.runtimeType == List<Animal>) {
-                                    final selected = selectedDevices as List<Animal>;
-                                    setState(() {
-                                      _alertAnimals.addAll(selected);
-                                    });
-                                  }
-                                });
-                              },
+                              onPressed: _onAddAnimals,
                               icon: Icon(
                                 Icons.add,
                                 color: theme.colorScheme.secondary,

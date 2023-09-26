@@ -18,7 +18,7 @@ class DeviceHistoryPage extends StatefulWidget {
 
 class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
   late DateTime _selectedValue;
-  final firstItemDataKey = GlobalKey();
+  final _firstItemDataKey = GlobalKey();
   List<AnimalLocationsCompanion> _deviceData = [];
 
   @override
@@ -71,7 +71,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
         child: Column(
           children: <Widget>[
             EasyDateTimeLine(
-              key: firstItemDataKey,
+              key: _firstItemDataKey,
               headerProps: EasyHeaderProps(
                   monthPickerType: MonthPickerType.dropDown,
                   selectedDateFormat: SelectedDateFormat.fullDateDMonthAsStrY,
@@ -142,7 +142,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
                       padding: const EdgeInsets.only(top: 10),
                       child: SingleChildScrollView(
                         child: DeviceDataInfoList(
-                          mapKey: firstItemDataKey,
+                          mapKey: _firstItemDataKey,
                           deviceData: _deviceData,
                         ),
                       ),

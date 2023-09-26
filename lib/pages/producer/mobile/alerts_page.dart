@@ -24,7 +24,7 @@ class AlertsPage extends StatefulWidget {
 class _AlertsPageState extends State<AlertsPage> {
   late Future _future;
 
-  List<AlertNotification> alerts = [];
+  List<AlertNotification> _alerts = [];
 
   @override
   void initState() {
@@ -41,8 +41,8 @@ class _AlertsPageState extends State<AlertsPage> {
       (allAlerts) {
         if (mounted) {
           setState(() {
-            alerts = [];
-            alerts.addAll(allAlerts);
+            _alerts = [];
+            _alerts.addAll(allAlerts);
           });
         }
       },
@@ -128,19 +128,19 @@ class _AlertsPageState extends State<AlertsPage> {
                           ],
                         ),
                       Expanded(
-                        child: alerts.isEmpty
+                        child: _alerts.isEmpty
                             ? Center(
                                 child: Text(localizations.no_notifications.capitalize()),
                               )
                             : Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                 child: ListView.builder(
-                                  itemCount: alerts.length,
+                                  itemCount: _alerts.length,
                                   itemBuilder: (context, index) => AlertItem(
-                                    alertNotification: alerts[index],
+                                    alertNotification: _alerts[index],
                                     onRemove: () async {
                                       await removeNotification(
-                                        alerts[index].alertNotificationId,
+                                        _alerts[index].alertNotificationId,
                                       ).then(
                                         (_) async => await _loadAlerts(),
                                       );

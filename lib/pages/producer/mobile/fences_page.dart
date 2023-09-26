@@ -27,7 +27,6 @@ class FencesPage extends StatefulWidget {
 }
 
 class _FencesPageState extends State<FencesPage> {
-  late String idUser;
   late Future _future;
 
   String _searchString = '';

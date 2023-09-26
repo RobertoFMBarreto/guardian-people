@@ -116,10 +116,10 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
               }
             });
           } else {
-            deleteEverything().then(
-              (_) => Navigator.pushNamedAndRemoveUntil(
-                  context, '/login', (Route<dynamic> route) => false),
-            );
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
           }
         });
       } else if (response.statusCode == 507) {
@@ -317,7 +317,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                 )
                               : Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                  // TODO: get devices from fence data
                                   child: ListView.builder(
                                     itemCount: _animals.length,
                                     itemBuilder: (context, index) => Padding(

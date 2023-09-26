@@ -23,10 +23,10 @@ class DateTimeInput extends StatefulWidget {
 }
 
 class _DateTimeInputState extends State<DateTimeInput> {
-  DateTime date = DateTime.now();
+  DateTime _date = DateTime.now();
   @override
   void initState() {
-    date = widget.date;
+    _date = widget.date;
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _DateTimeInputState extends State<DateTimeInput> {
           onSelectionChanged: (args) {
             if (args.value is DateTime) {
               setState(() {
-                date = args.value;
+                _date = args.value;
               });
               widget.onSelectionChanged(args);
             }
@@ -50,7 +50,7 @@ class _DateTimeInputState extends State<DateTimeInput> {
         ),
         TimeSelectorInput(
           onTimeChange: widget.onTimeChange,
-          time: date,
+          time: _date,
           key: Key('${widget.date}'),
         ),
       ],

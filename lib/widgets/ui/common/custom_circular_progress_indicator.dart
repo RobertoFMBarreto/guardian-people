@@ -10,15 +10,15 @@ class CustomCircularProgressIndicator extends StatefulWidget {
 }
 
 class _CustomCircularProgressIndicatorState extends State<CustomCircularProgressIndicator> {
-  bool showTakingLong = false;
-  bool showVerifyConnection = false;
+  bool _showTakingLong = false;
+  bool _showVerifyConnection = false;
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 5)).then((value) {
-      if (mounted) setState(() => showTakingLong = true);
+      if (mounted) setState(() => _showTakingLong = true);
     });
     Future.delayed(const Duration(seconds: 15)).then((value) {
-      if (mounted) setState(() => showVerifyConnection = true);
+      if (mounted) setState(() => _showVerifyConnection = true);
     });
     super.initState();
   }
@@ -37,8 +37,8 @@ class _CustomCircularProgressIndicatorState extends State<CustomCircularProgress
             color: theme.colorScheme.secondary,
           ),
           Text('${localizations.loading.capitalize()}...'),
-          if (showTakingLong) Text('${localizations.longer_than_expected.capitalize()}!'),
-          if (showVerifyConnection) Text('${localizations.verify_connection.capitalize()}!')
+          if (_showTakingLong) Text('${localizations.longer_than_expected.capitalize()}!'),
+          if (_showVerifyConnection) Text('${localizations.verify_connection.capitalize()}!')
         ],
       ),
     );

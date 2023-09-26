@@ -122,22 +122,24 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
-                  (_) => showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
                 );
               }
             });
           } else {
-            deleteEverything().then(
-              (_) => Navigator.pushNamedAndRemoveUntil(
-                  context, '/login', (Route<dynamic> route) => false),
-            );
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
           }
         });
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
             setShownNoServerConnection(true).then(
-              (_) => showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+              (_) =>
+                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
             );
           }
         });

@@ -145,10 +145,10 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
               }
             });
           } else {
-            deleteEverything().then(
-              (_) => Navigator.pushNamedAndRemoveUntil(
-                  context, '/login', (Route<dynamic> route) => false),
-            );
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
           }
         });
       } else if (response.statusCode == 507) {
@@ -268,10 +268,10 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                   }
                 });
               } else {
-                deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                );
+                clearUserSession().then((_) => deleteEverything().then(
+                      (_) => Navigator.pushNamedAndRemoveUntil(
+                          context, '/login', (Route<dynamic> route) => false),
+                    ));
               }
             });
           } else if (response.statusCode == 507) {

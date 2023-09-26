@@ -130,10 +130,6 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
                               ],
                             ),
                           ),
-                          // Text(
-                          //   '${DateFormat(DateFormat.YEAR_NUM_MONTH_DAY, localizations.localeName).format(widget.deviceData[index].dateTime)} ${localizations.at} ${DateFormat(DateFormat.HOUR_MINUTE, localizations.localeName).format(widget.deviceData[index].dateTime)}',
-                          //   style: theme.textTheme.bodyMedium,
-                          // ),
                         ],
                       ),
                     )

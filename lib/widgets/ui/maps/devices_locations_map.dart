@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/instance_manager.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
@@ -36,7 +35,6 @@ class DevicesLocationsMap extends StatefulWidget {
 class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
-  final db = Get.find<GuardianDb>();
 
   late Future _future;
 

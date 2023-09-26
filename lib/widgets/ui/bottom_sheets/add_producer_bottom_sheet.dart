@@ -21,7 +21,7 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
     double deviceWidth = MediaQuery.of(context).size.width;
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return DefaultBottomSheet(
-      title: 'Adicionar Produtor',
+      title: '${localizations.add.capitalize()} ${localizations.producer}',
       body: [
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),

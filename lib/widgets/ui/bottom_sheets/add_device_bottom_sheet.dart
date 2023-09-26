@@ -15,8 +15,8 @@ class AddDeviceBottomSheet extends StatefulWidget {
 }
 
 class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
-  String imei = '';
-  String name = '';
+  String _imei = '';
+  String _name = '';
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -32,7 +32,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
               label: Text('IMEI'),
             ),
             onChanged: (value) {
-              imei = value;
+              _imei = value;
             },
           ),
         ),
@@ -43,7 +43,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
               label: Text(localizations.name.capitalize()),
             ),
             onChanged: (value) {
-              name = value;
+              _name = value;
             },
           ),
         ),
@@ -72,7 +72,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  widget.onAddDevice(imei, name);
+                  widget.onAddDevice(_imei, _name);
                 },
                 child: Text(
                   localizations.add.capitalize(),

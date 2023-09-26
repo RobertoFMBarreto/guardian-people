@@ -73,6 +73,52 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     });
   }
 
+  Future<void> _onSelectAlerts() async {
+    Navigator.push(
+      context,
+      CustomPageRouter(
+          page: '/producer/alerts/management',
+          settings: RouteSettings(
+            arguments: {'isSelect': true, 'idAnimal': widget.animal.animal.idAnimal.value},
+          )),
+    ).then((gottenAlerts) async {
+      if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
+        final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
+        setState(() {
+          _alerts.addAll(selectedAlerts);
+        });
+        for (var selectedAlert in selectedAlerts) {
+          await addAlertDevice(
+            AlertAnimalsCompanion(
+              alertAnimalId: drift.Value(BigInt.from(Random().nextInt(999999))),
+              idAnimal: widget.animal.animal.idAnimal,
+              idAlert: selectedAlert.idAlert,
+            ),
+          );
+        }
+        // TODO: add service call
+      }
+    });
+  }
+
+  Future<void> _onSelectFence() async {
+    Navigator.of(context).pushNamed('/producer/fences', arguments: true).then((newFenceData) {
+      // TODO: Check if its wright
+      if (newFenceData != null && newFenceData.runtimeType == FenceData) {
+        final newFence = newFenceData as FenceData;
+        setState(() {
+          _fences.add(newFence);
+        });
+        createFenceDevice(
+          FenceAnimalsCompanion(
+            idFence: drift.Value(newFence.idFence),
+            idAnimal: widget.animal.animal.idAnimal,
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -115,37 +161,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              CustomPageRouter(
-                                  page: '/producer/alerts/management',
-                                  settings: RouteSettings(
-                                    arguments: {
-                                      'isSelect': true,
-                                      'idAnimal': widget.animal.animal.idAnimal.value
-                                    },
-                                  )),
-                            ).then((gottenAlerts) async {
-                              if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
-                                final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
-                                setState(() {
-                                  _alerts.addAll(selectedAlerts);
-                                });
-                                for (var selectedAlert in selectedAlerts) {
-                                  await addAlertDevice(
-                                    AlertAnimalsCompanion(
-                                      alertAnimalId:
-                                          drift.Value(BigInt.from(Random().nextInt(999999))),
-                                      idAnimal: widget.animal.animal.idAnimal,
-                                      idAlert: selectedAlert.idAlert,
-                                    ),
-                                  );
-                                }
-                                // TODO: add service call
-                              }
-                            });
-                          },
+                          onTap: _onSelectAlerts,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -186,25 +202,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed('/producer/fences', arguments: true)
-                                .then((newFenceData) {
-                              // TODO: Check if its wright
-                              if (newFenceData != null && newFenceData.runtimeType == FenceData) {
-                                final newFence = newFenceData as FenceData;
-                                setState(() {
-                                  _fences.add(newFence);
-                                });
-                                createFenceDevice(
-                                  FenceAnimalsCompanion(
-                                    idFence: drift.Value(newFence.idFence),
-                                    idAnimal: widget.animal.animal.idAnimal,
-                                  ),
-                                );
-                              }
-                            });
-                          },
+                          onTap: _onSelectFence,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -212,7 +210,6 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                 localizations.device_fences.capitalize(),
                                 style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                               ),
-                              // TODO: se poder ter várias cercas trocar
                               _fences.isEmpty ? const Icon(Icons.add) : const SizedBox()
                             ],
                           ),

@@ -97,7 +97,16 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     });
   }
 
-  void _showStartDateDateSelector(BuildContext context, AppLocalizations localizations) {
+  void _showDateDateSelector(
+    BuildContext context,
+    AppLocalizations localizations, {
+    required Function(DateRangePickerSelectionChangedArgs) onSelectionChanged,
+    required DateTime date,
+    required Function(DateTime) onTimeChange,
+    required DateTime maxDate,
+    DateTime? minDate,
+    required bool isStartDate,
+  }) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -119,10 +128,11 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DateTimeInput(
-                      onSelectionChanged: _onStartDateChanged,
-                      date: widget.startDate,
-                      onTimeChange: _onStartTimeChanged,
-                      maxDate: widget.endDate,
+                      onSelectionChanged: onSelectionChanged,
+                      date: date,
+                      onTimeChange: onTimeChange,
+                      maxDate: maxDate,
+                      minDate: minDate,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -137,68 +147,11 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
                         ),
                         TextButton(
                           onPressed: () {
-                            widget.onStartDateChanged(_startDate);
-                            Navigator.of(context).pop(true);
-                          },
-                          child: Text(
-                            localizations.confirm.capitalize(),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionDuration: const Duration(milliseconds: 300),
-    );
-  }
-
-  void _showEndDateDateSelector(BuildContext context, AppLocalizations localizations) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      pageBuilder: (ctx, a1, a2) {
-        return Container();
-      },
-      transitionBuilder: (ctx, a1, a2, child) {
-        var curve = Curves.easeInOut.transform(a1.value);
-        return Transform.scale(
-          scale: curve,
-          child: Dialog(
-            child: Container(
-              constraints: kIsWeb ? const BoxConstraints(maxWidth: 400) : null,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DateTimeInput(
-                      onSelectionChanged: _onEndDateChanged,
-                      date: widget.endDate,
-                      onTimeChange: _onEndTimeChanged,
-                      maxDate: DateTime.now(),
-                      minDate: widget.startDate,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            localizations.cancel.capitalize(),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            widget.onEndDateChanged(_endDate);
+                            if (isStartDate) {
+                              widget.onStartDateChanged(_startDate);
+                            } else {
+                              widget.onEndDateChanged(_endDate);
+                            }
                             Navigator.of(context).pop(true);
                           },
                           child: Text(
@@ -228,7 +181,16 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           child: DeviceDateCard(
             date: widget.startDate,
             onTap: () {
-              _showStartDateDateSelector(context, localizations);
+              _showDateDateSelector(
+                context,
+                localizations,
+                onSelectionChanged: _onStartDateChanged,
+                date: widget.startDate,
+                onTimeChange: _onStartTimeChanged,
+                maxDate: widget.endDate,
+                isStartDate: true,
+              );
+              //_showStartDateDateSelector(context, localizations);
             },
           ),
         ),
@@ -240,7 +202,17 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           child: DeviceDateCard(
             date: widget.endDate,
             onTap: () {
-              _showEndDateDateSelector(context, localizations);
+              _showDateDateSelector(
+                context,
+                localizations,
+                onSelectionChanged: _onEndDateChanged,
+                date: widget.endDate,
+                onTimeChange: _onEndTimeChanged,
+                maxDate: DateTime.now(),
+                minDate: widget.startDate,
+                isStartDate: false,
+              );
+              // _showEndDateDateSelector(context, localizations);
             },
           ),
         ),

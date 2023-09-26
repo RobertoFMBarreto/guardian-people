@@ -16,10 +16,10 @@ class CustomColorPickerInput extends StatefulWidget {
 }
 
 class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
-  Color pickedColor = gdMapGeofenceFillColor;
+  Color _pickedColor = gdMapGeofenceFillColor;
   @override
   void initState() {
-    pickedColor = widget.pickerColor;
+    _pickedColor = widget.pickerColor;
     super.initState();
   }
 
@@ -40,7 +40,7 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
         ),
         TextButton(
           onPressed: () {
-            widget.onSave(pickedColor);
+            widget.onSave(_pickedColor);
             Navigator.of(context).pop();
           },
           child: Text(
@@ -56,11 +56,11 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ColorPicker(
-            pickerColor: pickedColor,
+            pickerColor: _pickedColor,
             colorPickerWidth: 300,
             onColorChanged: (color) {
               setState(() {
-                pickedColor = color;
+                _pickedColor = color;
               });
             },
             showLabel: false,

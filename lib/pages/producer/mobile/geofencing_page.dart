@@ -15,37 +15,6 @@ class GeofencingPage extends StatefulWidget {
 }
 
 class _GeofencingPageState extends State<GeofencingPage> {
-  // Future<void> _confirmGeofence() async {
-  //   BigInt idFence;
-  //   // if is edit mode
-  //   if (widget.fence != null) {
-  //     idFence = widget.fence!.idFence;
-  //     // first update the fence
-  //     await updateFence(
-  //       widget.fence!
-  //           .copyWith(
-  //             name: _fenceName,
-  //             color: HexColor.toHex(color: _fenceColor),
-  //           )
-  //           .toCompanion(true),
-  //     );
-  //   } else {
-  //     idFence = BigInt.from(Random().nextInt(999999));
-  //     await createFence(
-  //       FenceCompanion(
-  //         idFence: drift.Value(idFence),
-  //         name: drift.Value(_fenceName),
-  //         color: drift.Value(HexColor.toHex(color: _fenceColor)),
-  //       ),
-  //     );
-  //   }
-
-  //   // second update fence points
-  //   createFencePointFromList(_editingPolygon.points, idFence).then(
-  //     (value) => Navigator.of(context).pop(_editingPolygon.points),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -61,16 +30,6 @@ class _GeofencingPageState extends State<GeofencingPage> {
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
-          // actions: [
-          //   TextButton(
-          //       onPressed: () {},
-          //       child: Text(
-          //         localizations.confirm.capitalize(),
-          //         style: theme.textTheme.bodyMedium!.copyWith(
-          //           color: gdSecondaryColor,
-          //         ),
-          //       ))
-          // ],
         ),
         body: Geofencing(
           fence: widget.fence,

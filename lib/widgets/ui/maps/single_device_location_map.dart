@@ -51,7 +51,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
   late Future _future;
   late String _dropDownValue;
 
-  List<String> dropdownItems = [
+  final List<String> _dropdownItems = [
     'normal',
     'heatmap',
   ];
@@ -75,7 +75,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
 
   Future<void> _setup() async {
     setState(() {
-      _dropDownValue = dropdownItems.first;
+      _dropDownValue = _dropdownItems.first;
     });
     await getCurrentPosition(
       context,
@@ -345,12 +345,12 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                             ),
                           ];
                         },
-                        items: dropdownItems
+                        items: _dropdownItems
                             .map(
                               (e) => DropdownMenuItem(
                                 value: e,
                                 child: Text(
-                                  e == dropdownItems.first
+                                  e == _dropdownItems.first
                                       ? localizations.normal_map.capitalize()
                                       : localizations.heatmap.capitalize(),
                                   style: TextStyle(color: theme.colorScheme.onBackground),
@@ -362,7 +362,7 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
                         onChanged: (String? value) {
                           if (value != null) {
                             setState(() {
-                              _showHeatMap = value == dropdownItems.last;
+                              _showHeatMap = value == _dropdownItems.last;
                               _dropDownValue = value;
                               _showFence = false;
                             });

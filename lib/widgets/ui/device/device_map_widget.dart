@@ -113,18 +113,20 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               }
             });
           } else {
-            deleteEverything().then(
-              (_) => Navigator.pushNamedAndRemoveUntil(
-                  context, '/login', (Route<dynamic> route) => false),
-            );
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
           }
         });
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
-          setState(() {
-            _startDate = DateTime.now();
-            _endDate = DateTime.now();
-          });
+          if (mounted) {
+            setState(() {
+              _startDate = DateTime.now();
+              _endDate = DateTime.now();
+            });
+          }
           if (!hasShown) {
             setShownNoServerConnection(true).then(
               (_) =>

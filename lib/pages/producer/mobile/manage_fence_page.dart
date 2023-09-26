@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
-import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
@@ -11,7 +10,6 @@ import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/helpers/hex_color.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/device/device_item_removable.dart';
@@ -31,47 +29,43 @@ class ManageFencePage extends StatefulWidget {
 }
 
 class _ManageFencePageState extends State<ManageFencePage> {
-  List<Animal> devices = [];
-  // color picker values
-  Color fenceColor = gdMapGeofenceFillColor;
-  String fenceHexColor = '';
-  List<LatLng> points = [];
+  List<Animal> _devices = [];
+  List<LatLng> _points = [];
 
-  late FenceData fence;
+  late FenceData _fence;
 
-  bool isLoading = true;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fence = widget.fence;
-    fenceColor = HexColor(fence.color);
-    fenceHexColor = fence.color;
+    _fence = widget.fence;
     _loadDevices();
     _reloadFence();
   }
 
   Future<void> _loadFencePoints() async {
-    await getFencePoints(fence.idFence).then((fencePoints) {
+    await getFencePoints(_fence.idFence).then((fencePoints) {
       setState(() {
-        points = [];
-        points.addAll(fencePoints);
+        _points = [];
+        _points.addAll(fencePoints);
       });
     });
   }
 
   Future<void> _loadDevices() async {
-    await getFenceAnimals(fence.idFence).then(
+    await getFenceAnimals(_fence.idFence).then(
       (allDevices) => setState(() {
-        devices.addAll(allDevices);
-        isLoading = false;
+        _devices = [];
+        _devices.addAll(allDevices);
+        _isLoading = false;
       }),
     );
   }
 
   Future<void> _reloadFence() async {
     await getFence(widget.fence.idFence).then((newFence) {
-      setState(() => fence = newFence);
+      setState(() => _fence = newFence);
     });
     _loadFencePoints();
   }
@@ -84,19 +78,19 @@ class _ManageFencePageState extends State<ManageFencePage> {
           settings: RouteSettings(
             arguments: {
               'isSelect': true,
-              'idFence': fence.idFence,
+              'idFence': _fence.idFence,
             },
           )),
     ).then((selectedDevices) async {
       if (selectedDevices != null && selectedDevices.runtimeType == List<Animal>) {
         final selected = selectedDevices as List<Animal>;
         setState(() {
-          devices.addAll(selected);
+          _devices.addAll(selected);
         });
         for (var device in selected) {
           await createFenceDevice(
             FenceAnimalsCompanion(
-              idFence: drift.Value(fence.idFence),
+              idFence: drift.Value(_fence.idFence),
               idAnimal: device.animal.idAnimal,
             ),
           );
@@ -111,10 +105,10 @@ class _ManageFencePageState extends State<ManageFencePage> {
     AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: !isLoading
+      appBar: !_isLoading
           ? AppBar(
               title: Text(
-                '${localizations.fence.capitalize()} ${fence.name}',
+                '${localizations.fence.capitalize()} ${_fence.name}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
               ),
               centerTitle: true,
@@ -123,7 +117,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   TextButton(
                     onPressed: () {
                       // TODO call service to delete fence
-                      removeFence(fence.idFence).then((_) => Navigator.of(context).pop());
+                      removeFence(_fence.idFence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
                       localizations.remove.capitalize(),
@@ -134,7 +128,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
               ],
             )
           : null,
-      body: isLoading
+      body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
                 color: theme.colorScheme.secondary,
@@ -154,11 +148,11 @@ class _ManageFencePageState extends State<ManageFencePage> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: DevicesLocationsMap(
-                              key: Key('${fence.color}$points'),
+                              key: Key('${_fence.color}$_points'),
                               showCurrentPosition: true,
-                              animals: devices,
+                              animals: _devices,
                               centerOnPoly: true,
-                              fences: [fence],
+                              fences: [_fence],
                             ),
                           ),
                         ],
@@ -171,12 +165,12 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context)
-                              .pushNamed('/producer/geofencing', arguments: fence)
+                              .pushNamed('/producer/geofencing', arguments: _fence)
                               .then(
                             (newPoints) {
                               if (newPoints != null && newPoints.runtimeType == List<LatLng>) {
                                 setState(() {
-                                  points = newPoints as List<LatLng>;
+                                  _points = newPoints as List<LatLng>;
                                 });
                                 _reloadFence();
                               }
@@ -207,28 +201,28 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   ),
                   Expanded(
                     flex: 2,
-                    child: devices.isEmpty
+                    child: _devices.isEmpty
                         ? Center(
                             child: Text(localizations.no_selected_devices.capitalize()),
                           )
                         : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
                             child: ListView.builder(
-                              itemCount: devices.length,
+                              itemCount: _devices.length,
                               itemBuilder: (context, index) => DeviceItemRemovable(
-                                key: Key(devices[index].animal.idAnimal.value.toString()),
-                                animal: devices[index],
+                                key: Key(_devices[index].animal.idAnimal.value.toString()),
+                                animal: _devices[index],
                                 onRemoveDevice: () {
                                   // TODO: On remove device
                                   removeAnimalFence(
-                                          fence.idFence, devices[index].animal.idAnimal.value)
+                                          _fence.idFence, _devices[index].animal.idAnimal.value)
                                       .then(
                                     (_) {
                                       setState(() {
-                                        devices.removeWhere(
+                                        _devices.removeWhere(
                                           (element) =>
                                               element.animal.idAnimal ==
-                                              devices[index].animal.idAnimal,
+                                              _devices[index].animal.idAnimal,
                                         );
                                       });
                                     },
