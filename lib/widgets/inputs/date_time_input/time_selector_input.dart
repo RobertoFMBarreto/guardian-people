@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the time selector widget
 class TimeSelectorInput extends StatelessWidget {
   final Function(DateTime)? onTimeChange;
   final DateTime time;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+/// Class that represents the date selector widget
 class DateSelectorInput extends StatefulWidget {
   final Function(DateRangePickerSelectionChangedArgs) onSelectionChanged;
   final DateTime? initialDate;

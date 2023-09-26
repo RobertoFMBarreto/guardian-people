@@ -4,6 +4,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
+/// Class that represents the custom color picker input widget
 class CustomColorPickerInput extends StatefulWidget {
   final Color pickerColor;
   final String hexColor;

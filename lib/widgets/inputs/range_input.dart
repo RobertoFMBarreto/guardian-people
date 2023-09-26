@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents the range input widget that shows the RangeSlider widget and a description
 class RangeInput extends StatelessWidget {
   final String title;
   final String label;

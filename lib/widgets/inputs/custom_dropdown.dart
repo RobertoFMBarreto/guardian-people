@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/helpers/key_value_pair.dart';
 
+/// Class that represents the custom dropdown widget
 class CustomDropdown extends StatelessWidget {
   final Object value;
   final List<KeyValuePair> values;

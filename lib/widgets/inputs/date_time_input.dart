@@ -3,6 +3,7 @@ import 'package:guardian/widgets/inputs/date_time_input/date_selector_input.dart
 import 'package:guardian/widgets/inputs/date_time_input/time_selector_input.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+/// Class that represenths the DateTime input widget that combines the date selector and time selector widgets
 class DateTimeInput extends StatefulWidget {
   final Function(DateRangePickerSelectionChangedArgs) onSelectionChanged;
   final Function(DateTime) onTimeChange;
