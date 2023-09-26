@@ -18,4 +18,4 @@ $ dart pub global activate dhttpd
 $ dhttpd --path doc/api
 ```
 
-Then go to [docs folder](./doc/api/index.html)(/docs)
+Then go to docs folder in the root of the project
