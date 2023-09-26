@@ -133,7 +133,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
       final data = args as Map<String, dynamic>;
       return AlertsManagementPage(
         isSelect: data['isSelect'] as bool,
-        idDevice: data['idDevice'] as String?,
+        idAnimal: (data['idAnimal'] as BigInt?).toString(),
       );
     } else {
       throw ErrorDescription('isSelect not provided');

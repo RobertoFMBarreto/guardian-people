@@ -11,6 +11,7 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -51,6 +52,7 @@ class _LoginFormState extends State<LoginForm> {
 
         AuthProvider.login(_email, _password).then((resp) {
           if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
 
             setUserSession(BigInt.from(int.parse(body['id'])), body['token']).then((_) {
@@ -68,6 +70,14 @@ class _LoginFormState extends State<LoginForm> {
                   body['isProducer'] == false ? '/admin' : '/producer',
                 );
               });
+            });
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                );
+              }
             });
           } else {
             setState(() {

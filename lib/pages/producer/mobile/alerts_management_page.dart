@@ -15,12 +15,12 @@ import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart'
 
 class AlertsManagementPage extends StatefulWidget {
   final bool isSelect;
-  final String? idDevice;
+  final String? idAnimal;
 
   const AlertsManagementPage({
     super.key,
     this.isSelect = false,
-    this.idDevice,
+    this.idAnimal,
   });
 
   @override
@@ -45,7 +45,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
 
   Future<void> _loadAlerts() async {
     if (widget.isSelect) {
-      await getDeviceUnselectedAlerts(widget.idDevice!).then(
+      await getDeviceUnselectedAlerts(widget.idAnimal!).then(
         (allAlerts) {
           if (mounted) {
             setState(() {

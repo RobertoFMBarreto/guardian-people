@@ -12,12 +12,14 @@ import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/device/device_item.dart';
+import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
 class WebProducerHomePage extends StatefulWidget {
@@ -58,6 +60,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
         final data = jsonDecode(response.body);
         List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
         for (var dt in data) {
@@ -110,9 +113,31 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
         });
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
-          final newToken = jsonDecode(resp.body)['token'];
-          await setSessionToken(newToken);
-          _getDevicesFromApi();
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken);
+            _getDevicesFromApi();
+          } else if (response.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            await deleteEverything();
+            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+          }
+        });
+      } else if (response.statusCode == 507) {
+        hasShownNoServerConnection().then((hasShown) async {
+          if (!hasShown) {
+            setShownNoServerConnection(true).then(
+              (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+            );
+          }
         });
       }
     });

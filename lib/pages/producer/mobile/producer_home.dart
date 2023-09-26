@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/translator/animals_translator.dart';
@@ -18,6 +19,7 @@ import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
+import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/device/square_devices_info.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
@@ -78,6 +80,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
         await animalsFromJson(response.body);
         getUserAnimalsWithData().then((allDevices) {
           if (mounted) {
@@ -89,9 +92,32 @@ class _ProducerHomeState extends State<ProducerHome> {
         });
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
-          final newToken = jsonDecode(resp.body)['token'];
-          await setSessionToken(newToken);
-          _getDevicesFromApi();
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken);
+            _getDevicesFromApi();
+          } else if (response.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            await deleteEverything();
+            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+          }
+        });
+      } else if (response.statusCode == 507) {
+        hasShownNoServerConnection().then((hasShown) async {
+          print('hasShowed: $hasShown');
+          if (!hasShown) {
+            setShownNoServerConnection(true).then(
+              (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+            );
+          }
         });
       }
     });

@@ -73,7 +73,7 @@ class _AlertsPageState extends State<AlertsPage> {
               CustomPageRouter(
                   page: '/producer/alerts/management',
                   settings: const RouteSettings(
-                    arguments: {'isSelect': false, 'idDevice': null},
+                    arguments: {'isSelect': false, 'idAnimal': null},
                   )),
             ).then(
               (_) => _loadAlerts(),

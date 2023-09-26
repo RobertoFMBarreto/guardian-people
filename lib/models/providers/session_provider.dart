@@ -35,10 +35,27 @@ Future<bool> hasShownNoWifiDialog() async {
   return hasShowed;
 }
 
+Future<bool> hasShownNoServerConnection() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  bool? hasShowed = prefs.getBool('showedNoServerConnection');
+  if (hasShowed == null) {
+    hasShowed = false;
+    setShownNoServerConnection(false);
+  }
+  return hasShowed;
+}
+
 Future<void> setShownNoWifiDialog(bool value) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   prefs.setBool('showedNoWifi', value);
+}
+
+Future<void> setShownNoServerConnection(bool value) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  prefs.setBool('showedNoServerConnection', value);
 }
 
 Future<void> setSessionToken(String value) async {
