@@ -97,7 +97,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     });
   }
 
-  void _showStartDateDateSelector(BuildContext context) {
+  void _showStartDateDateSelector(BuildContext context, AppLocalizations localizations) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -106,7 +106,6 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
         return Container();
       },
       transitionBuilder: (ctx, a1, a2, child) {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
         var curve = Curves.easeInOut.transform(a1.value);
         return Transform.scale(
           scale: curve,
@@ -158,7 +157,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     );
   }
 
-  void _showEndDateDateSelector(BuildContext context) {
+  void _showEndDateDateSelector(BuildContext context, AppLocalizations localizations) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -167,7 +166,6 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
         return Container();
       },
       transitionBuilder: (ctx, a1, a2, child) {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
         var curve = Curves.easeInOut.transform(a1.value);
         return Transform.scale(
           scale: curve,
@@ -230,7 +228,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           child: DeviceDateCard(
             date: widget.startDate,
             onTap: () {
-              _showStartDateDateSelector(context);
+              _showStartDateDateSelector(context, localizations);
             },
           ),
         ),
@@ -242,7 +240,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           child: DeviceDateCard(
             date: widget.endDate,
             onTap: () {
-              _showEndDateDateSelector(context);
+              _showEndDateDateSelector(context, localizations);
             },
           ),
         ),

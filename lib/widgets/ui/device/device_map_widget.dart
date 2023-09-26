@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
@@ -13,6 +14,7 @@ import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.da
 import 'package:guardian/widgets/ui/device/device_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceMapWidget extends StatefulWidget {
   final Animal animal;
@@ -69,7 +71,7 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
   }
 
   Future<void> _getDeviceDataFromApi() async {
-    AnimalProvider.getAnimalData(widget.animal.animal.idAnimal.value, _startDate, _endDate)
+    await AnimalProvider.getAnimalData(widget.animal.animal.idAnimal.value, _startDate, _endDate)
         .then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
@@ -86,10 +88,26 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
             await setSessionToken(newToken);
             _getDeviceDataFromApi();
           } else if (response.statusCode == 507) {
+            setState(() {
+              _startDate = DateTime.now();
+              _endDate = DateTime.now();
+            });
             hasShownNoServerConnection().then((hasShown) async {
+              setState(() {
+                _startDate = DateTime.now();
+                _endDate = DateTime.now();
+              });
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
                   (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.server_error.capitalize(),
+                    ),
+                  ),
                 );
               }
             });
@@ -100,9 +118,21 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
         });
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
+          setState(() {
+            _startDate = DateTime.now();
+            _endDate = DateTime.now();
+          });
           if (!hasShown) {
             setShownNoServerConnection(true).then(
               (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.server_error.capitalize(),
+                ),
+              ),
             );
           }
         });
@@ -134,13 +164,13 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                           onStartDateChanged: (newStartDate) {
                             setState(() {
                               _startDate = newStartDate;
-                              _getDeviceDataFromApi();
+                              _future = _getDeviceDataFromApi();
                             });
                           },
                           onEndDateChanged: (newEndDate) {
                             setState(() {
                               _endDate = newEndDate;
-                              _getDeviceDataFromApi();
+                              _future = _getDeviceDataFromApi();
                             });
                           }),
                     ),

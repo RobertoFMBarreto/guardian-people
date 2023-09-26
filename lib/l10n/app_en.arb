@@ -108,5 +108,7 @@
   "no_localization": "no localization",
   "no_localization_body": "it was not possible to obtain your location",
   "server_error": "comunication error",
-  "server_error_body": "unable to communicate with the server"
+  "server_error_body": "unable to communicate with the server",
+  "longer_than_expected": "taking longer than expected",
+  "verify_connection": "check your internet connection"
 }
