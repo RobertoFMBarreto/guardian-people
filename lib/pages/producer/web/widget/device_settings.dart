@@ -48,6 +48,13 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     super.dispose();
   }
 
+  /// Method that does the initial setup of the page
+  ///
+  /// 1. set the animal name
+  /// 1. set the animal color
+  /// 2. get the device alerts
+  /// 3. get the device fences
+  /// 4. setup the text of the controller to the animal name
   Future<void> _setup() async {
     _animalName = widget.animal.animal.animalName.value;
     _animalColor = widget.animal.animal.animalColor.value;
@@ -56,6 +63,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     controller.text = widget.animal.animal.animalName.value;
   }
 
+  /// Method that loads the device alerts into the [_alerts] list
   Future<void> _getDeviceAlerts() async {
     await getAnimalAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
       if (mounted) {
@@ -65,6 +73,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     });
   }
 
+  /// Method that load the device fences into the [_fences] list
   Future<void> _getDeviceFences() async {
     getAnimalFence(widget.animal.animal.idAnimal.value).then((deviceFence) {
       if (deviceFence != null) {
@@ -76,6 +85,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     });
   }
 
+  /// Method that shows a color picker to change the [_animalColor]
   void _showColorPicker() {
     showDialog(
       context: context,
@@ -89,6 +99,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     );
   }
 
+  /// Method that update the [_animalColor] and updates the database
   Future<void> _onColorUpdate(Color color) async {
     // TODO: Logic to update device color
     setState(() {
@@ -101,6 +112,57 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         animalColor: drift.Value(HexColor.toHex(color: color)),
       ),
     );
+  }
+
+  /// Method that pushes to the alerts management page in select mode and loads the selected alerts into the [_alerts] list
+  ///
+  /// It also inserts in the database the connection between the animal and the alert
+  Future<void> _onSelectAlerts() async {
+    Navigator.push(
+      context,
+      CustomPageRouter(
+          page: '/producer/alerts/management',
+          settings: RouteSettings(
+            arguments: {'isSelect': true, 'idAnimal': widget.animal.animal.idAnimal.value},
+          )),
+    ).then((gottenAlerts) async {
+      if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
+        final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
+        setState(() {
+          _alerts.addAll(selectedAlerts);
+        });
+        for (var selectedAlert in selectedAlerts) {
+          await addAlertAnimal(
+            AlertAnimalsCompanion(
+              idAnimal: widget.animal.animal.idAnimal,
+              idAlert: selectedAlert.idAlert,
+            ),
+          );
+        }
+        // TODO: add service call
+      }
+    });
+  }
+
+  /// Method that pushes the fences page in select mode and loads the fence into the [_fences] list
+  ///
+  /// It also inserts in the database the connection between the fence and the device
+  Future<void> _onSelectFence() async {
+    Navigator.of(context).pushNamed('/producer/fences', arguments: true).then((newFenceData) {
+      // TODO: Check if its wright
+      if (newFenceData != null && newFenceData.runtimeType == FenceData) {
+        final newFence = newFenceData as FenceData;
+        setState(() {
+          _fences.add(newFence);
+        });
+        createFenceDevice(
+          FenceAnimalsCompanion(
+            idFence: drift.Value(newFence.idFence),
+            idAnimal: widget.animal.animal.idAnimal,
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -148,35 +210,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        CustomPageRouter(
-                            page: '/producer/alerts/management',
-                            settings: RouteSettings(
-                              arguments: {
-                                'isSelect': true,
-                                'idAnimal': widget.animal.animal.idAnimal.value
-                              },
-                            )),
-                      ).then((gottenAlerts) async {
-                        if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
-                          final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
-                          setState(() {
-                            _alerts.addAll(selectedAlerts);
-                          });
-                          for (var selectedAlert in selectedAlerts) {
-                            await addAlertAnimal(
-                              AlertAnimalsCompanion(
-                                idAnimal: widget.animal.animal.idAnimal,
-                                idAlert: selectedAlert.idAlert,
-                              ),
-                            );
-                          }
-                          // TODO: add service call
-                        }
-                      });
-                    },
+                    onTap: _onSelectAlerts,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -217,25 +251,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed('/producer/fences', arguments: true)
-                          .then((newFenceData) {
-                        // TODO: Check if its wright
-                        if (newFenceData != null && newFenceData.runtimeType == FenceData) {
-                          final newFence = newFenceData as FenceData;
-                          setState(() {
-                            _fences.add(newFence);
-                          });
-                          createFenceDevice(
-                            FenceAnimalsCompanion(
-                              idFence: drift.Value(newFence.idFence),
-                              idAnimal: widget.animal.animal.idAnimal,
-                            ),
-                          );
-                        }
-                      });
-                    },
+                    onTap: _onSelectFence,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

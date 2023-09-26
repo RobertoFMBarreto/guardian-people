@@ -12,6 +12,7 @@ import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Method that represents the device page
 class DevicePage extends StatefulWidget {
   final Animal animal;
 

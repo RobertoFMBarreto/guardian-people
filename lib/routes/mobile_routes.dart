@@ -107,7 +107,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
   },
   '/producer/device/history': (context) {
     if (ModalRoute.of(context)!.settings.arguments.runtimeType == Animal) {
-      return DeviceHistoryPage(
+      return AnimalHistoryPage(
         animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {

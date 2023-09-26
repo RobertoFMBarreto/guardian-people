@@ -18,6 +18,7 @@ import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.da
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 
+/// Class that represents the device settings page
 class DeviceSettingsPage extends StatefulWidget {
   final Animal animal;
   const DeviceSettingsPage({super.key, required this.animal});
@@ -46,6 +47,12 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     super.dispose();
   }
 
+  /// Method that does the initial setup of the page
+  ///
+  /// 1. set the animal name
+  /// 2. get the device alerts
+  /// 3. get the device fences
+  /// 4. setup the text of the controller to the animal name
   Future<void> _setup() async {
     _animalName = widget.animal.animal.animalName.value;
     await _getDeviceAlerts();
@@ -53,6 +60,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     controller.text = widget.animal.animal.animalName.value;
   }
 
+  /// Method that loads the device alerts into the [_alerts] list
   Future<void> _getDeviceAlerts() async {
     await getAnimalAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
       if (mounted) {
@@ -62,6 +70,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     });
   }
 
+  /// Method that load the device fences into the [_fences] list
   Future<void> _getDeviceFences() async {
     getAnimalFence(widget.animal.animal.idAnimal.value).then((deviceFence) {
       if (deviceFence != null) {
@@ -73,6 +82,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     });
   }
 
+  /// Method that pushes to the alerts management page in select mode and loads the selected alerts into the [_alerts] list
+  ///
+  /// It also inserts in the database the connection between the animal and the alert
   Future<void> _onSelectAlerts() async {
     Navigator.push(
       context,
@@ -100,6 +112,9 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     });
   }
 
+  /// Method that pushes the fences page in select mode and loads the fence into the [_fences] list
+  ///
+  /// It also inserts in the database the connection between the fence and the device
   Future<void> _onSelectFence() async {
     Navigator.of(context).pushNamed('/producer/fences', arguments: true).then((newFenceData) {
       // TODO: Check if its wright

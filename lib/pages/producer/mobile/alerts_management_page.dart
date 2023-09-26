@@ -13,6 +13,7 @@ import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart';
 
+/// Class that represents the alerts management page
 class AlertsManagementPage extends StatefulWidget {
   final bool isSelect;
   final String? idAnimal;
@@ -39,10 +40,18 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the page loading the alerts
   Future<void> _setup() async {
     await _loadAlerts();
   }
 
+  /// Method that loads the user alerts into the [_alerts] list
+  ///
+  /// If is in select mode ( [widget.isSelect]=`true`) then only the unselected alerts will be shown
+  ///
+  /// If it isnt in select mode then all user alerts will be shown
+  ///
+  /// Resets the list to prevent duplicates
   Future<void> _loadAlerts() async {
     if (widget.isSelect) {
       await getAnimalUnselectedAlerts(widget.idAnimal!).then(

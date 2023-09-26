@@ -26,6 +26,7 @@ import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
+/// Class that represents the producer home
 class ProducerHome extends StatefulWidget {
   const ProducerHome({
     super.key,
@@ -52,13 +53,20 @@ class _ProducerHomeState extends State<ProducerHome> {
     _loadData = _setup();
   }
 
+  /// Method that doest the initial setup
+  ///
+  /// 1. load user data
+  /// 2. load user animals
+  /// 3. load fences
+  /// 4. load alert notifications
   Future<void> _setup() async {
     await _loadUserData();
-    await _loadDevices();
+    await _loadAnimals();
     await _loadFences();
     await _loadAlertNotifications();
   }
 
+  /// Method that loads the user data into [_user]
   Future<void> _loadUserData() async {
     await getSessionUserData().then((data) {
       if (data != null) {
@@ -67,17 +75,27 @@ class _ProducerHomeState extends State<ProducerHome> {
     });
   }
 
-  Future<void> _loadDevices() async {
+  /// Method that loads the animals into the [_animals] list
+  ///
+  /// 1. load local animals
+  /// 2. add to list
+  /// 3. load api animals
+  Future<void> _loadAnimals() async {
     await getUserAnimalsWithData().then((allAnimals) {
       _animals = [];
       setState(() {
         _animals.addAll(allAnimals);
       });
-      _getDevicesFromApi();
+      _getAnimalsFromApi();
     });
   }
 
-  Future<void> _getDevicesFromApi() async {
+  /// Method that loads the animals from the api into the [_animals] list
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
+  Future<void> _getAnimalsFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
@@ -96,7 +114,7 @@ class _ProducerHomeState extends State<ProducerHome> {
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken);
-            _getDevicesFromApi();
+            _getAnimalsFromApi();
           } else if (response.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
@@ -126,6 +144,11 @@ class _ProducerHomeState extends State<ProducerHome> {
     });
   }
 
+  /// Method that loads all fences into the [_fences] list
+  ///
+  /// In the process updates the [_reloadMap] variable so that the map reloads
+  ///
+  /// Resets the list to avoid duplicates
   Future<void> _loadFences() async {
     await getUserFences().then((allFences) {
       _fences = [];
@@ -136,6 +159,9 @@ class _ProducerHomeState extends State<ProducerHome> {
     });
   }
 
+  /// Method that loads all alert notifications into the [_alertNotifications] list
+  ///
+  /// Resets the list to avoid duplicates
   Future<void> _loadAlertNotifications() async {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
@@ -219,7 +245,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                                       context,
                                       CustomPageRouter(page: '/producer/devices'),
                                     ).then(
-                                      (_) => _loadDevices(),
+                                      (_) => _loadAnimals(),
                                     ),
                                   );
                                 },

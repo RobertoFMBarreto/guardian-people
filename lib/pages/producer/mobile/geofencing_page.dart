@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/pages/producer/web/widget/geofencing.dart';
+import 'package:guardian/widgets/ui/common/geofencing.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-// ignore: depend_on_referenced_packages
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the gefencing page for editing and creating a fence
 class GeofencingPage extends StatefulWidget {
   final FenceData? fence;
   const GeofencingPage({super.key, this.fence});

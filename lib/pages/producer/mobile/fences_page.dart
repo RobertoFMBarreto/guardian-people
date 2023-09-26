@@ -14,6 +14,7 @@ import 'package:guardian/widgets/inputs/search_field_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/fence/selectable_fence_item.dart';
 
+/// Class that represents the fences page
 class FencesPage extends StatefulWidget {
   final bool isSelect;
 
@@ -39,10 +40,14 @@ class _FencesPageState extends State<FencesPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the page
   Future<void> _setup() async {
     await _searchFences();
   }
 
+  /// Method that searches for the fences with the [searchString] loading them into the [_fences] list
+  ///
+  /// To prevent duplicates the list is reseted before adding the fences
   Future<void> _searchFences() async {
     await searchFences(_searchString).then((allFences) {
       if (mounted) {

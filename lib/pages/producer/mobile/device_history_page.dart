@@ -8,15 +8,16 @@ import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
 
-class DeviceHistoryPage extends StatefulWidget {
+/// Class that represents the animal history page
+class AnimalHistoryPage extends StatefulWidget {
   final Animal animal;
-  const DeviceHistoryPage({super.key, required this.animal});
+  const AnimalHistoryPage({super.key, required this.animal});
 
   @override
-  State<DeviceHistoryPage> createState() => _DeviceHistoryPageState();
+  State<AnimalHistoryPage> createState() => _AnimalHistoryPageState();
 }
 
-class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
+class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   late DateTime _selectedValue;
   final _firstItemDataKey = GlobalKey();
   List<AnimalLocationsCompanion> _deviceData = [];
@@ -27,6 +28,7 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the page setting the [_selectedValue] to now and then gets the animal data
   Future<void> _setup() async {
     final now = DateTime.now();
     _selectedValue = DateTime(now.year, now.month, now.day);
@@ -34,6 +36,9 @@ class _DeviceHistoryPageState extends State<DeviceHistoryPage> {
     await _getDeviceData();
   }
 
+  /// Method that gets the animal data between the 00:00 hours and 23:59 hours of the [_selectedValue] day and loads into the [_deviceData] list
+  ///
+  /// Resets the list to prevent duplicates
   Future<void> _getDeviceData() async {
     getAnimalData(
       isInterval: true,

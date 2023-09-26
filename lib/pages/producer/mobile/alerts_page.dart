@@ -12,6 +12,7 @@ import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.da
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the alerts page
 class AlertsPage extends StatefulWidget {
   const AlertsPage({
     super.key,
@@ -32,10 +33,14 @@ class _AlertsPageState extends State<AlertsPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the page loading the alerts
   Future<void> _setup() async {
     await _loadAlerts();
   }
 
+  /// Method that loads all alert notifications in to the [_alerts] list
+  ///
+  /// Resets the list to prevent duplicates
   Future<void> _loadAlerts() async {
     getAllNotifications().then(
       (allAlerts) {

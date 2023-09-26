@@ -22,10 +22,15 @@ import 'package:guardian/themes/light_theme.dart';
 late bool hasConnection;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // if (!kIsWeb) {
   //   await MapCaching().initMapCaching();
   // }
+
+  /// Put the reference to the guardian databe in the get package
   Get.put(GuardianDb());
+
+  /// set the show no server connection variable to false
   setShownNoServerConnection(false);
 
   runApp(const MyApp());
@@ -53,6 +58,10 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+  /// Method that realizes all initial setup
+  ///
+  /// 1. check if there is connection
+  /// 2. setup the connection checker
   Future<StreamSubscription?> _setup() async {
     if (!kIsWeb) {
       return _setupInitialConnectionState().then(
@@ -84,13 +93,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Change status bar color
+    /// Change status bar color
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor:
             Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
       ),
     );
+
+    /// Set orientation only to portait
     if (!kIsWeb) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,

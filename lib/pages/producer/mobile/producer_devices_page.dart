@@ -21,6 +21,7 @@ import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import '../../../widgets/ui/drawers/producer_page_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the producer devices page
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
   final BigInt? idFence;
@@ -52,7 +53,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   RangeValues _elevationRangeValues = const RangeValues(0, 1000);
   RangeValues _tmpRangeValues = const RangeValues(0, 25);
 
-  List<Animal> _selectedDevices = [];
+  List<Animal> _selectedAnimals = [];
   List<Animal> _animals = [];
 
   @override
@@ -62,12 +63,18 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup for the page
+  ///
+  /// 1. setup all filters
+  /// 2. filter the animals to load all local animals
+  /// 3. get the animals from the api
   Future<void> _setup() async {
     await _setupFilterRanges();
-    await _filterDevices();
-    await _getDevicesFromApi();
+    await _filterAnimals();
+    await _getAnimalsFromApi();
   }
 
+  /// Method that does the setup of filters based on de database values
   Future<void> _setupFilterRanges() async {
     _batteryRangeValues = const RangeValues(0, 100);
     _dtUsageRangeValues = const RangeValues(0, 10);
@@ -82,6 +89,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     }
   }
 
+  /// Method that resets all filters to the initial values
   Future<void> _resetFilters() async {
     if (mounted) {
       setState(() {
@@ -93,19 +101,24 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     }
   }
 
-  Future<void> _getDevicesFromApi() async {
+  /// Method that loads all devices from the API into the [_animals] list
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
+  Future<void> _getAnimalsFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         await animalsFromJson(response.body);
-        await _filterDevices();
+        await _filterAnimals();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken);
-            _getDevicesFromApi();
+            _getAnimalsFromApi();
           } else if (response.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
@@ -135,7 +148,14 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     });
   }
 
-  Future<void> _filterDevices() async {
+  /// Method that filters all animals loading them into the [_animals] list
+  ///
+  /// If in select mode it only loads the animals that aren't selected for the fence or the alert
+  ///
+  /// If not in select mode it loads all the animals
+  ///
+  /// Resets the [_animals] list to prevent duplicates
+  Future<void> _filterAnimals() async {
     if (widget.isSelect && widget.idFence != null) {
       await getUserFenceUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
@@ -144,6 +164,23 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
         idFence: widget.idFence!,
+      ).then((searchDevices) {
+        if (mounted) {
+          setState(() {
+            _animals = [];
+            _animals.addAll(searchDevices);
+          });
+        }
+      });
+    }
+    if (widget.isSelect && widget.idAlert != null) {
+      await getUserAlertUnselectedAnimalsFiltered(
+        batteryRangeValues: _batteryRangeValues,
+        elevationRangeValues: _elevationRangeValues,
+        dtUsageRangeValues: _dtUsageRangeValues,
+        searchString: _searchString,
+        tmpRangeValues: _tmpRangeValues,
+        idAlert: widget.idAlert!,
       ).then((searchDevices) {
         if (mounted) {
           setState(() {
@@ -226,20 +263,20 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                       });
                     },
                     onConfirm: () {
-                      _filterDevices();
+                      _filterAnimals();
                       _scaffoldKey.currentState!.closeEndDrawer();
                     },
                     onResetFilters: () {
                       _resetFilters();
-                      _filterDevices();
+                      _filterAnimals();
                     },
                   ),
                 )
               : null,
-          floatingActionButton: widget.isSelect && _selectedDevices.isNotEmpty
+          floatingActionButton: widget.isSelect && _selectedAnimals.isNotEmpty
               ? FloatingActionButton.extended(
                   onPressed: () {
-                    Navigator.of(context).pop(_selectedDevices);
+                    Navigator.of(context).pop(_selectedAnimals);
                   },
                   label: Text(
                     localizations.confirm.capitalize(),
@@ -270,7 +307,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                             },
                             onSearchChanged: (value) {
                               _searchString = value;
-                              _filterDevices();
+                              _filterAnimals();
                             },
                           ),
                         ),
@@ -280,13 +317,13 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  if (_selectedDevices.length == _animals.length) {
+                                  if (_selectedAnimals.length == _animals.length) {
                                     setState(() {
-                                      _selectedDevices = [];
+                                      _selectedAnimals = [];
                                     });
                                   } else {
                                     setState(() {
-                                      _selectedDevices = _animals;
+                                      _selectedAnimals = _animals;
                                     });
                                   }
                                 },
@@ -294,7 +331,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      _selectedDevices.length == _animals.length
+                                      _selectedAnimals.length == _animals.length
                                           ? Icons.remove
                                           : Icons.add,
                                       color: theme.colorScheme.secondary,
@@ -332,22 +369,22 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                               deviceBattery: _animals[index].data.isNotEmpty
                                                   ? _animals[index].data.first.battery.value
                                                   : null,
-                                              isSelected: _selectedDevices
+                                              isSelected: _selectedAnimals
                                                   .where((element) =>
                                                       element.animal.idAnimal ==
                                                       _animals[index].animal.idAnimal)
                                                   .isNotEmpty,
                                               onSelected: () {
-                                                int i = _selectedDevices.indexWhere((element) =>
+                                                int i = _selectedAnimals.indexWhere((element) =>
                                                     element.animal.idAnimal ==
                                                     _animals[index].animal.idAnimal);
 
                                                 if (mounted) {
                                                   setState(() {
                                                     if (i >= 0) {
-                                                      _selectedDevices.removeAt(i);
+                                                      _selectedAnimals.removeAt(i);
                                                     } else {
-                                                      _selectedDevices.add(_animals[index]);
+                                                      _selectedAnimals.add(_animals[index]);
                                                     }
                                                   });
                                                 }
@@ -356,7 +393,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                           : DeviceItem(
                                               animal: _animals[index],
                                               onBackFromDeviceScreen: () {
-                                                _filterDevices();
+                                                _filterAnimals();
                                               },
                                             ),
                                     ),

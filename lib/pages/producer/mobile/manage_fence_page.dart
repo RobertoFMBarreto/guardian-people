@@ -16,6 +16,7 @@ import 'package:guardian/widgets/ui/device/device_item_removable.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:latlong2/latlong.dart';
 
+/// Class that represents the manage fence page
 class ManageFencePage extends StatefulWidget {
   final FenceData fence;
 
@@ -29,7 +30,7 @@ class ManageFencePage extends StatefulWidget {
 }
 
 class _ManageFencePageState extends State<ManageFencePage> {
-  List<Animal> _devices = [];
+  List<Animal> _animals = [];
   List<LatLng> _points = [];
 
   late FenceData _fence;
@@ -40,10 +41,13 @@ class _ManageFencePageState extends State<ManageFencePage> {
   void initState() {
     super.initState();
     _fence = widget.fence;
-    _loadDevices();
+    _loadAnimals();
     _reloadFence();
   }
 
+  /// Method that loads all fence points into the [_points] list
+  ///
+  /// Resets the list to prevent duplicates
   Future<void> _loadFencePoints() async {
     await getFencePoints(_fence.idFence).then((fencePoints) {
       setState(() {
@@ -53,16 +57,20 @@ class _ManageFencePageState extends State<ManageFencePage> {
     });
   }
 
-  Future<void> _loadDevices() async {
+  /// Method that loads all fence animals into the [_animals] list
+  ///
+  /// Resets the list to prevent duplicates
+  Future<void> _loadAnimals() async {
     await getFenceAnimals(_fence.idFence).then(
       (allDevices) => setState(() {
-        _devices = [];
-        _devices.addAll(allDevices);
+        _animals = [];
+        _animals.addAll(allDevices);
         _isLoading = false;
       }),
     );
   }
 
+  /// Method that reloads the fence replacing the [_fence] with the new fence from database
   Future<void> _reloadFence() async {
     await getFence(widget.fence.idFence).then((newFence) {
       setState(() => _fence = newFence);
@@ -70,7 +78,10 @@ class _ManageFencePageState extends State<ManageFencePage> {
     _loadFencePoints();
   }
 
-  Future<void> _selectDevices() async {
+  /// Method that pushes to the devices page in select mode and loads the selected animals into the [_animals] list
+  ///
+  /// It also inserts in the database the connection between the animal and the fence
+  Future<void> _selectAnimals() async {
     Navigator.push(
       context,
       CustomPageRouter(
@@ -81,17 +92,17 @@ class _ManageFencePageState extends State<ManageFencePage> {
               'idFence': _fence.idFence,
             },
           )),
-    ).then((selectedDevices) async {
-      if (selectedDevices != null && selectedDevices.runtimeType == List<Animal>) {
-        final selected = selectedDevices as List<Animal>;
+    ).then((selectedAnimals) async {
+      if (selectedAnimals != null && selectedAnimals.runtimeType == List<Animal>) {
+        final selected = selectedAnimals as List<Animal>;
         setState(() {
-          _devices.addAll(selected);
+          _animals.addAll(selected);
         });
-        for (var device in selected) {
+        for (var animal in selected) {
           await createFenceDevice(
             FenceAnimalsCompanion(
               idFence: drift.Value(_fence.idFence),
-              idAnimal: device.animal.idAnimal,
+              idAnimal: animal.animal.idAnimal,
             ),
           );
         }
@@ -150,7 +161,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             child: DevicesLocationsMap(
                               key: Key('${_fence.color}$_points'),
                               showCurrentPosition: true,
-                              animals: _devices,
+                              animals: _animals,
                               centerOnPoly: true,
                               fences: [_fence],
                             ),
@@ -192,7 +203,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         if (hasConnection)
                           IconButton(
                             onPressed: () async {
-                              _selectDevices();
+                              _selectAnimals();
                             },
                             icon: const Icon(Icons.add),
                           ),
@@ -201,28 +212,28 @@ class _ManageFencePageState extends State<ManageFencePage> {
                   ),
                   Expanded(
                     flex: 2,
-                    child: _devices.isEmpty
+                    child: _animals.isEmpty
                         ? Center(
                             child: Text(localizations.no_selected_devices.capitalize()),
                           )
                         : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
                             child: ListView.builder(
-                              itemCount: _devices.length,
+                              itemCount: _animals.length,
                               itemBuilder: (context, index) => DeviceItemRemovable(
-                                key: Key(_devices[index].animal.idAnimal.value.toString()),
-                                animal: _devices[index],
+                                key: Key(_animals[index].animal.idAnimal.value.toString()),
+                                animal: _animals[index],
                                 onRemoveDevice: () {
                                   // TODO: On remove device
                                   removeAnimalFence(
-                                          _fence.idFence, _devices[index].animal.idAnimal.value)
+                                          _fence.idFence, _animals[index].animal.idAnimal.value)
                                       .then(
                                     (_) {
                                       setState(() {
-                                        _devices.removeWhere(
+                                        _animals.removeWhere(
                                           (element) =>
                                               element.animal.idAnimal ==
-                                              _devices[index].animal.idAnimal,
+                                              _animals[index].animal.idAnimal,
                                         );
                                       });
                                     },

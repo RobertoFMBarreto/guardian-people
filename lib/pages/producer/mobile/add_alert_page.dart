@@ -16,6 +16,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
 import 'package:guardian/widgets/ui/device/device_item_removable.dart';
 
+/// Class that represents the add alert page
 class AddAlertPage extends StatefulWidget {
   final UserAlertCompanion? alert;
   final bool? isEdit;
@@ -46,6 +47,10 @@ class _AddAlertPageState extends State<AddAlertPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup for the page
+  ///
+  /// 1. Parse received alert data if there is one
+  /// 2. Get alert devices
   Future<void> _setup() async {
     if (widget.alert != null) {
       _alertComparisson = parseComparissonFromString(widget.alert!.comparisson.value);
@@ -56,6 +61,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     }
   }
 
+  /// Method that get all alert devices and fills the [_alertAnimals] list
   Future<void> _getAlertDevices(BigInt idAlert) async {
     await getAlertAnimals(idAlert).then((allDevices) {
       if (mounted) {
@@ -64,6 +70,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
+  /// Method that inserts the devices for the alert [idAlert]
   Future<void> _addAlertDevices(BigInt idAlert) async {
     for (var device in _alertAnimals) {
       await addAlertAnimal(
@@ -75,6 +82,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
     }
   }
 
+  /// Method that updates the [widget.alert] with the new data
+  ///
+  /// This method replaces all data even if it didn't change
   Future<void> _updateAlert() async {
     await updateUserAlert(
       widget.alert!.copyWith(
@@ -94,6 +104,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     );
   }
 
+  /// Method that creates a new [UserAlertCompanion] and inserts on the database
   Future<void> _createAlert() async {
     final idAlert = BigInt.from(Random().nextInt(999999));
     final newAlert = UserAlertCompanion(
@@ -112,6 +123,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
+  /// Method that removes the alert animal on [index] from the [_alertAnimals] list
   Future<void> _removeAlert(int index) async {
     await removeAlertAnimal(
       widget.alert!.idAlert.value,
@@ -127,6 +139,9 @@ class _AddAlertPageState extends State<AddAlertPage> {
     );
   }
 
+  /// Method that pushes to the devices pages and allows to select the devices for the alert
+  ///
+  /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
   Future<void> _onAddAnimals() async {
     Navigator.of(context)
         .pushNamed(
@@ -152,6 +167,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
+  /// Method that validates the input value
   String? _validateInputValue(String? value, AppLocalizations localizations) {
     if (value == null) {
       return localizations.insert_value.capitalize();
