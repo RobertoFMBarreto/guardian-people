@@ -1,16 +1,21 @@
-# guardian
+# Guardian
 
-A new Flutter project.
+Flutter app for animal tracking
 
-## Getting Started
+## Documentation
 
-This project is a starting point for a Flutter application.
+To access the project documentation run:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+# install dartdoc tool to generate the docs
+$ dart pub global activate dartdoc
+# run the documentation tool
+$ dart doc .
+...
+# if it works activate the dhttpd package for web
+$ dart pub global activate dhttpd
+# copy the path given in the final of third step and replace doc/api
+$ dhttpd --path doc/api
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Then go to [docs folder](./doc/api/index.html)(/docs)
