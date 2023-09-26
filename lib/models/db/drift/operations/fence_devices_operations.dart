@@ -87,10 +87,6 @@ Future<List<Animal>> getFenceAnimals(BigInt idFence) async {
 
   List<Animal> fenceAnimals = [];
 
-  for (var dt in data) {
-    print(dt.data);
-  }
-
   fenceAnimals.addAll(
     data.map(
       (deviceData) => Animal(

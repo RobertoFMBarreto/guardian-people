@@ -24,7 +24,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
 
   late Future _future;
 
-  FenceData? _selectedFence = null;
+  FenceData? _selectedFence;
   bool isInteractingFence = false;
 
   String _searchString = '';
@@ -214,7 +214,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                           : DevicesLocationsMap(
                               key: Key(_fences.toString()),
                               showCurrentPosition: true,
-                              animals: [],
+                              animals: const [],
                               fences: _fences,
                               centerOnPoly: _fences.isNotEmpty,
                             ),

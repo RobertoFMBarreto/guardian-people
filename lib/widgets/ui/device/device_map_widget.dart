@@ -99,7 +99,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               });
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
-                  (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -112,8 +113,10 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
               }
             });
           } else {
-            await deleteEverything();
-            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+            deleteEverything().then(
+              (_) => Navigator.pushNamedAndRemoveUntil(
+                  context, '/login', (Route<dynamic> route) => false),
+            );
           }
         });
       } else if (response.statusCode == 507) {
@@ -124,7 +127,8 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
           });
           if (!hasShown) {
             setShownNoServerConnection(true).then(
-              (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+              (_) =>
+                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(

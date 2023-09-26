@@ -150,11 +150,6 @@ Future<List<UserAlertCompanion>> getDeviceUnselectedAlerts(String idDevice) asyn
 ''', variables: [drift.Variable(idDevice)])).get();
 
   List<UserAlertCompanion> alerts = [];
-  print(data);
-  print(idDevice);
-  for (var alert in data) {
-    print(alert.data);
-  }
 
   alerts.addAll(
     data.map(

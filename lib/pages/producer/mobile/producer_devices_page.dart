@@ -110,20 +110,24 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
-                  (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
                 );
               }
             });
           } else {
-            await deleteEverything();
-            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+            deleteEverything().then(
+              (_) => Navigator.pushNamedAndRemoveUntil(
+                  context, '/login', (Route<dynamic> route) => false),
+            );
           }
         });
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
             setShownNoServerConnection(true).then(
-              (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+              (_) =>
+                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
             );
           }
         });

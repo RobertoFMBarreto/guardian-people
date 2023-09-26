@@ -75,7 +75,8 @@ class _LoginFormState extends State<LoginForm> {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
-                  (_) => showDialog(context: context, builder: (context) => ServerErrorDialogue()),
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
                 );
               }
             });

@@ -14,10 +14,10 @@ class _CustomCircularProgressIndicatorState extends State<CustomCircularProgress
   bool showVerifyConnection = false;
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 5)).then((value) {
+    Future.delayed(const Duration(seconds: 5)).then((value) {
       if (mounted) setState(() => showTakingLong = true);
     });
-    Future.delayed(Duration(seconds: 15)).then((value) {
+    Future.delayed(const Duration(seconds: 15)).then((value) {
       if (mounted) setState(() => showVerifyConnection = true);
     });
     super.initState();

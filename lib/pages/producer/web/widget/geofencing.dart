@@ -37,7 +37,6 @@ class Geofencing extends StatefulWidget {
 class _GeofencingState extends State<Geofencing> {
   List<Polygon> _polygons = <Polygon>[];
 
-  final _circles = <Polygon>[];
   final TextEditingController _nameController = TextEditingController();
 
   late PolyEditor _polyEditor;
@@ -218,8 +217,6 @@ class _GeofencingState extends State<Geofencing> {
         ),
       );
     }
-    print(_editingPolygon.points.length);
-    print(idFence);
     // second update fence points
     createFencePointFromList(_editingPolygon.points, idFence).then(
       (value) => Navigator.of(context).pop(_editingPolygon.points),
