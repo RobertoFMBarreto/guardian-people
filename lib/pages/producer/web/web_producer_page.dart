@@ -40,6 +40,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
     super.initState();
   }
 
+  /// Method that replaces the current page on screen sending the needed data to it
   void goToPage(int index) {
     setState(() {
       _selectedDestination = index;

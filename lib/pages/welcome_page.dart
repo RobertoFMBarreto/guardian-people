@@ -7,6 +7,7 @@ import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
+/// Class that represents the welcome page
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
 
@@ -22,6 +23,9 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
   }
 
+  /// Method that gets the user id and the session token redirecting afterwards to the correct home page
+  ///
+  /// In case the user id or token are null the user is sent to login
   Future<void> _getToken(BuildContext context) async {
     await getUid(context).then(
       (idUser) async {

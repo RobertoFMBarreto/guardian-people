@@ -22,6 +22,7 @@ import 'package:guardian/widgets/ui/device/device_item.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
+/// Class that represents the web produce home page
 class WebProducerHomePage extends StatefulWidget {
   final Function(Animal) onSelectAnimal;
   const WebProducerHomePage({super.key, required this.onSelectAnimal});
@@ -44,10 +45,12 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the page
   Future<void> _setup() async {
     await _loadDevices();
   }
 
+  /// Method that loads the local devices into the [_animals] list an then loads from api
   Future<void> _loadDevices() async {
     getUserAnimalsWithData().then((allAnimals) {
       setState(() {
@@ -57,6 +60,11 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     });
   }
 
+  /// Method that loads all devices from the API and then loads from database into the [_animals] list
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
@@ -147,6 +155,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     });
   }
 
+  /// Method that loads the alerts into the [_notifications] list
   Future<void> _loadAlerts() async {
     getAllNotifications().then((allNotifications) {
       setState(() {
@@ -155,6 +164,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     });
   }
 
+  /// Method that loads the fences into the [_fences] list
   Future<void> _loadFences() async {
     getUserFences().then((allFences) {
       setState(() {

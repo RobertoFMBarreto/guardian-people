@@ -22,6 +22,7 @@ import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 
+/// Class that represents the web producer device page
 class WebProducerDevicePage extends StatefulWidget {
   final Animal? selectedAnimal;
   const WebProducerDevicePage({super.key, this.selectedAnimal});
@@ -57,6 +58,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     super.initState();
   }
 
+  /// Method that does the initial setup for the page
   Future<void> _setup() async {
     setState(() {
       _selectedAnimal = widget.selectedAnimal;
@@ -64,6 +66,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     await _loadDevices();
   }
 
+  /// Method that loads the local devices into the [_animals] list
+  ///
+  /// After that loads the devices from the api
   Future<void> _loadDevices() async {
     getUserAnimalsWithData().then((allDevices) {
       setState(() {
@@ -74,6 +79,11 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     });
   }
 
+  /// Method that loads all devices from the API and then loads from database into the [_animals] list
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
   Future<void> _getDevicesFromApi() async {
     AnimalProvider.getAnimals().then((response) async {
       if (response.statusCode == 200) {
@@ -164,6 +174,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     });
   }
 
+  /// Method that filters the animals and loads them into the [_animals] list
   Future<void> filterAnimals() async {
     await getUserAnimalsFiltered(
       batteryRangeValues: _batteryRangeValues,
@@ -179,6 +190,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     );
   }
 
+  /// Method that loads device data from the api and then loads from database into the [_animals] list
   Future<void> _getDeviceData() async {
     await getAnimalData(
       startDate: _startDate,

@@ -11,6 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
+/// Class that represents the web producer fences page
 class WebProducerFencesPage extends StatefulWidget {
   const WebProducerFencesPage({super.key});
 
@@ -37,10 +38,12 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the page
   Future<void> _setup() async {
     await _loadFences();
   }
 
+  /// Method that loads the fences into the [_fences] list
   Future<void> _loadFences() async {
     await getUserFences().then((allFences) => setState(() {
           _fences.addAll(allFences);
