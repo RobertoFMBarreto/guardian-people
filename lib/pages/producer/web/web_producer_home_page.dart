@@ -73,7 +73,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
             idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
           ));
           if (dt['last_device_data'] != null) {
-            await createDeviceData(
+            await createAnimalData(
               AnimalLocationsCompanion(
                 accuracy: dt['last_device_data']['accuracy'] != null
                     ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
@@ -148,7 +148,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   }
 
   Future<void> _loadAlerts() async {
-    getUserNotifications().then((allNotifications) {
+    getAllNotifications().then((allNotifications) {
       setState(() {
         _notifications.addAll(allNotifications);
       });

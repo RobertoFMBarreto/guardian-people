@@ -37,7 +37,7 @@ class _AlertsPageState extends State<AlertsPage> {
   }
 
   Future<void> _loadAlerts() async {
-    getUserNotifications().then(
+    getAllNotifications().then(
       (allAlerts) {
         if (mounted) {
           setState(() {

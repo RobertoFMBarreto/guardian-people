@@ -1,6 +1,11 @@
 import 'package:drift/drift.dart';
 import 'package:guardian/models/db/drift/tables/animal.dart';
 
+/// This class represents the AnimalLocations database table
+///
+/// [animalDataId] is the primary key
+///
+/// [idAnimal] relates with the table [Animal] on its primary key
 class AnimalLocations extends Table {
   Int64Column get animalDataId => int64()();
   Int64Column get idAnimal => int64().references(Animal, #idAnimal).nullable()();

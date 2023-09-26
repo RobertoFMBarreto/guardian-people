@@ -6,7 +6,7 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/translator/animals_translator.dart';
+import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -137,7 +137,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   }
 
   Future<void> _loadAlertNotifications() async {
-    await getUserNotifications().then((allAlerts) {
+    await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
       setState(() => _alertNotifications.addAll(allAlerts));
     });

@@ -1,3 +1,4 @@
 import 'package:drift/drift.dart';
 
-LazyDatabase openConnection() => throw UnimplementedError();
+/// Just a stub for when the app is loaded in a unsupported platform
+LazyDatabase openConnection() => throw UnsupportedError('Build platform isnt supported');

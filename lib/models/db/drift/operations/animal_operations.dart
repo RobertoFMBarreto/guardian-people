@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
+/// Method for creating an [animal] returning it as an [AnimalCompanion]
 Future<AnimalCompanion> createAnimal(
   AnimalCompanion animal,
 ) async {
@@ -12,11 +13,13 @@ Future<AnimalCompanion> createAnimal(
   return animal;
 }
 
+/// Method for deleting an animal [idAnimal]
 Future<void> deleteAnimal(BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.animal)..where((tbl) => tbl.idAnimal.equals(idAnimal))).go();
 }
 
+/// Method for updating an [animal] returning it as an [AnimalCompanion]
 Future<AnimalCompanion> updateAnimal(AnimalCompanion animal) async {
   final db = Get.find<GuardianDb>();
   db.update(db.animal).replace(animal);
@@ -24,6 +27,7 @@ Future<AnimalCompanion> updateAnimal(AnimalCompanion animal) async {
   return animal;
 }
 
+/// Method to get animal [idAnimal] information as [AnimalData]
 Future<AnimalData> getAnimal(BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data =
@@ -32,6 +36,7 @@ Future<AnimalData> getAnimal(BigInt idAnimal) async {
   return data;
 }
 
+/// Method to get all user animals as a [List<AnimalData>]
 Future<List<AnimalData>> getUserAnimals() async {
   final db = Get.find<GuardianDb>();
 
@@ -50,7 +55,8 @@ Future<List<AnimalData>> getUserAnimals() async {
   return data;
 }
 
-Future<Animal> getAnimalWithData(BigInt idDevice) async {
+/// Method to get an animal [idAnimal] information with all its locations data as an [Animal]
+Future<Animal> getAnimalWithData(BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
     '''
@@ -62,7 +68,7 @@ Future<Animal> getAnimalWithData(BigInt idDevice) async {
       WHERE ${db.animal.actualTableName}.${db.animalLocations.idAnimal.name} = ?
     ''',
     variables: [
-      drift.Variable.withBigInt(idDevice),
+      drift.Variable.withBigInt(idAnimal),
     ],
   ).getSingle();
 
@@ -92,6 +98,7 @@ Future<Animal> getAnimalWithData(BigInt idDevice) async {
       ]);
 }
 
+/// Method to get all user animals information with last location data as a [List<Animal>]
 Future<List<Animal>> getUserAnimalsWithData() async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect('''
@@ -155,6 +162,9 @@ Future<List<Animal>> getUserAnimalsWithData() async {
   return animals;
 }
 
+/// Method to search [searchString] all user animals and get them with information and last location data as a [List<Animal>]
+///
+/// These animals can be filtered by ranges: [batteryRangeValues], [dtUsageRangeValues], [tmpRangeValues], [elevationRangeValues]
 Future<List<Animal>> getUserAnimalsFiltered({
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
@@ -249,6 +259,9 @@ Future<List<Animal>> getUserAnimalsFiltered({
   return animals;
 }
 
+/// Method to get all user animals with last location [List<Animal>] that aren't selected for a fence [idFence] allowing to filter and search them
+///
+/// These animals can be filtered by ranges: [batteryRangeValues], [dtUsageRangeValues], [tmpRangeValues], [elevationRangeValues]
 Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
@@ -351,6 +364,9 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
   return devices;
 }
 
+/// Method to get all user animals with last location [List<Animal>] that aren't selected for an alert [idAlert] allowing to filter and search them
+///
+/// These animals can be filtered by ranges: [batteryRangeValues], [dtUsageRangeValues], [tmpRangeValues], [elevationRangeValues]
 Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,

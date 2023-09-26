@@ -4,7 +4,14 @@ import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
-Future<List<Animal>> getProducerDevicesFiltered({
+/// Allows to get a producer [idUser] animals filtered
+///
+/// The animals can be filtered by ranges: [batteryRangeValues], [dtUsageRangeValues], [tmpRangeValues], [elevationRangeValues]
+///
+/// With the [searchString] these animals are searched by name
+///
+/// Finally returns [Future<List<Animal>>] with all animals filtered
+Future<List<Animal>> getProducerAnimalsFiltered({
   required RangeValues batteryRangeValues,
   required RangeValues dtUsageRangeValues,
   required RangeValues tmpRangeValues,
@@ -82,7 +89,10 @@ Future<List<Animal>> getProducerDevicesFiltered({
   return devices;
 }
 
-Future<List<Animal>> getProducerDevices(BigInt idUser) async {
+/// Allows to get all producer animals from the user [idUser]
+///
+/// Finally returns [Future<List<Animal>>] with all the producer animals
+Future<List<Animal>> getProducerAnimals(BigInt idUser) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.animal)..where((tbl) => tbl.idUser.equals(idUser))).get();
   return data.map((e) => Animal(animal: e.toCompanion(true), data: [])).toList();

@@ -3,34 +3,38 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
-Future<AlertAnimalsCompanion> addAlertDevice(AlertAnimalsCompanion alertDevice) async {
+/// Method for adding an [alertAnimal] to the database retuning it as an [AlertAnimalsCompanion]
+Future<AlertAnimalsCompanion> addAlertAnimal(AlertAnimalsCompanion alertAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.alertAnimals)
         ..where((tbl) =>
-            tbl.idAnimal.equals(alertDevice.idAnimal.value) &
-            tbl.idAlert.equals(alertDevice.idAlert.value)))
+            tbl.idAnimal.equals(alertAnimal.idAnimal.value) &
+            tbl.idAlert.equals(alertAnimal.idAlert.value)))
       .get();
   if (data.isEmpty) {
-    db.into(db.alertAnimals).insertOnConflictUpdate(alertDevice);
+    db.into(db.alertAnimals).insertOnConflictUpdate(alertAnimal);
   }
-  return alertDevice;
+  return alertAnimal;
 }
 
-Future<void> removeAllAlertDevices(BigInt idAlert) async {
+/// Method for removing all alert animals based on an alert [idAlert]
+Future<void> removeAllAlertAnimals(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertAnimals)..where((tbl) => tbl.idAlert.equals(idAlert))).go();
 }
 
-Future<void> removeAlertDevice(BigInt idAlert, BigInt idDevice) async {
+/// Method for removing an animal [idAnimal] from an alert [idAlert]
+Future<void> removeAlertAnimal(BigInt idAlert, BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertAnimals)
         ..where(
-          (tbl) => tbl.idAlert.equals(idAlert) & tbl.idAnimal.equals(idDevice),
+          (tbl) => tbl.idAlert.equals(idAlert) & tbl.idAnimal.equals(idAnimal),
         ))
       .go();
 }
 
-Future<List<Animal>> getAlertDevices(BigInt idAlert) async {
+/// Method to get all alert [idAlert] animals as a [List<Animal>]
+Future<List<Animal>> getAlertAnimals(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.customSelect(
     '''
@@ -68,8 +72,8 @@ Future<List<Animal>> getAlertDevices(BigInt idAlert) async {
     ],
   )).get();
 
-  List<Animal> devices = [];
-  devices.addAll(
+  List<Animal> animals = [];
+  animals.addAll(
     data.map(
       (deviceData) => Animal(
         animal: AnimalCompanion(
@@ -100,15 +104,16 @@ Future<List<Animal>> getAlertDevices(BigInt idAlert) async {
       ),
     ),
   );
-  return devices;
+  return animals;
 }
 
-Future<List<UserAlertCompanion>> getDeviceAlerts(BigInt idDevice) async {
+/// Method to get all the animal [idAnimal] alerts as a [List<UserAlertCompanion>]
+Future<List<UserAlertCompanion>> getAnimalAlerts(BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.alertAnimals).join([
     drift.innerJoin(db.userAlert, db.userAlert.idAlert.equalsExp(db.alertAnimals.idAlert)),
   ])
-        ..where(db.alertAnimals.idAnimal.equals(idDevice)))
+        ..where(db.alertAnimals.idAnimal.equals(idAnimal)))
       .get();
   List<UserAlertCompanion> alerts = [];
 
@@ -127,16 +132,9 @@ Future<List<UserAlertCompanion>> getDeviceAlerts(BigInt idDevice) async {
   return alerts;
 }
 
-Future<List<UserAlertCompanion>> getDeviceUnselectedAlerts(String idDevice) async {
+/// Method to get all alerts that aren't associated with the device [idDevice] as a [List<UserAlertCompanion>]
+Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) async {
   final db = Get.find<GuardianDb>();
-  // final data = await (db.select(db.userAlert).join(
-  //   [
-  //     drift.leftOuterJoin(
-  //         db.alertDevices, db.alertDevices.idAlert.equalsExp(db.alertDevices.idAlert))
-  //   ],
-  // )..where(db.alertDevices.idDevice.isNotValue(idDevice)))
-  //     .get();
-
   final data = await (db.customSelect('''
       SELECT 
         ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name},

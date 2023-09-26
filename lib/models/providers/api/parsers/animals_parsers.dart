@@ -6,6 +6,7 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:drift/drift.dart' as drift;
 
+/// Method that allows to read json [body] and parse to an [AnimalCompanion] inserting it on the database in the process
 Future<void> animalsFromJson(String body) async {
   final data = jsonDecode(body);
   for (var dt in data) {
@@ -23,9 +24,10 @@ Future<void> animalsFromJson(String body) async {
   }
 }
 
+/// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
 Future<void> animalDataFromJson(Map<String, dynamic> data, String idAnimal) async {
   List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
-  await createDeviceData(
+  await createAnimalData(
     AnimalLocationsCompanion(
       dataUsage: drift.Value(Random().nextInt(10)),
       date: drift.Value(DateTime.parse(data['date'])),

@@ -12,6 +12,7 @@ import 'connection/connection.dart';
 
 part 'database.g.dart';
 
+/// This class represents the guardian database
 @DriftDatabase(tables: [
   User,
   Fence,

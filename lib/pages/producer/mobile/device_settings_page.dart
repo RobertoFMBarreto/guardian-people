@@ -54,7 +54,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   }
 
   Future<void> _getDeviceAlerts() async {
-    await getDeviceAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
+    await getAnimalAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
       if (mounted) {
         _alerts = [];
         setState(() => _alerts.addAll(allAlerts));
@@ -88,9 +88,8 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
           _alerts.addAll(selectedAlerts);
         });
         for (var selectedAlert in selectedAlerts) {
-          await addAlertDevice(
+          await addAlertAnimal(
             AlertAnimalsCompanion(
-              alertAnimalId: drift.Value(BigInt.from(Random().nextInt(999999))),
               idAnimal: widget.animal.animal.idAnimal,
               idAlert: selectedAlert.idAlert,
             ),
@@ -188,7 +187,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     onTap: () {},
                                     onDelete: (alert) {
                                       // TODO: Delete code for alert
-                                      removeAlertDevice(
+                                      removeAlertAnimal(
                                           alert.idAlert.value, widget.animal.animal.idAnimal.value);
                                       setState(() {
                                         _alerts.removeWhere(

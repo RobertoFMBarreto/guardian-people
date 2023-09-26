@@ -4,6 +4,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
+/// Method for creating an alert notification [notification] returning is as an [AlertNotificationCompanion]
 Future<AlertNotificationCompanion> createAlertNotification(
     AlertNotificationCompanion notification) async {
   final db = Get.find<GuardianDb>();
@@ -12,11 +13,13 @@ Future<AlertNotificationCompanion> createAlertNotification(
   return notification;
 }
 
+/// Method for removing all notifications
 Future<void> removeAllNotifications() async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertNotification)).go();
 }
 
+/// Method for removing a single notification [notificationId]
 Future<void> removeNotification(BigInt notificationId) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertNotification)
@@ -26,6 +29,7 @@ Future<void> removeNotification(BigInt notificationId) async {
       .go();
 }
 
+/// Method for removing all notifications from an alert [idAlert]
 Future<void> removeAllAlertNotifications(BigInt idAlert) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertNotification)
@@ -35,7 +39,8 @@ Future<void> removeAllAlertNotifications(BigInt idAlert) async {
       .go();
 }
 
-Future<List<AlertNotification>> getUserNotifications() async {
+/// Method to get all notifications as a [List<AlertNotification>]
+Future<List<AlertNotification>> getAllNotifications() async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
     '''

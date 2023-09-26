@@ -10,7 +10,7 @@ import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/translator/animals_translator.dart';
+import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';

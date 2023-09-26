@@ -90,7 +90,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
           ));
           if (dt['last_device_data'] != null) {
-            await createDeviceData(
+            await createAnimalData(
               AnimalLocationsCompanion(
                 accuracy: dt['last_device_data']['accuracy'] != null
                     ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
@@ -200,7 +200,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             final data = jsonDecode(response.body);
             List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
             for (var dt in data) {
-              await createDeviceData(
+              await createAnimalData(
                 AnimalLocationsCompanion(
                   accuracy: dt['accuracy'] != null
                       ? drift.Value(double.tryParse(dt['accuracy']))

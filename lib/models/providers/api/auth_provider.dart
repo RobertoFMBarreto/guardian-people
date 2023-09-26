@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:http/http.dart';
 
+/// This class is the authentication provider
 class AuthProvider {
+  /// Method for login based on [email] and [password]
   static Future<Response> login(String email, String password) async {
     Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     var url = Uri.http('192.168.10.71:7856', '/api/v1/login');
@@ -21,6 +23,7 @@ class AuthProvider {
     }
   }
 
+  /// Method for refresh user session token
   static Future<Response> refreshToken() async {
     String? token = await getToken();
     Map<String, String> headers = {

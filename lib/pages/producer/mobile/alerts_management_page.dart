@@ -45,7 +45,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
 
   Future<void> _loadAlerts() async {
     if (widget.isSelect) {
-      await getDeviceUnselectedAlerts(widget.idAnimal!).then(
+      await getAnimalUnselectedAlerts(widget.idAnimal!).then(
         (allAlerts) {
           if (mounted) {
             setState(() {

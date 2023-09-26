@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
+/// Method for creating a [fenceDevice] returning it as a [FenceAnimalsCompanion]
 Future<FenceAnimalsCompanion> createFenceDevice(FenceAnimalsCompanion fenceDevice) async {
   final db = Get.find<GuardianDb>();
   db.into(db.fenceAnimals).insertOnConflictUpdate(fenceDevice);
@@ -10,6 +11,7 @@ Future<FenceAnimalsCompanion> createFenceDevice(FenceAnimalsCompanion fenceDevic
   return fenceDevice;
 }
 
+/// Method to get the fence of an animal [idAnimal] returning as [FenceData?] because the animal can have no fence
 Future<FenceData?> getAnimalFence(BigInt idAnimal) async {
   // TODO check if works
   final db = Get.find<GuardianDb>();
@@ -23,6 +25,7 @@ Future<FenceData?> getAnimalFence(BigInt idAnimal) async {
   return dt;
 }
 
+/// Method to remove a fence [idFence] from an animal [idAnimal]
 Future<void> removeAnimalFence(BigInt idFence, BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
 
@@ -33,6 +36,7 @@ Future<void> removeAnimalFence(BigInt idFence, BigInt idAnimal) async {
       .go();
 }
 
+/// Method to remove all animals from a fence [idFence]
 Future<void> removeAllFenceAnimals(BigInt idFence) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.fenceAnimals)
@@ -42,6 +46,7 @@ Future<void> removeAllFenceAnimals(BigInt idFence) async {
       .go();
 }
 
+/// Method to get all animals [List<Animal>] selected for a fence [idFence]
 Future<List<Animal>> getFenceAnimals(BigInt idFence) async {
   final db = Get.find<GuardianDb>();
   // TODO try join

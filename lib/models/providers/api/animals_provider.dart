@@ -2,10 +2,9 @@ import 'dart:io';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:http/http.dart';
 
-String getTimezone(Duration offset) =>
-    "${offset.isNegative ? "-" : "+"}${offset.inHours.abs().toString().padLeft(2, "0")}:${(offset.inMinutes - offset.inHours * 60).abs().toString().padLeft(2, "0")}";
-
+/// This class is the provider of animals from the guardian api
 class AnimalProvider {
+  /// Method for getting all user animals from api
   static Future<Response> getAnimals() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -26,6 +25,7 @@ class AnimalProvider {
     }
   }
 
+  /// Method for getting all animal data [idAnimal] between [startDate] and [endDate]
   static Future<Response> getAnimalData(
       BigInt idAnimal, DateTime startDate, DateTime endDate) async {
     String? token = await getToken();

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 
+/// Method to dele the intire database
 Future<void> deleteEverything() {
   final db = Get.find<GuardianDb>();
   return db.transaction(() async {

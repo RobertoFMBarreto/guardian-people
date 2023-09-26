@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:math' show cos, sqrt, asin;
 
+/// Method that allows to get the map tile [TileLayer]
 TileLayer getTileLayer(BuildContext context) {
   return TileLayer(
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -13,6 +14,7 @@ TileLayer getTileLayer(BuildContext context) {
   );
 }
 
+/// Method that allows to get all circle fences drawed [CircleLayer]
 CircleLayer getCircleFences(List<Polygon> circles) {
   return CircleLayer(
     circles: [
@@ -40,13 +42,17 @@ CircleLayer getCircleFences(List<Polygon> circles) {
   );
 }
 
+/// Method that allows to get all polygon fences drawed [PolygonLayer]
 PolygonLayer getPolygonFences(List<Polygon> polygons) {
   return PolygonLayer(
     polygons: polygons,
   );
 }
 
-/// Method that allows to get the distance in meters between two points
+/// Method that allows to get the distance in meters between two coordinates
+///
+/// * Coordinate 1 [lat1][lon1]
+/// * Coordinate 2 [lat2][lon2]
 double calculateDistance(lat1, lon1, lat2, lon2) {
   var p = 0.017453292519943295;
   var c = cos;

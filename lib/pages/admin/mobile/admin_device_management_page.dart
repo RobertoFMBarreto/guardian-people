@@ -45,7 +45,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
 
   Future<void> _loadAnimals() async {
     // TODO : create operation for this
-    await getProducerDevices(widget.producerId).then((allAnimals) {
+    await getProducerAnimals(widget.producerId).then((allAnimals) {
       if (mounted) {
         setState(() {
           _animals.addAll(

@@ -9,6 +9,7 @@ import 'package:guardian/models/providers/permissions_provider.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Method that checks if there if wifi connection by dns lookup google.com
 Future<bool> checkInternetConnection(BuildContext context) async {
   return await InternetAddress.lookup('google.com').then((result) {
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -20,6 +21,9 @@ Future<bool> checkInternetConnection(BuildContext context) async {
       false;
 }
 
+/// Method that allows to setup the wifi connection checker
+///
+/// This wifi connection checker continuously verifies the internet connection
 StreamSubscription<ConnectivityResult> wifiConnectionChecker(
     {required Function() onHasConnection, required Function() onNotHasConnection}) {
   return Connectivity().onConnectivityChanged.listen(
@@ -34,10 +38,7 @@ StreamSubscription<ConnectivityResult> wifiConnectionChecker(
   );
 }
 
-/// Method that allows to get device current location
-/// @param onGetPosition -> Method to run when we get the device location
-/// @param context -> current app context
-
+/// Method that allows to get device current location asking for permission if not given
 Future<void> getCurrentPosition(
   BuildContext context,
   Function(Position position) onGetPosition,

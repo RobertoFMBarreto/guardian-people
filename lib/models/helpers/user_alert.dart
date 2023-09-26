@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// This enum holds the comparisson options of an [UserAlert]
 enum AlertComparissons {
   equal,
   greater,
@@ -9,13 +10,16 @@ enum AlertComparissons {
   lessOrEqual,
 }
 
+/// This enum holds the parameters of an [UserAlert]
 enum AlertParameter {
   temperature,
   dataUsage,
   battery,
 }
 
+/// Extensions of [AlertComparissons]
 extension ParseCmpToString on AlertComparissons {
+  /// Extension to parse from [AlertComparissons] to [String]
   String toShortString(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     String value = toString().split('.').last;
@@ -41,7 +45,9 @@ extension ParseCmpToString on AlertComparissons {
   }
 }
 
+/// Extensions of [AlertParameter]
 extension ParseParToString on AlertParameter {
+  /// Extension to parse from [AlertParameter] to [String]
   String toShortString(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     String value = toString().split('.').last;
@@ -61,6 +67,7 @@ extension ParseParToString on AlertParameter {
   }
 }
 
+/// Method that parses from [text] [String] to [AlertParameter]
 AlertParameter parseAlertParameterFromString(String text) {
   String value = text.toString().split('.').last;
   switch (value) {
@@ -78,6 +85,7 @@ AlertParameter parseAlertParameterFromString(String text) {
   }
 }
 
+/// Method that parses from [text] [String] to [AlertComparisson]
 AlertComparissons parseComparissonFromString(String text) {
   String value = text.toString().split('.').last;
 

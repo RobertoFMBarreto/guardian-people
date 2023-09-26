@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/producer_with_devices_amount.dart';
 
+/// Allows to get the producer data
+///
+/// Gets the producer data based on [idUser] that is the id of the producer
+///
+/// Returns all all user data in [Future<UserData>]
 Future<UserData> getProducer(BigInt idUser) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.user)..where((tbl) => tbl.idUser.equals(idUser))).getSingle();
@@ -10,6 +15,11 @@ Future<UserData> getProducer(BigInt idUser) async {
   return data;
 }
 
+/// Allows to search producers and get the amount of devices they have
+/// * `@param: [String]` - searchString
+/// Based on the [searchString] searchs the producers by name and email
+///
+/// Finally returns [Future<List<ProducerWithDevicesAmount>>]
 Future<List<ProducerWithDevicesAmount>> getProducersWithSearchAndDevicesAmount(
     String searchString) async {
   final db = Get.find<GuardianDb>();

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// This class allows access to icons providers of device widgets
 class DeviceWidgetProvider {
-  /*
-  Method for getting the device battery indicator icon
-  @param int deviceBattery -> actual device battery
-  @param Color color -> icon color
-  @returns Battery icon
-  */
+  /// Method to get the device battery indicator icon [Widget] based on the [deviceBattery]
   static Widget getBatteryWidget({
     required int deviceBattery,
     required Color color,
@@ -58,12 +54,7 @@ class DeviceWidgetProvider {
     return icon;
   }
 
-  /*
-  Method for getting the device battery indicator icon
-  @param int deviceBattery -> actual device battery
-  @param Color color -> icon color
-  @returns Battery icon
-  */
+  /// Method to get the device battery indication icon [IconData] based on the [deviceBattery]
   static IconData getBatteryIcon({
     required int deviceBattery,
     required Color color,

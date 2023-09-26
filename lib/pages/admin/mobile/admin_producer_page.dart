@@ -76,7 +76,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
   }
 
   Future<List<Animal>> _filterDevices() async {
-    return await getProducerDevicesFiltered(
+    return await getProducerAnimalsFiltered(
       batteryRangeValues: _batteryRangeValues,
       elevationRangeValues: _elevationRangeValues,
       dtUsageRangeValues: _dtUsageRangeValues,

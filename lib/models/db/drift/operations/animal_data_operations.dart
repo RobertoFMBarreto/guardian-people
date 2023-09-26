@@ -2,27 +2,15 @@ import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 
-Future<AnimalLocationsCompanion> createDeviceData(AnimalLocationsCompanion deviceData) async {
+/// Method for creating animal location data [animalData] returning it as [AnimalLocationsCompanion]
+Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion animalData) async {
   final db = Get.find<GuardianDb>();
-  db.into(db.animalLocations).insertOnConflictUpdate(deviceData);
-  return deviceData;
+  db.into(db.animalLocations).insertOnConflictUpdate(animalData);
+  return animalData;
 }
 
-// Future<List<DeviceData>?> getAllDeviceData(String idDevice) async {
-//   final db = await GuardianDatabase().database;
-//   final data = await db.query(
-//     tableDeviceData,
-//     where: '${DeviceDataFields.idDevice} = ?',
-//     whereArgs: [idDevice],
-//   );
-
-//   if (data.isNotEmpty) {
-//     return data.map((e) => DeviceData.fromJson(e)).toList();
-//   }
-//   return null;
-// }
-
-Future<AnimalLocationsCompanion?> getLastDeviceData(BigInt idAnimal) async {
+/// Method to get last animal data from a single animal [idAnimal] returning as a [AnimalLocationsCompanion]
+Future<AnimalLocationsCompanion?> getLastAnimalData(BigInt idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.animalLocations)
         ..where(
@@ -35,6 +23,7 @@ Future<AnimalLocationsCompanion?> getLastDeviceData(BigInt idAnimal) async {
   return data?.toCompanion(true);
 }
 
+/// Method to get the current registered max elevation in the database
 Future<double> getMaxElevation() async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect('''
@@ -45,6 +34,7 @@ Future<double> getMaxElevation() async {
   return double.parse(data.data['maxElevation'].toString());
 }
 
+/// Method to get the current registered max temperature in the database
 Future<double> getMaxTemperature() async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect('''
@@ -55,6 +45,14 @@ Future<double> getMaxTemperature() async {
   return double.parse(data.data['maxTemperature'].toString());
 }
 
+/// Method to get all animal data from a single animal [idAnimal]
+///
+/// If the [isInterval] parameter is `false` the method returns the last registered data
+///
+/// If the [isInterval] parameter is `true` than [startDate] and [endDate] must be set and with a diffence of
+/// at least 60 seconds. Then the query will select all animal data between [startDate] and [endDate]
+///
+/// Returns the animal data as a [List<AnimalLocationsCompanion>]
 Future<List<AnimalLocationsCompanion>> getAnimalData({
   DateTime? startDate,
   DateTime? endDate,
@@ -62,14 +60,9 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
   bool isInterval = false,
 }) async {
   final db = Get.find<GuardianDb>();
-  List<AnimalLocationsCompanion> deviceData = [];
+  List<AnimalLocationsCompanion> animalData = [];
   List<AnimalLocation> data = [];
   if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
-    // AND ${db.deviceLocations.date.name} BETWEEN ? AND ?
-    //   JOIN ${db.device.actualTableName} ON ${db.device.actualTableName}.${db.device.idDevice.name} = ${db.deviceLocations.actualTableName}.${db.deviceLocations.idDevice.name}
-    //   JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idDevice.name} = ${db.device.actualTableName}.${db.device.idDevice.name}
-    //   WHERE ${db.animal.idAnimal.name} = ?
-    //   ORDER BY ${db.deviceLocations.date.name} DESC
     final dt = await db.customSelect('''
       SELECT * FROM ${db.animalLocations.actualTableName}
       JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name}
@@ -82,7 +75,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
     ]).get();
     if (dt.isNotEmpty) {
       for (var locationData in dt) {
-        deviceData.add(
+        animalData.add(
           AnimalLocationsCompanion(
             accuracy: drift.Value(locationData.data[db.animalLocations.accuracy.name]),
             battery: drift.Value(locationData.data[db.animalLocations.battery.name]),
@@ -111,10 +104,10 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
           ))
         .get();
     if (dt.isNotEmpty) {
-      deviceData.add(dt.first.toCompanion(true));
+      animalData.add(dt.first.toCompanion(true));
     }
   }
 
-  deviceData.addAll(data.map((e) => e.toCompanion(true)));
-  return deviceData;
+  animalData.addAll(data.map((e) => e.toCompanion(true)));
+  return animalData;
 }

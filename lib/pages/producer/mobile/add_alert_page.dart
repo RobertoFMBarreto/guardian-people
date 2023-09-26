@@ -57,7 +57,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   Future<void> _getAlertDevices(BigInt idAlert) async {
-    await getAlertDevices(idAlert).then((allDevices) {
+    await getAlertAnimals(idAlert).then((allDevices) {
       if (mounted) {
         setState(() => _alertAnimals.addAll(allDevices));
       }
@@ -66,9 +66,8 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _addAlertDevices(BigInt idAlert) async {
     for (var device in _alertAnimals) {
-      await addAlertDevice(
+      await addAlertAnimal(
         AlertAnimalsCompanion(
-          alertAnimalId: drift.Value(BigInt.from(Random().nextInt(9999))),
           idAnimal: device.animal.idAnimal,
           idAlert: drift.Value(idAlert),
         ),
@@ -85,7 +84,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
         hasNotification: drift.Value(_sendNotification),
       ),
     ).then(
-      (_) async => await removeAllAlertDevices(widget.alert!.idAlert.value).then(
+      (_) async => await removeAllAlertAnimals(widget.alert!.idAlert.value).then(
         (_) async {
           await _addAlertDevices(widget.alert!.idAlert.value).then(
             (_) => Navigator.of(context).pop(),
@@ -114,7 +113,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   Future<void> _removeAlert(int index) async {
-    await removeAlertDevice(
+    await removeAlertAnimal(
       widget.alert!.idAlert.value,
       _alertAnimals[index].animal.idAnimal.value,
     ).then(
