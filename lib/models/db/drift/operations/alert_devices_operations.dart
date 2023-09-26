@@ -145,16 +145,21 @@ Future<List<UserAlertCompanion>> getDeviceUnselectedAlerts(String idDevice) asyn
         ${db.userAlert.hasNotification.name},
         ${db.userAlert.value.name}
       FROM ${db.userAlert.actualTableName}
-      LEFT JOIN ${db.alertAnimals.actualTableName} ON ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAlert.name} = ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name}
-      WHERE ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAnimal.name} != ? OR ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAnimal.name} IS NULL
+      WHERE ${db.userAlert.idAlert.name} NOT IN 
+        (SELECT ${db.userAlert.idAlert.name} FROM ${db.alertAnimals.actualTableName} WHERE ${db.alertAnimals.idAnimal.name} = ?)
 ''', variables: [drift.Variable(idDevice)])).get();
 
   List<UserAlertCompanion> alerts = [];
+  print(data);
+  print(idDevice);
+  for (var alert in data) {
+    print(alert.data);
+  }
 
   alerts.addAll(
     data.map(
       (e) => UserAlertCompanion(
-        idAlert: drift.Value(e.data[db.userAlert.idAlert.name]),
+        idAlert: drift.Value(BigInt.from(e.data[db.userAlert.idAlert.name])),
         comparisson: drift.Value(e.data[db.userAlert.comparisson.name]),
         hasNotification: drift.Value(e.data[db.userAlert.hasNotification.name] == 1),
         parameter: drift.Value(e.data[db.userAlert.parameter.name]),

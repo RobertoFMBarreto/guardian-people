@@ -276,7 +276,7 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
         ${db.animalLocations.elevation.name},
         ${db.animalLocations.accuracy.name},
         ${db.animalLocations.date.name},
-        ${db.animalLocations.state.name},
+        ${db.animalLocations.state.name}
       FROM ${db.animal.actualTableName} 
       LEFT JOIN (
         SELECT * FROM

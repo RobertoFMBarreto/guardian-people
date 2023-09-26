@@ -48,10 +48,10 @@ Future<List<Animal>> getFenceAnimals(BigInt idFence) async {
   final data = await db.customSelect(
     '''
       SELECT
-        ${db.animal.actualTableName}.${db.animal.idUser.name} as deviceUid,
+        ${db.animal.actualTableName}.${db.animal.idUser.name},
         ${db.animal.animalIdentification.name},
-        ${db.animal.actualTableName}.${db.animal.animalColor.name} as animalColor,
-        ${db.animal.actualTableName}.${db.animal.animalName.name} as animalName,
+        ${db.animal.actualTableName}.${db.animal.animalColor.name},
+        ${db.animal.actualTableName}.${db.animal.animalName.name},
         ${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
         ${db.animalLocations.dataUsage.name},
@@ -63,11 +63,11 @@ Future<List<Animal>> getFenceAnimals(BigInt idFence) async {
         ${db.animalLocations.accuracy.name},
         ${db.animalLocations.date.name},
         ${db.animalLocations.state.name},
-        ${db.animal.actualTableName}.${db.animal.idAnimal.name} as idDevice
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.fence.actualTableName}
       LEFT JOIN ${db.fenceAnimals.actualTableName} ON ${db.fenceAnimals.actualTableName}.${db.fenceAnimals.idFence.name} = ${db.fence.actualTableName}.${db.fence.idFence.name}
       JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.fenceAnimals.actualTableName}.${db.fenceAnimals.idAnimal.name}
-      JOIN (
+      LEFT JOIN (
         SELECT * FROM
           (
             SELECT * FROM ${db.animalLocations.actualTableName}
@@ -87,15 +87,19 @@ Future<List<Animal>> getFenceAnimals(BigInt idFence) async {
 
   List<Animal> fenceAnimals = [];
 
+  for (var dt in data) {
+    print(dt.data);
+  }
+
   fenceAnimals.addAll(
     data.map(
       (deviceData) => Animal(
         animal: AnimalCompanion(
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
-          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+          idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
           isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
           animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
+          idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
         ),
         data: [
@@ -106,8 +110,9 @@ Future<List<Animal>> getFenceAnimals(BigInt idFence) async {
               dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                   deviceData.data[db.animalLocations.date.name])),
-              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
-              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+              animalDataId:
+                  drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
+              idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
               elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
               lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
               lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
