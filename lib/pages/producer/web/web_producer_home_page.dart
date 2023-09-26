@@ -18,7 +18,7 @@ import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/ui/device/device_item.dart';
+import 'package:guardian/widgets/ui/animal/animal_item.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
@@ -206,7 +206,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                                     borderRadius: BorderRadius.circular(8),
                                     child: ListView.builder(
                                       itemCount: _animals.length,
-                                      itemBuilder: (context, index) => DeviceItem(
+                                      itemBuilder: (context, index) => AnimalItem(
                                         animal: _animals[index],
                                         onTap: () {
                                           widget.onSelectAnimal(_animals[index]);
@@ -270,7 +270,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: DevicesLocationsMap(
+                      child: AnimalsLocationsMap(
                         showCurrentPosition: true,
                         animals: _animals,
                         fences: _fences,

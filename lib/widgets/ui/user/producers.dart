@@ -5,6 +5,7 @@ import 'package:guardian/models/db/drift/query_models/producer_with_devices_amou
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'producer.dart';
 
+/// Class that represents the producers list widget
 class Producers extends StatelessWidget {
   final List<ProducerWithDevicesAmount> producers;
   const Producers({super.key, required this.producers});

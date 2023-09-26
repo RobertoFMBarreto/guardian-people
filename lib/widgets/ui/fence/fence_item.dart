@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
 
+/// Class that represents a fence item widget
 class FenceItem extends StatelessWidget {
   final String name;
   final Color color;

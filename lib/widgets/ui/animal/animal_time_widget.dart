@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/date_time_input.dart';
-import 'package:guardian/widgets/ui/device/device_date_card.dart';
+import 'package:guardian/widgets/ui/animal/animal_date_card.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class DeviceTimeRangeWidget extends StatefulWidget {
+/// Class that represents the animal time range widget
+class AnimalTimeRangeWidget extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final Function(DateTime) onStartDateChanged;
   final Function(DateTime) onEndDateChanged;
-  const DeviceTimeRangeWidget({
+  const AnimalTimeRangeWidget({
     super.key,
     required this.startDate,
     required this.endDate,
@@ -20,10 +21,10 @@ class DeviceTimeRangeWidget extends StatefulWidget {
   });
 
   @override
-  State<DeviceTimeRangeWidget> createState() => _DeviceTimeRangeWidgetState();
+  State<AnimalTimeRangeWidget> createState() => _AnimalTimeRangeWidgetState();
 }
 
-class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
+class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
 
@@ -34,6 +35,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     super.initState();
   }
 
+  /// Method that sets the [_startDate] date keeping the backup time
   void _onStartDateChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       //store last date
@@ -51,6 +53,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     });
   }
 
+  /// Method that sets the [_startDate] time keeping the backup date
   void _onStartTimeChanged(DateTime newDate) {
     DateTime backup = _startDate;
     final newTime = DateTime(
@@ -66,6 +69,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     });
   }
 
+  /// Method that sets the [_endDate] date keeping the backup time
   void _onEndDateChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       //store last date
@@ -82,6 +86,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     });
   }
 
+  /// Method that sets the [_endDate] time keeping the backup date
   void _onEndTimeChanged(DateTime newDate) {
     DateTime backup = _endDate;
     final newTime = DateTime(
@@ -97,6 +102,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     });
   }
 
+  /// Method that shows the date picker dialogue
   void _showDateDateSelector(
     BuildContext context,
     AppLocalizations localizations, {
@@ -178,7 +184,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
     return Row(
       children: [
         Expanded(
-          child: DeviceDateCard(
+          child: AnimalDateCard(
             date: widget.startDate,
             onTap: () {
               _showDateDateSelector(
@@ -199,7 +205,7 @@ class _DeviceTimeRangeWidgetState extends State<DeviceTimeRangeWidget> {
           style: theme.textTheme.bodyLarge,
         ),
         Expanded(
-          child: DeviceDateCard(
+          child: AnimalDateCard(
             date: widget.endDate,
             onTap: () {
               _showDateDateSelector(

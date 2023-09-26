@@ -3,10 +3,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:intl/intl.dart';
 
-class DeviceDateCard extends StatelessWidget {
+/// Class that represents the
+class AnimalDateCard extends StatelessWidget {
   final DateTime date;
   final Function() onTap;
-  const DeviceDateCard({super.key, required this.date, required this.onTap});
+  const AnimalDateCard({super.key, required this.date, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents a circle avatar widget with border
 class CircleAvatarBorder extends StatelessWidget {
   final double? radius;
   const CircleAvatarBorder({super.key, this.radius});

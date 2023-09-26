@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 
-class SquareDevicesInfo extends StatelessWidget {
+/// Class that represents the
+class SquareAnimalsInfo extends StatelessWidget {
   final String title;
   final String description;
   final bool isAlert;
   final Function() onTap;
-  const SquareDevicesInfo({
+  const SquareAnimalsInfo({
     super.key,
     required this.title,
     required this.description,

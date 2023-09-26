@@ -4,6 +4,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/ui/common/color_circle.dart';
 
+/// Class that represents a selectable fence item widget
 class SelectableFenceItem extends StatelessWidget {
   final String name;
   final Color color;

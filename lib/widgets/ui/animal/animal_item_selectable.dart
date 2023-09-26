@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 
-class DeviceItemSelectable extends StatelessWidget {
+/// Class that represents an animal item widget that can be selected
+class AnimalItemSelectable extends StatelessWidget {
   final String deviceImei;
   final int? deviceData;
   final int? deviceBattery;
@@ -10,7 +11,7 @@ class DeviceItemSelectable extends StatelessWidget {
   final Function() onSelected;
   final bool isPopPush;
 
-  const DeviceItemSelectable({
+  const AnimalItemSelectable({
     super.key,
     required this.deviceImei,
     required this.deviceData,

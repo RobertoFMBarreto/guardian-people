@@ -5,6 +5,7 @@ import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
+/// Class that represents an alert item widget
 class AlertItem extends StatelessWidget {
   final AlertNotification alertNotification;
   final Function() onRemove;

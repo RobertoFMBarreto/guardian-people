@@ -214,7 +214,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                               key: Key(_selectedFence!.idFence.toString()),
                               fence: _selectedFence,
                             )
-                          : DevicesLocationsMap(
+                          : AnimalsLocationsMap(
                               key: Key(_fences.toString()),
                               showCurrentPosition: true,
                               animals: const [],

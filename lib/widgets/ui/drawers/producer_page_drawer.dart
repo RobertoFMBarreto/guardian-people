@@ -4,6 +4,7 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/widgets/inputs/range_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the producer page drawer widget for filtering
 class ProducerPageDrawer extends StatelessWidget {
   final RangeValues batteryRangeValues;
   final RangeValues dtUsageRangeValues;

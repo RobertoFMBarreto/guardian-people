@@ -16,8 +16,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/pages/producer/web/widget/device_settings.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/ui/device/device_item.dart';
-import 'package:guardian/widgets/ui/device/device_time_widget.dart';
+import 'package:guardian/widgets/ui/animal/animal_item.dart';
+import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
@@ -384,7 +384,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                             child: ListView.builder(
                                                 itemCount: _animals.length,
                                                 itemBuilder: (context, index) {
-                                                  return DeviceItem(
+                                                  return AnimalItem(
                                                     animal: _animals[index],
                                                     isSelected: _selectedAnimal != null &&
                                                         _animals[index].animal.idAnimal.value ==
@@ -440,7 +440,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(top: 20.0),
-                              child: DeviceTimeRangeWidget(
+                              child: AnimalTimeRangeWidget(
                                   startDate: _startDate,
                                   endDate: _endDate,
                                   onStartDateChanged: (newStartDate) {
@@ -521,7 +521,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: _selectedAnimal != null
-                          ? SingleDeviceLocationMap(
+                          ? SingleAnimalLocationMap(
                               showCurrentPosition: true,
                               deviceData: _selectedAnimal!.data
                                   .where((element) => element.lat.value != null)
@@ -538,7 +538,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                               idAnimal: _selectedAnimal!.animal.idAnimal.value,
                               deviceColor: _selectedAnimal!.animal.animalColor.value,
                             )
-                          : DevicesLocationsMap(
+                          : AnimalsLocationsMap(
                               showCurrentPosition: true,
                               animals: _animals,
                               fences: _fences,

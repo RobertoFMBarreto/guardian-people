@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents the color circle widget
 class ColorCircle extends StatelessWidget {
   final Color color;
   final double radius;

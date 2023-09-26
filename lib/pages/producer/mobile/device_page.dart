@@ -7,7 +7,7 @@ import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:guardian/widgets/ui/device/device_map_widget.dart';
+import 'package:guardian/widgets/ui/animal/animal_map_widget.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -253,7 +253,7 @@ class _DevicePageState extends State<DevicePage> {
                       ),
                     ),
                   Expanded(
-                    child: DeviceMapWidget(
+                    child: AnimalMapWidget(
                       key: Key(_reloadNum.toString()),
                       animal: _animal,
                       isInterval: _isInterval,

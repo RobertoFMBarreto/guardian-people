@@ -4,12 +4,13 @@ import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 
-class DeviceItemRemovable extends StatelessWidget {
+/// Class that represents an animal item widget that can be removed
+class AnimalItemRemovable extends StatelessWidget {
   final Animal animal;
   final Function() onRemoveDevice;
   final bool isPopPush;
 
-  const DeviceItemRemovable({
+  const AnimalItemRemovable({
     super.key,
     required this.animal,
     required this.onRemoveDevice,

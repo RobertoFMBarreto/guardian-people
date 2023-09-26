@@ -7,7 +7,8 @@ import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
-class DeviceItem extends StatelessWidget {
+/// Class that represents an animal item widget
+class AnimalItem extends StatelessWidget {
   final Animal animal;
   final bool isBlocked;
   final Function? onBackFromDeviceScreen;
@@ -15,7 +16,7 @@ class DeviceItem extends StatelessWidget {
   final Function()? onTap;
   final bool isSelected;
 
-  const DeviceItem({
+  const AnimalItem({
     super.key,
     this.isBlocked = false,
     required this.animal,
@@ -25,6 +26,7 @@ class DeviceItem extends StatelessWidget {
     this.isSelected = false,
   });
 
+  /// Method that pushes to the correct device page
   void _onTapDevice(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 300)).then((value) {
       if (!kIsWeb) {

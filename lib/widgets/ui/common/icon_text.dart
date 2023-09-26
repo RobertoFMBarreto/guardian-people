@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 
+/// Class that represents an icon with text widget
 class IconText extends StatelessWidget {
   final IconData icon;
   final Color iconColor;

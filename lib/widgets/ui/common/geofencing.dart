@@ -25,6 +25,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 
+/// Class that represents the geofencing widget
 class Geofencing extends StatefulWidget {
   final FenceData? fence;
   final Function()? onFenceCreated;
@@ -50,8 +51,8 @@ class _GeofencingState extends State<Geofencing> {
   String _fenceName = '';
   Color _fenceColor = Colors.red;
 
-  List<LatLng> fencePoints = [];
-  final List<Animal> _devices = [];
+  List<LatLng> _fencePoints = [];
+  final List<Animal> _animals = [];
 
   @override
   void dispose() {
@@ -65,15 +66,22 @@ class _GeofencingState extends State<Geofencing> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the widget
+  ///
+  /// 1. get current position
+  /// 2. load fence points
+  /// 3. load animals
+  /// 4. set the fence data
+  /// 5. init the polygons
   Future<void> _setup() async {
     await _getCurrentPosition();
     if (widget.fence != null) {
       await _loadFencePoints();
-      await _loadDevices();
+      await _loadAnimals();
       if (mounted) {
         setState(() {
           // if there are only 2 points then its a circle
-          _isCircle = fencePoints.length == 2;
+          _isCircle = _fencePoints.length == 2;
           _fenceName = widget.fence!.name;
           _fenceColor = HexColor(widget.fence!.color);
           _nameController.text = _fenceName;
@@ -86,6 +94,7 @@ class _GeofencingState extends State<Geofencing> {
     }
   }
 
+  /// Method that sets the [_editingPolyon] and adds all points to it
   void _initPolygon() {
     _editingPolygon = Polygon(
       color: widget.fence != null
@@ -97,10 +106,11 @@ class _GeofencingState extends State<Geofencing> {
       points: [],
     );
     if (widget.fence != null) {
-      _editingPolygon.points.addAll(fencePoints);
+      _editingPolygon.points.addAll(_fencePoints);
     }
   }
 
+  /// Method that changes the [_editingPolygon] color
   void _changePolygonColor() {
     setState(() {
       _editingPolygon = Polygon(
@@ -120,6 +130,7 @@ class _GeofencingState extends State<Geofencing> {
     });
   }
 
+  /// Method that sets the polygon editor [_polyEditor] with the default configurations
   void _initPolyEditor() {
     _polyEditor = PolyEditor(
       addClosePathMarker: true,
@@ -150,6 +161,7 @@ class _GeofencingState extends State<Geofencing> {
     _polygons.add(_editingPolygon);
   }
 
+  /// Method that loads the current into [_currentPosition]
   Future<void> _getCurrentPosition() async {
     await getCurrentPosition(
       context,
@@ -161,38 +173,42 @@ class _GeofencingState extends State<Geofencing> {
     );
   }
 
+  /// Method that resets [_editingPolygon] points
   void _resetPolygon() {
     _editingPolygon.points.clear();
     if (widget.fence != null) {
-      if (fencePoints.length == 2 && _isCircle) {
-        _editingPolygon.points.addAll(fencePoints);
-      } else if (fencePoints.length > 2 && !_isCircle) {
-        _editingPolygon.points.addAll(fencePoints);
+      if (_fencePoints.length == 2 && _isCircle) {
+        _editingPolygon.points.addAll(_fencePoints);
+      } else if (_fencePoints.length > 2 && !_isCircle) {
+        _editingPolygon.points.addAll(_fencePoints);
       } else {
         _editingPolygon.points.clear();
       }
     }
   }
 
+  /// Method that loads the fence points into the [_fencePoints] list
   Future<void> _loadFencePoints() async {
     await getFencePoints(widget.fence!.idFence).then(
       (allPoints) {
         if (mounted) {
           setState(() {
-            fencePoints = [];
-            fencePoints.addAll(allPoints);
+            _fencePoints = [];
+            _fencePoints.addAll(allPoints);
           });
         }
       },
     );
   }
 
-  Future<void> _loadDevices() async {
+  /// Method that loads the animals into the [_animals] list
+  Future<void> _loadAnimals() async {
     await getUserAnimalsWithData().then(
-      (allDevices) => _devices.addAll(allDevices),
+      (allDevices) => _animals.addAll(allDevices),
     );
   }
 
+  /// Method that stores/updates the fence data and points
   Future<void> _confirmGeofence() async {
     BigInt idFence;
     // if is edit mode
@@ -251,13 +267,13 @@ class _GeofencingState extends State<Geofencing> {
                         key: Key(_fenceColor.toString()),
                         options: MapOptions(
                           bounds:
-                              widget.fence != null ? LatLngBounds.fromPoints(fencePoints) : null,
+                              widget.fence != null ? LatLngBounds.fromPoints(_fencePoints) : null,
                           onTap: (_, ll) {
                             _polyEditor.add(_editingPolygon.points, ll);
                           },
                           center: widget.fence == null
                               ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                              : getFenceCenter(fencePoints),
+                              : getFenceCenter(_fencePoints),
                           zoom: 17,
                           minZoom: 3,
                           maxZoom: 18,
@@ -272,7 +288,7 @@ class _GeofencingState extends State<Geofencing> {
                           ),
                           MarkerLayer(
                             markers: [
-                              ..._devices
+                              ..._animals
                                   .where((element) =>
                                       element.data.isNotEmpty &&
                                       element.data.first.lat.value != null &&

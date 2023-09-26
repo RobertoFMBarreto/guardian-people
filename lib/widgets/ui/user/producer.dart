@@ -4,6 +4,7 @@ import 'package:guardian/custom_page_router.dart';
 
 import 'circle_avatar_border.dart';
 
+/// Class that represents a producer widget
 class Producer extends StatelessWidget {
   final BigInt idUser;
   final String producerName;

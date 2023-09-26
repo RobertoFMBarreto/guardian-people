@@ -12,7 +12,7 @@ import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/widgets/ui/device/device_item_removable.dart';
+import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -158,7 +158,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: DevicesLocationsMap(
+                            child: AnimalsLocationsMap(
                               key: Key('${_fence.color}$_points'),
                               showCurrentPosition: true,
                               animals: _animals,
@@ -220,7 +220,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
                             child: ListView.builder(
                               itemCount: _animals.length,
-                              itemBuilder: (context, index) => DeviceItemRemovable(
+                              itemBuilder: (context, index) => AnimalItemRemovable(
                                 key: Key(_animals[index].animal.idAnimal.value.toString()),
                                 animal: _animals[index],
                                 onRemoveDevice: () {

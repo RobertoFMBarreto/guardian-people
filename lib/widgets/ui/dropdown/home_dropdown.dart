@@ -6,9 +6,11 @@ import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the home dropdown widget
 class HomeDropDown extends StatelessWidget {
   const HomeDropDown({super.key});
 
+  /// Method that redirects the user to the correct page based on [item]
   void _onSelectedItem(int item, BuildContext context) {
     switch (item) {
       case 0:

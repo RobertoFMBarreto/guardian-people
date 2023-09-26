@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
+/// Class that represents the custom circular progress indicator
+///
+/// In case the  progress takes 5 seconds it shows a message warning the for time long time
+///
+/// In case the progress takes 15 seconds it shows a message warning for the connection to wifi
 class CustomCircularProgressIndicator extends StatefulWidget {
   const CustomCircularProgressIndicator({super.key});
 

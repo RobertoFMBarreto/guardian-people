@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/helpers/key_value_pair.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
 
+/// Class that represents the alert comparisson dropdown widget
 class AlertComparissonDropdown extends StatelessWidget {
   final AlertComparissons value;
   final List<KeyValuePair> values;

@@ -6,7 +6,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/widgets/ui/device/device_data_info_list_item.dart';
+import 'package:guardian/widgets/ui/animal/animal_data_info_list_item.dart';
 
 /// Class that represents the animal history page
 class AnimalHistoryPage extends StatefulWidget {
@@ -146,7 +146,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: SingleChildScrollView(
-                        child: DeviceDataInfoList(
+                        child: AnimalDataInfoList(
                           mapKey: _firstItemDataKey,
                           deviceData: _deviceData,
                         ),

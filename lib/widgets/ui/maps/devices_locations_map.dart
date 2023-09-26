@@ -11,14 +11,15 @@ import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:latlong2/latlong.dart';
 
-class DevicesLocationsMap extends StatefulWidget {
+/// Class that represents the animals locations maps for showing all user devices locations
+class AnimalsLocationsMap extends StatefulWidget {
   final bool showCurrentPosition;
   final List<Animal> animals;
   final List<FenceData>? fences;
   final String? reloadMap;
   final bool centerOnPoly;
   final bool centerOnDevice;
-  const DevicesLocationsMap({
+  const AnimalsLocationsMap({
     super.key,
     required this.showCurrentPosition,
     required this.animals,
@@ -29,10 +30,10 @@ class DevicesLocationsMap extends StatefulWidget {
   });
 
   @override
-  State<DevicesLocationsMap> createState() => _DevicesLocationsMapState();
+  State<AnimalsLocationsMap> createState() => _AnimalsLocationsMapState();
 }
 
-class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
+class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
 
@@ -40,8 +41,8 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
 
   Position? _currentPosition;
 
-  List<LatLng> animalsDataPoints = [];
-  List<LatLng> allFencesPoints = [];
+  final List<LatLng> _animalsDataPoints = [];
+  final List<LatLng> _allFencesPoints = [];
 
   @override
   void initState() {
@@ -49,6 +50,11 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the widget
+  ///
+  /// 1. get current position
+  /// 2. load fences
+  /// 3. load animals
   Future<void> _setup() async {
     await getCurrentPosition(
       context,
@@ -64,7 +70,7 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
       if (animal.data.isNotEmpty &&
           animal.data.first.lat.value != null &&
           animal.data.first.lon.value != null) {
-        animalsDataPoints.add(
+        _animalsDataPoints.add(
           LatLng(
             animal.data.first.lat.value!,
             animal.data.first.lon.value!,
@@ -74,13 +80,14 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
     }
   }
 
+  /// Method that loads all fences into the [allCircles], [allPolygons] and [_allFencesPoints] lists
   Future<void> _loadFences() async {
     List<Polygon> allPolygons = [];
     List<Polygon> allCircles = [];
     if (widget.fences != null) {
       for (FenceData fence in widget.fences!) {
         await getFencePoints(fence.idFence).then((points) {
-          allFencesPoints.addAll(points);
+          _allFencesPoints.addAll(points);
           return points.length == 2
               ? allCircles.add(
                   Polygon(
@@ -129,9 +136,9 @@ class _DevicesLocationsMapState extends State<DevicesLocationsMap> {
                     )
                   : null,
               bounds: widget.centerOnPoly
-                  ? LatLngBounds.fromPoints(allFencesPoints)
-                  : animalsDataPoints.isNotEmpty
-                      ? LatLngBounds.fromPoints(animalsDataPoints)
+                  ? LatLngBounds.fromPoints(_allFencesPoints)
+                  : _animalsDataPoints.isNotEmpty
+                      ? LatLngBounds.fromPoints(_animalsDataPoints)
                       : null,
               boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
               zoom: 17,

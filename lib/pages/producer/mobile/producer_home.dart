@@ -21,7 +21,7 @@ import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
-import 'package:guardian/widgets/ui/device/square_devices_info.dart';
+import 'package:guardian/widgets/ui/animal/square_animals_info.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
@@ -236,7 +236,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 8),
-                              child: SquareDevicesInfo(
+                              child: SquareAnimalsInfo(
                                 title: localizations.devices.capitalize(),
                                 description: '${_animals.length}',
                                 onTap: () {
@@ -255,7 +255,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(right: 20, left: 8),
-                              child: SquareDevicesInfo(
+                              child: SquareAnimalsInfo(
                                 title: localizations.alerts.capitalize(),
                                 description: '${_alertNotifications.length}',
                                 isAlert: true,
@@ -283,7 +283,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                         const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 20.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: DevicesLocationsMap(
+                      child: AnimalsLocationsMap(
                         key: Key(_reloadMap.toString()),
                         showCurrentPosition: true,
                         animals: _animals,

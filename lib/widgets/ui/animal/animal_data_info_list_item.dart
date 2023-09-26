@@ -7,44 +7,47 @@ import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DeviceDataInfoList extends StatefulWidget {
+/// Class that represents a animal data with states list widget
+class AnimalDataInfoList extends StatefulWidget {
   final List<AnimalLocationsCompanion> deviceData;
   final GlobalKey mapKey;
-  const DeviceDataInfoList({super.key, required this.deviceData, required this.mapKey});
+  const AnimalDataInfoList({super.key, required this.deviceData, required this.mapKey});
 
   @override
-  State<DeviceDataInfoList> createState() => _DeviceDataInfoListState();
+  State<AnimalDataInfoList> createState() => _AnimalDataInfoListState();
 }
 
-class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
+class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
   int _currentTopicExtent = 10;
-  List<bool> devicesDataInfo = [];
-  List<bool> currentDevicesDataInfo = [];
+  List<bool> animalDataInfo = [];
+  List<bool> currentAnimalDataInfo = [];
   List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
 
   @override
   void initState() {
     if (widget.deviceData.length == 1) {
-      devicesDataInfo.add(false);
+      animalDataInfo.add(false);
     } else {
-      devicesDataInfo = List.generate(10, (index) => false);
+      animalDataInfo = List.generate(10, (index) => false);
     }
     super.initState();
   }
 
+  /// Method that allows to load 10 more items
   void getMoreInfo() {
     // TODO: code to get more 10 data info
     setState(() {
-      devicesDataInfo.addAll(List.generate(10, (index) => false));
+      animalDataInfo.addAll(List.generate(10, (index) => false));
 
       _currentTopicExtent += 10;
     });
   }
 
+  /// Method taht allows to load 10 less items
   void showLessInfo() {
     // TODO: code to show less 10 data info
     setState(() {
-      devicesDataInfo.removeRange(10, _currentTopicExtent);
+      animalDataInfo.removeRange(10, _currentTopicExtent);
       _currentTopicExtent = 10;
     });
   }
@@ -59,10 +62,10 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
           dividerColor: Colors.transparent,
           expansionCallback: (panelIndex, isExpanded) {
             setState(() {
-              devicesDataInfo[panelIndex] = !isExpanded;
+              animalDataInfo[panelIndex] = !isExpanded;
             });
           },
-          children: List.generate(devicesDataInfo.length, (index) {
+          children: List.generate(animalDataInfo.length, (index) {
             int from = Random().nextInt(23);
             int to = Random().nextInt(23);
             while (to <= from) {
@@ -71,7 +74,7 @@ class _DeviceDataInfoListState extends State<DeviceDataInfoList> {
             }
 
             return ExpansionPanel(
-              isExpanded: devicesDataInfo[index],
+              isExpanded: animalDataInfo[index],
               canTapOnHeader: true,
               headerBuilder: (context, isExpanded) {
                 return Row(

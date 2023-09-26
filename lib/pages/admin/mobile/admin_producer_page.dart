@@ -12,8 +12,8 @@ import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/ui/device/device_item.dart';
-import 'package:guardian/widgets/ui/device/device_item_removable.dart';
+import 'package:guardian/widgets/ui/animal/animal_item.dart';
+import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/interactables/floating_action_button.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/bottom_sheets/add_device_bottom_sheet.dart';
@@ -330,7 +330,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                 horizontal: 10.0,
                               ),
                               child: _isRemoveMode
-                                  ? DeviceItemRemovable(
+                                  ? AnimalItemRemovable(
                                       animal: _devices[index],
                                       onRemoveDevice: () {
                                         // TODO: On remove device code
@@ -342,7 +342,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                         });
                                       },
                                     )
-                                  : DeviceItem(
+                                  : AnimalItem(
                                       animal: _devices[index],
                                       producerId: widget.producerId,
                                     ),

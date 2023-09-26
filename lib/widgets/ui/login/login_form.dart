@@ -13,6 +13,7 @@ import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
+/// Class that represents and manages the login form
 class LoginForm extends StatefulWidget {
   const LoginForm({
     super.key,
@@ -41,6 +42,11 @@ class _LoginFormState extends State<LoginForm> {
     // }
   }
 
+  /// Method that validates all form fields and the does the authentication logic
+  ///
+  /// 1. set user sessions
+  /// 2. create user data
+  /// 3. send user to correct screen
   void _onLogin(AppLocalizations localizations) {
     // if true the inputs are filled and correct
     if (_formKey.currentState!.validate()) {
@@ -126,6 +132,7 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
+  /// Method that implements the email validation logic
   String? _validateEmail(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.empty_field.capitalize();
@@ -133,6 +140,7 @@ class _LoginFormState extends State<LoginForm> {
     return null;
   }
 
+  /// Method that implements the password validation logic
   String? _validatePassword(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.empty_field.capitalize();

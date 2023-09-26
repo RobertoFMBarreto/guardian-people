@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
+/// Class that represents the server error dialogue
 class ServerErrorDialogue extends StatelessWidget {
   const ServerErrorDialogue({super.key});
 

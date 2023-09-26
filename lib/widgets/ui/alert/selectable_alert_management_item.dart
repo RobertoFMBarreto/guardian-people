@@ -5,6 +5,7 @@ import 'package:guardian/models/helpers/user_alert.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/extensions/string_extension.dart';
 
+/// Class that represents a selectable alert management item widget
 class SelectableAlertManagementItem extends StatelessWidget {
   final UserAlertCompanion alert;
   final bool isSelected;

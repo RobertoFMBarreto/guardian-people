@@ -11,25 +11,26 @@ import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/ui/device/device_time_widget.dart';
+import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DeviceMapWidget extends StatefulWidget {
+/// Class that represents the animal map widget
+class AnimalMapWidget extends StatefulWidget {
   final Animal animal;
   final bool isInterval;
-  const DeviceMapWidget({super.key, required this.animal, required this.isInterval});
+  const AnimalMapWidget({super.key, required this.animal, required this.isInterval});
 
   @override
-  State<DeviceMapWidget> createState() => _DeviceMapWidgetState();
+  State<AnimalMapWidget> createState() => _AnimalMapWidgetState();
 }
 
-class _DeviceMapWidgetState extends State<DeviceMapWidget> {
+class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   final _firstItemDataKey = GlobalKey();
   late Future _future;
 
-  List<AnimalLocationsCompanion> _deviceData = [];
+  List<AnimalLocationsCompanion> _animalData = [];
 
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
@@ -44,15 +45,21 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
     super.initState();
   }
 
+  /// Method that does the initial setup of the widget
+  ///
+  /// 1. set the animal data
+  /// 2. get the local animal data
+  /// 3. get the animal data from api
   Future<void> _setup() async {
     setState(() {
-      _deviceData = widget.animal.data;
+      _animalData = widget.animal.data;
     });
-    await _getDeviceData();
-    await _getDeviceDataFromApi();
+    await _getAnimalData();
+    await _getAnimalDataFromApi();
   }
 
-  Future<void> _getDeviceData() async {
+  /// Method that loads that local animal data into the [_animalData] list
+  Future<void> _getAnimalData() async {
     await getAnimalData(
       startDate: _startDate,
       endDate: _endDate,
@@ -60,17 +67,22 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
       isInterval: widget.isInterval,
     ).then(
       (data) async {
-        _deviceData = [];
+        _animalData = [];
         if (mounted) {
           setState(() {
-            _deviceData.addAll(data);
+            _animalData.addAll(data);
           });
         }
       },
     );
   }
 
-  Future<void> _getDeviceDataFromApi() async {
+  /// Method that loads all devices from the API into the [_animals] list
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
+  Future<void> _getAnimalDataFromApi() async {
     await AnimalProvider.getAnimalData(widget.animal.animal.idAnimal.value, _startDate, _endDate)
         .then((response) async {
       if (response.statusCode == 200) {
@@ -79,14 +91,14 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
         for (var dt in body['data']) {
           await animalDataFromJson(dt, widget.animal.animal.idAnimal.value.toString());
         }
-        _getDeviceData();
+        _getAnimalData();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken);
-            _getDeviceDataFromApi();
+            _getAnimalDataFromApi();
           } else if (response.statusCode == 507) {
             setState(() {
               _startDate = DateTime.now();
@@ -164,19 +176,19 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: DeviceTimeRangeWidget(
+                      child: AnimalTimeRangeWidget(
                           startDate: _startDate,
                           endDate: _endDate,
                           onStartDateChanged: (newStartDate) {
                             setState(() {
                               _startDate = newStartDate;
-                              _future = _getDeviceDataFromApi();
+                              _future = _getAnimalDataFromApi();
                             });
                           },
                           onEndDateChanged: (newEndDate) {
                             setState(() {
                               _endDate = newEndDate;
-                              _future = _getDeviceDataFromApi();
+                              _future = _getAnimalDataFromApi();
                             });
                           }),
                     ),
@@ -188,10 +200,10 @@ class _DeviceMapWidgetState extends State<DeviceMapWidget> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: SingleDeviceLocationMap(
-                        key: Key(_deviceData.toString()),
+                      child: SingleAnimalLocationMap(
+                        key: Key(_animalData.toString()),
                         showCurrentPosition: true,
-                        deviceData: _deviceData,
+                        deviceData: _animalData,
                         idAnimal: widget.animal.animal.idAnimal.value,
                         deviceColor: widget.animal.animal.animalColor.value,
                         isInterval: widget.isInterval,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:guardian/models/helpers/custom_floating_btn_option.dart';
 
+/// Class that represents a custom floating action button widget
 class CustomFloatingActionButton extends StatelessWidget {
   final List<CustomFloatingActionButtonOption> options;
   const CustomFloatingActionButton({super.key, required this.options});

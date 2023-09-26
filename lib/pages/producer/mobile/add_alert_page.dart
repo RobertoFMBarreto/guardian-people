@@ -14,7 +14,7 @@ import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
-import 'package:guardian/widgets/ui/device/device_item_removable.dart';
+import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 
 /// Class that represents the add alert page
 class AddAlertPage extends StatefulWidget {
@@ -358,7 +358,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           flex: 2,
                           child: ListView.builder(
                             itemCount: _alertAnimals.length,
-                            itemBuilder: (context, index) => DeviceItemRemovable(
+                            itemBuilder: (context, index) => AnimalItemRemovable(
                               key: Key(_alertAnimals[index].animal.idAnimal.value.toString()),
                               animal: _alertAnimals[index],
                               onRemoveDevice: () {

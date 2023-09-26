@@ -16,7 +16,8 @@ import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.da
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class SingleDeviceLocationMap extends StatefulWidget {
+/// Class that represents a single animal location map
+class SingleAnimalLocationMap extends StatefulWidget {
   final bool showCurrentPosition;
   final List<AnimalLocationsCompanion> deviceData;
   final BigInt idAnimal;
@@ -26,7 +27,7 @@ class SingleDeviceLocationMap extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final bool isInterval;
-  const SingleDeviceLocationMap({
+  const SingleAnimalLocationMap({
     super.key,
     required this.showCurrentPosition,
     required this.deviceData,
@@ -40,10 +41,10 @@ class SingleDeviceLocationMap extends StatefulWidget {
   });
 
   @override
-  State<SingleDeviceLocationMap> createState() => _SingleDeviceLocationMapState();
+  State<SingleAnimalLocationMap> createState() => _SingleAnimalLocationMapState();
 }
 
-class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
+class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
   final MapController _mapController = MapController();
@@ -73,6 +74,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
     super.dispose();
   }
 
+  /// Method that does the initial setup of the widget
+  ///
+  /// 1. set the [_dropDownValue]
+  /// 2. get current position
+  /// 3. load animal fences
   Future<void> _setup() async {
     setState(() {
       _dropDownValue = _dropdownItems.first;
@@ -85,10 +91,11 @@ class _SingleDeviceLocationMapState extends State<SingleDeviceLocationMap> {
         }
       },
     );
-    await _loadDeviceFences();
+    await _loadAnimalFences();
   }
 
-  Future<void> _loadDeviceFences() async {
+  /// Method that loads the animal fences into [_polygons] list
+  Future<void> _loadAnimalFences() async {
     List<Polygon> allFences = [];
     await getAnimalFence(widget.idAnimal).then((fence) async {
       if (fence != null) {
