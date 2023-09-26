@@ -119,16 +119,21 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-                    flex: 2,
-                    child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        widget.animal.animal.animalName.value,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.headlineMedium!.copyWith(
-                          color: theme.colorScheme.onSecondary,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.fitHeight,
+                            child: Text(
+                              widget.animal.animal.animalName.value,
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.headlineMedium!.copyWith(
+                                color: theme.colorScheme.onSecondary,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                   if (widget.animal.data.isEmpty)
