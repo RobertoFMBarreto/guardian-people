@@ -5,8 +5,16 @@ import 'package:latlong2/latlong.dart';
 
 Future<void> createFencePointFromList(List<LatLng> points, BigInt idFence) async {
   final db = Get.find<GuardianDb>();
+  final dt = await (db.select(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).get();
+  print(dt);
+  print(dt.length);
   // first remove all points
-  db.delete(db.fencePoints).where((tbl) => tbl.idFence.equals(idFence));
+
+  (db.delete(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).go();
+
+  final dt2 = await (db.select(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).get();
+  print(dt2);
+  print(dt2.length);
   // second add all points again
   await db.batch((batch) {
     batch.insertAll(

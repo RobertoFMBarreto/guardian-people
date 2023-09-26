@@ -71,7 +71,6 @@ class _GeofencingState extends State<Geofencing> {
     if (widget.fence != null) {
       await _loadFencePoints();
       await _loadDevices();
-      await _loadFences();
       if (mounted) {
         setState(() {
           // if there are only 2 points then its a circle
@@ -85,42 +84,6 @@ class _GeofencingState extends State<Geofencing> {
     if (mounted) {
       _initPolygon();
       _initPolyEditor();
-    }
-  }
-
-  Future<void> _loadFences() async {
-    List<Polygon> allPolygons = [];
-    List<Polygon> allCircles = [];
-    await getUserFences().then((allFences) async {
-      for (FenceData fence in allFences) {
-        await getFencePoints(fence.idFence).then((points) {
-          return points.length == 2
-              ? allCircles.add(
-                  Polygon(
-                    points: points,
-                    color: HexColor(fence.color).withOpacity(0.5),
-                    borderColor: HexColor(fence.color),
-                    borderStrokeWidth: 2,
-                    isFilled: true,
-                  ),
-                )
-              : allPolygons.add(
-                  Polygon(
-                    points: points,
-                    color: HexColor(fence.color).withOpacity(0.5),
-                    borderColor: HexColor(fence.color),
-                    borderStrokeWidth: 2,
-                    isFilled: true,
-                  ),
-                );
-        });
-      }
-    });
-    if (mounted) {
-      setState(() {
-        _polygons.addAll(allPolygons);
-        _circles.addAll(allCircles);
-      });
     }
   }
 
@@ -255,12 +218,15 @@ class _GeofencingState extends State<Geofencing> {
         ),
       );
     }
-
+    print(_editingPolygon.points.length);
+    print(idFence);
     // second update fence points
     createFencePointFromList(_editingPolygon.points, idFence).then(
       (value) => Navigator.of(context).pop(_editingPolygon.points),
     );
-    widget.onFenceCreated!();
+    if (widget.onFenceCreated != null) {
+      widget.onFenceCreated!();
+    }
   }
 
   @override

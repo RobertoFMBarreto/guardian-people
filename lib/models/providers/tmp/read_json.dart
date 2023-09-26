@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
@@ -105,11 +106,11 @@ Future<List<UserAlert>> loadAlerts() async {
   for (var alert in alertsMapList) {
     createAlert(
       UserAlertCompanion(
-        hasNotification: Value(alert['hasNotification']),
-        parameter: Value(alert['parameter']),
-        comparisson: Value(alert['comparisson']),
-        value: Value(alert['value']),
-        idAlert: Value(alert['id']),
+        hasNotification: drift.Value(alert['hasNotification']),
+        parameter: drift.Value(alert['parameter']),
+        comparisson: drift.Value(alert['comparisson']),
+        value: drift.Value(alert['value']),
+        idAlert: drift.Value(alert['id']),
       ),
     );
   }
@@ -128,39 +129,46 @@ Future<void> loadUserFences(BigInt idUser) async {
     fencesMap = fencesDataJson;
   }
   List<dynamic> fencesMapList = fencesMap['fences'];
-  for (var fence in fencesMapList) {
-    if (BigInt.from(fence['idUser']) == idUser) {
-      // load fence points
-      for (var point in fence['points']) {
-        createFencePoint(
-          FencePointsCompanion(
-            idFencePoint: Value(BigInt.from(point["idPoint"])),
-            idFence: Value(BigInt.from(fence["id"])),
-            lat: Value(point['lat']),
-            lon: Value(point['lon']),
+  getUserFences().then((userFences) {
+    for (var fence in fencesMapList) {
+      if (BigInt.from(fence['idUser']) == idUser &&
+          userFences.firstWhereOrNull(
+                (element) => element.idFence == BigInt.from(fence['id']),
+              ) ==
+              null) {
+        // removeFence(BigInt.from(fence["id"]));
+        // load fence points
+        for (var point in fence['points']) {
+          createFencePoint(
+            FencePointsCompanion(
+              idFencePoint: drift.Value(BigInt.from(point["idPoint"])),
+              idFence: drift.Value(BigInt.from(fence["id"])),
+              lat: drift.Value(point['lat']),
+              lon: drift.Value(point['lon']),
+            ),
+          );
+        }
+
+        for (var animal in fence['animals']) {
+          createFenceDevice(
+            FenceAnimalsCompanion(
+              idFence: drift.Value(BigInt.from(fence["id"])),
+              idAnimal: drift.Value(BigInt.from(animal['idAnimal'])),
+            ),
+          );
+        }
+
+        // load fences and their points
+        createFence(
+          FenceCompanion(
+            name: drift.Value(fence["name"]),
+            color: drift.Value(fence["color"]),
+            idFence: drift.Value(BigInt.from(fence["id"])),
           ),
         );
       }
-
-      for (var animal in fence['animals']) {
-        createFenceDevice(
-          FenceAnimalsCompanion(
-            idFence: Value(BigInt.from(fence["id"])),
-            idAnimal: Value(BigInt.from(animal['idAnimal'])),
-          ),
-        );
-      }
-
-      // load fences and their points
-      createFence(
-        FenceCompanion(
-          name: Value(fence["name"]),
-          color: Value(fence["color"]),
-          idFence: Value(BigInt.from(fence["id"])),
-        ),
-      );
     }
-  }
+  });
 }
 
 // Future<Device?> loadDevice(String deviceImei) async {
