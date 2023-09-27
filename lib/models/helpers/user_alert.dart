@@ -85,7 +85,7 @@ AlertParameter parseAlertParameterFromString(String text) {
   }
 }
 
-/// Method that parses from [text] [String] to [AlertComparisson]
+/// Method that parses from [text] [String] to [AlertComparissons]
 AlertComparissons parseComparissonFromString(String text) {
   String value = text.toString().split('.').last;
 

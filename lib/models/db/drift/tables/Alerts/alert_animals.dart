@@ -4,7 +4,7 @@ import 'package:guardian/models/db/drift/tables/animal.dart';
 
 /// This class represents the AlertAnimals database table
 ///
-/// [alertAnimalId] is the primary key
+/// [idAnimal] and [idAlert] are the primary keys
 ///
 /// [idAnimal] relates with the table [Animal] on its primary key
 /// [idAlert] relates with the table [UserAlert] on its primary key

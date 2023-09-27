@@ -145,13 +145,15 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                   showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.server_error.capitalize(),
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!.server_error.capitalize(),
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           }
         });
       }

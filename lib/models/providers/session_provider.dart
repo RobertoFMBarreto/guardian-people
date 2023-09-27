@@ -3,7 +3,7 @@ import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Method for setting the user session with [idUSer] and the session token [token]
+/// Method for setting the user session with [idUser] and the session token [token]
 Future<void> setUserSession(BigInt idUser, String token) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 

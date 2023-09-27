@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// This class represents a [FloatingActionButtonOption] data
+/// This class represents a floating action button option data
 class CustomFloatingActionButtonOption {
   final String title;
   final IconData icon;

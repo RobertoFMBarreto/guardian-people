@@ -254,7 +254,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                     data: data,
                   );
                 });
-                if (_selectedAnimal!.data.isEmpty) {
+                if (_selectedAnimal!.data.isEmpty && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(
                       AppLocalizations.of(context)!.there_is_no_animal_data.capitalize(),
