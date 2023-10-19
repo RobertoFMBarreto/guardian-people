@@ -89,7 +89,6 @@ Future<BigInt?> getUid(BuildContext context) async {
   } else {
     clearUserSession().then((_) => deleteEverything().then(
           (_) {
-            print('Go to login');
             Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
           },
         ));
