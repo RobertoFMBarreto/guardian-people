@@ -50,11 +50,6 @@ class _WelcomePageState extends State<WelcomePage> {
               );
             }
           });
-        } else {
-          Navigator.pushReplacement(
-            context,
-            CustomPageRouter(page: '/login'),
-          );
         }
       },
     );

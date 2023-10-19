@@ -88,8 +88,10 @@ Future<BigInt?> getUid(BuildContext context) async {
     return idUser;
   } else {
     clearUserSession().then((_) => deleteEverything().then(
-          (_) =>
-              Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false),
+          (_) {
+            print('Go to login');
+            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+          },
         ));
   }
   return null;

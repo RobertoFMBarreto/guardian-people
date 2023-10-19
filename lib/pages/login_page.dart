@@ -12,6 +12,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    print('Login Page Build');
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
