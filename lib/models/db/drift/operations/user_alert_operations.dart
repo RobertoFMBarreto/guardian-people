@@ -21,7 +21,7 @@ Future<UserAlertCompanion> updateUserAlert(UserAlertCompanion alert) async {
 /// Method for deleting an user created alert [idAlert]
 ///
 /// This process removes all associated animals from the alert
-Future<void> deleteAlert(BigInt idAlert) async {
+Future<void> deleteAlert(String idAlert) async {
   final db = Get.find<GuardianDb>();
   await removeAllAlertAnimals(idAlert);
   (db.delete(db.userAlert)..where((tbl) => tbl.idAlert.equals(idAlert))).go();
@@ -34,7 +34,7 @@ Future<void> deleteAllAlerts() async {
 }
 
 /// Method to get a user created alert [idAlert] information [UserAlertData]
-Future<UserAlertData> getAlert(BigInt idAlert) async {
+Future<UserAlertData> getAlert(String idAlert) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.userAlert)
         ..where(

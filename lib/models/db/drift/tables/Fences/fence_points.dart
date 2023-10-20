@@ -7,8 +7,8 @@ import 'package:guardian/models/db/drift/tables/Fences/fence.dart';
 ///
 /// [idFence] relates with the table [Fence] on its primary key
 class FencePoints extends Table {
-  Int64Column get idFencePoint => int64()();
-  Int64Column get idFence => int64().references(Fence, #idFence)();
+  TextColumn get idFencePoint => text()();
+  TextColumn get idFence => text().references(Fence, #idFence)();
   RealColumn get lat => real()();
   RealColumn get lon => real()();
   @override

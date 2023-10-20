@@ -12,7 +12,7 @@ class AnimalItem extends StatelessWidget {
   final Animal animal;
   final bool isBlocked;
   final Function? onBackFromDeviceScreen;
-  final BigInt? producerId;
+  final String? producerId;
   final Function()? onTap;
   final bool isSelected;
 

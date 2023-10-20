@@ -24,7 +24,7 @@ import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
-  final BigInt producerId;
+  final String producerId;
 
   const AdminProducerPage({
     super.key,

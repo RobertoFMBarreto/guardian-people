@@ -20,7 +20,7 @@ Future<void> removeAllNotifications() async {
 }
 
 /// Method for removing a single notification [notificationId]
-Future<void> removeNotification(BigInt notificationId) async {
+Future<void> removeNotification(String notificationId) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertNotification)
         ..where(
@@ -30,7 +30,7 @@ Future<void> removeNotification(BigInt notificationId) async {
 }
 
 /// Method for removing all notifications from an alert [idAlert]
-Future<void> removeAllAlertNotifications(BigInt idAlert) async {
+Future<void> removeAllAlertNotifications(String idAlert) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertNotification)
         ..where(

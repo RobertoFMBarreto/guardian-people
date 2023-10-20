@@ -9,7 +9,7 @@ class AuthProvider {
   /// Method for login based on [email] and [password]
   static Future<Response> login(String email, String password) async {
     Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    var url = Uri.http('192.168.10.71:7856', '/api/v1/login');
+    var url = Uri.http('192.168.10.71:7986', '/api/v1/login');
 
     Map<String, dynamic> body = {"email": email, "password": password};
     try {
@@ -30,7 +30,7 @@ class AuthProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7856', '/api/v1/session/refresh');
+    var url = Uri.http('192.168.10.71:7986', '/api/v1/session/refresh');
     try {
       var response = await get(url, headers: headers);
 

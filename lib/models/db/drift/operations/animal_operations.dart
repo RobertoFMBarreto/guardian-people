@@ -14,7 +14,7 @@ Future<AnimalCompanion> createAnimal(
 }
 
 /// Method for deleting an animal [idAnimal]
-Future<void> deleteAnimal(BigInt idAnimal) async {
+Future<void> deleteAnimal(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.animal)..where((tbl) => tbl.idAnimal.equals(idAnimal))).go();
 }
@@ -28,7 +28,7 @@ Future<AnimalCompanion> updateAnimal(AnimalCompanion animal) async {
 }
 
 /// Method to get animal [idAnimal] information as [AnimalData]
-Future<AnimalData> getAnimal(BigInt idAnimal) async {
+Future<AnimalData> getAnimal(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data =
       await (db.select(db.animal)..where((tbl) => tbl.idAnimal.equals(idAnimal))).getSingle();
@@ -56,7 +56,7 @@ Future<List<AnimalData>> getUserAnimals() async {
 }
 
 /// Method to get an animal [idAnimal] information with all its locations data as an [Animal]
-Future<Animal> getAnimalWithData(BigInt idAnimal) async {
+Future<Animal> getAnimalWithData(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
     '''
@@ -68,7 +68,7 @@ Future<Animal> getAnimalWithData(BigInt idAnimal) async {
       WHERE ${db.animal.actualTableName}.${db.animalLocations.idAnimal.name} = ?
     ''',
     variables: [
-      drift.Variable.withBigInt(idAnimal),
+      drift.Variable.withString(idAnimal),
     ],
   ).getSingle();
 
@@ -134,9 +134,9 @@ Future<List<Animal>> getUserAnimalsWithData() async {
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
           isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
           animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-          idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-          idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
@@ -146,9 +146,8 @@ Future<List<Animal>> getUserAnimalsWithData() async {
               dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                   deviceData.data[db.animalLocations.date.name])),
-              animalDataId:
-                  drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-              idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
               elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
               lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
               lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
@@ -230,9 +229,9 @@ Future<List<Animal>> getUserAnimalsFiltered({
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
           isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
           animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-          idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-          idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
@@ -242,9 +241,8 @@ Future<List<Animal>> getUserAnimalsFiltered({
               dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                   deviceData.data[db.animalLocations.date.name])),
-              animalDataId:
-                  drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-              idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
               elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
               lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
               lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
@@ -268,7 +266,7 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
   required RangeValues tmpRangeValues,
   required RangeValues elevationRangeValues,
   required String searchString,
-  required BigInt idFence,
+  required String idFence,
 }) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
@@ -325,7 +323,7 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
       drift.Variable.withReal(elevationRangeValues.end),
       drift.Variable.withString('%$searchString%'),
       drift.Variable.withString('%$searchString%'),
-      drift.Variable.withBigInt(idFence),
+      drift.Variable.withString(idFence),
     ],
   ).get();
 
@@ -337,9 +335,9 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
             animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
             isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
             animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-            idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+            idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-            idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+            idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
           ),
           data: [
             if (deviceData.data[db.animalLocations.date.name] != null)
@@ -349,9 +347,8 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
                 dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
                 date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                     deviceData.data[db.animalLocations.date.name])),
-                animalDataId:
-                    drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-                idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+                animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+                idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
                 elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
                 lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
                 lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
@@ -373,7 +370,7 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
   required RangeValues tmpRangeValues,
   required RangeValues elevationRangeValues,
   required String searchString,
-  required BigInt idAlert,
+  required String idAlert,
 }) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
@@ -439,9 +436,9 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
             animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
             isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
             animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-            idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+            idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-            idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+            idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
           ),
           data: [
             if (deviceData.data[db.animalLocations.date.name] != null)
@@ -451,9 +448,8 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
                 dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
                 date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                     deviceData.data[db.animalLocations.date.name])),
-                animalDataId:
-                    drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-                idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+                animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+                idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
                 elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
                 lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
                 lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),

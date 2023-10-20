@@ -94,10 +94,10 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
           await createAnimal(AnimalCompanion(
             isActive: drift.Value(dt['animal_is_active'] == true),
             animalName: drift.Value(dt['animal_name']),
-            idUser: drift.Value(BigInt.from(int.parse(dt['id_user']))),
+            idUser: drift.Value(dt['id_user']),
             animalColor: drift.Value(dt['animal_color']),
             animalIdentification: drift.Value(dt['animal_identification']),
-            idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
+            idAnimal: drift.Value(dt['id_animal']),
           ));
           if (dt['last_device_data'] != null) {
             await createAnimalData(
@@ -110,9 +110,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                     : const drift.Value.absent(),
                 dataUsage: drift.Value(Random().nextInt(10)),
                 date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
-                animalDataId:
-                    drift.Value(BigInt.from(int.parse(dt['last_device_data']['id_data']))),
-                idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
+                animalDataId: drift.Value(dt['last_device_data']['id_data']),
+                idAnimal: drift.Value(dt['id_animal']),
                 elevation: dt['last_device_data']['altitude'] != null
                     ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
                     : const drift.Value.absent(),
@@ -222,8 +221,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       : const drift.Value.absent(),
                   dataUsage: drift.Value(Random().nextInt(10)),
                   date: drift.Value(DateTime.parse(dt['date'])),
-                  animalDataId: drift.Value(BigInt.from(int.parse(dt['id_data']))),
-                  idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
+                  animalDataId: drift.Value(dt['id_data']),
+                  idAnimal: drift.Value(dt['id_animal']),
                   elevation: dt['altitude'] != null
                       ? drift.Value(double.tryParse(dt['altitude']))
                       : const drift.Value.absent(),

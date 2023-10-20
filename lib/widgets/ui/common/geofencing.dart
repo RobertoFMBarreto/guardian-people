@@ -24,6 +24,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
+import 'package:uuid/uuid.dart';
 
 /// Class that represents the geofencing widget
 class Geofencing extends StatefulWidget {
@@ -210,7 +211,7 @@ class _GeofencingState extends State<Geofencing> {
 
   /// Method that stores/updates the fence data and points
   Future<void> _confirmGeofence() async {
-    BigInt idFence;
+    String idFence;
     // if is edit mode
     if (widget.fence != null) {
       idFence = widget.fence!.idFence;
@@ -224,7 +225,7 @@ class _GeofencingState extends State<Geofencing> {
             .toCompanion(true),
       );
     } else {
-      idFence = BigInt.from(Random().nextInt(999999));
+      idFence = const Uuid().v4();
       await createFence(
         FenceCompanion(
           idFence: drift.Value(idFence),

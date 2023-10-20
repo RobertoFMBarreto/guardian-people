@@ -13,10 +13,10 @@ Future<void> animalsFromJson(String body) async {
     await createAnimal(AnimalCompanion(
       isActive: drift.Value(dt['animal_is_active'] == true),
       animalName: drift.Value(dt['animal_name']),
-      idUser: drift.Value(BigInt.from(int.parse(dt['id_user']))),
+      idUser: drift.Value(dt['id_user']),
       animalColor: drift.Value(dt['animal_color']),
       animalIdentification: drift.Value(dt['animal_identification']),
-      idAnimal: drift.Value(BigInt.from(int.parse(dt['id_animal']))),
+      idAnimal: drift.Value(dt['id_animal']),
     ));
     if (dt['last_device_data'] != null) {
       await animalDataFromJson(dt['last_device_data'], dt['id_animal']);
@@ -31,8 +31,8 @@ Future<void> animalDataFromJson(Map<String, dynamic> data, String idAnimal) asyn
     AnimalLocationsCompanion(
       dataUsage: drift.Value(Random().nextInt(10)),
       date: drift.Value(DateTime.parse(data['date'])),
-      animalDataId: drift.Value(BigInt.from(int.parse(data['id_data']))),
-      idAnimal: drift.Value(BigInt.from(int.parse(idAnimal))),
+      animalDataId: drift.Value(data['id_data']),
+      idAnimal: drift.Value(idAnimal),
       state: drift.Value(states[Random().nextInt(states.length)]),
       accuracy: data['accuracy'] != null
           ? drift.Value(double.tryParse(data['accuracy']))

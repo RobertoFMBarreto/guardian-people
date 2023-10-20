@@ -20,7 +20,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SingleAnimalLocationMap extends StatefulWidget {
   final bool showCurrentPosition;
   final List<AnimalLocationsCompanion> deviceData;
-  final BigInt idAnimal;
+  final String idAnimal;
   final String deviceColor;
   final Function(double) onZoomChange;
   final double startingZoom;

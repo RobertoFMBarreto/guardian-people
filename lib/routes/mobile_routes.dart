@@ -27,9 +27,9 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
   '/profile': (context) => const ProfilePage(),
   '/admin': (context) => const AdminHomePage(),
   '/admin/producer': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == BigInt) {
+    if (ModalRoute.of(context)!.settings.arguments.runtimeType == String) {
       return AdminProducerPage(
-        producerId: ModalRoute.of(context)!.settings.arguments as BigInt,
+        producerId: ModalRoute.of(context)!.settings.arguments as String,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -40,7 +40,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
       final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       return AdminDeviceManagementPage(
         device: args['device'] as Animal,
-        producerId: args['producerId'] as BigInt,
+        producerId: args['producerId'] as String,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -77,10 +77,10 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
 
       return ProducerDevicesPage(
         isSelect: data['isSelect'] as bool,
-        idFence: data.containsKey('idFence') ? data['idFence'] as BigInt : null,
-        idAlert: data.containsKey('idAlert') ? data['idAlert'] as BigInt : null,
+        idFence: data.containsKey('idFence') ? data['idFence'] as String : null,
+        idAlert: data.containsKey('idAlert') ? data['idAlert'] as String : null,
         notToShowAnimals:
-            data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<BigInt> : null,
+            data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<String> : null,
       );
     } else {
       return const ProducerDevicesPage();
@@ -133,7 +133,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
       final data = args as Map<String, dynamic>;
       return AlertsManagementPage(
         isSelect: data['isSelect'] as bool,
-        idAnimal: (data['idAnimal'] as BigInt?).toString(),
+        idAnimal: (data['idAnimal'] as String?).toString(),
       );
     } else {
       throw ErrorDescription('isSelect not provided');

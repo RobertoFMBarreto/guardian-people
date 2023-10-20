@@ -117,7 +117,7 @@ Future<List<UserAlert>> loadAlerts() async {
   return alerts;
 }
 
-Future<void> loadUserFences(BigInt idUser) async {
+Future<void> loadUserFences(String idUser) async {
   String fencesInput = '';
   if (!kIsWeb) {
     fencesInput = await rootBundle.loadString('assets/data/fences.json');
@@ -131,9 +131,9 @@ Future<void> loadUserFences(BigInt idUser) async {
   List<dynamic> fencesMapList = fencesMap['fences'];
   getUserFences().then((userFences) {
     for (var fence in fencesMapList) {
-      if (BigInt.from(fence['idUser']) == idUser &&
+      if (fence['idUser'] == idUser &&
           userFences.firstWhereOrNull(
-                (element) => element.idFence == BigInt.from(fence['id']),
+                (element) => element.idFence == fence['id'],
               ) ==
               null) {
         // removeFence(BigInt.from(fence["id"]));
@@ -141,8 +141,8 @@ Future<void> loadUserFences(BigInt idUser) async {
         for (var point in fence['points']) {
           createFencePoint(
             FencePointsCompanion(
-              idFencePoint: drift.Value(BigInt.from(point["idPoint"])),
-              idFence: drift.Value(BigInt.from(fence["id"])),
+              idFencePoint: drift.Value(point["idPoint"]),
+              idFence: drift.Value(fence["id"]),
               lat: drift.Value(point['lat']),
               lon: drift.Value(point['lon']),
             ),
@@ -152,8 +152,8 @@ Future<void> loadUserFences(BigInt idUser) async {
         for (var animal in fence['animals']) {
           createFenceDevice(
             FenceAnimalsCompanion(
-              idFence: drift.Value(BigInt.from(fence["id"])),
-              idAnimal: drift.Value(BigInt.from(animal['idAnimal'])),
+              idFence: drift.Value(fence["id"]),
+              idAnimal: drift.Value(animal['idAnimal']),
             ),
           );
         }
@@ -163,7 +163,7 @@ Future<void> loadUserFences(BigInt idUser) async {
           FenceCompanion(
             name: drift.Value(fence["name"]),
             color: drift.Value(fence["color"]),
-            idFence: drift.Value(BigInt.from(fence["id"])),
+            idFence: drift.Value(fence["id"]),
           ),
         );
       }

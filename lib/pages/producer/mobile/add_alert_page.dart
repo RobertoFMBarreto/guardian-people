@@ -15,6 +15,7 @@ import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.da
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/inputs/custom_dropdown.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
+import 'package:uuid/uuid.dart';
 
 /// Class that represents the add alert page
 class AddAlertPage extends StatefulWidget {
@@ -62,7 +63,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   /// Method that get all alert devices and fills the [_alertAnimals] list
-  Future<void> _getAlertDevices(BigInt idAlert) async {
+  Future<void> _getAlertDevices(String idAlert) async {
     await getAlertAnimals(idAlert).then((allDevices) {
       if (mounted) {
         setState(() => _alertAnimals.addAll(allDevices));
@@ -71,7 +72,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   /// Method that inserts the devices for the alert [idAlert]
-  Future<void> _addAlertDevices(BigInt idAlert) async {
+  Future<void> _addAlertDevices(String idAlert) async {
     for (var device in _alertAnimals) {
       await addAlertAnimal(
         AlertAnimalsCompanion(
@@ -106,7 +107,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   /// Method that creates a new [UserAlertCompanion] and inserts on the database
   Future<void> _createAlert() async {
-    final idAlert = BigInt.from(Random().nextInt(999999));
+    final idAlert = const Uuid().v4();
     final newAlert = UserAlertCompanion(
       idAlert: drift.Value(idAlert),
       hasNotification: drift.Value(_sendNotification),

@@ -18,13 +18,13 @@ Future<AlertAnimalsCompanion> addAlertAnimal(AlertAnimalsCompanion alertAnimal) 
 }
 
 /// Method for removing all alert animals based on an alert [idAlert]
-Future<void> removeAllAlertAnimals(BigInt idAlert) async {
+Future<void> removeAllAlertAnimals(String idAlert) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertAnimals)..where((tbl) => tbl.idAlert.equals(idAlert))).go();
 }
 
 /// Method for removing an animal [idAnimal] from an alert [idAlert]
-Future<void> removeAlertAnimal(BigInt idAlert, BigInt idAnimal) async {
+Future<void> removeAlertAnimal(String idAlert, String idAnimal) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.alertAnimals)
         ..where(
@@ -34,7 +34,7 @@ Future<void> removeAlertAnimal(BigInt idAlert, BigInt idAnimal) async {
 }
 
 /// Method to get all alert [idAlert] animals as a [List<Animal>]
-Future<List<Animal>> getAlertAnimals(BigInt idAlert) async {
+Future<List<Animal>> getAlertAnimals(String idAlert) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.customSelect(
     '''
@@ -68,7 +68,7 @@ Future<List<Animal>> getAlertAnimals(BigInt idAlert) async {
       WHERE ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAlert.name} = ?
     ''',
     variables: [
-      drift.Variable.withBigInt(idAlert),
+      drift.Variable.withString(idAlert),
     ],
   )).get();
 
@@ -108,7 +108,7 @@ Future<List<Animal>> getAlertAnimals(BigInt idAlert) async {
 }
 
 /// Method to get all the animal [idAnimal] alerts as a [List<UserAlertCompanion>]
-Future<List<UserAlertCompanion>> getAnimalAlerts(BigInt idAnimal) async {
+Future<List<UserAlertCompanion>> getAnimalAlerts(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.alertAnimals).join([
     drift.innerJoin(db.userAlert, db.userAlert.idAlert.equalsExp(db.alertAnimals.idAlert)),
@@ -152,7 +152,7 @@ Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) asyn
   alerts.addAll(
     data.map(
       (e) => UserAlertCompanion(
-        idAlert: drift.Value(BigInt.from(e.data[db.userAlert.idAlert.name])),
+        idAlert: drift.Value(e.data[db.userAlert.idAlert.name]),
         comparisson: drift.Value(e.data[db.userAlert.comparisson.name]),
         hasNotification: drift.Value(e.data[db.userAlert.hasNotification.name] == 1),
         parameter: drift.Value(e.data[db.userAlert.parameter.name]),

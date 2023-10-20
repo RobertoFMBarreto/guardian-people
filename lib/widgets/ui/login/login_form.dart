@@ -60,11 +60,12 @@ class _LoginFormState extends State<LoginForm> {
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
+            print(body);
 
-            setUserSession(BigInt.from(int.parse(body['id'])), body['token']).then((_) {
+            setUserSession(body['id'], body['token']).then((_) {
               // store user profile
               createUser(UserCompanion(
-                idUser: drift.Value(BigInt.from(int.parse(body['id']))),
+                idUser: drift.Value(body['id']),
                 email: drift.Value(body['email']),
                 name: drift.Value(body['name']),
                 phone: const drift.Value(999999999),

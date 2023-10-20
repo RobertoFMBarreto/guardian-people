@@ -24,9 +24,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 /// Class that represents the producer devices page
 class ProducerDevicesPage extends StatefulWidget {
   final bool isSelect;
-  final BigInt? idFence;
-  final BigInt? idAlert;
-  final List<BigInt>? notToShowAnimals;
+  final String? idFence;
+  final String? idAlert;
+  final List<String>? notToShowAnimals;
 
   const ProducerDevicesPage({
     super.key,

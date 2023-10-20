@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 /// Method for creating fence [idFence] points from a list of coordinates [points]
 ///
 /// In case there are already fence points for the [idFence] they are getting removed and added again from the list [points]
-Future<void> createFencePointFromList(List<LatLng> points, BigInt idFence) async {
+Future<void> createFencePointFromList(List<LatLng> points, String idFence) async {
   final db = Get.find<GuardianDb>();
 
   /// remove all fence [idFence] points so that they dont stack
@@ -36,7 +36,7 @@ Future<FencePointsCompanion> createFencePoint(FencePointsCompanion point) async 
 }
 
 /// Method to get all points [List<LatLng>] from fence [idFence]
-Future<List<LatLng>> getFencePoints(BigInt idFence) async {
+Future<List<LatLng>> getFencePoints(String idFence) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).get();
 
@@ -51,7 +51,7 @@ Future<List<LatLng>> getFencePoints(BigInt idFence) async {
 }
 
 /// Method to remove all points from a fence [idFence]
-Future<void> removeAllFencePoints(BigInt idFence) async {
+Future<void> removeAllFencePoints(String idFence) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).go();
 }

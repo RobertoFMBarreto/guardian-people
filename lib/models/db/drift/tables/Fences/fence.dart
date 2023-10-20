@@ -4,7 +4,7 @@ import 'package:drift/drift.dart';
 ///
 /// [idFence] is the primary key
 class Fence extends Table {
-  Int64Column get idFence => int64()();
+  TextColumn get idFence => text()();
   TextColumn get name => text()();
   TextColumn get color => text()();
   @override

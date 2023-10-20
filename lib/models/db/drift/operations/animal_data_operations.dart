@@ -10,7 +10,7 @@ Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion anima
 }
 
 /// Method to get last animal data from a single animal [idAnimal] returning as a [AnimalLocationsCompanion]
-Future<AnimalLocationsCompanion?> getLastAnimalData(BigInt idAnimal) async {
+Future<AnimalLocationsCompanion?> getLastAnimalData(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.animalLocations)
         ..where(
@@ -56,7 +56,7 @@ Future<double> getMaxTemperature() async {
 Future<List<AnimalLocationsCompanion>> getAnimalData({
   DateTime? startDate,
   DateTime? endDate,
-  required BigInt idAnimal,
+  required String idAnimal,
   bool isInterval = false,
 }) async {
   final db = Get.find<GuardianDb>();
@@ -69,7 +69,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
       WHERE ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ? AND ${db.animalLocations.date.name} BETWEEN ? AND ?
       ORDER BY ${db.animalLocations.date.name} DESC
     ''', variables: [
-      drift.Variable.withBigInt(idAnimal),
+      drift.Variable.withString(idAnimal),
       drift.Variable.withDateTime(startDate),
       drift.Variable.withDateTime(endDate)
     ]).get();
@@ -83,8 +83,8 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
             date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                 locationData.data[db.animalLocations.date.name])),
             animalDataId:
-                drift.Value(BigInt.from(locationData.data[db.animalLocations.animalDataId.name])),
-            idAnimal: drift.Value(BigInt.from(locationData.data[db.animal.idAnimal.name])),
+                drift.Value(locationData.data[db.animalLocations.animalDataId.name]),
+            idAnimal: drift.Value(locationData.data[db.animal.idAnimal.name]),
             elevation: drift.Value(locationData.data[db.animalLocations.elevation.name]),
             lat: drift.Value(locationData.data[db.animalLocations.lat.name]),
             lon: drift.Value(locationData.data[db.animalLocations.lon.name]),

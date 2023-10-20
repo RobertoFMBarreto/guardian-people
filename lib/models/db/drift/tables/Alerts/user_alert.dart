@@ -4,7 +4,7 @@ import 'package:drift/drift.dart';
 ///
 /// [idAlert] is the primary key
 class UserAlert extends Table {
-  Int64Column get idAlert => int64()();
+  TextColumn get idAlert => text()();
   BoolColumn get hasNotification => boolean()();
   TextColumn get parameter => text()();
   TextColumn get comparisson => text()();

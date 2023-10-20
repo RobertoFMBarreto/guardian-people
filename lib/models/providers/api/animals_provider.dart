@@ -27,7 +27,7 @@ class AnimalProvider {
 
   /// Method for getting all animal data [idAnimal] between [startDate] and [endDate]
   static Future<Response> getAnimalData(
-      BigInt idAnimal, DateTime startDate, DateTime endDate) async {
+      String idAnimal, DateTime startDate, DateTime endDate) async {
     String? token = await getToken();
     Map<String, String> headers = {
       //HttpHeaders.contentTypeHeader: 'application/json',

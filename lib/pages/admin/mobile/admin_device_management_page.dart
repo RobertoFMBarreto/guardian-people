@@ -14,7 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {
   final Animal device;
-  final BigInt producerId;
+  final String producerId;
 
   const AdminDeviceManagementPage({
     super.key,

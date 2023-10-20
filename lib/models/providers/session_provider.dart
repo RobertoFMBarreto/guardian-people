@@ -4,7 +4,7 @@ import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Method for setting the user session with [idUser] and the session token [token]
-Future<void> setUserSession(BigInt idUser, String token) async {
+Future<void> setUserSession(String idUser, String token) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   await prefs.setString("token", token);
@@ -80,11 +80,11 @@ Future<void> setSessionToken(String value) async {
 /// Method that allows to get the id of the user
 ///
 /// If the id isn't setted then the user will be redirected to login
-Future<BigInt?> getUid(BuildContext context) async {
+Future<String?> getUid(BuildContext context) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? dt = prefs.getString('idUser');
   if (dt != null) {
-    BigInt? idUser = BigInt.from(int.parse(dt));
+    String? idUser = dt;
     return idUser;
   } else {
     clearUserSession().then((_) => deleteEverything().then(
