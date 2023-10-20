@@ -62,13 +62,13 @@ class _LoginFormState extends State<LoginForm> {
             final body = jsonDecode(resp.body);
             print(body);
 
-            setUserSession(body['id'], body['token']).then((_) {
+            setUserSession(body['uid'], body['token']).then((_) {
               // store user profile
               createUser(UserCompanion(
-                idUser: drift.Value(body['id']),
+                idUser: drift.Value(body['uid']),
                 email: drift.Value(body['email']),
                 name: drift.Value(body['name']),
-                phone: const drift.Value(999999999),
+                phone: drift.Value(int.parse(body['phone'])),
                 isProducer: drift.Value(body['isProducer'] == true),
                 isSuperuser: drift.Value(body['isSuperuser'] == true),
               )).then((_) {
