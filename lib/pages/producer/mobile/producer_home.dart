@@ -96,7 +96,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   ///
   /// If the server takes too long to answer then the user receives and alert
   Future<void> _getAnimalsFromApi() async {
-    AnimalProvider.getAnimals().then((response) async {
+    AnimalProvider.getAnimalsWithLastLocation().then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         await animalsFromJson(response.body);

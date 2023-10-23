@@ -873,15 +873,6 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("is_active" IN (0, 1))'));
-  static const VerificationMeta _isSubscribedMeta =
-      const VerificationMeta('isSubscribed');
-  @override
-  late final GeneratedColumn<bool> isSubscribed = GeneratedColumn<bool>(
-      'is_subscribed', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("is_subscribed" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
         idAnimal,
@@ -889,8 +880,7 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
         animalIdentification,
         animalName,
         animalColor,
-        isActive,
-        isSubscribed
+        isActive
       ];
   @override
   String get aliasedName => _alias ?? 'animal';
@@ -943,14 +933,6 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
     } else if (isInserting) {
       context.missing(_isActiveMeta);
     }
-    if (data.containsKey('is_subscribed')) {
-      context.handle(
-          _isSubscribedMeta,
-          isSubscribed.isAcceptableOrUnknown(
-              data['is_subscribed']!, _isSubscribedMeta));
-    } else if (isInserting) {
-      context.missing(_isSubscribedMeta);
-    }
     return context;
   }
 
@@ -973,8 +955,6 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
           .read(DriftSqlType.string, data['${effectivePrefix}animal_color'])!,
       isActive: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
-      isSubscribed: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_subscribed'])!,
     );
   }
 
@@ -991,15 +971,13 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
   final String animalName;
   final String animalColor;
   final bool isActive;
-  final bool isSubscribed;
   const AnimalData(
       {required this.idAnimal,
       required this.idUser,
       required this.animalIdentification,
       required this.animalName,
       required this.animalColor,
-      required this.isActive,
-      required this.isSubscribed});
+      required this.isActive});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1009,7 +987,6 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
     map['animal_name'] = Variable<String>(animalName);
     map['animal_color'] = Variable<String>(animalColor);
     map['is_active'] = Variable<bool>(isActive);
-    map['is_subscribed'] = Variable<bool>(isSubscribed);
     return map;
   }
 
@@ -1021,7 +998,6 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
       animalName: Value(animalName),
       animalColor: Value(animalColor),
       isActive: Value(isActive),
-      isSubscribed: Value(isSubscribed),
     );
   }
 
@@ -1036,7 +1012,6 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
       animalName: serializer.fromJson<String>(json['animalName']),
       animalColor: serializer.fromJson<String>(json['animalColor']),
       isActive: serializer.fromJson<bool>(json['isActive']),
-      isSubscribed: serializer.fromJson<bool>(json['isSubscribed']),
     );
   }
   @override
@@ -1049,7 +1024,6 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
       'animalName': serializer.toJson<String>(animalName),
       'animalColor': serializer.toJson<String>(animalColor),
       'isActive': serializer.toJson<bool>(isActive),
-      'isSubscribed': serializer.toJson<bool>(isSubscribed),
     };
   }
 
@@ -1059,8 +1033,7 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
           String? animalIdentification,
           String? animalName,
           String? animalColor,
-          bool? isActive,
-          bool? isSubscribed}) =>
+          bool? isActive}) =>
       AnimalData(
         idAnimal: idAnimal ?? this.idAnimal,
         idUser: idUser ?? this.idUser,
@@ -1068,7 +1041,6 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
         animalName: animalName ?? this.animalName,
         animalColor: animalColor ?? this.animalColor,
         isActive: isActive ?? this.isActive,
-        isSubscribed: isSubscribed ?? this.isSubscribed,
       );
   @override
   String toString() {
@@ -1078,15 +1050,14 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
           ..write('animalIdentification: $animalIdentification, ')
           ..write('animalName: $animalName, ')
           ..write('animalColor: $animalColor, ')
-          ..write('isActive: $isActive, ')
-          ..write('isSubscribed: $isSubscribed')
+          ..write('isActive: $isActive')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(idAnimal, idUser, animalIdentification,
-      animalName, animalColor, isActive, isSubscribed);
+      animalName, animalColor, isActive);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1096,8 +1067,7 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
           other.animalIdentification == this.animalIdentification &&
           other.animalName == this.animalName &&
           other.animalColor == this.animalColor &&
-          other.isActive == this.isActive &&
-          other.isSubscribed == this.isSubscribed);
+          other.isActive == this.isActive);
 }
 
 class AnimalCompanion extends UpdateCompanion<AnimalData> {
@@ -1107,7 +1077,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
   final Value<String> animalName;
   final Value<String> animalColor;
   final Value<bool> isActive;
-  final Value<bool> isSubscribed;
   final Value<int> rowid;
   const AnimalCompanion({
     this.idAnimal = const Value.absent(),
@@ -1116,7 +1085,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
     this.animalName = const Value.absent(),
     this.animalColor = const Value.absent(),
     this.isActive = const Value.absent(),
-    this.isSubscribed = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AnimalCompanion.insert({
@@ -1126,15 +1094,13 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
     required String animalName,
     required String animalColor,
     required bool isActive,
-    required bool isSubscribed,
     this.rowid = const Value.absent(),
   })  : idAnimal = Value(idAnimal),
         idUser = Value(idUser),
         animalIdentification = Value(animalIdentification),
         animalName = Value(animalName),
         animalColor = Value(animalColor),
-        isActive = Value(isActive),
-        isSubscribed = Value(isSubscribed);
+        isActive = Value(isActive);
   static Insertable<AnimalData> custom({
     Expression<String>? idAnimal,
     Expression<String>? idUser,
@@ -1142,7 +1108,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
     Expression<String>? animalName,
     Expression<String>? animalColor,
     Expression<bool>? isActive,
-    Expression<bool>? isSubscribed,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1153,7 +1118,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
       if (animalName != null) 'animal_name': animalName,
       if (animalColor != null) 'animal_color': animalColor,
       if (isActive != null) 'is_active': isActive,
-      if (isSubscribed != null) 'is_subscribed': isSubscribed,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1165,7 +1129,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
       Value<String>? animalName,
       Value<String>? animalColor,
       Value<bool>? isActive,
-      Value<bool>? isSubscribed,
       Value<int>? rowid}) {
     return AnimalCompanion(
       idAnimal: idAnimal ?? this.idAnimal,
@@ -1174,7 +1137,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
       animalName: animalName ?? this.animalName,
       animalColor: animalColor ?? this.animalColor,
       isActive: isActive ?? this.isActive,
-      isSubscribed: isSubscribed ?? this.isSubscribed,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1201,9 +1163,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
-    if (isSubscribed.present) {
-      map['is_subscribed'] = Variable<bool>(isSubscribed.value);
-    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1219,7 +1178,6 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
           ..write('animalName: $animalName, ')
           ..write('animalColor: $animalColor, ')
           ..write('isActive: $isActive, ')
-          ..write('isSubscribed: $isSubscribed, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

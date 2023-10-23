@@ -60,9 +60,8 @@ class _LoginFormState extends State<LoginForm> {
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
-            print(body);
-
-            setUserSession(body['uid'], body['token']).then((_) {
+            String refreshToken = resp.headers['set-cookie']!.split('=')[1].split(';')[0];
+            setUserSession(body['uid'], body['token'], refreshToken).then((_) {
               // store user profile
               createUser(UserCompanion(
                 idUser: drift.Value(body['uid']),

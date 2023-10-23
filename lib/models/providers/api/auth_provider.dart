@@ -25,14 +25,13 @@ class AuthProvider {
 
   /// Method for refresh user session token
   static Future<Response> refreshToken() async {
-    String? token = await getToken();
+    String? token = await getRefreshToken();
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
-      HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7986', '/api/v1/session/refresh');
+    var url = Uri.http('192.168.10.71:7986', '/api/v1/refresh-token');
     try {
-      var response = await get(url, headers: headers);
+      var response = await post(url, headers: headers, body: jsonEncode({"refresh-token": token}));
 
       return response;
     } on SocketException catch (e) {

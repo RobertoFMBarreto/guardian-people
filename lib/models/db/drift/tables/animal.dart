@@ -13,7 +13,6 @@ class Animal extends Table {
   TextColumn get animalName => text()();
   TextColumn get animalColor => text()();
   BoolColumn get isActive => boolean()();
-  BoolColumn get isSubscribed => boolean()();
 
   @override
   Set<Column> get primaryKey => {idAnimal};

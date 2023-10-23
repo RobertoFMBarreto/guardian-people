@@ -11,7 +11,28 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7856', '/api/v1/animals');
+    var url = Uri.http('192.168.10.71:7986', '/api/v1/animals');
+    try {
+      var response = await get(
+        url,
+        headers: headers,
+      );
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
+  /// Method for getting all user animals from api with last location
+  static Future<Response> getAnimalsWithLastLocation() async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http('192.168.10.71:7986', '/api/v1/animals/location');
     try {
       var response = await get(
         url,
@@ -33,7 +54,7 @@ class AnimalProvider {
       //HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7856', '/api/v1/animals/$idAnimal/data');
+    var url = Uri.http('192.168.10.71:7986', '/api/v1/animals/$idAnimal/data');
     try {
       var response = await post(url,
           headers: headers,

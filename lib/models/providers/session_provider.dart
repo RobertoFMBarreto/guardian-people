@@ -4,10 +4,11 @@ import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Method for setting the user session with [idUser] and the session token [token]
-Future<void> setUserSession(String idUser, String token) async {
+Future<void> setUserSession(String idUser, String token, String refreshToken) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   await prefs.setString("token", token);
+  await prefs.setString("refresh-token", refreshToken);
   await prefs.setString("idUser", idUser.toString());
 }
 
@@ -101,5 +102,13 @@ Future<String?> getToken() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   String? token = prefs.getString('token');
+  return token;
+}
+
+/// Method that allows to get the session token
+Future<String?> getRefreshToken() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  String? token = prefs.getString('refresh-token');
   return token;
 }
