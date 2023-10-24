@@ -111,6 +111,69 @@
   "server_error_body": "unable to communicate with the server",
   "longer_than_expected": "taking longer than expected",
   "verify_connection": "check your internet connection",
-  "fencing_noti_outside": "is outside the fence",
-  "fencing_noti_inside": "is inside the fence"
+  "fencing_noti_outside": "{animalName} is outside fence {fenceName}",
+  "@fencing_noti_outside": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "fenceName": {
+        "type": "String",
+        "example": "1.0"
+      }
+    }
+  },
+  "fencing_noti_inside": "{animalName} is inside fence {fenceName}",
+  "@fencing_noti_inside": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "fenceName": {
+        "type": "String",
+        "example": "1.0"
+      }
+    }
+  },
+  "notification_alert_altitude_body_string": "The animal {animalName} is at {value}m elevation",
+  "@notification_alert_altitude_body_string": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "value": {
+        "type": "double",
+        "example": "1.0"
+      }
+    }
+  },
+  "notification_alert_battery_body_string": "The animal {animalName} has {value}% battery",
+  "@notification_alert_battery_body_string": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "value": {
+        "type": "double",
+        "example": "1.0"
+      }
+    }
+  },
+  "notification_alert_temperature_body_string": "The animal {animalName} has {value}ºC temperature",
+  "@notification_alert_temperature_body_string": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "value": {
+        "type": "double",
+        "example": "1.0"
+      }
+    }
+  }
 }

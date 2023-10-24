@@ -90,10 +90,10 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       return DevicePage(
-        animal: data['device'] as Animal,
+        animal: data['animal'] as Animal,
       );
     } else {
-      throw ErrorDescription('Device not provided');
+      throw ErrorDescription('Animal not provided');
     }
   },
   '/producer/device/settings': (context) {
@@ -102,7 +102,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
         animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {
-      throw ErrorDescription('Device not provided');
+      throw ErrorDescription('Animal not provided');
     }
   },
   '/producer/device/history': (context) {
@@ -111,7 +111,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
         animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {
-      throw ErrorDescription('Device not provided');
+      throw ErrorDescription('Animal not provided');
     }
   },
   '/producer/alerts': (context) => const AlertsPage(),

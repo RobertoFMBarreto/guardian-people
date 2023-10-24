@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:drift/drift.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -18,15 +22,24 @@ class FCMMessagingProvider {
     print('[Messaging] -> Background message ${message.notification!.body}');
   }
 
-  static String _getMessageBody(BuildContext context, String data, String channel) {
+  static String getMessageBody(BuildContext context, String data, String channel) {
     final body = jsonDecode(data);
     AppLocalizations localizations = AppLocalizations.of(context)!;
     if (channel == "fencing") {
       return body['fence_is_stay_inside']
-          ? '${body['name_animal']} ${localizations.fencing_noti_outside} ${body['fence_name']}'
-          : '${body['name_animal']} ${localizations.fencing_noti_inside} ${body['fence_name']}';
+          ? localizations.fencing_noti_outside(body['name_animal'], body['fence_name'])
+          : localizations.fencing_noti_inside(body['name_animal'], body['fence_name']);
     } else if (channel == "alerts") {
-      return '';
+      final currentValue = double.parse(body['sensor_data']);
+      final animalName = body['animal']['animal_name'];
+      final sensorName = body['alert']['sensor_name'];
+      if (sensorName == "Altitude") {
+        return localizations.notification_alert_altitude_body_string(animalName, currentValue);
+      } else if (sensorName == "Battery") {
+        return localizations.notification_alert_battery_body_string(animalName, currentValue);
+      } else if (sensorName == "Skin Temperature") {
+        return localizations.notification_alert_temperature_body_string(animalName, currentValue);
+      }
     }
     return '';
   }
@@ -34,17 +47,43 @@ class FCMMessagingProvider {
   static Future<void> initInfo(
     GlobalKey<NavigatorState> navigatorKey,
   ) async {
+    await FirebaseMessaging.instance.setDeliveryMetricsExportToBigQuery(true);
     //Handle terminated state message clicking
     RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-
     if (initialMessage != null) {
       if (kDebugMode) {
         print("--------------------Click Background Terminated--------------------");
+        final payloadData = jsonDecode(initialMessage.data['data']);
+        if (initialMessage.data['channel'] == 'fencing') {
+          // Receber dados suficientes para construir um animal
+          // enviar o animal para a página
+          print(payloadData);
+          Animal animal = Animal(
+            animal: AnimalCompanion(
+              animalColor: Value(payloadData['animal']['animal_color']),
+              animalIdentification: Value(payloadData['animal']['animal_identification']),
+              animalName: Value(payloadData['animal']['animal_name']),
+              idAnimal: Value(payloadData['animal']['id_animal']),
+              idUser: Value(payloadData['animal']['id_user']),
+              isActive: Value(payloadData['animal']['animal_active']),
+            ),
+            data: [],
+          );
+          navigatorKey.currentState!.push(
+            CustomPageRouter(
+              page: '/producer/device',
+              settings: RouteSettings(
+                arguments: {
+                  'animal': animal,
+                  'producerId': payloadData['animal']['id_user'],
+                },
+              ),
+            ),
+          );
+        }
       }
-      final payloadData = jsonDecode(initialMessage.data['body']);
-      if (kDebugMode) {
-        print("data: $payloadData");
-      }
+      //final payloadData = jsonDecode(initialMessage.data['body']);
+      if (kDebugMode) {}
     }
     const androidInitialize = AndroidInitializationSettings('icon_512');
     const DarwinInitializationSettings initializationSettingsDarwin =
@@ -82,13 +121,27 @@ class FCMMessagingProvider {
     // Open notification with app on background but not terminated
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (kDebugMode) {
-        print("--------------------Click Background--------------------");
+        print("--------------------Click Background >$message< --------------------");
       }
       try {
-        final payloadData = jsonDecode(message.data['body']);
-        if (kDebugMode) {
-          print("data: $payloadData");
+        final payloadData = jsonDecode(message.data['data']);
+        if (message.data['channel'] == 'fencing' || message.data['channel'] == 'alerts') {
+          // Receber dados suficientes para construir um animal
+          // enviar o animal para a página
+          Animal animal = Animal(
+            animal: AnimalCompanion(
+              animalColor: Value(payloadData['animal']['animal_color']),
+              animalIdentification: Value(payloadData['animal']['animal_identification']),
+              animalName: Value(payloadData['animal']['animal_name']),
+              idAnimal: Value(payloadData['animal']['id_animal']),
+              idUser: Value(payloadData['animal']['id_user']),
+              isActive: Value(payloadData['animal']['animal_active']),
+            ),
+            data: [],
+          );
+          navigatorKey.currentState!.pushNamed('/producer/device', arguments: {"animal": animal});
         }
+        if (kDebugMode) {}
       } catch (e) {}
     });
 
@@ -101,10 +154,10 @@ class FCMMessagingProvider {
       }
 
       final body = jsonDecode(message.data['data']);
-      final bodyMessage = _getMessageBody(
+      final bodyMessage = getMessageBody(
           navigatorKey.currentState!.context, message.data['data'], message.data['channel']);
-      print("Message: $bodyMessage");
-      print("Channel: ${message.data['channel']}");
+      // print("Message: $bodyMessage");
+      // print("Channel: ${message.data['channel']}");
       // String bodyMessage = "${message.data['title']} ${body['msg']}";
 
       DarwinNotificationDetails iosNotificationDetails = const DarwinNotificationDetails(
@@ -137,7 +190,7 @@ class FCMMessagingProvider {
         body['name_animal'], //message.data['title'],
         bodyMessage,
         platformChannelSpecifics,
-        payload: "Teste", //message.data['body'],
+        payload: message.data.toString(), //message.data['body'],
       );
     });
   }

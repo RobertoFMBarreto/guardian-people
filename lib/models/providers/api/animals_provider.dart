@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/settings/app_settings.dart';
 import 'package:http/http.dart';
 
 /// This class is the provider of animals from the guardian api
@@ -11,7 +12,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7986', '/api/v1/animals');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals');
     try {
       var response = await get(
         url,
@@ -32,7 +33,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7986', '/api/v1/animals/location');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/location');
     try {
       var response = await get(
         url,
@@ -54,7 +55,7 @@ class AnimalProvider {
       //HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http('192.168.10.71:7986', '/api/v1/animals/$idAnimal/data');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/$idAnimal/data');
     try {
       var response = await post(url,
           headers: headers,
