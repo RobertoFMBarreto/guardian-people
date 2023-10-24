@@ -44,6 +44,39 @@ class FCMMessagingProvider {
     return '';
   }
 
+  static void _notificationClickHandler(
+    RemoteMessage message,
+    GlobalKey<NavigatorState> navigatorKey,
+  ) {
+    if (kDebugMode) {
+      print("--------------------Click Background--------------------");
+    }
+    try {
+      final payloadData = jsonDecode(message.data['data']);
+      if (message.data['channel'] == 'fencing' || message.data['channel'] == 'alerts') {
+        // Receber dados suficientes para construir um animal
+        // enviar o animal para a página
+        Animal animal = Animal(
+          animal: AnimalCompanion(
+            animalColor: Value(payloadData['animal']['animal_color']),
+            animalIdentification: Value(payloadData['animal']['animal_identification']),
+            animalName: Value(payloadData['animal']['animal_name']),
+            idAnimal: Value(payloadData['animal']['id_animal']),
+            idUser: Value(payloadData['animal']['id_user']),
+            isActive: Value(payloadData['animal']['animal_active']),
+          ),
+          data: [],
+        );
+        navigatorKey.currentState!.pushNamed('/producer/device', arguments: {"animal": animal});
+      }
+      if (kDebugMode) {}
+    } catch (e) {}
+  }
+
+  static void _onMessage(
+    RemoteMessage message,
+  ) {}
+
   static Future<void> initInfo(
     GlobalKey<NavigatorState> navigatorKey,
   ) async {
@@ -53,34 +86,7 @@ class FCMMessagingProvider {
     if (initialMessage != null) {
       if (kDebugMode) {
         print("--------------------Click Background Terminated--------------------");
-        final payloadData = jsonDecode(initialMessage.data['data']);
-        if (initialMessage.data['channel'] == 'fencing') {
-          // Receber dados suficientes para construir um animal
-          // enviar o animal para a página
-          print(payloadData);
-          Animal animal = Animal(
-            animal: AnimalCompanion(
-              animalColor: Value(payloadData['animal']['animal_color']),
-              animalIdentification: Value(payloadData['animal']['animal_identification']),
-              animalName: Value(payloadData['animal']['animal_name']),
-              idAnimal: Value(payloadData['animal']['id_animal']),
-              idUser: Value(payloadData['animal']['id_user']),
-              isActive: Value(payloadData['animal']['animal_active']),
-            ),
-            data: [],
-          );
-          navigatorKey.currentState!.push(
-            CustomPageRouter(
-              page: '/producer/device',
-              settings: RouteSettings(
-                arguments: {
-                  'animal': animal,
-                  'producerId': payloadData['animal']['id_user'],
-                },
-              ),
-            ),
-          );
-        }
+        _notificationClickHandler(initialMessage, navigatorKey);
       }
       //final payloadData = jsonDecode(initialMessage.data['body']);
       if (kDebugMode) {}
@@ -115,34 +121,11 @@ class FCMMessagingProvider {
 
     FirebaseMessaging.instance.getToken().then((String? token) {
       assert(token != null);
-      print('Token $token');
     });
 
     // Open notification with app on background but not terminated
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (kDebugMode) {
-        print("--------------------Click Background >$message< --------------------");
-      }
-      try {
-        final payloadData = jsonDecode(message.data['data']);
-        if (message.data['channel'] == 'fencing' || message.data['channel'] == 'alerts') {
-          // Receber dados suficientes para construir um animal
-          // enviar o animal para a página
-          Animal animal = Animal(
-            animal: AnimalCompanion(
-              animalColor: Value(payloadData['animal']['animal_color']),
-              animalIdentification: Value(payloadData['animal']['animal_identification']),
-              animalName: Value(payloadData['animal']['animal_name']),
-              idAnimal: Value(payloadData['animal']['id_animal']),
-              idUser: Value(payloadData['animal']['id_user']),
-              isActive: Value(payloadData['animal']['animal_active']),
-            ),
-            data: [],
-          );
-          navigatorKey.currentState!.pushNamed('/producer/device', arguments: {"animal": animal});
-        }
-        if (kDebugMode) {}
-      } catch (e) {}
+      _notificationClickHandler(message, navigatorKey);
     });
 
     FirebaseMessaging.onMessage.listen((message) async {
@@ -156,9 +139,6 @@ class FCMMessagingProvider {
       final body = jsonDecode(message.data['data']);
       final bodyMessage = getMessageBody(
           navigatorKey.currentState!.context, message.data['data'], message.data['channel']);
-      // print("Message: $bodyMessage");
-      // print("Channel: ${message.data['channel']}");
-      // String bodyMessage = "${message.data['title']} ${body['msg']}";
 
       DarwinNotificationDetails iosNotificationDetails = const DarwinNotificationDetails(
         presentAlert: true,
