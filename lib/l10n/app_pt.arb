@@ -110,5 +110,7 @@
   "server_error": "erro de comunicação",
   "server_error_body": "não foi possível comunicar com o servidor",
   "longer_than_expected": "a demorar mais tempo do que o esperado",
-  "verify_connection": "verifique a sua conexão à internet"
+  "verify_connection": "verifique a sua conexão à internet",
+  "fencing_noti_outside": "está fora da cerca",
+  "fencing_noti_inside": "está dentro da cerca"
 }

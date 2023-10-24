@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "127822371110",
+    "project_id": "guardian-9d8c5",
+    "storage_bucket": "guardian-9d8c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127822371110:android:f3b71fd593d5cb217d49e7",
+        "android_client_info": {
+          "package_name": "com.example.guardian"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlergplLL5cRz8EnfeBSKjwBw5_in4V2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127822371110:android:5372533f23e284787d49e7",
+        "android_client_info": {
+          "package_name": "com.linovt.guardian"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlergplLL5cRz8EnfeBSKjwBw5_in4V2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

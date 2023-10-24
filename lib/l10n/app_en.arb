@@ -110,5 +110,7 @@
   "server_error": "comunication error",
   "server_error_body": "unable to communicate with the server",
   "longer_than_expected": "taking longer than expected",
-  "verify_connection": "check your internet connection"
+  "verify_connection": "check your internet connection",
+  "fencing_noti_outside": "is outside the fence",
+  "fencing_noti_inside": "is inside the fence"
 }

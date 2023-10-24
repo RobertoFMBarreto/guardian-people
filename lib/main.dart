@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:guardian/firebase_options.dart';
+import 'package:guardian/models/providers/messaging_provider.dart';
 import 'package:guardian/routes/mobile_routes.dart';
 import 'package:guardian/routes/web_routes.dart';
 // import 'package:get/get.dart';
@@ -20,8 +24,24 @@ import 'package:guardian/themes/light_theme.dart';
 // import 'package:guardian/models/providers/caching/caching_provider.dart';
 
 late bool hasConnection;
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print('[Messaging] -> Background message ${message.notification!.body}');
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseMessaging.onBackgroundMessage(FCMMessagingProvider.firebaseMessagingBackgroundHandler);
 
   // if (!kIsWeb) {
   //   await MapCaching().initMapCaching();
@@ -64,21 +84,23 @@ class _MyAppState extends State<MyApp> {
   /// 2. setup the connection checker
   Future<StreamSubscription?> _setup() async {
     if (!kIsWeb) {
-      return _setupInitialConnectionState().then(
-        (_) => subscription = wifiConnectionChecker(
-          onHasConnection: () async {
-            setState(() {
-              hasConnection = true;
-            });
-            await setShownNoWifiDialog(false);
-          },
-          onNotHasConnection: () async {
-            setState(() {
-              hasConnection = false;
-            });
+      return FCMMessagingProvider.initInfo(navigatorKey).then(
+        (_) => _setupInitialConnectionState().then(
+          (_) => subscription = wifiConnectionChecker(
+            onHasConnection: () async {
+              setState(() {
+                hasConnection = true;
+              });
+              await setShownNoWifiDialog(false);
+            },
+            onNotHasConnection: () async {
+              setState(() {
+                hasConnection = false;
+              });
 
-            await showNoWifiDialog(navigatorKey.currentContext!);
-          },
+              await showNoWifiDialog(navigatorKey.currentContext!);
+            },
+          ),
         ),
       );
     } else {
