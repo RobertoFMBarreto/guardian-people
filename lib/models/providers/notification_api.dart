@@ -1,7 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest_all.dart' as timezone;
-import 'package:timezone/timezone.dart' as timezone;
 
 class NotificationApi {
   static final _notification = FlutterLocalNotificationsPlugin();

@@ -6,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/settings/colors.dart';
@@ -19,7 +18,9 @@ class FCMMessagingProvider {
     // make sure you call `initializeApp` before using other Firebase services.
     await Firebase.initializeApp();
 
-    print('[Messaging] -> Background message ${message.notification!.body}');
+    if (kDebugMode) {
+      print('[Messaging] -> Background message ${message.notification!.body}');
+    }
   }
 
   static String getMessageBody(BuildContext context, String data, String channel) {
@@ -73,10 +74,6 @@ class FCMMessagingProvider {
     } catch (e) {}
   }
 
-  static void _onMessage(
-    RemoteMessage message,
-  ) {}
-
   static Future<void> initInfo(
     GlobalKey<NavigatorState> navigatorKey,
   ) async {
@@ -112,7 +109,9 @@ class FCMMessagingProvider {
           if (payload != null && payload.isNotEmpty) {
             final payloadData = jsonDecode(payload);
 
-            print("data: $payloadData");
+            if (kDebugMode) {
+              print("data: $payloadData");
+            }
           } else {}
         } catch (e) {}
         return;

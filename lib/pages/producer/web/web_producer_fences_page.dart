@@ -28,9 +28,6 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
   FenceData? _selectedFence;
   bool isInteractingFence = false;
 
-  String _searchString = '';
-  String _fenceName = '';
-
   @override
   void initState() {
     _future = _setup();
@@ -95,7 +92,6 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                             child: SearchWithFilterInput(
                                               onFilter: () {},
                                               onSearchChanged: (value) {
-                                                _searchString = value;
                                                 _filterFences();
                                               },
                                             ),
@@ -150,9 +146,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                     Padding(
                                       padding: const EdgeInsets.only(bottom: 8.0),
                                       child: TextField(
-                                        onChanged: (newValue) {
-                                          _fenceName = newValue;
-                                        },
+                                        onChanged: (newValue) {},
                                         controller: _nameController,
                                         decoration: InputDecoration(
                                           label: Text(
