@@ -124,7 +124,10 @@ Future<List<UserAlertCompanion>> getAnimalAlerts(String idAnimal) async {
         comparisson: drift.Value(e.readTable(db.userAlert).comparisson),
         hasNotification: drift.Value(e.readTable(db.userAlert).hasNotification),
         parameter: drift.Value(e.readTable(db.userAlert).parameter),
-        value: drift.Value(e.readTable(db.userAlert).value),
+        conditionCompTo: drift.Value(e.readTable(db.userAlert).parameter),
+        durationSeconds: drift.Value(e.readTable(db.userAlert).durationSeconds),
+        isStateParam: drift.Value(e.readTable(db.userAlert).isStateParam),
+        isTimed: drift.Value(e.readTable(db.userAlert).isTimed),
       ),
     ),
   );
@@ -141,7 +144,10 @@ Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) asyn
         ${db.userAlert.comparisson.name},
         ${db.userAlert.parameter.name},
         ${db.userAlert.hasNotification.name},
-        ${db.userAlert.value.name}
+        ${db.userAlert.conditionCompTo.name},
+        ${db.userAlert.durationSeconds.name},
+        ${db.userAlert.isStateParam.name},
+        ${db.userAlert.isTimed.name},
       FROM ${db.userAlert.actualTableName}
       WHERE ${db.userAlert.idAlert.name} NOT IN 
         (SELECT ${db.userAlert.idAlert.name} FROM ${db.alertAnimals.actualTableName} WHERE ${db.alertAnimals.idAnimal.name} = ?)
@@ -156,7 +162,10 @@ Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) asyn
         comparisson: drift.Value(e.data[db.userAlert.comparisson.name]),
         hasNotification: drift.Value(e.data[db.userAlert.hasNotification.name] == 1),
         parameter: drift.Value(e.data[db.userAlert.parameter.name]),
-        value: drift.Value(e.data[db.userAlert.value.name]),
+        conditionCompTo: drift.Value(e.data[db.userAlert.conditionCompTo.name]),
+        durationSeconds: drift.Value(e.data[db.userAlert.durationSeconds.name]),
+        isStateParam: drift.Value(e.data[db.userAlert.isStateParam.name]),
+        isTimed: drift.Value(e.data[db.userAlert.isTimed.name]),
       ),
     ),
   );

@@ -45,6 +45,44 @@ extension ParseCmpToString on AlertComparissons {
   }
 }
 
+String parseComparisson(String op, AppLocalizations localizations) {
+  switch (op) {
+    case '=':
+      return localizations.equal;
+
+    case '>':
+      return localizations.greater;
+
+    case '<':
+      return localizations.less;
+
+    case '>=':
+      return localizations.greaterOrEqual;
+
+    case '<=':
+      return localizations.lessOrEqual;
+
+    default:
+      return op;
+  }
+}
+
+String parseSensor(String name, AppLocalizations localizations) {
+  switch (name) {
+    case 'Skin Temperature':
+      return localizations.temperature;
+
+    case 'dataUsage':
+      return localizations.data_used;
+
+    case 'Battery':
+      return localizations.battery;
+
+    default:
+      return name;
+  }
+}
+
 /// Extensions of [AlertParameter]
 extension ParseParToString on AlertParameter {
   /// Extension to parse from [AlertParameter] to [String]

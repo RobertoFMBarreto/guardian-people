@@ -46,9 +46,18 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'CHECK ("is_producer" IN (0, 1))'));
+  static const VerificationMeta _isOverViewerMeta =
+      const VerificationMeta('isOverViewer');
+  @override
+  late final GeneratedColumn<bool> isOverViewer = GeneratedColumn<bool>(
+      'is_over_viewer', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_over_viewer" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns =>
-      [idUser, name, email, phone, isSuperuser, isProducer];
+      [idUser, name, email, phone, isSuperuser, isProducer, isOverViewer];
   @override
   String get aliasedName => _alias ?? 'user';
   @override
@@ -98,6 +107,14 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
     } else if (isInserting) {
       context.missing(_isProducerMeta);
     }
+    if (data.containsKey('is_over_viewer')) {
+      context.handle(
+          _isOverViewerMeta,
+          isOverViewer.isAcceptableOrUnknown(
+              data['is_over_viewer']!, _isOverViewerMeta));
+    } else if (isInserting) {
+      context.missing(_isOverViewerMeta);
+    }
     return context;
   }
 
@@ -119,6 +136,8 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
           .read(DriftSqlType.bool, data['${effectivePrefix}is_superuser'])!,
       isProducer: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_producer'])!,
+      isOverViewer: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_over_viewer'])!,
     );
   }
 
@@ -135,13 +154,15 @@ class UserData extends DataClass implements Insertable<UserData> {
   final int phone;
   final bool isSuperuser;
   final bool isProducer;
+  final bool isOverViewer;
   const UserData(
       {required this.idUser,
       required this.name,
       required this.email,
       required this.phone,
       required this.isSuperuser,
-      required this.isProducer});
+      required this.isProducer,
+      required this.isOverViewer});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -151,6 +172,7 @@ class UserData extends DataClass implements Insertable<UserData> {
     map['phone'] = Variable<int>(phone);
     map['is_superuser'] = Variable<bool>(isSuperuser);
     map['is_producer'] = Variable<bool>(isProducer);
+    map['is_over_viewer'] = Variable<bool>(isOverViewer);
     return map;
   }
 
@@ -162,6 +184,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       phone: Value(phone),
       isSuperuser: Value(isSuperuser),
       isProducer: Value(isProducer),
+      isOverViewer: Value(isOverViewer),
     );
   }
 
@@ -175,6 +198,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       phone: serializer.fromJson<int>(json['phone']),
       isSuperuser: serializer.fromJson<bool>(json['isSuperuser']),
       isProducer: serializer.fromJson<bool>(json['isProducer']),
+      isOverViewer: serializer.fromJson<bool>(json['isOverViewer']),
     );
   }
   @override
@@ -187,6 +211,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       'phone': serializer.toJson<int>(phone),
       'isSuperuser': serializer.toJson<bool>(isSuperuser),
       'isProducer': serializer.toJson<bool>(isProducer),
+      'isOverViewer': serializer.toJson<bool>(isOverViewer),
     };
   }
 
@@ -196,7 +221,8 @@ class UserData extends DataClass implements Insertable<UserData> {
           String? email,
           int? phone,
           bool? isSuperuser,
-          bool? isProducer}) =>
+          bool? isProducer,
+          bool? isOverViewer}) =>
       UserData(
         idUser: idUser ?? this.idUser,
         name: name ?? this.name,
@@ -204,6 +230,7 @@ class UserData extends DataClass implements Insertable<UserData> {
         phone: phone ?? this.phone,
         isSuperuser: isSuperuser ?? this.isSuperuser,
         isProducer: isProducer ?? this.isProducer,
+        isOverViewer: isOverViewer ?? this.isOverViewer,
       );
   @override
   String toString() {
@@ -213,14 +240,15 @@ class UserData extends DataClass implements Insertable<UserData> {
           ..write('email: $email, ')
           ..write('phone: $phone, ')
           ..write('isSuperuser: $isSuperuser, ')
-          ..write('isProducer: $isProducer')
+          ..write('isProducer: $isProducer, ')
+          ..write('isOverViewer: $isOverViewer')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(idUser, name, email, phone, isSuperuser, isProducer);
+  int get hashCode => Object.hash(
+      idUser, name, email, phone, isSuperuser, isProducer, isOverViewer);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -230,7 +258,8 @@ class UserData extends DataClass implements Insertable<UserData> {
           other.email == this.email &&
           other.phone == this.phone &&
           other.isSuperuser == this.isSuperuser &&
-          other.isProducer == this.isProducer);
+          other.isProducer == this.isProducer &&
+          other.isOverViewer == this.isOverViewer);
 }
 
 class UserCompanion extends UpdateCompanion<UserData> {
@@ -240,6 +269,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
   final Value<int> phone;
   final Value<bool> isSuperuser;
   final Value<bool> isProducer;
+  final Value<bool> isOverViewer;
   final Value<int> rowid;
   const UserCompanion({
     this.idUser = const Value.absent(),
@@ -248,6 +278,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
     this.phone = const Value.absent(),
     this.isSuperuser = const Value.absent(),
     this.isProducer = const Value.absent(),
+    this.isOverViewer = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserCompanion.insert({
@@ -257,13 +288,15 @@ class UserCompanion extends UpdateCompanion<UserData> {
     required int phone,
     required bool isSuperuser,
     required bool isProducer,
+    required bool isOverViewer,
     this.rowid = const Value.absent(),
   })  : idUser = Value(idUser),
         name = Value(name),
         email = Value(email),
         phone = Value(phone),
         isSuperuser = Value(isSuperuser),
-        isProducer = Value(isProducer);
+        isProducer = Value(isProducer),
+        isOverViewer = Value(isOverViewer);
   static Insertable<UserData> custom({
     Expression<String>? idUser,
     Expression<String>? name,
@@ -271,6 +304,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
     Expression<int>? phone,
     Expression<bool>? isSuperuser,
     Expression<bool>? isProducer,
+    Expression<bool>? isOverViewer,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -280,6 +314,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       if (phone != null) 'phone': phone,
       if (isSuperuser != null) 'is_superuser': isSuperuser,
       if (isProducer != null) 'is_producer': isProducer,
+      if (isOverViewer != null) 'is_over_viewer': isOverViewer,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -291,6 +326,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       Value<int>? phone,
       Value<bool>? isSuperuser,
       Value<bool>? isProducer,
+      Value<bool>? isOverViewer,
       Value<int>? rowid}) {
     return UserCompanion(
       idUser: idUser ?? this.idUser,
@@ -299,6 +335,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       phone: phone ?? this.phone,
       isSuperuser: isSuperuser ?? this.isSuperuser,
       isProducer: isProducer ?? this.isProducer,
+      isOverViewer: isOverViewer ?? this.isOverViewer,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -324,6 +361,9 @@ class UserCompanion extends UpdateCompanion<UserData> {
     if (isProducer.present) {
       map['is_producer'] = Variable<bool>(isProducer.value);
     }
+    if (isOverViewer.present) {
+      map['is_over_viewer'] = Variable<bool>(isOverViewer.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -339,6 +379,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
           ..write('phone: $phone, ')
           ..write('isSuperuser: $isSuperuser, ')
           ..write('isProducer: $isProducer, ')
+          ..write('isOverViewer: $isOverViewer, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -356,6 +397,14 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
   late final GeneratedColumn<String> idFence = GeneratedColumn<String>(
       'id_fence', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _idUserMeta = const VerificationMeta('idUser');
+  @override
+  late final GeneratedColumn<String> idUser = GeneratedColumn<String>(
+      'id_user', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES user (id_user)'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -366,8 +415,18 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
   late final GeneratedColumn<String> color = GeneratedColumn<String>(
       'color', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _isStayInsideMeta =
+      const VerificationMeta('isStayInside');
   @override
-  List<GeneratedColumn> get $columns => [idFence, name, color];
+  late final GeneratedColumn<bool> isStayInside = GeneratedColumn<bool>(
+      'is_stay_inside', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_stay_inside" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idFence, idUser, name, color, isStayInside];
   @override
   String get aliasedName => _alias ?? 'fence';
   @override
@@ -383,6 +442,12 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
     } else if (isInserting) {
       context.missing(_idFenceMeta);
     }
+    if (data.containsKey('id_user')) {
+      context.handle(_idUserMeta,
+          idUser.isAcceptableOrUnknown(data['id_user']!, _idUserMeta));
+    } else if (isInserting) {
+      context.missing(_idUserMeta);
+    }
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
@@ -395,6 +460,14 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
     } else if (isInserting) {
       context.missing(_colorMeta);
     }
+    if (data.containsKey('is_stay_inside')) {
+      context.handle(
+          _isStayInsideMeta,
+          isStayInside.isAcceptableOrUnknown(
+              data['is_stay_inside']!, _isStayInsideMeta));
+    } else if (isInserting) {
+      context.missing(_isStayInsideMeta);
+    }
     return context;
   }
 
@@ -406,10 +479,14 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
     return FenceData(
       idFence: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id_fence'])!,
+      idUser: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id_user'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       color: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}color'])!,
+      isStayInside: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_stay_inside'])!,
     );
   }
 
@@ -421,24 +498,34 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
 
 class FenceData extends DataClass implements Insertable<FenceData> {
   final String idFence;
+  final String idUser;
   final String name;
   final String color;
+  final bool isStayInside;
   const FenceData(
-      {required this.idFence, required this.name, required this.color});
+      {required this.idFence,
+      required this.idUser,
+      required this.name,
+      required this.color,
+      required this.isStayInside});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id_fence'] = Variable<String>(idFence);
+    map['id_user'] = Variable<String>(idUser);
     map['name'] = Variable<String>(name);
     map['color'] = Variable<String>(color);
+    map['is_stay_inside'] = Variable<bool>(isStayInside);
     return map;
   }
 
   FenceCompanion toCompanion(bool nullToAbsent) {
     return FenceCompanion(
       idFence: Value(idFence),
+      idUser: Value(idUser),
       name: Value(name),
       color: Value(color),
+      isStayInside: Value(isStayInside),
     );
   }
 
@@ -447,8 +534,10 @@ class FenceData extends DataClass implements Insertable<FenceData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FenceData(
       idFence: serializer.fromJson<String>(json['idFence']),
+      idUser: serializer.fromJson<String>(json['idUser']),
       name: serializer.fromJson<String>(json['name']),
       color: serializer.fromJson<String>(json['color']),
+      isStayInside: serializer.fromJson<bool>(json['isStayInside']),
     );
   }
   @override
@@ -456,80 +545,109 @@ class FenceData extends DataClass implements Insertable<FenceData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'idFence': serializer.toJson<String>(idFence),
+      'idUser': serializer.toJson<String>(idUser),
       'name': serializer.toJson<String>(name),
       'color': serializer.toJson<String>(color),
+      'isStayInside': serializer.toJson<bool>(isStayInside),
     };
   }
 
-  FenceData copyWith({String? idFence, String? name, String? color}) =>
+  FenceData copyWith(
+          {String? idFence,
+          String? idUser,
+          String? name,
+          String? color,
+          bool? isStayInside}) =>
       FenceData(
         idFence: idFence ?? this.idFence,
+        idUser: idUser ?? this.idUser,
         name: name ?? this.name,
         color: color ?? this.color,
+        isStayInside: isStayInside ?? this.isStayInside,
       );
   @override
   String toString() {
     return (StringBuffer('FenceData(')
           ..write('idFence: $idFence, ')
+          ..write('idUser: $idUser, ')
           ..write('name: $name, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('isStayInside: $isStayInside')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idFence, name, color);
+  int get hashCode => Object.hash(idFence, idUser, name, color, isStayInside);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is FenceData &&
           other.idFence == this.idFence &&
+          other.idUser == this.idUser &&
           other.name == this.name &&
-          other.color == this.color);
+          other.color == this.color &&
+          other.isStayInside == this.isStayInside);
 }
 
 class FenceCompanion extends UpdateCompanion<FenceData> {
   final Value<String> idFence;
+  final Value<String> idUser;
   final Value<String> name;
   final Value<String> color;
+  final Value<bool> isStayInside;
   final Value<int> rowid;
   const FenceCompanion({
     this.idFence = const Value.absent(),
+    this.idUser = const Value.absent(),
     this.name = const Value.absent(),
     this.color = const Value.absent(),
+    this.isStayInside = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   FenceCompanion.insert({
     required String idFence,
+    required String idUser,
     required String name,
     required String color,
+    required bool isStayInside,
     this.rowid = const Value.absent(),
   })  : idFence = Value(idFence),
+        idUser = Value(idUser),
         name = Value(name),
-        color = Value(color);
+        color = Value(color),
+        isStayInside = Value(isStayInside);
   static Insertable<FenceData> custom({
     Expression<String>? idFence,
+    Expression<String>? idUser,
     Expression<String>? name,
     Expression<String>? color,
+    Expression<bool>? isStayInside,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idFence != null) 'id_fence': idFence,
+      if (idUser != null) 'id_user': idUser,
       if (name != null) 'name': name,
       if (color != null) 'color': color,
+      if (isStayInside != null) 'is_stay_inside': isStayInside,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   FenceCompanion copyWith(
       {Value<String>? idFence,
+      Value<String>? idUser,
       Value<String>? name,
       Value<String>? color,
+      Value<bool>? isStayInside,
       Value<int>? rowid}) {
     return FenceCompanion(
       idFence: idFence ?? this.idFence,
+      idUser: idUser ?? this.idUser,
       name: name ?? this.name,
       color: color ?? this.color,
+      isStayInside: isStayInside ?? this.isStayInside,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -540,11 +658,17 @@ class FenceCompanion extends UpdateCompanion<FenceData> {
     if (idFence.present) {
       map['id_fence'] = Variable<String>(idFence.value);
     }
+    if (idUser.present) {
+      map['id_user'] = Variable<String>(idUser.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
     if (color.present) {
       map['color'] = Variable<String>(color.value);
+    }
+    if (isStayInside.present) {
+      map['is_stay_inside'] = Variable<bool>(isStayInside.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -556,8 +680,10 @@ class FenceCompanion extends UpdateCompanion<FenceData> {
   String toString() {
     return (StringBuffer('FenceCompanion(')
           ..write('idFence: $idFence, ')
+          ..write('idUser: $idUser, ')
           ..write('name: $name, ')
           ..write('color: $color, ')
+          ..write('isStayInside: $isStayInside, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -595,8 +721,15 @@ class $FencePointsTable extends FencePoints
   late final GeneratedColumn<double> lon = GeneratedColumn<double>(
       'lon', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _isCenterMeta =
+      const VerificationMeta('isCenter');
   @override
-  List<GeneratedColumn> get $columns => [idFencePoint, idFence, lat, lon];
+  late final GeneratedColumn<double> isCenter = GeneratedColumn<double>(
+      'is_center', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idFencePoint, idFence, lat, lon, isCenter];
   @override
   String get aliasedName => _alias ?? 'fence_points';
   @override
@@ -632,6 +765,12 @@ class $FencePointsTable extends FencePoints
     } else if (isInserting) {
       context.missing(_lonMeta);
     }
+    if (data.containsKey('is_center')) {
+      context.handle(_isCenterMeta,
+          isCenter.isAcceptableOrUnknown(data['is_center']!, _isCenterMeta));
+    } else if (isInserting) {
+      context.missing(_isCenterMeta);
+    }
     return context;
   }
 
@@ -649,6 +788,8 @@ class $FencePointsTable extends FencePoints
           .read(DriftSqlType.double, data['${effectivePrefix}lat'])!,
       lon: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}lon'])!,
+      isCenter: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}is_center'])!,
     );
   }
 
@@ -663,11 +804,13 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
   final String idFence;
   final double lat;
   final double lon;
+  final double isCenter;
   const FencePoint(
       {required this.idFencePoint,
       required this.idFence,
       required this.lat,
-      required this.lon});
+      required this.lon,
+      required this.isCenter});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -675,6 +818,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
     map['id_fence'] = Variable<String>(idFence);
     map['lat'] = Variable<double>(lat);
     map['lon'] = Variable<double>(lon);
+    map['is_center'] = Variable<double>(isCenter);
     return map;
   }
 
@@ -684,6 +828,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       idFence: Value(idFence),
       lat: Value(lat),
       lon: Value(lon),
+      isCenter: Value(isCenter),
     );
   }
 
@@ -695,6 +840,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       idFence: serializer.fromJson<String>(json['idFence']),
       lat: serializer.fromJson<double>(json['lat']),
       lon: serializer.fromJson<double>(json['lon']),
+      isCenter: serializer.fromJson<double>(json['isCenter']),
     );
   }
   @override
@@ -705,16 +851,22 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       'idFence': serializer.toJson<String>(idFence),
       'lat': serializer.toJson<double>(lat),
       'lon': serializer.toJson<double>(lon),
+      'isCenter': serializer.toJson<double>(isCenter),
     };
   }
 
   FencePoint copyWith(
-          {String? idFencePoint, String? idFence, double? lat, double? lon}) =>
+          {String? idFencePoint,
+          String? idFence,
+          double? lat,
+          double? lon,
+          double? isCenter}) =>
       FencePoint(
         idFencePoint: idFencePoint ?? this.idFencePoint,
         idFence: idFence ?? this.idFence,
         lat: lat ?? this.lat,
         lon: lon ?? this.lon,
+        isCenter: isCenter ?? this.isCenter,
       );
   @override
   String toString() {
@@ -722,13 +874,14 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
           ..write('idFencePoint: $idFencePoint, ')
           ..write('idFence: $idFence, ')
           ..write('lat: $lat, ')
-          ..write('lon: $lon')
+          ..write('lon: $lon, ')
+          ..write('isCenter: $isCenter')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idFencePoint, idFence, lat, lon);
+  int get hashCode => Object.hash(idFencePoint, idFence, lat, lon, isCenter);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -736,7 +889,8 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
           other.idFencePoint == this.idFencePoint &&
           other.idFence == this.idFence &&
           other.lat == this.lat &&
-          other.lon == this.lon);
+          other.lon == this.lon &&
+          other.isCenter == this.isCenter);
 }
 
 class FencePointsCompanion extends UpdateCompanion<FencePoint> {
@@ -744,12 +898,14 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
   final Value<String> idFence;
   final Value<double> lat;
   final Value<double> lon;
+  final Value<double> isCenter;
   final Value<int> rowid;
   const FencePointsCompanion({
     this.idFencePoint = const Value.absent(),
     this.idFence = const Value.absent(),
     this.lat = const Value.absent(),
     this.lon = const Value.absent(),
+    this.isCenter = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   FencePointsCompanion.insert({
@@ -757,16 +913,19 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
     required String idFence,
     required double lat,
     required double lon,
+    required double isCenter,
     this.rowid = const Value.absent(),
   })  : idFencePoint = Value(idFencePoint),
         idFence = Value(idFence),
         lat = Value(lat),
-        lon = Value(lon);
+        lon = Value(lon),
+        isCenter = Value(isCenter);
   static Insertable<FencePoint> custom({
     Expression<String>? idFencePoint,
     Expression<String>? idFence,
     Expression<double>? lat,
     Expression<double>? lon,
+    Expression<double>? isCenter,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -774,6 +933,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
       if (idFence != null) 'id_fence': idFence,
       if (lat != null) 'lat': lat,
       if (lon != null) 'lon': lon,
+      if (isCenter != null) 'is_center': isCenter,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -783,12 +943,14 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
       Value<String>? idFence,
       Value<double>? lat,
       Value<double>? lon,
+      Value<double>? isCenter,
       Value<int>? rowid}) {
     return FencePointsCompanion(
       idFencePoint: idFencePoint ?? this.idFencePoint,
       idFence: idFence ?? this.idFence,
       lat: lat ?? this.lat,
       lon: lon ?? this.lon,
+      isCenter: isCenter ?? this.isCenter,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -808,6 +970,9 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
     if (lon.present) {
       map['lon'] = Variable<double>(lon.value);
     }
+    if (isCenter.present) {
+      map['is_center'] = Variable<double>(isCenter.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -821,6 +986,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
           ..write('idFence: $idFence, ')
           ..write('lat: $lat, ')
           ..write('lon: $lon, ')
+          ..write('isCenter: $isCenter, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1909,6 +2075,277 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   }
 }
 
+class $SensorsTable extends Sensors with TableInfo<$SensorsTable, Sensor> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SensorsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idSensorMeta =
+      const VerificationMeta('idSensor');
+  @override
+  late final GeneratedColumn<String> idSensor = GeneratedColumn<String>(
+      'id_sensor', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _sensorNameMeta =
+      const VerificationMeta('sensorName');
+  @override
+  late final GeneratedColumn<String> sensorName = GeneratedColumn<String>(
+      'sensor_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _fullSensorNameMeta =
+      const VerificationMeta('fullSensorName');
+  @override
+  late final GeneratedColumn<String> fullSensorName = GeneratedColumn<String>(
+      'full_sensor_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _canAlertMeta =
+      const VerificationMeta('canAlert');
+  @override
+  late final GeneratedColumn<bool> canAlert = GeneratedColumn<bool>(
+      'can_alert', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("can_alert" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idSensor, sensorName, fullSensorName, canAlert];
+  @override
+  String get aliasedName => _alias ?? 'sensors';
+  @override
+  String get actualTableName => 'sensors';
+  @override
+  VerificationContext validateIntegrity(Insertable<Sensor> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_sensor')) {
+      context.handle(_idSensorMeta,
+          idSensor.isAcceptableOrUnknown(data['id_sensor']!, _idSensorMeta));
+    } else if (isInserting) {
+      context.missing(_idSensorMeta);
+    }
+    if (data.containsKey('sensor_name')) {
+      context.handle(
+          _sensorNameMeta,
+          sensorName.isAcceptableOrUnknown(
+              data['sensor_name']!, _sensorNameMeta));
+    } else if (isInserting) {
+      context.missing(_sensorNameMeta);
+    }
+    if (data.containsKey('full_sensor_name')) {
+      context.handle(
+          _fullSensorNameMeta,
+          fullSensorName.isAcceptableOrUnknown(
+              data['full_sensor_name']!, _fullSensorNameMeta));
+    } else if (isInserting) {
+      context.missing(_fullSensorNameMeta);
+    }
+    if (data.containsKey('can_alert')) {
+      context.handle(_canAlertMeta,
+          canAlert.isAcceptableOrUnknown(data['can_alert']!, _canAlertMeta));
+    } else if (isInserting) {
+      context.missing(_canAlertMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idSensor};
+  @override
+  Sensor map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Sensor(
+      idSensor: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id_sensor'])!,
+      sensorName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sensor_name'])!,
+      fullSensorName: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}full_sensor_name'])!,
+      canAlert: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}can_alert'])!,
+    );
+  }
+
+  @override
+  $SensorsTable createAlias(String alias) {
+    return $SensorsTable(attachedDatabase, alias);
+  }
+}
+
+class Sensor extends DataClass implements Insertable<Sensor> {
+  final String idSensor;
+  final String sensorName;
+  final String fullSensorName;
+  final bool canAlert;
+  const Sensor(
+      {required this.idSensor,
+      required this.sensorName,
+      required this.fullSensorName,
+      required this.canAlert});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_sensor'] = Variable<String>(idSensor);
+    map['sensor_name'] = Variable<String>(sensorName);
+    map['full_sensor_name'] = Variable<String>(fullSensorName);
+    map['can_alert'] = Variable<bool>(canAlert);
+    return map;
+  }
+
+  SensorsCompanion toCompanion(bool nullToAbsent) {
+    return SensorsCompanion(
+      idSensor: Value(idSensor),
+      sensorName: Value(sensorName),
+      fullSensorName: Value(fullSensorName),
+      canAlert: Value(canAlert),
+    );
+  }
+
+  factory Sensor.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Sensor(
+      idSensor: serializer.fromJson<String>(json['idSensor']),
+      sensorName: serializer.fromJson<String>(json['sensorName']),
+      fullSensorName: serializer.fromJson<String>(json['fullSensorName']),
+      canAlert: serializer.fromJson<bool>(json['canAlert']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idSensor': serializer.toJson<String>(idSensor),
+      'sensorName': serializer.toJson<String>(sensorName),
+      'fullSensorName': serializer.toJson<String>(fullSensorName),
+      'canAlert': serializer.toJson<bool>(canAlert),
+    };
+  }
+
+  Sensor copyWith(
+          {String? idSensor,
+          String? sensorName,
+          String? fullSensorName,
+          bool? canAlert}) =>
+      Sensor(
+        idSensor: idSensor ?? this.idSensor,
+        sensorName: sensorName ?? this.sensorName,
+        fullSensorName: fullSensorName ?? this.fullSensorName,
+        canAlert: canAlert ?? this.canAlert,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Sensor(')
+          ..write('idSensor: $idSensor, ')
+          ..write('sensorName: $sensorName, ')
+          ..write('fullSensorName: $fullSensorName, ')
+          ..write('canAlert: $canAlert')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(idSensor, sensorName, fullSensorName, canAlert);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Sensor &&
+          other.idSensor == this.idSensor &&
+          other.sensorName == this.sensorName &&
+          other.fullSensorName == this.fullSensorName &&
+          other.canAlert == this.canAlert);
+}
+
+class SensorsCompanion extends UpdateCompanion<Sensor> {
+  final Value<String> idSensor;
+  final Value<String> sensorName;
+  final Value<String> fullSensorName;
+  final Value<bool> canAlert;
+  final Value<int> rowid;
+  const SensorsCompanion({
+    this.idSensor = const Value.absent(),
+    this.sensorName = const Value.absent(),
+    this.fullSensorName = const Value.absent(),
+    this.canAlert = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SensorsCompanion.insert({
+    required String idSensor,
+    required String sensorName,
+    required String fullSensorName,
+    required bool canAlert,
+    this.rowid = const Value.absent(),
+  })  : idSensor = Value(idSensor),
+        sensorName = Value(sensorName),
+        fullSensorName = Value(fullSensorName),
+        canAlert = Value(canAlert);
+  static Insertable<Sensor> custom({
+    Expression<String>? idSensor,
+    Expression<String>? sensorName,
+    Expression<String>? fullSensorName,
+    Expression<bool>? canAlert,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (idSensor != null) 'id_sensor': idSensor,
+      if (sensorName != null) 'sensor_name': sensorName,
+      if (fullSensorName != null) 'full_sensor_name': fullSensorName,
+      if (canAlert != null) 'can_alert': canAlert,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SensorsCompanion copyWith(
+      {Value<String>? idSensor,
+      Value<String>? sensorName,
+      Value<String>? fullSensorName,
+      Value<bool>? canAlert,
+      Value<int>? rowid}) {
+    return SensorsCompanion(
+      idSensor: idSensor ?? this.idSensor,
+      sensorName: sensorName ?? this.sensorName,
+      fullSensorName: fullSensorName ?? this.fullSensorName,
+      canAlert: canAlert ?? this.canAlert,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idSensor.present) {
+      map['id_sensor'] = Variable<String>(idSensor.value);
+    }
+    if (sensorName.present) {
+      map['sensor_name'] = Variable<String>(sensorName.value);
+    }
+    if (fullSensorName.present) {
+      map['full_sensor_name'] = Variable<String>(fullSensorName.value);
+    }
+    if (canAlert.present) {
+      map['can_alert'] = Variable<bool>(canAlert.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorsCompanion(')
+          ..write('idSensor: $idSensor, ')
+          ..write('sensorName: $sensorName, ')
+          ..write('fullSensorName: $fullSensorName, ')
+          ..write('canAlert: $canAlert, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UserAlertTable extends UserAlert
     with TableInfo<$UserAlertTable, UserAlertData> {
   @override
@@ -1921,6 +2358,24 @@ class $UserAlertTable extends UserAlert
   late final GeneratedColumn<String> idAlert = GeneratedColumn<String>(
       'id_alert', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _comparissonMeta =
+      const VerificationMeta('comparisson');
+  @override
+  late final GeneratedColumn<String> comparisson = GeneratedColumn<String>(
+      'comparisson', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _conditionCompToMeta =
+      const VerificationMeta('conditionCompTo');
+  @override
+  late final GeneratedColumn<String> conditionCompTo = GeneratedColumn<String>(
+      'condition_comp_to', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _durationSecondsMeta =
+      const VerificationMeta('durationSeconds');
+  @override
+  late final GeneratedColumn<int> durationSeconds = GeneratedColumn<int>(
+      'duration_seconds', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _hasNotificationMeta =
       const VerificationMeta('hasNotification');
   @override
@@ -1930,26 +2385,44 @@ class $UserAlertTable extends UserAlert
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'CHECK ("has_notification" IN (0, 1))'));
+  static const VerificationMeta _isTimedMeta =
+      const VerificationMeta('isTimed');
+  @override
+  late final GeneratedColumn<bool> isTimed = GeneratedColumn<bool>(
+      'is_timed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_timed" IN (0, 1))'));
+  static const VerificationMeta _isStateParamMeta =
+      const VerificationMeta('isStateParam');
+  @override
+  late final GeneratedColumn<bool> isStateParam = GeneratedColumn<bool>(
+      'is_state_param', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_state_param" IN (0, 1))'));
   static const VerificationMeta _parameterMeta =
       const VerificationMeta('parameter');
   @override
   late final GeneratedColumn<String> parameter = GeneratedColumn<String>(
       'parameter', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _comparissonMeta =
-      const VerificationMeta('comparisson');
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES sensors (id_sensor)'));
   @override
-  late final GeneratedColumn<String> comparisson = GeneratedColumn<String>(
-      'comparisson', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _valueMeta = const VerificationMeta('value');
-  @override
-  late final GeneratedColumn<double> value = GeneratedColumn<double>(
-      'value', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [idAlert, hasNotification, parameter, comparisson, value];
+  List<GeneratedColumn> get $columns => [
+        idAlert,
+        comparisson,
+        conditionCompTo,
+        durationSeconds,
+        hasNotification,
+        isTimed,
+        isStateParam,
+        parameter
+      ];
   @override
   String get aliasedName => _alias ?? 'user_alert';
   @override
@@ -1965,20 +2438,6 @@ class $UserAlertTable extends UserAlert
     } else if (isInserting) {
       context.missing(_idAlertMeta);
     }
-    if (data.containsKey('has_notification')) {
-      context.handle(
-          _hasNotificationMeta,
-          hasNotification.isAcceptableOrUnknown(
-              data['has_notification']!, _hasNotificationMeta));
-    } else if (isInserting) {
-      context.missing(_hasNotificationMeta);
-    }
-    if (data.containsKey('parameter')) {
-      context.handle(_parameterMeta,
-          parameter.isAcceptableOrUnknown(data['parameter']!, _parameterMeta));
-    } else if (isInserting) {
-      context.missing(_parameterMeta);
-    }
     if (data.containsKey('comparisson')) {
       context.handle(
           _comparissonMeta,
@@ -1987,11 +2446,49 @@ class $UserAlertTable extends UserAlert
     } else if (isInserting) {
       context.missing(_comparissonMeta);
     }
-    if (data.containsKey('value')) {
+    if (data.containsKey('condition_comp_to')) {
       context.handle(
-          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+          _conditionCompToMeta,
+          conditionCompTo.isAcceptableOrUnknown(
+              data['condition_comp_to']!, _conditionCompToMeta));
     } else if (isInserting) {
-      context.missing(_valueMeta);
+      context.missing(_conditionCompToMeta);
+    }
+    if (data.containsKey('duration_seconds')) {
+      context.handle(
+          _durationSecondsMeta,
+          durationSeconds.isAcceptableOrUnknown(
+              data['duration_seconds']!, _durationSecondsMeta));
+    } else if (isInserting) {
+      context.missing(_durationSecondsMeta);
+    }
+    if (data.containsKey('has_notification')) {
+      context.handle(
+          _hasNotificationMeta,
+          hasNotification.isAcceptableOrUnknown(
+              data['has_notification']!, _hasNotificationMeta));
+    } else if (isInserting) {
+      context.missing(_hasNotificationMeta);
+    }
+    if (data.containsKey('is_timed')) {
+      context.handle(_isTimedMeta,
+          isTimed.isAcceptableOrUnknown(data['is_timed']!, _isTimedMeta));
+    } else if (isInserting) {
+      context.missing(_isTimedMeta);
+    }
+    if (data.containsKey('is_state_param')) {
+      context.handle(
+          _isStateParamMeta,
+          isStateParam.isAcceptableOrUnknown(
+              data['is_state_param']!, _isStateParamMeta));
+    } else if (isInserting) {
+      context.missing(_isStateParamMeta);
+    }
+    if (data.containsKey('parameter')) {
+      context.handle(_parameterMeta,
+          parameter.isAcceptableOrUnknown(data['parameter']!, _parameterMeta));
+    } else if (isInserting) {
+      context.missing(_parameterMeta);
     }
     return context;
   }
@@ -2004,14 +2501,20 @@ class $UserAlertTable extends UserAlert
     return UserAlertData(
       idAlert: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id_alert'])!,
-      hasNotification: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}has_notification'])!,
-      parameter: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}parameter'])!,
       comparisson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}comparisson'])!,
-      value: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
+      conditionCompTo: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}condition_comp_to'])!,
+      durationSeconds: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}duration_seconds'])!,
+      hasNotification: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}has_notification'])!,
+      isTimed: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_timed'])!,
+      isStateParam: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_state_param'])!,
+      parameter: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}parameter'])!,
     );
   }
 
@@ -2023,34 +2526,46 @@ class $UserAlertTable extends UserAlert
 
 class UserAlertData extends DataClass implements Insertable<UserAlertData> {
   final String idAlert;
-  final bool hasNotification;
-  final String parameter;
   final String comparisson;
-  final double value;
+  final String conditionCompTo;
+  final int durationSeconds;
+  final bool hasNotification;
+  final bool isTimed;
+  final bool isStateParam;
+  final String parameter;
   const UserAlertData(
       {required this.idAlert,
-      required this.hasNotification,
-      required this.parameter,
       required this.comparisson,
-      required this.value});
+      required this.conditionCompTo,
+      required this.durationSeconds,
+      required this.hasNotification,
+      required this.isTimed,
+      required this.isStateParam,
+      required this.parameter});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id_alert'] = Variable<String>(idAlert);
-    map['has_notification'] = Variable<bool>(hasNotification);
-    map['parameter'] = Variable<String>(parameter);
     map['comparisson'] = Variable<String>(comparisson);
-    map['value'] = Variable<double>(value);
+    map['condition_comp_to'] = Variable<String>(conditionCompTo);
+    map['duration_seconds'] = Variable<int>(durationSeconds);
+    map['has_notification'] = Variable<bool>(hasNotification);
+    map['is_timed'] = Variable<bool>(isTimed);
+    map['is_state_param'] = Variable<bool>(isStateParam);
+    map['parameter'] = Variable<String>(parameter);
     return map;
   }
 
   UserAlertCompanion toCompanion(bool nullToAbsent) {
     return UserAlertCompanion(
       idAlert: Value(idAlert),
-      hasNotification: Value(hasNotification),
-      parameter: Value(parameter),
       comparisson: Value(comparisson),
-      value: Value(value),
+      conditionCompTo: Value(conditionCompTo),
+      durationSeconds: Value(durationSeconds),
+      hasNotification: Value(hasNotification),
+      isTimed: Value(isTimed),
+      isStateParam: Value(isStateParam),
+      parameter: Value(parameter),
     );
   }
 
@@ -2059,10 +2574,13 @@ class UserAlertData extends DataClass implements Insertable<UserAlertData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UserAlertData(
       idAlert: serializer.fromJson<String>(json['idAlert']),
-      hasNotification: serializer.fromJson<bool>(json['hasNotification']),
-      parameter: serializer.fromJson<String>(json['parameter']),
       comparisson: serializer.fromJson<String>(json['comparisson']),
-      value: serializer.fromJson<double>(json['value']),
+      conditionCompTo: serializer.fromJson<String>(json['conditionCompTo']),
+      durationSeconds: serializer.fromJson<int>(json['durationSeconds']),
+      hasNotification: serializer.fromJson<bool>(json['hasNotification']),
+      isTimed: serializer.fromJson<bool>(json['isTimed']),
+      isStateParam: serializer.fromJson<bool>(json['isStateParam']),
+      parameter: serializer.fromJson<String>(json['parameter']),
     );
   }
   @override
@@ -2070,110 +2588,149 @@ class UserAlertData extends DataClass implements Insertable<UserAlertData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'idAlert': serializer.toJson<String>(idAlert),
-      'hasNotification': serializer.toJson<bool>(hasNotification),
-      'parameter': serializer.toJson<String>(parameter),
       'comparisson': serializer.toJson<String>(comparisson),
-      'value': serializer.toJson<double>(value),
+      'conditionCompTo': serializer.toJson<String>(conditionCompTo),
+      'durationSeconds': serializer.toJson<int>(durationSeconds),
+      'hasNotification': serializer.toJson<bool>(hasNotification),
+      'isTimed': serializer.toJson<bool>(isTimed),
+      'isStateParam': serializer.toJson<bool>(isStateParam),
+      'parameter': serializer.toJson<String>(parameter),
     };
   }
 
   UserAlertData copyWith(
           {String? idAlert,
-          bool? hasNotification,
-          String? parameter,
           String? comparisson,
-          double? value}) =>
+          String? conditionCompTo,
+          int? durationSeconds,
+          bool? hasNotification,
+          bool? isTimed,
+          bool? isStateParam,
+          String? parameter}) =>
       UserAlertData(
         idAlert: idAlert ?? this.idAlert,
-        hasNotification: hasNotification ?? this.hasNotification,
-        parameter: parameter ?? this.parameter,
         comparisson: comparisson ?? this.comparisson,
-        value: value ?? this.value,
+        conditionCompTo: conditionCompTo ?? this.conditionCompTo,
+        durationSeconds: durationSeconds ?? this.durationSeconds,
+        hasNotification: hasNotification ?? this.hasNotification,
+        isTimed: isTimed ?? this.isTimed,
+        isStateParam: isStateParam ?? this.isStateParam,
+        parameter: parameter ?? this.parameter,
       );
   @override
   String toString() {
     return (StringBuffer('UserAlertData(')
           ..write('idAlert: $idAlert, ')
-          ..write('hasNotification: $hasNotification, ')
-          ..write('parameter: $parameter, ')
           ..write('comparisson: $comparisson, ')
-          ..write('value: $value')
+          ..write('conditionCompTo: $conditionCompTo, ')
+          ..write('durationSeconds: $durationSeconds, ')
+          ..write('hasNotification: $hasNotification, ')
+          ..write('isTimed: $isTimed, ')
+          ..write('isStateParam: $isStateParam, ')
+          ..write('parameter: $parameter')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(idAlert, hasNotification, parameter, comparisson, value);
+  int get hashCode => Object.hash(idAlert, comparisson, conditionCompTo,
+      durationSeconds, hasNotification, isTimed, isStateParam, parameter);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is UserAlertData &&
           other.idAlert == this.idAlert &&
-          other.hasNotification == this.hasNotification &&
-          other.parameter == this.parameter &&
           other.comparisson == this.comparisson &&
-          other.value == this.value);
+          other.conditionCompTo == this.conditionCompTo &&
+          other.durationSeconds == this.durationSeconds &&
+          other.hasNotification == this.hasNotification &&
+          other.isTimed == this.isTimed &&
+          other.isStateParam == this.isStateParam &&
+          other.parameter == this.parameter);
 }
 
 class UserAlertCompanion extends UpdateCompanion<UserAlertData> {
   final Value<String> idAlert;
-  final Value<bool> hasNotification;
-  final Value<String> parameter;
   final Value<String> comparisson;
-  final Value<double> value;
+  final Value<String> conditionCompTo;
+  final Value<int> durationSeconds;
+  final Value<bool> hasNotification;
+  final Value<bool> isTimed;
+  final Value<bool> isStateParam;
+  final Value<String> parameter;
   final Value<int> rowid;
   const UserAlertCompanion({
     this.idAlert = const Value.absent(),
-    this.hasNotification = const Value.absent(),
-    this.parameter = const Value.absent(),
     this.comparisson = const Value.absent(),
-    this.value = const Value.absent(),
+    this.conditionCompTo = const Value.absent(),
+    this.durationSeconds = const Value.absent(),
+    this.hasNotification = const Value.absent(),
+    this.isTimed = const Value.absent(),
+    this.isStateParam = const Value.absent(),
+    this.parameter = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserAlertCompanion.insert({
     required String idAlert,
-    required bool hasNotification,
-    required String parameter,
     required String comparisson,
-    required double value,
+    required String conditionCompTo,
+    required int durationSeconds,
+    required bool hasNotification,
+    required bool isTimed,
+    required bool isStateParam,
+    required String parameter,
     this.rowid = const Value.absent(),
   })  : idAlert = Value(idAlert),
-        hasNotification = Value(hasNotification),
-        parameter = Value(parameter),
         comparisson = Value(comparisson),
-        value = Value(value);
+        conditionCompTo = Value(conditionCompTo),
+        durationSeconds = Value(durationSeconds),
+        hasNotification = Value(hasNotification),
+        isTimed = Value(isTimed),
+        isStateParam = Value(isStateParam),
+        parameter = Value(parameter);
   static Insertable<UserAlertData> custom({
     Expression<String>? idAlert,
-    Expression<bool>? hasNotification,
-    Expression<String>? parameter,
     Expression<String>? comparisson,
-    Expression<double>? value,
+    Expression<String>? conditionCompTo,
+    Expression<int>? durationSeconds,
+    Expression<bool>? hasNotification,
+    Expression<bool>? isTimed,
+    Expression<bool>? isStateParam,
+    Expression<String>? parameter,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idAlert != null) 'id_alert': idAlert,
-      if (hasNotification != null) 'has_notification': hasNotification,
-      if (parameter != null) 'parameter': parameter,
       if (comparisson != null) 'comparisson': comparisson,
-      if (value != null) 'value': value,
+      if (conditionCompTo != null) 'condition_comp_to': conditionCompTo,
+      if (durationSeconds != null) 'duration_seconds': durationSeconds,
+      if (hasNotification != null) 'has_notification': hasNotification,
+      if (isTimed != null) 'is_timed': isTimed,
+      if (isStateParam != null) 'is_state_param': isStateParam,
+      if (parameter != null) 'parameter': parameter,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   UserAlertCompanion copyWith(
       {Value<String>? idAlert,
-      Value<bool>? hasNotification,
-      Value<String>? parameter,
       Value<String>? comparisson,
-      Value<double>? value,
+      Value<String>? conditionCompTo,
+      Value<int>? durationSeconds,
+      Value<bool>? hasNotification,
+      Value<bool>? isTimed,
+      Value<bool>? isStateParam,
+      Value<String>? parameter,
       Value<int>? rowid}) {
     return UserAlertCompanion(
       idAlert: idAlert ?? this.idAlert,
-      hasNotification: hasNotification ?? this.hasNotification,
-      parameter: parameter ?? this.parameter,
       comparisson: comparisson ?? this.comparisson,
-      value: value ?? this.value,
+      conditionCompTo: conditionCompTo ?? this.conditionCompTo,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
+      hasNotification: hasNotification ?? this.hasNotification,
+      isTimed: isTimed ?? this.isTimed,
+      isStateParam: isStateParam ?? this.isStateParam,
+      parameter: parameter ?? this.parameter,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2184,17 +2741,26 @@ class UserAlertCompanion extends UpdateCompanion<UserAlertData> {
     if (idAlert.present) {
       map['id_alert'] = Variable<String>(idAlert.value);
     }
-    if (hasNotification.present) {
-      map['has_notification'] = Variable<bool>(hasNotification.value);
-    }
-    if (parameter.present) {
-      map['parameter'] = Variable<String>(parameter.value);
-    }
     if (comparisson.present) {
       map['comparisson'] = Variable<String>(comparisson.value);
     }
-    if (value.present) {
-      map['value'] = Variable<double>(value.value);
+    if (conditionCompTo.present) {
+      map['condition_comp_to'] = Variable<String>(conditionCompTo.value);
+    }
+    if (durationSeconds.present) {
+      map['duration_seconds'] = Variable<int>(durationSeconds.value);
+    }
+    if (hasNotification.present) {
+      map['has_notification'] = Variable<bool>(hasNotification.value);
+    }
+    if (isTimed.present) {
+      map['is_timed'] = Variable<bool>(isTimed.value);
+    }
+    if (isStateParam.present) {
+      map['is_state_param'] = Variable<bool>(isStateParam.value);
+    }
+    if (parameter.present) {
+      map['parameter'] = Variable<String>(parameter.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2206,10 +2772,13 @@ class UserAlertCompanion extends UpdateCompanion<UserAlertData> {
   String toString() {
     return (StringBuffer('UserAlertCompanion(')
           ..write('idAlert: $idAlert, ')
-          ..write('hasNotification: $hasNotification, ')
-          ..write('parameter: $parameter, ')
           ..write('comparisson: $comparisson, ')
-          ..write('value: $value, ')
+          ..write('conditionCompTo: $conditionCompTo, ')
+          ..write('durationSeconds: $durationSeconds, ')
+          ..write('hasNotification: $hasNotification, ')
+          ..write('isTimed: $isTimed, ')
+          ..write('isStateParam: $isStateParam, ')
+          ..write('parameter: $parameter, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2651,6 +3220,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
   late final $FenceAnimalsTable fenceAnimals = $FenceAnimalsTable(this);
   late final $AnimalLocationsTable animalLocations =
       $AnimalLocationsTable(this);
+  late final $SensorsTable sensors = $SensorsTable(this);
   late final $UserAlertTable userAlert = $UserAlertTable(this);
   late final $AlertNotificationTable alertNotification =
       $AlertNotificationTable(this);
@@ -2666,6 +3236,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
         animal,
         fenceAnimals,
         animalLocations,
+        sensors,
         userAlert,
         alertNotification,
         alertAnimals

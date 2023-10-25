@@ -90,86 +90,86 @@ import 'package:guardian/models/providers/tmp/fences_data.dart';
 //   return devices;
 // }
 
-Future<List<UserAlert>> loadAlerts() async {
-  String alertsInput = '';
-  if (!kIsWeb) {
-    alertsInput = await rootBundle.loadString('assets/data/alerts.json');
-  }
-  Map alertsMap;
-  if (!kIsWeb) {
-    alertsMap = await json.decode(alertsInput);
-  } else {
-    alertsMap = alertsDataJson;
-  }
-  List<dynamic> alertsMapList = alertsMap['alerts'];
-  List<UserAlert> alerts = [];
-  for (var alert in alertsMapList) {
-    createAlert(
-      UserAlertCompanion(
-        hasNotification: drift.Value(alert['hasNotification']),
-        parameter: drift.Value(alert['parameter']),
-        comparisson: drift.Value(alert['comparisson']),
-        value: drift.Value(alert['value']),
-        idAlert: drift.Value(alert['id']),
-      ),
-    );
-  }
-  return alerts;
-}
+// Future<List<UserAlert>> loadAlerts() async {
+//   String alertsInput = '';
+//   if (!kIsWeb) {
+//     alertsInput = await rootBundle.loadString('assets/data/alerts.json');
+//   }
+//   Map alertsMap;
+//   if (!kIsWeb) {
+//     alertsMap = await json.decode(alertsInput);
+//   } else {
+//     alertsMap = alertsDataJson;
+//   }
+//   List<dynamic> alertsMapList = alertsMap['alerts'];
+//   List<UserAlert> alerts = [];
+//   for (var alert in alertsMapList) {
+//     createAlert(
+//       UserAlertCompanion(
+//         hasNotification: drift.Value(alert['hasNotification']),
+//         parameter: drift.Value(alert['parameter']),
+//         comparisson: drift.Value(alert['comparisson']),
+//         value: drift.Value(alert['value']),
+//         idAlert: drift.Value(alert['id']),
+//       ),
+//     );
+//   }
+//   return alerts;
+// }
 
-Future<void> loadUserFences(String idUser) async {
-  String fencesInput = '';
-  if (!kIsWeb) {
-    fencesInput = await rootBundle.loadString('assets/data/fences.json');
-  }
-  Map fencesMap;
-  if (!kIsWeb) {
-    fencesMap = await json.decode(fencesInput);
-  } else {
-    fencesMap = fencesDataJson;
-  }
-  List<dynamic> fencesMapList = fencesMap['fences'];
-  getUserFences().then((userFences) {
-    for (var fence in fencesMapList) {
-      if (fence['idUser'] == idUser &&
-          userFences.firstWhereOrNull(
-                (element) => element.idFence == fence['id'],
-              ) ==
-              null) {
-        // removeFence(BigInt.from(fence["id"]));
-        // load fence points
-        for (var point in fence['points']) {
-          createFencePoint(
-            FencePointsCompanion(
-              idFencePoint: drift.Value(point["idPoint"]),
-              idFence: drift.Value(fence["id"]),
-              lat: drift.Value(point['lat']),
-              lon: drift.Value(point['lon']),
-            ),
-          );
-        }
+// Future<void> loadUserFences(String idUser) async {
+//   String fencesInput = '';
+//   if (!kIsWeb) {
+//     fencesInput = await rootBundle.loadString('assets/data/fences.json');
+//   }
+//   Map fencesMap;
+//   if (!kIsWeb) {
+//     fencesMap = await json.decode(fencesInput);
+//   } else {
+//     fencesMap = fencesDataJson;
+//   }
+//   List<dynamic> fencesMapList = fencesMap['fences'];
+//   getUserFences().then((userFences) {
+//     for (var fence in fencesMapList) {
+//       if (fence['idUser'] == idUser &&
+//           userFences.firstWhereOrNull(
+//                 (element) => element.idFence == fence['id'],
+//               ) ==
+//               null) {
+//         // removeFence(BigInt.from(fence["id"]));
+//         // load fence points
+//         for (var point in fence['points']) {
+//           createFencePoint(
+//             FencePointsCompanion(
+//               idFencePoint: drift.Value(point["idPoint"]),
+//               idFence: drift.Value(fence["id"]),
+//               lat: drift.Value(point['lat']),
+//               lon: drift.Value(point['lon']),
+//             ),
+//           );
+//         }
 
-        for (var animal in fence['animals']) {
-          createFenceDevice(
-            FenceAnimalsCompanion(
-              idFence: drift.Value(fence["id"]),
-              idAnimal: drift.Value(animal['idAnimal']),
-            ),
-          );
-        }
+//         for (var animal in fence['animals']) {
+//           createFenceDevice(
+//             FenceAnimalsCompanion(
+//               idFence: drift.Value(fence["id"]),
+//               idAnimal: drift.Value(animal['idAnimal']),
+//             ),
+//           );
+//         }
 
-        // load fences and their points
-        createFence(
-          FenceCompanion(
-            name: drift.Value(fence["name"]),
-            color: drift.Value(fence["color"]),
-            idFence: drift.Value(fence["id"]),
-          ),
-        );
-      }
-    }
-  });
-}
+//         // load fences and their points
+//         createFence(
+//           FenceCompanion(
+//             name: drift.Value(fence["name"]),
+//             color: drift.Value(fence["color"]),
+//             idFence: drift.Value(fence["id"]),
+//           ),
+//         );
+//       }
+//     }
+//   });
+// }
 
 // Future<Device?> loadDevice(String deviceImei) async {
 //   String devicesInput = await rootBundle.loadString('assets/data/devices.json');

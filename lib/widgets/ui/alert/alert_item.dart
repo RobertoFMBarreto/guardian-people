@@ -40,7 +40,7 @@ class AlertItem extends StatelessWidget {
           ),
           title: Text(alertNotification.device.animal.animalName.value),
           subtitle: Text(
-              '${alertNotification.alert.parameter.value.capitalize()} ${alertNotification.alert.comparisson.value} ${alertNotification.alert.comparisson.value == AlertComparissons.equal.toShortString(context) ? localizations.to : localizations.than} ${alertNotification.alert.value}'),
+              '${parseSensor(alertNotification.alert.parameter.value, localizations).capitalize()} ${parseComparisson(alertNotification.alert.comparisson.value, localizations)} ${alertNotification.alert.comparisson.value == '=' ? localizations.to : localizations.than} ${alertNotification.alert.conditionCompTo.value}'),
           trailing: IconButton(
             onPressed: onRemove,
             icon: Icon(

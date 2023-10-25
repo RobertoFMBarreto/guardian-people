@@ -10,6 +10,7 @@ class User extends Table {
   IntColumn? get phone => integer()();
   BoolColumn get isSuperuser => boolean()();
   BoolColumn get isProducer => boolean()();
+  BoolColumn get isOverViewer => boolean()();
   @override
   Set<Column> get primaryKey => {idUser};
 }

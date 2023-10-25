@@ -11,6 +11,7 @@ class FencePoints extends Table {
   TextColumn get idFence => text().references(Fence, #idFence)();
   RealColumn get lat => real()();
   RealColumn get lon => real()();
+  RealColumn get isCenter => real()();
   @override
   Set<Column> get primaryKey => {idFencePoint};
 }

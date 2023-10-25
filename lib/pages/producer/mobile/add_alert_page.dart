@@ -37,7 +37,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   final List<Animal> _alertAnimals = [];
   AlertComparissons _alertComparisson = AlertComparissons.equal;
   AlertParameter _alertParameter = AlertParameter.temperature;
-  double _comparissonValue = 0;
+  String _comparissonValue = "0";
   bool _sendNotification = true;
 
   @override
@@ -54,7 +54,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     if (widget.alert != null) {
       _alertComparisson = parseComparissonFromString(widget.alert!.comparisson.value);
       _alertParameter = parseAlertParameterFromString(widget.alert!.parameter.value);
-      _comparissonValue = widget.alert!.value.value;
+      _comparissonValue = widget.alert!.conditionCompTo.value;
       _sendNotification = widget.alert!.hasNotification.value;
       await _getAlertDevices(widget.alert!.idAlert.value);
     }
@@ -89,8 +89,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
       widget.alert!.copyWith(
         parameter: drift.Value(_alertParameter.toString()),
         comparisson: drift.Value(_alertComparisson.toString()),
-        value: drift.Value(_comparissonValue),
+        conditionCompTo: drift.Value(_comparissonValue),
         hasNotification: drift.Value(_sendNotification),
+        durationSeconds: const drift.Value(0),
+        isStateParam: const drift.Value(false),
+        isTimed: const drift.Value(false),
       ),
     ).then(
       (_) async => await removeAllAlertAnimals(widget.alert!.idAlert.value).then(
@@ -111,7 +114,10 @@ class _AddAlertPageState extends State<AddAlertPage> {
       hasNotification: drift.Value(_sendNotification),
       parameter: drift.Value(_alertParameter.toString()),
       comparisson: drift.Value(_alertComparisson.toString()),
-      value: drift.Value(_comparissonValue),
+      conditionCompTo: drift.Value(_comparissonValue),
+      durationSeconds: const drift.Value(0),
+      isStateParam: const drift.Value(false),
+      isTimed: const drift.Value(false),
     );
     await createAlert(
       newAlert,
@@ -292,7 +298,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 onChanged: (value) {
                                   double? inputValue = double.tryParse(value);
                                   if (inputValue != null) {
-                                    _comparissonValue = inputValue;
+                                    _comparissonValue = inputValue.toString();
                                   }
                                 },
                               ),

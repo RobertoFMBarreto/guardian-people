@@ -38,7 +38,7 @@ class AnimalItem extends StatelessWidget {
                 CustomPageRouter(
                     page: isAdmin ? '/admin/producer/device' : '/producer/device',
                     settings:
-                        RouteSettings(arguments: {'device': animal, 'producerId': producerId})),
+                        RouteSettings(arguments: {'animal': animal, 'producerId': producerId})),
               ).then((_) {
                 if (!isAdmin && onBackFromDeviceScreen != null) onBackFromDeviceScreen!();
               });

@@ -112,7 +112,7 @@ class _AlertsPageState extends State<AlertsPage> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                removeAllNotifications().then((_) => loadAlerts());
+                                //removeAllNotifications().then((_) => loadAlerts());
                               },
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,

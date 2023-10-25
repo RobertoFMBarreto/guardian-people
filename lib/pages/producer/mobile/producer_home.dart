@@ -6,7 +6,9 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
+import 'package:guardian/models/providers/api/notifications_provider.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
+import 'package:guardian/models/providers/api/parsers/notifications_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -49,7 +51,6 @@ class _ProducerHomeState extends State<ProducerHome> {
   @override
   void initState() {
     super.initState();
-
     _loadData = _setup();
   }
 
@@ -166,6 +167,52 @@ class _ProducerHomeState extends State<ProducerHome> {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
       setState(() => _alertNotifications.addAll(allAlerts));
+      _getNotificationsFromApi();
+    });
+  }
+
+  Future<void> _getNotificationsFromApi() async {
+    NotificationsProvider.getNotifications().then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+        parseNotifications(response.body);
+        await getAllNotifications().then((allAlerts) {
+          _alertNotifications = [];
+          setState(() => _alertNotifications.addAll(allAlerts));
+        });
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken);
+            _getNotificationsFromApi();
+          } else if (response.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        hasShownNoServerConnection().then((hasShown) async {
+          if (!hasShown) {
+            setShownNoServerConnection(true).then(
+              (_) =>
+                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+            );
+          }
+        });
+      }
     });
   }
 

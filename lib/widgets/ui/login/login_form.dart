@@ -64,13 +64,14 @@ class _LoginFormState extends State<LoginForm> {
             setUserSession(body['uid'], body['token'], refreshToken).then((_) {
               // store user profile
               createUser(UserCompanion(
-                idUser: drift.Value(body['uid']),
-                email: drift.Value(body['email']),
-                name: drift.Value(body['name']),
-                phone: drift.Value(int.parse(body['phone'])),
-                isProducer: drift.Value(body['isProducer'] == true),
-                isSuperuser: drift.Value(body['isSuperuser'] == true),
-              )).then((_) {
+                      idUser: drift.Value(body['uid']),
+                      email: drift.Value(body['email']),
+                      name: drift.Value(body['name']),
+                      phone: drift.Value(int.parse(body['phone'])),
+                      isProducer: drift.Value(body['isProducer'] == true),
+                      isSuperuser: drift.Value(body['isSuperuser'] == true),
+                      isOverViewer: drift.Value(body['isOverviewer'] == true)))
+                  .then((_) {
                 // send to admin or producer
                 Navigator.of(context).popAndPushNamed(
                   body['isProducer'] == false ? '/admin' : '/producer',

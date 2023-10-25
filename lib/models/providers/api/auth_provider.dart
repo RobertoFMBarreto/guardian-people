@@ -32,7 +32,7 @@ class AuthProvider {
     };
     var url = Uri.https(kGDapiServerUrl, '/api/v1/refresh-token');
     try {
-      var response = await post(url, headers: headers, body: jsonEncode({"refresh-token": token}));
+      var response = await post(url, headers: headers, body: jsonEncode({"refreshToken": token}));
 
       return response;
     } on SocketException catch (e) {

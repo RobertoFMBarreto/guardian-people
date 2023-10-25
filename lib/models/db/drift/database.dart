@@ -7,6 +7,7 @@ import 'package:guardian/models/db/drift/tables/Fences/fence.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_animals.dart';
 import 'package:guardian/models/db/drift/tables/Fences/fence_points.dart';
 import 'package:guardian/models/db/drift/tables/animal.dart';
+import 'package:guardian/models/db/drift/tables/sensors.dart';
 import 'package:guardian/models/db/drift/tables/user.dart';
 import 'connection/connection.dart';
 
@@ -21,6 +22,7 @@ part 'database.g.dart';
   Animal,
   AnimalLocations,
   UserAlert,
+  Sensors,
   AlertNotification,
   AlertAnimals,
 ])

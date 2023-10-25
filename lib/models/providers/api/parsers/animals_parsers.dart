@@ -18,8 +18,8 @@ Future<void> animalsFromJson(String body) async {
       animalIdentification: drift.Value(dt['animalIdentification']),
       idAnimal: drift.Value(dt['idAnimal']),
     ));
-    if (dt['last_device_data'] != null) {
-      await animalDataFromJson(dt['locationData'], dt['idAnimal']);
+    for (var location in dt['locationData']) {
+      await animalDataFromJson(location, dt['idAnimal']);
     }
   }
 }
@@ -32,7 +32,7 @@ Future<void> animalDataFromJson(Map<String, dynamic> data, String idAnimal) asyn
     AnimalLocationsCompanion(
       dataUsage: drift.Value(Random().nextInt(10)),
       date: drift.Value(DateTime.parse(data['date'])),
-      animalDataId: drift.Value(data['idData']),
+      animalDataId: drift.Value(data['id_data']),
       idAnimal: drift.Value(idAnimal),
       state: drift.Value(states[Random().nextInt(states.length)]),
       accuracy: data['accuracy'] != null

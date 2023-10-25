@@ -1,14 +1,18 @@
 import 'package:drift/drift.dart';
+import 'package:guardian/models/db/drift/tables/sensors.dart';
 
 /// This class represents the UserAlert database table
 ///
 /// [idAlert] is the primary key
 class UserAlert extends Table {
   TextColumn get idAlert => text()();
-  BoolColumn get hasNotification => boolean()();
-  TextColumn get parameter => text()();
   TextColumn get comparisson => text()();
-  RealColumn get value => real()();
+  TextColumn get conditionCompTo => text()();
+  IntColumn get durationSeconds => integer()();
+  BoolColumn get hasNotification => boolean()();
+  BoolColumn get isTimed => boolean()();
+  BoolColumn get isStateParam => boolean()();
+  TextColumn get parameter => text().references(Sensors, #idSensor)();
   @override
   Set<Column> get primaryKey => {idAlert};
 }

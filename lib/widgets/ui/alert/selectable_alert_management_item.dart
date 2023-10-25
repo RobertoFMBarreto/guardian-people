@@ -50,7 +50,7 @@ class SelectableAlertManagementItem extends StatelessWidget {
                             children: [
                               TextSpan(
                                 text:
-                                    '''${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize()} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ${alert.value.value}''',
+                                    '''${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize()} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ${alert.conditionCompTo.value}''',
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ],

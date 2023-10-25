@@ -34,7 +34,7 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(FCMMessagingProvider.firebaseMessagingBackgroundHandler);
 
-  // if (!kIsWeb) {
+  // if (!kIsWeb) {o
   //   await MapCaching().initMapCaching();
   // }
 

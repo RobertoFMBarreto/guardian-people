@@ -3,6 +3,14 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 
 /// Method for creating an user created alert [alert] returning an [UserAlertCompanion]
+Future<SensorsCompanion> createSensor(SensorsCompanion sensor) async {
+  final db = Get.find<GuardianDb>();
+
+  db.into(db.sensors).insertOnConflictUpdate(sensor);
+  return sensor;
+}
+
+/// Method for creating an user created alert [alert] returning an [UserAlertCompanion]
 Future<UserAlertCompanion> createAlert(UserAlertCompanion alert) async {
   final db = Get.find<GuardianDb>();
 

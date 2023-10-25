@@ -47,11 +47,11 @@ Future<List<AlertNotification>> getAllNotifications() async {
       SELECT
         *
       FROM ${db.alertNotification.actualTableName}
-      LEFT JOIN ${db.userAlert.actualTableName} ON ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAlert.name}
-      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAnimal.name}
+      JOIN ${db.userAlert.actualTableName} ON ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAlert.name}
+      JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.alertNotification.actualTableName}.${db.alertNotification.idAnimal.name}
+      JOIN ${db.sensors.actualTableName} ON ${db.sensors.actualTableName}.${db.sensors.idSensor.name} = ${db.userAlert.actualTableName}.${db.userAlert.parameter.name}
     ''',
   ).get();
-
   List<AlertNotification> notifications = [];
   notifications.addAll(
     data.map(
@@ -60,11 +60,12 @@ Future<List<AlertNotification>> getAllNotifications() async {
         alert: UserAlertCompanion(
           idAlert: drift.Value(deviceData.data[db.userAlert.idAlert.name]),
           comparisson: drift.Value(deviceData.data[db.userAlert.comparisson.name]),
-          hasNotification: drift.Value(deviceData.data[db.userAlert.hasNotification.name]),
-          parameter: drift.Value(deviceData.data[db.userAlert.parameter.name]),
-          value: drift.Value(
-            deviceData.data[db.userAlert.value.name],
-          ),
+          hasNotification: drift.Value(deviceData.data[db.userAlert.hasNotification.name] == 1),
+          parameter: drift.Value(deviceData.data[db.sensors.fullSensorName.name]),
+          conditionCompTo: drift.Value(deviceData.data[db.userAlert.conditionCompTo.name]),
+          durationSeconds: drift.Value(deviceData.data[db.userAlert.durationSeconds.name]),
+          isStateParam: drift.Value(deviceData.data[db.userAlert.isStateParam.name] == 1),
+          isTimed: drift.Value(deviceData.data[db.userAlert.isTimed.name] == 1),
         ),
         device: Animal(
           animal: AnimalCompanion(
@@ -80,6 +81,5 @@ Future<List<AlertNotification>> getAllNotifications() async {
       ),
     ),
   );
-
   return notifications;
 }

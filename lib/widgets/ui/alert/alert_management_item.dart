@@ -60,7 +60,7 @@ class AlertManagementItem extends StatelessWidget {
                           style: theme.textTheme.bodyLarge,
                           children: [
                             TextSpan(
-                              text: alert.value.value.toString(),
+                              text: alert.conditionCompTo.value.toString(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
