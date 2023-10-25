@@ -46,7 +46,7 @@ class AlertManagementItem extends StatelessWidget {
                           children: [
                             TextSpan(
                               text:
-                                  '${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize()} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ',
+                                  '${parseAlertParameterFromId(alert.parameter.value, localizations).capitalize()} ${parseComparissonFromString(alert.comparisson.value, localizations)} ',
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],

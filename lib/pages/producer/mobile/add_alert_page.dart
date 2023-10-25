@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/helpers/key_value_pair.dart';
@@ -31,12 +32,13 @@ class AddAlertPage extends StatefulWidget {
 
 class _AddAlertPageState extends State<AddAlertPage> {
   final _formKey = GlobalKey<FormState>();
+  List<Sensor> _availableSensors = [];
 
   late Future _future;
+  late Sensor _alertParameter;
 
   final List<Animal> _alertAnimals = [];
   AlertComparissons _alertComparisson = AlertComparissons.equal;
-  AlertParameter _alertParameter = AlertParameter.temperature;
   String _comparissonValue = "0";
   bool _sendNotification = true;
 
@@ -51,13 +53,16 @@ class _AddAlertPageState extends State<AddAlertPage> {
   /// 1. Parse received alert data if there is one
   /// 2. Get alert devices
   Future<void> _setup() async {
-    if (widget.alert != null) {
-      _alertComparisson = parseComparissonFromString(widget.alert!.comparisson.value);
-      _alertParameter = parseAlertParameterFromString(widget.alert!.parameter.value);
-      _comparissonValue = widget.alert!.conditionCompTo.value;
-      _sendNotification = widget.alert!.hasNotification.value;
-      await _getAlertDevices(widget.alert!.idAlert.value);
-    }
+    return await _getAlertableSensors().then((_) async {
+      if (widget.alert != null) {
+        await _getAlertDevices(widget.alert!.idAlert.value).then(
+          (_) {
+            _comparissonValue = widget.alert!.conditionCompTo.value;
+            _sendNotification = widget.alert!.hasNotification.value;
+          },
+        );
+      }
+    });
   }
 
   /// Method that get all alert devices and fills the [_alertAnimals] list
@@ -112,8 +117,8 @@ class _AddAlertPageState extends State<AddAlertPage> {
     final newAlert = UserAlertCompanion(
       idAlert: drift.Value(idAlert),
       hasNotification: drift.Value(_sendNotification),
-      parameter: drift.Value(_alertParameter.toString()),
-      comparisson: drift.Value(_alertComparisson.toString()),
+      parameter: drift.Value(_alertParameter.idSensor),
+      comparisson: drift.Value(_alertComparisson.toOperator()),
       conditionCompTo: drift.Value(_comparissonValue),
       durationSeconds: const drift.Value(0),
       isStateParam: const drift.Value(false),
@@ -172,6 +177,20 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
+  Future<void> _getAlertableSensors() async {
+    return await getAlertableSensors().then((allSensors) {
+      _availableSensors = [];
+      if (widget.alert == null) {
+        _alertParameter = allSensors[0];
+      } else {
+        _alertParameter =
+            allSensors.firstWhere((element) => element.idSensor == widget.alert!.parameter.value);
+      }
+
+      _availableSensors.addAll(allSensors);
+    });
+  }
+
   /// Method that validates the input value
   String? _validateInputValue(String? value, AppLocalizations localizations) {
     if (value == null) {
@@ -179,18 +198,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
     } else {
       double? inputValue = double.tryParse(value);
       if (inputValue != null) {
-        switch (_alertParameter) {
-          case AlertParameter.battery:
+        switch (_alertParameter.idSensor) {
+          case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
             if (inputValue < 0 || inputValue > 100) {
               return localizations.invalid_value.capitalize();
             }
-            break;
-          case AlertParameter.dataUsage:
-            if (inputValue < 0 || inputValue > 10) {
-              return localizations.invalid_value.capitalize();
-            }
-            break;
-          case AlertParameter.temperature:
             break;
         }
       } else {
@@ -243,14 +255,19 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: CustomDropdown(
                             value: _alertParameter,
-                            values: AlertParameter.values
-                                .map((e) => KeyValuePair(
-                                    key: e.toShortString(context).capitalize(), value: e))
+                            values: _availableSensors
+                                .map(
+                                  (e) => KeyValuePair(
+                                    key: parseAlertParameterFromId(e.idSensor, localizations)
+                                        .capitalize(),
+                                    value: e,
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (value) {
                               setState(() {
                                 if (value != null) {
-                                  _alertParameter = value as AlertParameter;
+                                  _alertParameter = value as Sensor;
                                 }
                               });
                             },
@@ -262,8 +279,12 @@ class _AddAlertPageState extends State<AddAlertPage> {
                             CustomDropdown(
                               value: _alertComparisson,
                               values: AlertComparissons.values
-                                  .map((e) => KeyValuePair(
-                                      key: e.toShortString(context).capitalize(), value: e))
+                                  .map(
+                                    (e) => KeyValuePair(
+                                      key: e.toShortString(context).capitalize(),
+                                      value: e,
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) {
                                 setState(() {
@@ -325,17 +346,18 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Switch(
-                                    activeTrackColor: theme.colorScheme.secondary,
-                                    inactiveTrackColor:
-                                        Theme.of(context).brightness == Brightness.light
-                                            ? gdToggleGreyArea
-                                            : gdDarkToggleGreyArea,
-                                    value: _sendNotification,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _sendNotification = value;
-                                      });
-                                    }),
+                                  activeTrackColor: theme.colorScheme.secondary,
+                                  inactiveTrackColor:
+                                      Theme.of(context).brightness == Brightness.light
+                                          ? gdToggleGreyArea
+                                          : gdDarkToggleGreyArea,
+                                  value: _sendNotification,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _sendNotification = value;
+                                    });
+                                  },
+                                ),
                               ),
                             ],
                           ),

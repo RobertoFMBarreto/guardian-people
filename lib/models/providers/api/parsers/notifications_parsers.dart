@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
+import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 
 Future<void> parseNotifications(String body) async {

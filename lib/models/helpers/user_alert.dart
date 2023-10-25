@@ -45,6 +45,33 @@ extension ParseCmpToString on AlertComparissons {
   }
 }
 
+/// Extensions of [AlertComparissons]
+extension ParseCmpToOp on AlertComparissons {
+  /// Extension to parse from [AlertComparissons] to [String]
+  String toOperator() {
+    String value = toString().split('.').last;
+    switch (value) {
+      case 'equal':
+        return '=';
+
+      case 'greater':
+        return '>';
+
+      case 'less':
+        return '<';
+
+      case 'greaterOrEqual':
+        return '>=';
+
+      case 'lessOrEqual':
+        return '<=';
+
+      default:
+        return value;
+    }
+  }
+}
+
 String parseComparisson(String op, AppLocalizations localizations) {
   switch (op) {
     case '=':
@@ -83,40 +110,17 @@ String parseSensor(String name, AppLocalizations localizations) {
   }
 }
 
-/// Extensions of [AlertParameter]
-extension ParseParToString on AlertParameter {
-  /// Extension to parse from [AlertParameter] to [String]
-  String toShortString(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-    String value = toString().split('.').last;
-    switch (value) {
-      case 'temperature':
-        return localizations.temperature;
-
-      case 'dataUsage':
-        return localizations.data_used;
-
-      case 'battery':
-        return localizations.battery;
-
-      default:
-        return value;
-    }
-  }
-}
-
 /// Method that parses from [text] [String] to [AlertParameter]
-AlertParameter parseAlertParameterFromString(String text) {
-  String value = text.toString().split('.').last;
-  switch (value) {
-    case 'temperature':
-      return AlertParameter.temperature;
+String parseAlertParameterFromId(String text, AppLocalizations localizations) {
+  switch (text) {
+    case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
+      return localizations.temperature;
 
-    case 'dataUsage':
-      return AlertParameter.dataUsage;
+    case '33246c98-651a-4a73-aeff-0ab248de0a32':
+      return 'altitude';
 
-    case 'battery':
-      return AlertParameter.battery;
+    case 'a5f677a6-f3a4-495a-9ae9-f19c5997bb69':
+      return localizations.battery;
 
     default:
       throw Exception('Invalid alert parameter');
@@ -124,24 +128,22 @@ AlertParameter parseAlertParameterFromString(String text) {
 }
 
 /// Method that parses from [text] [String] to [AlertComparissons]
-AlertComparissons parseComparissonFromString(String text) {
-  String value = text.toString().split('.').last;
+String parseComparissonFromString(String text, AppLocalizations localizations) {
+  switch (text) {
+    case '=':
+      return localizations.equal;
 
-  switch (value) {
-    case 'equal':
-      return AlertComparissons.equal;
+    case '>':
+      return localizations.greater;
 
-    case 'greater':
-      return AlertComparissons.greater;
+    case '<':
+      return localizations.less;
 
-    case 'less':
-      return AlertComparissons.less;
+    case '>=':
+      return localizations.greaterOrEqual;
 
-    case 'greaterOrEqual':
-      return AlertComparissons.greaterOrEqual;
-
-    case 'lessOrEqual':
-      return AlertComparissons.lessOrEqual;
+    case '<=':
+      return localizations.lessOrEqual;
 
     default:
       throw Exception('Invalid alert comparisson');
