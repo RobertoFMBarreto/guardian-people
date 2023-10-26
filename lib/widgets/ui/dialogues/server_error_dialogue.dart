@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents the server error dialogue
 class ServerErrorDialogue extends StatelessWidget {
@@ -10,9 +10,9 @@ class ServerErrorDialogue extends StatelessWidget {
   Widget build(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(localizations.server_error.capitalize()),
+      title: Text(localizations.server_error.capitalize!),
       content: Text(
-        localizations.server_error_body.capitalize(),
+        localizations.server_error_body.capitalize!,
       ),
     );
   }

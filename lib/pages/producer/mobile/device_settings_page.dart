@@ -8,7 +8,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -142,7 +142,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            localizations.device_settings.capitalize(),
+            localizations.device_settings.capitalize!,
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -162,7 +162,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                          label: Text(localizations.name.capitalize()),
+                          label: Text(localizations.name.capitalize!),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -178,7 +178,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                localizations.device_warnings.capitalize(),
+                                localizations.device_warnings.capitalize!,
                                 style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                               ),
                               const Icon(Icons.add)
@@ -189,7 +189,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       Expanded(
                         child: _alerts.isEmpty
                             ? Center(
-                                child: Text(localizations.no_selected_alerts.capitalize()),
+                                child: Text(localizations.no_selected_alerts.capitalize!),
                               )
                             : ListView.builder(
                                 itemCount: _alerts.length,
@@ -219,7 +219,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                localizations.device_fences.capitalize(),
+                                localizations.device_fences.capitalize!,
                                 style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                               ),
                               _fences.isEmpty ? const Icon(Icons.add) : const SizedBox()
@@ -230,7 +230,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       Expanded(
                         child: _fences.isEmpty
                             ? Center(
-                                child: Text(localizations.no_selected_fences.capitalize()),
+                                child: Text(localizations.no_selected_fences.capitalize!),
                               )
                             : ListView.builder(
                                 itemCount: _fences.length,
@@ -271,7 +271,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   backgroundColor: const MaterialStatePropertyAll(gdCancelBtnColor),
                                 ),
                                 child: Text(
-                                  localizations.cancel.capitalize(),
+                                  localizations.cancel.capitalize!,
                                 ),
                               ),
                             ),
@@ -284,7 +284,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     .then((value) => Navigator.of(context).pop(newAnimal));
                               },
                               child: Text(
-                                localizations.confirm.capitalize(),
+                                localizations.confirm.capitalize!,
                               ),
                             ),
                           ],

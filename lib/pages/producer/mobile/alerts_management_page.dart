@@ -6,7 +6,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
@@ -86,7 +86,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.warnings_managment.capitalize(),
+          localizations.warnings_managment.capitalize!,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -140,8 +140,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                 ),
                                 label: Text(
                                   widget.isSelect
-                                      ? localizations.select_all.capitalize()
-                                      : localizations.remove_all.capitalize(),
+                                      ? localizations.select_all.capitalize!
+                                      : localizations.remove_all.capitalize!,
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: widget.isSelect
                                         ? theme.colorScheme.secondary
@@ -157,7 +157,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                         flex: 12,
                         child: _alerts.isEmpty
                             ? Center(
-                                child: Text(localizations.no_alerts.capitalize()),
+                                child: Text(localizations.no_alerts.capitalize!),
                               )
                             : ListView.builder(
                                 itemCount: _alerts.length,
@@ -240,8 +240,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                   },
                   label: Text(
                     widget.isSelect
-                        ? localizations.confirm.capitalize()
-                        : '${localizations.add.capitalize()} ${localizations.warning.capitalize()}',
+                        ? localizations.confirm.capitalize!
+                        : '${localizations.add.capitalize!} ${localizations.warning.capitalize!}',
                     style: theme.textTheme.bodyLarge!.copyWith(
                       color: theme.colorScheme.onSecondary,
                       fontWeight: FontWeight.bold,

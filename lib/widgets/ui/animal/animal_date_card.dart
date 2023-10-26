@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 /// Class that represents the
@@ -54,7 +54,7 @@ class AnimalDateCard extends StatelessWidget {
                             FittedBox(
                               fit: BoxFit.fitWidth,
                               child: Text(
-                                DateFormat.MMMM(localizations.localeName).format(date).capitalize(),
+                                DateFormat.MMMM(localizations.localeName).format(date).capitalize!,
                                 style: theme.textTheme.bodyLarge!.copyWith(
                                   fontWeight: FontWeight.w500,
                                 ),

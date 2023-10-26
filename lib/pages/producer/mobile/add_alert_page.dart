@@ -8,7 +8,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;
@@ -194,19 +194,19 @@ class _AddAlertPageState extends State<AddAlertPage> {
   /// Method that validates the input value
   String? _validateInputValue(String? value, AppLocalizations localizations) {
     if (value == null) {
-      return localizations.insert_value.capitalize();
+      return localizations.insert_value.capitalize!;
     } else {
       double? inputValue = double.tryParse(value);
       if (inputValue != null) {
         switch (_alertParameter.idSensor) {
           case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
             if (inputValue < 0 || inputValue > 100) {
-              return localizations.invalid_value.capitalize();
+              return localizations.invalid_value.capitalize!;
             }
             break;
         }
       } else {
-        return localizations.invalid_value.capitalize();
+        return localizations.invalid_value.capitalize!;
       }
       return null;
     }
@@ -226,7 +226,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(
-            '${widget.isEdit! ? localizations.edit.capitalize() : localizations.add.capitalize()} ${localizations.warnings.capitalize()}',
+            '${widget.isEdit! ? localizations.edit.capitalize! : localizations.add.capitalize!} ${localizations.warnings.capitalize!}',
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -246,7 +246,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          localizations.when.capitalize(),
+                          localizations.when.capitalize!,
                           style: theme.textTheme.bodyLarge!.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -259,7 +259,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 .map(
                                   (e) => KeyValuePair(
                                     key: parseAlertParameterFromId(e.idSensor, localizations)
-                                        .capitalize(),
+                                        .capitalize!,
                                     value: e,
                                   ),
                                 )
@@ -281,7 +281,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               values: AlertComparissons.values
                                   .map(
                                     (e) => KeyValuePair(
-                                      key: e.toShortString(context).capitalize(),
+                                      key: e.toShortString(context).capitalize!,
                                       value: e,
                                     ),
                                   )
@@ -308,7 +308,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                             Expanded(
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  label: Text(localizations.value.capitalize()),
+                                  label: Text(localizations.value.capitalize!),
                                 ),
                                 keyboardType: TextInputType.number,
                                 initialValue:
@@ -329,7 +329,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            localizations.what_to_do.capitalize(),
+                            localizations.what_to_do.capitalize!,
                             style: theme.textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -340,7 +340,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           child: Row(
                             children: [
                               Text(
-                                '${localizations.send.capitalize()} ${localizations.notification.capitalize()}:',
+                                '${localizations.send.capitalize!} ${localizations.notification.capitalize!}:',
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Padding(
@@ -372,7 +372,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 color: theme.colorScheme.secondary,
                               ),
                               label: Text(
-                                '${localizations.add.capitalize()} ${localizations.devices.capitalize()}',
+                                '${localizations.add.capitalize!} ${localizations.devices.capitalize!}',
                                 style: theme.textTheme.bodyLarge!.copyWith(
                                   color: theme.colorScheme.secondary,
                                   fontWeight: FontWeight.bold,
@@ -420,7 +420,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                   backgroundColor: MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                 ),
                                 child: Text(
-                                  localizations.cancel.capitalize(),
+                                  localizations.cancel.capitalize!,
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: theme.colorScheme.onSecondary,
                                   ),
@@ -441,8 +441,8 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 },
                                 child: Text(
                                   widget.isEdit!
-                                      ? localizations.confirm.capitalize()
-                                      : localizations.add.capitalize(),
+                                      ? localizations.confirm.capitalize!
+                                      : localizations.add.capitalize!,
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: theme.colorScheme.onSecondary,
                                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -55,7 +55,7 @@ class HomeDropDown extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(localizations.profile.capitalize()),
+                Text(localizations.profile.capitalize!),
                 const Icon(
                   Icons.person,
                   size: 15,
@@ -68,7 +68,7 @@ class HomeDropDown extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(localizations.logout.capitalize()),
+              Text(localizations.logout.capitalize!),
               const Icon(
                 Icons.logout,
                 size: 15,

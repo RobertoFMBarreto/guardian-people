@@ -7,7 +7,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
@@ -256,7 +256,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                 if (_selectedAnimal!.data.isEmpty && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(
-                      AppLocalizations.of(context)!.there_is_no_animal_data.capitalize(),
+                      AppLocalizations.of(context)!.there_is_no_animal_data.capitalize!,
                     ),
                   ));
                 }
@@ -333,7 +333,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                         Padding(
                                           padding: const EdgeInsets.only(bottom: 8.0),
                                           child: Text(
-                                            localizations.devices.capitalize(),
+                                            localizations.devices.capitalize!,
                                             style: theme.textTheme.headlineMedium,
                                           ),
                                         ),
@@ -353,7 +353,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                             },
                                             icon: const Icon(Icons.settings),
                                             label: Text(
-                                              localizations.device_settings.capitalize(),
+                                              localizations.device_settings.capitalize!,
                                             ),
                                           ),
                                         ],
@@ -418,7 +418,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                             .showSnackBar(SnackBar(
                                                           content: Text(
                                                             localizations.there_is_no_animal_data
-                                                                .capitalize(),
+                                                                .capitalize!,
                                                           ),
                                                         ));
                                                       }
@@ -481,7 +481,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      localizations.device_settings.capitalize(),
+                                      localizations.device_settings.capitalize!,
                                       style: theme.textTheme.headlineMedium,
                                     ),
                                   ],

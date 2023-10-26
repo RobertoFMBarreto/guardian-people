@@ -27,7 +27,7 @@ Future<void> animalsFromJson(String body) async {
 /// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
 Future<void> animalDataFromJson(Map<String, dynamic> data, String idAnimal) async {
   List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
-
+  print(data);
   await createAnimalData(
     AnimalLocationsCompanion(
       dataUsage: drift.Value(Random().nextInt(10)),
@@ -50,8 +50,8 @@ Future<void> animalDataFromJson(Map<String, dynamic> data, String idAnimal) asyn
       lon: data['lon'] != null
           ? drift.Value(double.tryParse(data['lon']))
           : const drift.Value.absent(),
-      temperature: data['skinTemperature'] != null
-          ? drift.Value(double.tryParse(data['skinTemperature']))
+      temperature: data['skintemperature'] != null
+          ? drift.Value(double.tryParse(data['skintemperature']))
           : const drift.Value.absent(),
     ),
   );

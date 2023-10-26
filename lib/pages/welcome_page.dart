@@ -4,7 +4,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
 /// Class that represents the welcome page
@@ -112,7 +112,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${localizations.loading.capitalize()}...",
+                          "${localizations.loading.capitalize!}...",
                           style: theme.textTheme.bodyLarge!.copyWith(
                             color: theme.colorScheme.onSecondary,
                             shadows: <Shadow>[

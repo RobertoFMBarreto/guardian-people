@@ -5,7 +5,7 @@ import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/providers/tmp/read_json.dart';
 
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -62,7 +62,7 @@ class _AlertsPageState extends State<AlertsPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            localizations.alerts.capitalize(),
+            localizations.alerts.capitalize!,
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -85,7 +85,7 @@ class _AlertsPageState extends State<AlertsPage> {
             );
           },
           label: Text(
-            '${localizations.manage.capitalize()} ${localizations.warnings.capitalize()}',
+            '${localizations.manage.capitalize!} ${localizations.warnings.capitalize!}',
             style: theme.textTheme.bodyLarge!.copyWith(
               color: theme.colorScheme.onSecondary,
               fontWeight: FontWeight.bold,
@@ -122,7 +122,7 @@ class _AlertsPageState extends State<AlertsPage> {
                                     color: theme.colorScheme.error,
                                   ),
                                   Text(
-                                    '${localizations.remove.capitalize()} ${localizations.all.capitalize()}',
+                                    '${localizations.remove.capitalize!} ${localizations.all.capitalize!}',
                                     style: theme.textTheme.bodyLarge!.copyWith(
                                       color: theme.colorScheme.error,
                                     ),
@@ -135,7 +135,7 @@ class _AlertsPageState extends State<AlertsPage> {
                       Expanded(
                         child: _alerts.isEmpty
                             ? Center(
-                                child: Text(localizations.no_notifications.capitalize()),
+                                child: Text(localizations.no_notifications.capitalize!),
                               )
                             : Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10.0),

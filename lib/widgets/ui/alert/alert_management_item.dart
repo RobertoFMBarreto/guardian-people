@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents an alert management item widget
 class AlertManagementItem extends StatelessWidget {
@@ -41,12 +41,12 @@ class AlertManagementItem extends StatelessWidget {
                       RichText(
                         maxLines: 2,
                         text: TextSpan(
-                          text: '${localizations.when.capitalize()} ',
+                          text: '${localizations.when.capitalize!} ',
                           style: theme.textTheme.bodyLarge,
                           children: [
                             TextSpan(
                               text:
-                                  '${parseAlertParameterFromId(alert.parameter.value, localizations).capitalize()} ${parseComparissonFromString(alert.comparisson.value, localizations)} ',
+                                  '${parseAlertParameterFromId(alert.parameter.value, localizations).capitalize!} ${parseComparissonFromString(alert.comparisson.value, localizations)} ',
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -73,7 +73,7 @@ class AlertManagementItem extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "${localizations.notification.capitalize()}: ${alert.hasNotification.value ? localizations.yes.capitalize() : localizations.no.capitalize()}",
+                      "${localizations.notification.capitalize!}: ${alert.hasNotification.value ? localizations.yes.capitalize! : localizations.no.capitalize!}",
                       style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
@@ -88,7 +88,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         final body = jsonDecode(response.body);
-        for (var dt in body['data']) {
+        for (var dt in body) {
           await animalDataFromJson(dt, widget.animal.animal.idAnimal.value.toString());
         }
         _getAnimalData();
@@ -118,7 +118,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      AppLocalizations.of(context)!.server_error.capitalize(),
+                      AppLocalizations.of(context)!.server_error.capitalize!,
                     ),
                   ),
                 );
@@ -149,7 +149,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    AppLocalizations.of(context)!.server_error.capitalize(),
+                    AppLocalizations.of(context)!.server_error.capitalize!,
                   ),
                 ),
               );

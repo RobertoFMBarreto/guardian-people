@@ -5,7 +5,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/animal/animal_map_widget.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.dart';
@@ -47,6 +47,7 @@ class _DevicePageState extends State<DevicePage> {
                   ? gdGradientEnd
                   : gdDarkGradientEnd,
               title: Text(widget.animal.animal.animalName.value),
+              foregroundColor: Colors.white,
               centerTitle: true,
               actions: [
                 IconButton(
@@ -96,7 +97,7 @@ class _DevicePageState extends State<DevicePage> {
         },
         backgroundColor: theme.colorScheme.secondary,
         label: Text(
-          localizations.state_history.capitalize(),
+          localizations.state_history.capitalize!,
           style: theme.textTheme.bodyLarge!.copyWith(
             fontWeight: FontWeight.w500,
             color: theme.colorScheme.onSecondary,
@@ -128,7 +129,7 @@ class _DevicePageState extends State<DevicePage> {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            localizations.localization.capitalize(),
+                            localizations.localization.capitalize!,
                             style: theme.textTheme.headlineSmall!.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -152,8 +153,8 @@ class _DevicePageState extends State<DevicePage> {
                           ],
                           totalSwitches: 2,
                           labels: [
-                            localizations.current.capitalize(),
-                            localizations.range.capitalize(),
+                            localizations.current.capitalize!,
+                            localizations.range.capitalize!,
                           ],
                           onToggle: (index) {
                             setState(() {
@@ -216,7 +217,7 @@ class _DevicePageState extends State<DevicePage> {
                           FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              localizations.localization.capitalize(),
+                              localizations.localization.capitalize!,
                               style: theme.textTheme.headlineSmall!.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
@@ -240,8 +241,8 @@ class _DevicePageState extends State<DevicePage> {
                             ],
                             totalSwitches: 2,
                             labels: [
-                              localizations.current.capitalize(),
-                              localizations.range.capitalize(),
+                              localizations.current.capitalize!,
+                              localizations.range.capitalize!,
                             ],
                             onToggle: (index) {
                               setState(() {

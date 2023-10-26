@@ -9,7 +9,7 @@ import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
@@ -119,7 +119,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
       appBar: !_isLoading
           ? AppBar(
               title: Text(
-                '${localizations.fence.capitalize()} ${_fence.name}',
+                '${localizations.fence.capitalize!} ${_fence.name}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
               ),
               centerTitle: true,
@@ -131,7 +131,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       removeFence(_fence.idFence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
-                      localizations.remove.capitalize(),
+                      localizations.remove.capitalize!,
                       style: theme.textTheme.bodyLarge!
                           .copyWith(color: theme.colorScheme.error, fontWeight: FontWeight.w500),
                     ),
@@ -188,7 +188,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             },
                           );
                         },
-                        child: Text('${localizations.edit.capitalize()} ${localizations.fence}'),
+                        child: Text('${localizations.edit.capitalize!} ${localizations.fence}'),
                       ),
                     ),
                   Padding(
@@ -197,7 +197,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${localizations.associated_devices.capitalize()}:',
+                          '${localizations.associated_devices.capitalize!}:',
                           style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
                         if (hasConnection)
@@ -214,7 +214,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                     flex: 2,
                     child: _animals.isEmpty
                         ? Center(
-                            child: Text(localizations.no_selected_devices.capitalize()),
+                            child: Text(localizations.no_selected_devices.capitalize!),
                           )
                         : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),

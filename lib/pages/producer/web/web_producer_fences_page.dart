@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/geofencing.dart';
 import 'package:guardian/settings/colors.dart';
@@ -75,7 +75,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: Text(
-                                  localizations.fences.capitalize(),
+                                  localizations.fences.capitalize!,
                                   style: theme.textTheme.headlineMedium,
                                 ),
                               ),
@@ -150,7 +150,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                         controller: _nameController,
                                         decoration: InputDecoration(
                                           label: Text(
-                                            localizations.fence_name.capitalize(),
+                                            localizations.fence_name.capitalize!,
                                           ),
                                         ),
                                       ),
@@ -167,7 +167,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                                 MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                           ),
                                           child: Text(
-                                            localizations.cancel.capitalize(),
+                                            localizations.cancel.capitalize!,
                                             style: theme.textTheme.bodyLarge!.copyWith(
                                               color: theme.colorScheme.onSecondary,
                                               fontWeight: FontWeight.w500,
@@ -179,7 +179,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                             _confirmGeofence();
                                           },
                                           child: Text(
-                                            localizations.confirm.capitalize(),
+                                            localizations.confirm.capitalize!,
                                             style: theme.textTheme.bodyLarge!.copyWith(
                                               color: theme.colorScheme.onSecondary,
                                               fontWeight: FontWeight.w500,

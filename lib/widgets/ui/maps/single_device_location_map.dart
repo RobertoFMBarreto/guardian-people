@@ -4,11 +4,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/system_provider.dart';
@@ -123,17 +123,16 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
+    AnimalLocationsCompanion? lastLocation = widget.deviceData
+        .firstWhereOrNull((element) => element.lat.value != null && element.lon.value != null);
     List<AnimalLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
         ? widget.deviceData
             .where((element) => element.lat.value != null && element.lon.value != null)
             .toList()
-        : widget.deviceData.isNotEmpty
-            ? [
-                widget.deviceData
-                    .where((element) => element.lat.value != null && element.lon.value != null)
-                    .first
-              ]
+        : widget.deviceData.isNotEmpty && lastLocation != null
+            ? [lastLocation]
             : [];
+
     // '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'
     return FutureBuilder(
       future: _future,
@@ -332,7 +331,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  localizations.normal_map.capitalize(),
+                                  localizations.normal_map.capitalize!,
                                   style: theme.textTheme.bodyLarge!.copyWith(
                                       color: theme.colorScheme.onBackground,
                                       fontWeight: FontWeight.w500),
@@ -343,7 +342,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  localizations.heatmap.capitalize(),
+                                  localizations.heatmap.capitalize!,
                                   style: theme.textTheme.bodyLarge!.copyWith(
                                       color: theme.colorScheme.onBackground,
                                       fontWeight: FontWeight.w500),
@@ -358,8 +357,8 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                                 value: e,
                                 child: Text(
                                   e == _dropdownItems.first
-                                      ? localizations.normal_map.capitalize()
-                                      : localizations.heatmap.capitalize(),
+                                      ? localizations.normal_map.capitalize!
+                                      : localizations.heatmap.capitalize!,
                                   style: TextStyle(color: theme.colorScheme.onBackground),
                                 ),
                               ),
@@ -413,7 +412,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "${localizations.show.capitalize()} ${localizations.fence.capitalize()}:",
+                                "${localizations.show.capitalize!} ${localizations.fence.capitalize!}:",
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Switch(
@@ -443,7 +442,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "${localizations.show.capitalize()} ${localizations.route}",
+                                "${localizations.show.capitalize!} ${localizations.route}",
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Switch(

@@ -5,7 +5,7 @@ import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -79,7 +79,7 @@ class _FencesPageState extends State<FencesPage> {
                     Navigator.of(context).pop(_selectedFence);
                   },
                   label: Text(
-                    localizations.confirm.capitalize(),
+                    localizations.confirm.capitalize!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       color: theme.colorScheme.onSecondary,
                       fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class _FencesPageState extends State<FencesPage> {
                     ),
           appBar: AppBar(
             title: Text(
-              localizations.fences.capitalize(),
+              localizations.fences.capitalize!,
               style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
             ),
             centerTitle: true,
@@ -130,7 +130,7 @@ class _FencesPageState extends State<FencesPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: SearchFieldInput(
-                            label: localizations.search.capitalize(),
+                            label: localizations.search.capitalize!,
                             onChanged: (value) {
                               _searchString = value;
                               _searchFences();
@@ -141,7 +141,7 @@ class _FencesPageState extends State<FencesPage> {
                           child: _fences.isEmpty
                               ? Center(
                                   child: Text(
-                                    localizations.no_fences.capitalize(),
+                                    localizations.no_fences.capitalize!,
                                   ),
                                 )
                               : ListView.builder(

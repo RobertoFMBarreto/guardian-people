@@ -9,7 +9,7 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/fence.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
@@ -429,7 +429,7 @@ class _GeofencingState extends State<Geofencing> {
                                   controller: _nameController,
                                   decoration: InputDecoration(
                                     label: Text(
-                                      localizations.fence_name.capitalize(),
+                                      localizations.fence_name.capitalize!,
                                     ),
                                   ),
                                 ),
@@ -446,7 +446,7 @@ class _GeofencingState extends State<Geofencing> {
                                           MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                     ),
                                     child: Text(
-                                      localizations.cancel.capitalize(),
+                                      localizations.cancel.capitalize!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.onSecondary,
                                         fontWeight: FontWeight.w500,
@@ -458,7 +458,7 @@ class _GeofencingState extends State<Geofencing> {
                                       _confirmGeofence();
                                     },
                                     child: Text(
-                                      localizations.confirm.capitalize(),
+                                      localizations.confirm.capitalize!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.onSecondary,
                                         fontWeight: FontWeight.w500,

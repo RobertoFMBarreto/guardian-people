@@ -6,7 +6,7 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/settings/colors.dart';
@@ -182,7 +182,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       child: TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                          label: Text(localizations.name.capitalize()),
+                          label: Text(localizations.name.capitalize!),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -213,7 +213,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations.device_warnings.capitalize(),
+                          localizations.device_warnings.capitalize!,
                           style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                         ),
                         const Icon(Icons.add)
@@ -224,7 +224,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Expanded(
                   child: _alerts.isEmpty
                       ? Center(
-                          child: Text(localizations.no_selected_alerts.capitalize()),
+                          child: Text(localizations.no_selected_alerts.capitalize!),
                         )
                       : ListView.builder(
                           itemCount: _alerts.length,
@@ -254,7 +254,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations.device_fences.capitalize(),
+                          localizations.device_fences.capitalize!,
                           style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                         ),
                         // TODO: se poder ter várias cercas trocar
@@ -266,7 +266,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Expanded(
                   child: _fences.isEmpty
                       ? Center(
-                          child: Text(localizations.no_selected_fences.capitalize()),
+                          child: Text(localizations.no_selected_fences.capitalize!),
                         )
                       : ListView.builder(
                           itemCount: _fences.length,
@@ -307,7 +307,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                             backgroundColor: const MaterialStatePropertyAll(gdCancelBtnColor),
                           ),
                           child: Text(
-                            localizations.cancel.capitalize(),
+                            localizations.cancel.capitalize!,
                           ),
                         ),
                       ),
@@ -320,7 +320,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                               .then((value) => Navigator.of(context).pop(newAnimal));
                         },
                         child: Text(
-                          localizations.confirm.capitalize(),
+                          localizations.confirm.capitalize!,
                         ),
                       ),
                     ],

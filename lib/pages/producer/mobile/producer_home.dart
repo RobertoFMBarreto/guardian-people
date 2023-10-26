@@ -16,7 +16,7 @@ import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/settings/settings.dart';
@@ -82,7 +82,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   /// 2. add to list
   /// 3. load api animals
   Future<void> _loadAnimals() async {
-    await getUserAnimalsWithData().then((allAnimals) {
+    await getUserAnimalsWithLastLocation().then((allAnimals) {
       _animals = [];
       setState(() {
         _animals.addAll(allAnimals);
@@ -101,7 +101,7 @@ class _ProducerHomeState extends State<ProducerHome> {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         await animalsFromJson(response.body);
-        getUserAnimalsWithData().then((allDevices) {
+        getUserAnimalsWithLastLocation().then((allDevices) {
           if (mounted) {
             setState(() {
               _animals = [];
@@ -182,6 +182,8 @@ class _ProducerHomeState extends State<ProducerHome> {
         });
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
+          print(resp.statusCode);
+          print(resp.body);
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
@@ -264,7 +266,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                             },
                             child: FittedBox(
                                 fit: BoxFit.scaleDown,
-                                child: Text(localizations.fences.capitalize())),
+                                child: Text(localizations.fences.capitalize!)),
                           ),
                         ],
                       ),
@@ -284,7 +286,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 8),
                               child: SquareAnimalsInfo(
-                                title: localizations.devices.capitalize(),
+                                title: localizations.devices.capitalize!,
                                 description: '${_animals.length}',
                                 onTap: () {
                                   Future.delayed(const Duration(milliseconds: 300)).then(
@@ -303,7 +305,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 20, left: 8),
                               child: SquareAnimalsInfo(
-                                title: localizations.alerts.capitalize(),
+                                title: localizations.alerts.capitalize!,
                                 description: '${_alertNotifications.length}',
                                 isAlert: true,
                                 onTap: () {

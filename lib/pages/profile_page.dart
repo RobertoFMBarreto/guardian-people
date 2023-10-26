@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/settings/settings.dart';
@@ -75,11 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    label: Text(localizations.name.capitalize()),
+                                    label: Text(localizations.name.capitalize!),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize();
+                                      return localizations.empty_field.capitalize!;
                                     }
                                     return null;
                                   },
@@ -93,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize();
+                                      return localizations.empty_field.capitalize!;
                                     }
                                     return null;
                                   },
@@ -103,11 +103,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    label: Text(localizations.password.capitalize()),
+                                    label: Text(localizations.password.capitalize!),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize();
+                                      return localizations.empty_field.capitalize!;
                                     }
                                     return null;
                                   },
@@ -117,11 +117,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    label: Text(localizations.password_confirmation.capitalize()),
+                                    label: Text(localizations.password_confirmation.capitalize!),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize();
+                                      return localizations.empty_field.capitalize!;
                                     }
                                     return null;
                                   },
@@ -143,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: const ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll(Colors.grey),
                                   ),
-                                  child: Text(localizations.cancel.capitalize()),
+                                  child: Text(localizations.cancel.capitalize!),
                                 ),
                                 const SizedBox(
                                   width: 20,
@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       );
                                     }
                                   },
-                                  child: Text(localizations.confirm.capitalize()),
+                                  child: Text(localizations.confirm.capitalize!),
                                 ),
                               ],
                             ),

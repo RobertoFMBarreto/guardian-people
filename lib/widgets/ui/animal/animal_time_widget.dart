@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/inputs/date_time_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_date_card.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -148,7 +148,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                             Navigator.of(context).pop();
                           },
                           child: Text(
-                            localizations.cancel.capitalize(),
+                            localizations.cancel.capitalize!,
                           ),
                         ),
                         TextButton(
@@ -161,7 +161,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                             Navigator.of(context).pop(true);
                           },
                           child: Text(
-                            localizations.confirm.capitalize(),
+                            localizations.confirm.capitalize!,
                           ),
                         ),
                       ],
@@ -201,7 +201,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
           ),
         ),
         Text(
-          ' ${localizations.until.capitalize()} ',
+          ' ${localizations.until.capitalize!} ',
           style: theme.textTheme.bodyLarge,
         ),
         Expanded(

@@ -28,8 +28,8 @@ class FCMMessagingProvider {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     if (channel == "fencing") {
       return body['fence_is_stay_inside']
-          ? localizations.fencing_noti_outside(body['name_animal'], body['fence_name'])
-          : localizations.fencing_noti_inside(body['name_animal'], body['fence_name']);
+          ? localizations.fencing_noti_outside(body['animal']['animal_name'], body['fence_name'])
+          : localizations.fencing_noti_inside(body['animal']['animal_name'], body['fence_name']);
     } else if (channel == "alerts") {
       final currentValue = double.parse(body['sensor_data']);
       final animalName = body['animal']['animal_name'];
@@ -120,6 +120,7 @@ class FCMMessagingProvider {
 
     FirebaseMessaging.instance.getToken().then((String? token) {
       assert(token != null);
+      print(token);
     });
 
     // Open notification with app on background but not terminated

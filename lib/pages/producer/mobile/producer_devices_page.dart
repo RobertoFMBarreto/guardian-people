@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
@@ -95,8 +95,8 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
       setState(() {
         _batteryRangeValues = const RangeValues(0, 100);
         _dtUsageRangeValues = const RangeValues(0, 10);
-        _elevationRangeValues = RangeValues(0, _maxTemperature);
-        _tmpRangeValues = RangeValues(0, _maxElevation);
+        _elevationRangeValues = RangeValues(0, _maxElevation);
+        _tmpRangeValues = RangeValues(0, _maxTemperature);
       });
     }
   }
@@ -146,6 +146,17 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
         });
       }
     });
+  }
+
+  bool _areFiltersApplied() {
+    return _batteryRangeValues.start == 0 &&
+        _batteryRangeValues.end == 100 &&
+        _dtUsageRangeValues.start == 0 &&
+        _dtUsageRangeValues.end == 10 &&
+        _tmpRangeValues.start == 0 &&
+        _tmpRangeValues.end == _maxTemperature &&
+        _elevationRangeValues.start == 0 &&
+        _elevationRangeValues.end == _maxElevation;
   }
 
   /// Method that filters all animals loading them into the [_animals] list
@@ -228,7 +239,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text(
-              localizations.devices.capitalize(),
+              localizations.devices.capitalize!,
               style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
             ),
             centerTitle: true,
@@ -279,7 +290,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                     Navigator.of(context).pop(_selectedAnimals);
                   },
                   label: Text(
-                    localizations.confirm.capitalize(),
+                    localizations.confirm.capitalize!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -337,7 +348,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       color: theme.colorScheme.secondary,
                                     ),
                                     Text(
-                                      localizations.select_all.capitalize(),
+                                      localizations.select_all.capitalize!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.secondary,
                                       ),
@@ -350,7 +361,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                         Expanded(
                           child: _animals.isEmpty
                               ? Center(
-                                  child: Text(localizations.no_devices.capitalize()),
+                                  child: Text(localizations.no_devices.capitalize!),
                                 )
                               : Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20.0),

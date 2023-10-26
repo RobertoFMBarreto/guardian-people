@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/query_models/producer_with_devices_amount.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'producer.dart';
 
 /// Class that represents the producers list widget
@@ -18,7 +18,7 @@ class Producers extends StatelessWidget {
       child: Padding(
         padding: kIsWeb ? const EdgeInsets.symmetric(horizontal: 40.0) : const EdgeInsets.all(0),
         child: producers.isEmpty
-            ? Center(child: Text(localizations.no_producers.capitalize()))
+            ? Center(child: Text(localizations.no_producers.capitalize!))
             : GridView.extent(
                 physics: const NeverScrollableScrollPhysics(),
                 childAspectRatio: 1,

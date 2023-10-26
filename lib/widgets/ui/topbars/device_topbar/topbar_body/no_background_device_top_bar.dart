@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/color_circle.dart';
@@ -138,7 +138,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                   if (widget.animal.data.isEmpty)
                     Expanded(
                       child: Text(
-                        localizations.no_device_data.capitalize(),
+                        localizations.no_device_data.capitalize!,
                         style: theme.textTheme.bodyLarge!.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
@@ -247,7 +247,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Text(
-                                        localizations.animal_color.capitalize(),
+                                        localizations.animal_color.capitalize!,
                                         style: theme.textTheme.bodyLarge!.copyWith(
                                           color: theme.colorScheme.onSecondary,
                                         ),

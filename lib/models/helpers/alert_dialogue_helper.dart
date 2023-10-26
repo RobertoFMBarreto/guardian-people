@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
@@ -25,7 +25,7 @@ void showLoadingDialog(BuildContext context) {
                 height: 15,
               ),
               // Some text
-              Text(localizations.loading.capitalize())
+              Text(localizations.loading.capitalize!)
             ],
           ),
         ),
@@ -51,18 +51,18 @@ Future<void> showNoWifiDialog(BuildContext context) async {
           builder: (BuildContext context) {
             return AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.background,
-              title: Text(localizations.no_wifi.capitalize()),
+              title: Text(localizations.no_wifi.capitalize!),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text(localizations.no_wifi_operations.capitalize()),
+                    Text(localizations.no_wifi_operations.capitalize!),
                   ],
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   child: Text(
-                    localizations.ok.capitalize(),
+                    localizations.ok.capitalize!,
                     style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                   onPressed: () {
@@ -89,11 +89,11 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(localizations.no_wifi.capitalize()),
+        title: Text(localizations.no_wifi.capitalize!),
         actions: <Widget>[
           TextButton(
             child: Text(
-              localizations.ok.capitalize(),
+              localizations.ok.capitalize!,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),
             onPressed: () {

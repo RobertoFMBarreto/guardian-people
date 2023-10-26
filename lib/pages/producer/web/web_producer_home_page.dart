@@ -11,7 +11,7 @@ import 'package:guardian/models/db/drift/operations/animal_data_operations.dart'
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
@@ -193,7 +193,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                localizations.devices.capitalize(),
+                                localizations.devices.capitalize!,
                                 style: theme.textTheme.headlineMedium,
                               ),
                             ),
@@ -228,7 +228,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: Text(
-                                  localizations.warnings.capitalize(),
+                                  localizations.warnings.capitalize!,
                                   style: theme.textTheme.headlineMedium,
                                 ),
                               ),
@@ -238,7 +238,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                                     borderRadius: BorderRadius.circular(8),
                                     child: _notifications.isEmpty
                                         ? Center(
-                                            child: Text(localizations.no_alerts.capitalize()),
+                                            child: Text(localizations.no_alerts.capitalize!),
                                           )
                                         : ListView.builder(
                                             itemCount: _notifications.length,

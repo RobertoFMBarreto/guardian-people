@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/inputs/range_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -47,7 +47,7 @@ class ProducerPageDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
-                '${localizations.filter.capitalize()} ${localizations.results}',
+                '${localizations.filter.capitalize!} ${localizations.results}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
@@ -55,7 +55,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: batteryRangeValues,
               max: 100,
               min: 0,
-              title: localizations.battery.capitalize(),
+              title: localizations.battery.capitalize!,
               label: '${batteryRangeValues.start.round()}% - ${batteryRangeValues.end.round()}%',
               onChanged: onChangedBat,
             ),
@@ -63,7 +63,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: dtUsageRangeValues,
               max: 10,
               min: 0,
-              title: localizations.data_used.capitalize(),
+              title: localizations.data_used.capitalize!,
               label: '${dtUsageRangeValues.start.round()}MB - ${dtUsageRangeValues.end.round()}MB',
               onChanged: onChangedDtUsg,
             ),
@@ -71,7 +71,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: tmpRangeValues,
               max: maxTemp,
               min: 0,
-              title: localizations.temperature.capitalize(),
+              title: localizations.temperature.capitalize!,
               label: '${tmpRangeValues.start.round()}ºC - ${tmpRangeValues.end.round()}ºC',
               onChanged: onChangedTmp,
             ),
@@ -79,7 +79,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: elevationRangeValues,
               max: maxElevation,
               min: 0,
-              title: localizations.elevation.capitalize(),
+              title: localizations.elevation.capitalize!,
               label:
                   '${elevationRangeValues.start.round()}m - ${elevationRangeValues.end.round()}m',
               onChanged: onChangedElev,
@@ -87,12 +87,12 @@ class ProducerPageDrawer extends StatelessWidget {
             ElevatedButton(
               onPressed: onConfirm,
               child:
-                  Text('${localizations.apply.capitalize()} ${localizations.filters.capitalize()}'),
+                  Text('${localizations.apply.capitalize!} ${localizations.filters.capitalize!}'),
             ),
             TextButton(
               onPressed: onResetFilters,
               child: Text(
-                '${localizations.clean.capitalize()} ${localizations.filters.capitalize()}',
+                '${localizations.clean.capitalize!} ${localizations.filters.capitalize!}',
                 style: theme.textTheme.bodyMedium!.copyWith(
                   color: gdSecondaryColor,
                   fontWeight: FontWeight.w500,

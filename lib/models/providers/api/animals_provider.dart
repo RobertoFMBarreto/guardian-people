@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/app_settings.dart';
@@ -52,14 +53,17 @@ class AnimalProvider {
       String idAnimal, DateTime startDate, DateTime endDate) async {
     String? token = await getToken();
     Map<String, String> headers = {
-      //HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/$idAnimal/data');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/$idAnimal');
     try {
+      print(jsonEncode(
+          {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()}));
       var response = await post(url,
           headers: headers,
-          body: {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()});
+          body: jsonEncode(
+              {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()}));
 
       return response;
     } on SocketException catch (e) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -65,12 +65,12 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      localizations.device_data.capitalize(),
+                      localizations.device_data.capitalize!,
                       style: theme.textTheme.headlineMedium,
                     ),
                     if (device.data.isNotEmpty)
                       Text(
-                        localizations.no_device_data.capitalize(),
+                        localizations.no_device_data.capitalize!,
                         style: theme.textTheme.bodyLarge!.copyWith(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),

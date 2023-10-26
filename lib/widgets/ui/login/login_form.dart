@@ -7,7 +7,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -105,7 +105,7 @@ class _LoginFormState extends State<LoginForm> {
         //     if (user.isEmpty) {
         //       Navigator.of(context).pop();
         //       setState(() {
-        //         errorString = localizations.login_error.capitalize();
+        //         errorString = localizations.login_error.capitalize!;
         //       });
         //     } else {
         //       _loadDataRemoveThisLater(users, user.first).then((_) {
@@ -127,7 +127,7 @@ class _LoginFormState extends State<LoginForm> {
         // );
       } else {
         setState(() {
-          errorString = localizations.no_wifi.capitalize();
+          errorString = localizations.no_wifi.capitalize!;
         });
       }
     }
@@ -136,7 +136,7 @@ class _LoginFormState extends State<LoginForm> {
   /// Method that implements the email validation logic
   String? _validateEmail(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
-      return localizations.empty_field.capitalize();
+      return localizations.empty_field.capitalize!;
     }
     return null;
   }
@@ -144,7 +144,7 @@ class _LoginFormState extends State<LoginForm> {
   /// Method that implements the password validation logic
   String? _validatePassword(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
-      return localizations.empty_field.capitalize();
+      return localizations.empty_field.capitalize!;
     }
     return null;
   }

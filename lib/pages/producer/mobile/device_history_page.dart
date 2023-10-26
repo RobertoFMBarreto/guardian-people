@@ -5,7 +5,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/ui/animal/animal_data_info_list_item.dart';
 
 /// Class that represents the animal history page
@@ -67,7 +67,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.state_history.capitalize(),
+          localizations.state_history.capitalize!,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -138,7 +138,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                 ? Expanded(
                     child: Center(
                       child: Text(
-                        localizations.no_data_to_show.capitalize(),
+                        localizations.no_data_to_show.capitalize!,
                       ),
                     ),
                   )
