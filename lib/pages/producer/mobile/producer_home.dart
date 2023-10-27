@@ -9,6 +9,7 @@ import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/notifications_provider.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/parsers/notifications_parsers.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -87,61 +88,18 @@ class _ProducerHomeState extends State<ProducerHome> {
       setState(() {
         _animals.addAll(allAnimals);
       });
-      _getAnimalsFromApi();
-    });
-  }
-
-  /// Method that loads the animals from the api into the [_animals] list
-  ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
-  ///
-  /// If the server takes too long to answer then the user receives and alert
-  Future<void> _getAnimalsFromApi() async {
-    AnimalProvider.getAnimalsWithLastLocation().then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        await animalsFromJson(response.body);
-        getUserAnimalsWithLastLocation().then((allDevices) {
-          if (mounted) {
-            setState(() {
-              _animals = [];
-              _animals.addAll(allDevices);
-            });
-          }
-        });
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getAnimalsFromApi();
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+      AnimalRequests.getAnimalsFromApiWithLastLocation(
+          context: context,
+          onDataGotten: () {
+            getUserAnimalsWithLastLocation().then((allDevices) {
+              if (mounted) {
+                setState(() {
+                  _animals = [];
+                  _animals.addAll(allDevices);
+                });
               }
             });
-          } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
-          }
-        });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          }
-        });
-      }
+          });
     });
   }
 

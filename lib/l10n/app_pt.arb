@@ -175,5 +175,6 @@
         "example": "1.0"
       }
     }
-  }
+  },
+  "realtime": "tempo real"
 }

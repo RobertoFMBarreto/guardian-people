@@ -62,7 +62,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
   final db = Get.find<GuardianDb>();
   List<AnimalLocationsCompanion> animalData = [];
   List<AnimalLocation> data = [];
-  if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
+  if (isInterval && startDate!.difference(endDate ?? DateTime.now()).inSeconds.abs() > 60) {
     final dt = await db.customSelect('''
       SELECT * FROM ${db.animalLocations.actualTableName}
       JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name}
@@ -71,7 +71,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
     ''', variables: [
       drift.Variable.withString(idAnimal),
       drift.Variable.withDateTime(startDate),
-      drift.Variable.withDateTime(endDate)
+      drift.Variable.withDateTime(endDate ?? DateTime.now())
     ]).get();
     if (dt.isNotEmpty) {
       for (var locationData in dt) {
@@ -82,8 +82,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
             dataUsage: drift.Value(locationData.data[db.animalLocations.dataUsage.name]),
             date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                 locationData.data[db.animalLocations.date.name])),
-            animalDataId:
-                drift.Value(locationData.data[db.animalLocations.animalDataId.name]),
+            animalDataId: drift.Value(locationData.data[db.animalLocations.animalDataId.name]),
             idAnimal: drift.Value(locationData.data[db.animal.idAnimal.name]),
             elevation: drift.Value(locationData.data[db.animalLocations.elevation.name]),
             lat: drift.Value(locationData.data[db.animalLocations.lat.name]),

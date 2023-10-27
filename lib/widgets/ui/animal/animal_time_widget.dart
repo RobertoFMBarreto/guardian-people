@@ -9,7 +9,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 /// Class that represents the animal time range widget
 class AnimalTimeRangeWidget extends StatefulWidget {
   final DateTime startDate;
-  final DateTime endDate;
+  final DateTime? endDate;
   final Function(DateTime) onStartDateChanged;
   final Function(DateTime) onEndDateChanged;
   const AnimalTimeRangeWidget({
@@ -26,7 +26,7 @@ class AnimalTimeRangeWidget extends StatefulWidget {
 
 class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
   DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
+  DateTime? _endDate = DateTime.now();
 
   @override
   void initState() {
@@ -73,11 +73,11 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
   void _onEndDateChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       //store last date
-      DateTime backupDate = _endDate;
+      DateTime backupDate = _endDate ?? DateTime.now();
       //store new date
       _endDate = args.value;
       //add the backup date hours to the new date
-      _endDate = _endDate.add(
+      _endDate = _endDate!.add(
         Duration(
           hours: backupDate.hour,
           minutes: backupDate.minute,
@@ -88,7 +88,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
 
   /// Method that sets the [_endDate] time keeping the backup date
   void _onEndTimeChanged(DateTime newDate) {
-    DateTime backup = _endDate;
+    DateTime backup = _endDate ?? DateTime.now();
     final newTime = DateTime(
       backup.year,
       backup.month,
@@ -156,7 +156,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                             if (isStartDate) {
                               widget.onStartDateChanged(_startDate);
                             } else {
-                              widget.onEndDateChanged(_endDate);
+                              widget.onEndDateChanged(_endDate ?? DateTime.now());
                             }
                             Navigator.of(context).pop(true);
                           },
@@ -193,7 +193,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                 onSelectionChanged: _onStartDateChanged,
                 date: widget.startDate,
                 onTimeChange: _onStartTimeChanged,
-                maxDate: widget.endDate,
+                maxDate: widget.endDate ?? DateTime.now(),
                 isStartDate: true,
               );
               //_showStartDateDateSelector(context, localizations);
@@ -212,7 +212,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                 context,
                 localizations,
                 onSelectionChanged: _onEndDateChanged,
-                date: widget.endDate,
+                date: widget.endDate ?? DateTime.now(),
                 onTimeChange: _onEndTimeChanged,
                 maxDate: DateTime.now(),
                 minDate: widget.startDate,

@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
@@ -33,7 +35,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   List<AnimalLocationsCompanion> _animalData = [];
 
   DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
+  DateTime? _endDate;
 
   bool _showHeatMap = false;
 
@@ -48,14 +50,71 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   /// Method that does the initial setup of the widget
   ///
   /// 1. set the animal data
-  /// 2. get the local animal data
-  /// 3. get the animal data from api
+  /// 2. if interval
+  ///       if endDate == atual
+  ///         setup realtime location
+  ///         and get history
+  ///       else
+  ///         get history
+  ///    else
+  ///       get the last animal location
   Future<void> _setup() async {
     setState(() {
       _animalData = widget.animal.data;
     });
-    await _getAnimalData();
-    await _getAnimalDataFromApi();
+    // await _getAnimalData();
+    // await _getAnimalDataFromApi();
+    final now = DateTime.now();
+    if (widget.isInterval) {
+      // get data in interval
+      _getAnimalData();
+      AnimalRequests.getAnimalDataIntervalFromApi(
+        idAnimal: widget.animal.animal.idAnimal.value,
+        startDate: _startDate,
+        endDate: _endDate ?? DateTime.now(),
+        context: context,
+        onDataGotten: () {
+          _getAnimalData();
+        },
+        onFailed: () {
+          hasShownNoServerConnection().then((hasShown) async {
+            if (mounted) {
+              setState(() {
+                _startDate = DateTime.now();
+                _endDate = DateTime.now();
+              });
+            }
+            if (!hasShown) {
+              setShownNoServerConnection(true).then(
+                (_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+              );
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.server_error.capitalize!,
+                    ),
+                  ),
+                );
+              }
+            }
+          });
+        },
+      );
+      if (_endDate == null) {
+        // make realtime request
+      }
+    } else {
+      // get last location
+      _getLastLocation();
+      AnimalRequests.getAnimalsFromApiWithLastLocation(
+          context: context,
+          onDataGotten: () {
+            _getLastLocation();
+          });
+    }
   }
 
   /// Method that loads that local animal data into the [_animalData] list
@@ -77,86 +136,12 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
     );
   }
 
-  /// Method that loads all devices from the API into the [_animals] list
-  ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
-  ///
-  /// If the server takes too long to answer then the user receives and alert
-  Future<void> _getAnimalDataFromApi() async {
-    await AnimalProvider.getAnimalData(widget.animal.animal.idAnimal.value, _startDate, _endDate)
-        .then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        final body = jsonDecode(response.body);
-        for (var dt in body) {
-          await animalDataFromJson(dt, widget.animal.animal.idAnimal.value.toString());
-        }
-        _getAnimalData();
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getAnimalDataFromApi();
-          } else if (response.statusCode == 507) {
-            setState(() {
-              _startDate = DateTime.now();
-              _endDate = DateTime.now();
-            });
-            hasShownNoServerConnection().then((hasShown) async {
-              setState(() {
-                _startDate = DateTime.now();
-                _endDate = DateTime.now();
-              });
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.server_error.capitalize!,
-                    ),
-                  ),
-                );
-              }
-            });
-          } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
-          }
-        });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (mounted) {
-            setState(() {
-              _startDate = DateTime.now();
-              _endDate = DateTime.now();
-            });
-          }
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context)!.server_error.capitalize!,
-                  ),
-                ),
-              );
-            }
-          }
-        });
-      }
+  Future<void> _getLastLocation() async {
+    await getUserAnimalWithLastLocation(widget.animal.animal.idAnimal.value).then((animal) {
+      setState(() {
+        _animalData = [];
+        _animalData.addAll(animal.first.data);
+      });
     });
   }
 
@@ -184,13 +169,13 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                           onStartDateChanged: (newStartDate) {
                             setState(() {
                               _startDate = newStartDate;
-                              _future = _getAnimalDataFromApi();
+                              _future = _setup();
                             });
                           },
                           onEndDateChanged: (newEndDate) {
                             setState(() {
                               _endDate = newEndDate;
-                              _future = _getAnimalDataFromApi();
+                              _future = _setup();
                             });
                           }),
                     ),
@@ -209,7 +194,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                         idAnimal: widget.animal.animal.idAnimal.value,
                         deviceColor: widget.animal.animal.animalColor.value,
                         isInterval: widget.isInterval,
-                        endDate: _endDate,
+                        endDate: _endDate ?? DateTime.now(),
                         startDate: _startDate,
                         onZoomChange: (newZoom) {
                           // No need to setstate because we dont need to update the screen
