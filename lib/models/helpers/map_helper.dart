@@ -5,8 +5,9 @@ import 'package:latlong2/latlong.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 /// Method that allows to get the map tile [TileLayer]
-TileLayer getTileLayer(BuildContext context) {
+TileLayer getTileLayer(BuildContext context, {Key? key}) {
   return TileLayer(
+    key: key,
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     userAgentPackageName: 'com.linovt.guardian',
     //tileProvider: FMTC.instance('guardian').getTileProvider(),

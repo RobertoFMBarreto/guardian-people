@@ -1,15 +1,15 @@
-import 'dart:convert';
+import 'dart:math';
 
+import 'package:dart_amqp/dart_amqp.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/helpers/db_helpers.dart';
-import 'package:guardian/models/providers/api/animals_provider.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
+import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -38,8 +38,16 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   DateTime? _endDate;
 
   bool _showHeatMap = false;
-
   double _currentZoom = 17;
+  RabbitMQProvider rabbitMQProvider = RabbitMQProvider();
+
+  late Consumer consumer;
+
+  @override
+  void dispose() {
+    rabbitMQProvider.stop();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -64,7 +72,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
     });
     // await _getAnimalData();
     // await _getAnimalDataFromApi();
-    final now = DateTime.now();
     if (widget.isInterval) {
       // get data in interval
       _getAnimalData();
@@ -103,23 +110,40 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
           });
         },
       );
-      if (_endDate == null) {
-        // make realtime request
-      }
     } else {
       // get last location
-      _getLastLocation();
+      _getLastLocation().then(
+        (_) => setState(() {
+          _startDate =
+              _animalData.firstWhereOrNull((element) => element.lat.value != null)?.date.value ??
+                  DateTime.now();
+        }),
+      );
+
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
           onDataGotten: () {
             _getLastLocation();
           });
     }
+    if (_endDate == null) {
+      // make realtime request
+      rabbitMQProvider.listen(
+        topicId: widget.animal.animal.idAnimal.value,
+        onDataReceived: (message) async {
+          if (message['lat'] != null && message['lon'] != null) {
+            animalDataFromJson(message, widget.animal.animal.idAnimal.value).then(
+              (_) => _getAnimalData(),
+            );
+          }
+        },
+      );
+    }
   }
 
   /// Method that loads that local animal data into the [_animalData] list
   Future<void> _getAnimalData() async {
-    await getAnimalData(
+    getAnimalData(
       startDate: _startDate,
       endDate: _endDate,
       idAnimal: widget.animal.animal.idAnimal.value,
@@ -188,7 +212,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: SingleAnimalLocationMap(
-                        key: Key(_animalData.toString()),
                         showCurrentPosition: true,
                         deviceData: _animalData,
                         idAnimal: widget.animal.animal.idAnimal.value,

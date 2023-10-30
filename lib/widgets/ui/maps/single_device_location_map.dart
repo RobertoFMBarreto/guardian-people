@@ -133,7 +133,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
             ? [lastLocation]
             : [];
 
-    // '${_showFence}_${_showHeatMap}_${widget.device.device.color.value}${widget.isInterval}'
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {

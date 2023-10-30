@@ -140,8 +140,6 @@ class _ProducerHomeState extends State<ProducerHome> {
         });
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
-          print(resp.statusCode);
-          print(resp.body);
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];

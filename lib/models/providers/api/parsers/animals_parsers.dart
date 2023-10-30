@@ -25,7 +25,7 @@ Future<void> animalsFromJson(String body) async {
 }
 
 /// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
-Future<void> animalDataFromJson(Map<String, dynamic> data, String idAnimal) async {
+Future<void> animalDataFromJson(Map<dynamic, dynamic> data, String idAnimal) async {
   List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
   await createAnimalData(
     AnimalLocationsCompanion(

@@ -255,7 +255,7 @@ class _DevicePageState extends State<DevicePage> {
                     ),
                   Expanded(
                     child: AnimalMapWidget(
-                      key: Key(_reloadNum.toString()),
+                      key: Key('$_reloadNum'),
                       animal: _animal,
                       isInterval: _isInterval,
                     ),

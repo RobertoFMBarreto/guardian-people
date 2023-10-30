@@ -5,7 +5,7 @@ import 'package:guardian/models/db/drift/database.dart';
 /// Method for creating animal location data [animalData] returning it as [AnimalLocationsCompanion]
 Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion animalData) async {
   final db = Get.find<GuardianDb>();
-  db.into(db.animalLocations).insertOnConflictUpdate(animalData);
+  await db.into(db.animalLocations).insertOnConflictUpdate(animalData);
   return animalData;
 }
 
@@ -62,7 +62,8 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
   final db = Get.find<GuardianDb>();
   List<AnimalLocationsCompanion> animalData = [];
   List<AnimalLocation> data = [];
-  if (isInterval && startDate!.difference(endDate ?? DateTime.now()).inSeconds.abs() > 60) {
+  if (isInterval &&
+      (startDate!.difference(endDate ?? DateTime.now()).inSeconds.abs() > 60 || endDate == null)) {
     final dt = await db.customSelect('''
       SELECT * FROM ${db.animalLocations.actualTableName}
       JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name}
@@ -71,7 +72,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
     ''', variables: [
       drift.Variable.withString(idAnimal),
       drift.Variable.withDateTime(startDate),
-      drift.Variable.withDateTime(endDate ?? DateTime.now())
+      drift.Variable.withDateTime(endDate ?? DateTime.now().add(Duration(seconds: 60)))
     ]).get();
     if (dt.isNotEmpty) {
       for (var locationData in dt) {
@@ -81,7 +82,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
             battery: drift.Value(locationData.data[db.animalLocations.battery.name]),
             dataUsage: drift.Value(locationData.data[db.animalLocations.dataUsage.name]),
             date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                locationData.data[db.animalLocations.date.name])),
+                locationData.data[db.animalLocations.date.name] * 1000)),
             animalDataId: drift.Value(locationData.data[db.animalLocations.animalDataId.name]),
             idAnimal: drift.Value(locationData.data[db.animal.idAnimal.name]),
             elevation: drift.Value(locationData.data[db.animalLocations.elevation.name]),

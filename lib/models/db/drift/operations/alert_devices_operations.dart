@@ -91,7 +91,7 @@ Future<List<Animal>> getAlertAnimals(String idAlert) async {
               battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
               dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                  deviceData.data[db.animalLocations.date.name])),
+                  deviceData.data[db.animalLocations.date.name] * 1000)),
               animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
               idAnimal: drift.Value(deviceData.data[db.animalLocations.idAnimal.name]),
               elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),

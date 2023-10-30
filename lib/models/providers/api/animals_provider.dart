@@ -13,7 +13,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals');
     try {
       var response = await get(
         url,
@@ -34,7 +34,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/location');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/location');
     try {
       var response = await get(
         url,
@@ -56,10 +56,8 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/$idAnimal');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/$idAnimal');
     try {
-      print(jsonEncode(
-          {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()}));
       var response = await post(url,
           headers: headers,
           body: jsonEncode(
