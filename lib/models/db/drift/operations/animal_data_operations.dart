@@ -72,7 +72,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
     ''', variables: [
       drift.Variable.withString(idAnimal),
       drift.Variable.withDateTime(startDate),
-      drift.Variable.withDateTime(endDate ?? DateTime.now().add(Duration(seconds: 60)))
+      drift.Variable.withDateTime(endDate ?? DateTime.now().add(const Duration(seconds: 60)))
     ]).get();
     if (dt.isNotEmpty) {
       for (var locationData in dt) {

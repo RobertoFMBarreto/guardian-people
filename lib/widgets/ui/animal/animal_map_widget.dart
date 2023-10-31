@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dart_amqp/dart_amqp.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';

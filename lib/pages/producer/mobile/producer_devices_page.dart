@@ -148,17 +148,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
     });
   }
 
-  bool _areFiltersApplied() {
-    return _batteryRangeValues.start == 0 &&
-        _batteryRangeValues.end == 100 &&
-        _dtUsageRangeValues.start == 0 &&
-        _dtUsageRangeValues.end == 10 &&
-        _tmpRangeValues.start == 0 &&
-        _tmpRangeValues.end == _maxTemperature &&
-        _elevationRangeValues.start == 0 &&
-        _elevationRangeValues.end == _maxElevation;
-  }
-
   /// Method that filters all animals loading them into the [_animals] list
   ///
   /// If in select mode it only loads the animals that aren't selected for the fence or the alert

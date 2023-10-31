@@ -6,7 +6,6 @@ import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:get/get.dart';
-import 'package:guardian/models/providers/tmp/read_json.dart';
 
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';

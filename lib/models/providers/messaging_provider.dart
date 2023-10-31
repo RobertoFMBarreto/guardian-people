@@ -120,7 +120,9 @@ class FCMMessagingProvider {
 
     FirebaseMessaging.instance.getToken().then((String? token) {
       assert(token != null);
-      print(token);
+      if (kDebugMode) {
+        print(token);
+      }
     });
 
     // Open notification with app on background but not terminated

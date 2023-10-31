@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/providers/tmp/read_json.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/custom_page_router.dart';
