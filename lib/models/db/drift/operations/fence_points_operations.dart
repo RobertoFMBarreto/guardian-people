@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:uuid/uuid.dart';
 
 /// Method for creating fence [idFence] points from a list of coordinates [points]
 ///
@@ -16,6 +17,7 @@ Future<void> createFencePointFromList(List<LatLng> points, String idFence) async
     db.fencePoints.insertOnConflictUpdate(
       FencePointsCompanion(
         idFence: drift.Value(idFence),
+        idFencePoint: drift.Value(const Uuid().v4()),
         lat: drift.Value(points[0].latitude),
         lon: drift.Value(points[0].longitude),
         isCenter: const drift.Value(true),
@@ -24,6 +26,7 @@ Future<void> createFencePointFromList(List<LatLng> points, String idFence) async
     db.fencePoints.insertOnConflictUpdate(
       FencePointsCompanion(
         idFence: drift.Value(idFence),
+        idFencePoint: drift.Value(const Uuid().v4()),
         lat: drift.Value(points[1].latitude),
         lon: drift.Value(points[1].longitude),
         isCenter: const drift.Value(false),
@@ -37,6 +40,7 @@ Future<void> createFencePointFromList(List<LatLng> points, String idFence) async
         points.map(
           (e) => FencePointsCompanion(
             idFence: drift.Value(idFence),
+            idFencePoint: drift.Value(const Uuid().v4()),
             lat: drift.Value(e.latitude),
             lon: drift.Value(e.longitude),
             isCenter: const drift.Value(false),
