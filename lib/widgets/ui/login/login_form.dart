@@ -29,19 +29,6 @@ class _LoginFormState extends State<LoginForm> {
   String _email = '';
   String _password = '';
 
-  Future<void> _loadDataRemoveThisLater(List<UserCompanion> users, UserCompanion user) async {
-    // TODO: To Remove it
-    // if (user.isSuperuser.value) {
-    //   for (var u in users) {
-    //     await loadUserDevices(u.idUser.value);
-    //     await loadUserFences(u.idUser.value);
-    //   }
-    // } else {
-    //   await loadUserDevices(user.idUser.value);
-    //   await loadUserFences(user.idUser.value);
-    // }
-  }
-
   /// Method that validates all form fields and the does the authentication logic
   ///
   /// 1. set user sessions

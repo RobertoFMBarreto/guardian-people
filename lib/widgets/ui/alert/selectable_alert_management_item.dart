@@ -46,7 +46,7 @@ class SelectableAlertManagementItem extends StatelessWidget {
                           text: TextSpan(
                             text: '${localizations.when.capitalize!} ',
                             style: theme.textTheme.bodyLarge,
-                            children: [
+                            children: const [
                               // TextSpan(
                               //   text:
                               //       '''${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize!} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ${alert.conditionCompTo.value}''',

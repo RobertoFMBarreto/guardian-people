@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/app_settings.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
 
 /// This class is the authentication provider
