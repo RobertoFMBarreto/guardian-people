@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
@@ -195,6 +196,53 @@ class AnimalRequests {
               (value) => stopRealtimeStreaming(
                 idAnimal: idAnimal,
                 onDataGotten: onDataGotten,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (response.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
+
+  /// Method that allows to call the stop realtime stream service
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
+  static Future<void> updateAnimal({
+    required Animal animal,
+    required BuildContext context,
+    required Function onFailed,
+  }) async {
+    await AnimalProvider.updateAnimal(animal.animal).then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => updateAnimal(
+                animal: animal,
                 onFailed: onFailed,
                 context: context,
               ),

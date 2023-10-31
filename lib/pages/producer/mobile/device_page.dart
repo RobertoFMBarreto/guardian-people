@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/providers/api/animals_provider.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
@@ -34,6 +36,20 @@ class _DevicePageState extends State<DevicePage> {
     _animal = widget.animal;
 
     super.initState();
+  }
+
+  Future<void> _updateAnimal(String newColor) async {
+    setState(() {
+      _animal = Animal(
+          animal: _animal.animal.copyWith(animalColor: drift.Value(newColor)), data: _animal.data);
+    });
+    AnimalRequests.updateAnimal(
+      animal: _animal,
+      context: context,
+      onFailed: () {
+        // TODO: show dialogue
+      },
+    );
   }
 
   @override
@@ -114,13 +130,7 @@ class _DevicePageState extends State<DevicePage> {
                 pinned: true,
                 delegate: SliverDeviceAppBar(
                   maxHeight: MediaQuery.of(context).size.height * 0.4,
-                  onColorChanged: (newColor) {
-                    setState(() {
-                      _animal = Animal(
-                          animal: _animal.animal.copyWith(animalColor: drift.Value(newColor)),
-                          data: _animal.data);
-                    });
-                  },
+                  onColorChanged: _updateAnimal,
                   title: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(

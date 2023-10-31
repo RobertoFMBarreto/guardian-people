@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/app_settings.dart';
 import 'package:http/http.dart';
@@ -102,6 +103,32 @@ class AnimalProvider {
         kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/cancel');
     try {
       var response = await get(url, headers: headers);
+
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
+  static Future<Response> updateAnimal(AnimalCompanion animal) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/');
+    try {
+      var response = await put(
+        url,
+        headers: headers,
+        body: jsonEncode({
+          "idAnimal": animal.idAnimal.value,
+          "animalName": animal.animalName.value,
+          "animalColor": animal.animalColor.value,
+        }),
+      );
 
       return response;
     } on SocketException catch (e) {
