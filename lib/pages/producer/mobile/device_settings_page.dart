@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -129,6 +130,25 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
         );
       }
     });
+  }
+
+  /// Method that updates animal name
+  Future<void> _updateAnimal() async {
+    final newAnimal = Animal(
+      animal: widget.animal.animal.copyWith(
+        animalName: drift.Value(_animalName),
+      ),
+      data: widget.animal.data,
+    );
+
+    updateAnimal(newAnimal.animal).then((value) => Navigator.of(context).pop(newAnimal));
+    AnimalRequests.updateAnimal(
+      animal: newAnimal,
+      context: context,
+      onFailed: () {
+        // TODO: show dialogue
+      },
+    );
   }
 
   @override
@@ -276,13 +296,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                final newAnimal = widget.animal.animal.copyWith(
-                                  animalName: drift.Value(_animalName),
-                                );
-                                updateAnimal(newAnimal)
-                                    .then((value) => Navigator.of(context).pop(newAnimal));
-                              },
+                              onPressed: _updateAnimal,
                               child: Text(
                                 localizations.confirm.capitalize!,
                               ),
