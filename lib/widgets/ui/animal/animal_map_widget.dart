@@ -179,6 +179,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
     );
   }
 
+  /// Method that allows to get the animal with the last location from api and store it in [_animalData] variable
   Future<void> _getLastLocation() async {
     await getUserAnimalWithLastLocation(widget.animal.animal.idAnimal.value).then((animal) {
       setState(() {

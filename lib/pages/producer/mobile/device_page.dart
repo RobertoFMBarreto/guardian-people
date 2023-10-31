@@ -38,6 +38,7 @@ class _DevicePageState extends State<DevicePage> {
     super.initState();
   }
 
+  /// Method that allows to update animal on api
   Future<void> _updateAnimal(String newColor) async {
     setState(() {
       _animal = Animal(

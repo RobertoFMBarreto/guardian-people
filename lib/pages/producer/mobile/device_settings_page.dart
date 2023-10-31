@@ -132,7 +132,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     });
   }
 
-  /// Method that updates animal name
+  /// Method that updates animal name locally and on api
   Future<void> _updateAnimal() async {
     final newAnimal = Animal(
       animal: widget.animal.animal.copyWith(

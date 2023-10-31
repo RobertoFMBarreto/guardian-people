@@ -129,6 +129,7 @@ class _ProducerHomeState extends State<ProducerHome> {
     });
   }
 
+  /// Method that loads all notifications from api
   Future<void> _getNotificationsFromApi() async {
     NotificationsProvider.getNotifications().then((response) async {
       if (response.statusCode == 200) {
