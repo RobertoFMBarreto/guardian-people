@@ -45,7 +45,17 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
   @override
   void dispose() {
-    rabbitMQProvider.stop();
+    AnimalRequests.stopRealtimeStreaming(
+      idAnimal: widget.animal.animal.idAnimal.value,
+      context: context,
+      onDataGotten: () {
+        rabbitMQProvider.stop();
+      },
+      onFailed: () {
+        // TODO: Show error dialogue
+      },
+    );
+
     super.dispose();
   }
 
@@ -128,14 +138,23 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
     }
     if (_endDate == null) {
       // make realtime request
-      rabbitMQProvider.listen(
-        topicId: widget.animal.animal.idAnimal.value,
-        onDataReceived: (message) async {
-          if (message['lat'] != null && message['lon'] != null) {
-            animalDataFromJson(message, widget.animal.animal.idAnimal.value).then(
-              (_) => _getAnimalData(),
-            );
-          }
+      AnimalRequests.startRealtimeStreaming(
+        idAnimal: widget.animal.animal.idAnimal.value,
+        context: context,
+        onDataGotten: () {
+          rabbitMQProvider.listen(
+            topicId: widget.animal.animal.idAnimal.value,
+            onDataReceived: (message) async {
+              if (message['lat'] != null && message['lon'] != null) {
+                animalDataFromJson(message, widget.animal.animal.idAnimal.value).then(
+                  (_) => _getAnimalData(),
+                );
+              }
+            },
+          );
+        },
+        onFailed: () {
+          // TODO: Show error dialogue
         },
       );
     }

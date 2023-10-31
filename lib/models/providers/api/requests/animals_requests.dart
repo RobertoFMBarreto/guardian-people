@@ -120,4 +120,104 @@ class AnimalRequests {
       }
     });
   }
+
+  /// Method that allows to call the start realtime stream service
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
+  static Future<void> startRealtimeStreaming({
+    required String idAnimal,
+    required BuildContext context,
+    required Function onDataGotten,
+    required Function onFailed,
+  }) async {
+    await AnimalProvider.startRealtimeStreaming(idAnimal).then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+        onDataGotten();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => startRealtimeStreaming(
+                idAnimal: idAnimal,
+                onDataGotten: onDataGotten,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (response.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
+
+  /// Method that allows to call the stop realtime stream service
+  ///
+  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  ///
+  /// If the server takes too long to answer then the user receives and alert
+  static Future<void> stopRealtimeStreaming({
+    required String idAnimal,
+    required BuildContext context,
+    required Function onDataGotten,
+    required Function onFailed,
+  }) async {
+    await AnimalProvider.stopRealtimeStreaming(idAnimal).then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+        onDataGotten();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => stopRealtimeStreaming(
+                idAnimal: idAnimal,
+                onDataGotten: onDataGotten,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (response.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
 }
