@@ -48,6 +48,7 @@ class _LoginFormState extends State<LoginForm> {
             setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
             String refreshToken = resp.headers['set-cookie']!.split('=')[1].split(';')[0];
+            print(refreshToken);
             setUserSession(body['uid'], body['token'], refreshToken).then((_) {
               // store user profile
               createUser(UserCompanion(

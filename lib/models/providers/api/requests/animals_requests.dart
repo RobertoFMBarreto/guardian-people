@@ -33,7 +33,7 @@ class AnimalRequests {
                 onDataGotten: onDataGotten,
               ),
             );
-          } else if (response.statusCode == 507) {
+          } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
@@ -99,7 +99,7 @@ class AnimalRequests {
                 context: context,
               ),
             );
-          } else if (response.statusCode == 507) {
+          } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
@@ -149,7 +149,7 @@ class AnimalRequests {
                 context: context,
               ),
             );
-          } else if (response.statusCode == 507) {
+          } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
@@ -199,7 +199,7 @@ class AnimalRequests {
                 context: context,
               ),
             );
-          } else if (response.statusCode == 507) {
+          } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
@@ -246,7 +246,7 @@ class AnimalRequests {
                 context: context,
               ),
             );
-          } else if (response.statusCode == 507) {
+          } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
                 setShownNoServerConnection(true).then(
