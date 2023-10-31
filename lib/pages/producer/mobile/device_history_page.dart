@@ -67,7 +67,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.state_history.capitalize!,
+          localizations.state_history.capitalizeFirst!,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -138,7 +138,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                 ? Expanded(
                     child: Center(
                       child: Text(
-                        localizations.no_data_to_show.capitalize!,
+                        localizations.no_data_to_show.capitalizeFirst!,
                       ),
                     ),
                   )

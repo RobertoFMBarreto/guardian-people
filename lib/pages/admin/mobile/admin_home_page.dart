@@ -85,7 +85,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         title: Padding(
                           padding: const EdgeInsets.only(right: 20.0),
                           child: SearchFieldInput(
-                            label: localizations.search.capitalize!,
+                            label: localizations.search.capitalizeFirst!,
                             onChanged: (value) {
                               _searchString = value;
                               _loadUsers();
@@ -100,7 +100,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0, top: 8.0),
                       child: Text(
-                        localizations.producers.capitalize!,
+                        localizations.producers.capitalizeFirst!,
                         style: theme.textTheme.headlineMedium!.copyWith(fontSize: kIsWeb ? 42 : 22),
                       ),
                     ),
@@ -126,7 +126,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           },
                         ));
               },
-              tooltip: '${localizations.add.capitalize!} ${localizations.producer}',
+              tooltip: '${localizations.add.capitalizeFirst!} ${localizations.producer}',
               backgroundColor: theme.colorScheme.secondary,
               shape: const CircleBorder(),
               child: Icon(

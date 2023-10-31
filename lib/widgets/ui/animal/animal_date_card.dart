@@ -57,7 +57,7 @@ class AnimalDateCard extends StatelessWidget {
                                     child: Text(
                                       DateFormat.MMMM(localizations.localeName)
                                           .format(date!)
-                                          .capitalize!,
+                                          .capitalizeFirst!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -82,7 +82,7 @@ class AnimalDateCard extends StatelessWidget {
                         fit: BoxFit.fitHeight,
                         child: Center(
                           child: Text(
-                            localizations.current.capitalize!,
+                            localizations.current.capitalizeFirst!,
                             style: theme.textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -96,7 +96,7 @@ class AnimalDateCard extends StatelessWidget {
                   child: Text(
                     date != null
                         ? '${date!.hour <= 9 ? "0${date!.hour}" : date!.hour}:${date!.minute <= 9 ? "0${date!.minute}" : date!.minute}'
-                        : localizations.realtime.capitalize!,
+                        : localizations.realtime.capitalizeFirst!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.w500,
                       fontSize: 20,

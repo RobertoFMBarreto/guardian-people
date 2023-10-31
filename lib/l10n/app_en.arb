@@ -176,5 +176,8 @@
       }
     }
   },
-  "realtime": "real time"
+  "realtime": "real time",
+  "keep_animal": "keep animal",
+  "inside": "inside",
+  "outside": "outside"
 }

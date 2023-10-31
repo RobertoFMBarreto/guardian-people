@@ -26,7 +26,7 @@ class _GeofencingPageState extends State<GeofencingPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            '${widget.fence != null ? localizations.edit.capitalize! : localizations.add.capitalize!} ${localizations.fence.capitalize!}',
+            '${widget.fence != null ? localizations.edit.capitalizeFirst! : localizations.add.capitalizeFirst!} ${localizations.fence.capitalizeFirst!}',
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,

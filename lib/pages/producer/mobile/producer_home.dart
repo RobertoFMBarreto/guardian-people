@@ -221,7 +221,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                             },
                             child: FittedBox(
                                 fit: BoxFit.scaleDown,
-                                child: Text(localizations.fences.capitalize!)),
+                                child: Text(localizations.fences.capitalizeFirst!)),
                           ),
                         ],
                       ),
@@ -241,7 +241,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 8),
                               child: SquareAnimalsInfo(
-                                title: localizations.devices.capitalize!,
+                                title: localizations.devices.capitalizeFirst!,
                                 description: '${_animals.length}',
                                 onTap: () {
                                   Future.delayed(const Duration(milliseconds: 300)).then(
@@ -260,7 +260,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 20, left: 8),
                               child: SquareAnimalsInfo(
-                                title: localizations.alerts.capitalize!,
+                                title: localizations.alerts.capitalizeFirst!,
                                 description: '${_alertNotifications.length}',
                                 isAlert: true,
                                 onTap: () {

@@ -23,6 +23,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 import 'package:uuid/uuid.dart';
 
 /// Class that represents the geofencing widget
@@ -48,6 +49,7 @@ class _GeofencingState extends State<Geofencing> {
 
   bool _isCircle = false;
   bool isLoading = true;
+  bool _isStayInside = true;
   String _fenceName = '';
   Color _fenceColor = Colors.red;
 
@@ -225,18 +227,20 @@ class _GeofencingState extends State<Geofencing> {
       );
     } else {
       idFence = const Uuid().v4();
-      await createFence(
-        FenceCompanion(
-          idFence: drift.Value(idFence),
-          name: drift.Value(_fenceName),
-          color: drift.Value(HexColor.toHex(color: _fenceColor)),
-        ),
+      final newFence = FenceCompanion(
+        idFence: drift.Value(idFence),
+        name: drift.Value(_fenceName),
+        color: drift.Value(HexColor.toHex(color: _fenceColor)),
       );
+      await createFence(
+        newFence,
+      ).then((_) => );
     }
     // second update fence points
     createFencePointFromList(_editingPolygon.points, idFence).then(
       (value) => Navigator.of(context).pop(_editingPolygon.points),
     );
+
     if (widget.onFenceCreated != null) {
       widget.onFenceCreated!();
     }
@@ -429,9 +433,57 @@ class _GeofencingState extends State<Geofencing> {
                                   controller: _nameController,
                                   decoration: InputDecoration(
                                     label: Text(
-                                      localizations.fence_name.capitalize!,
+                                      localizations.fence_name.capitalizeFirst!,
                                     ),
                                   ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: Text(
+                                        '${localizations.keep_animal.capitalizeFirst!}:',
+                                        style: theme.textTheme.bodyLarge!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.brightness == Brightness.light
+                                              ? gdTextColor
+                                              : gdDarkTextColor,
+                                        ),
+                                      ),
+                                    ),
+                                    ToggleSwitch(
+                                      initialLabelIndex: _isStayInside ? 1 : 0,
+                                      cornerRadius: 50,
+                                      radiusStyle: true,
+                                      activeBgColor: [theme.colorScheme.secondary],
+                                      activeFgColor: theme.colorScheme.onSecondary,
+                                      inactiveBgColor:
+                                          Theme.of(context).brightness == Brightness.light
+                                              ? gdToggleGreyArea
+                                              : gdDarkToggleGreyArea,
+                                      inactiveFgColor:
+                                          Theme.of(context).brightness == Brightness.light
+                                              ? Colors.black
+                                              : Colors.white,
+                                      customTextStyles: const [
+                                        TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
+                                        TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
+                                      ],
+                                      totalSwitches: 2,
+                                      labels: [
+                                        localizations.inside.capitalizeFirst!,
+                                        localizations.outside.capitalizeFirst!,
+                                      ],
+                                      onToggle: (index) {
+                                        setState(() {
+                                          _isStayInside = index == 1;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                               Row(
@@ -446,7 +498,7 @@ class _GeofencingState extends State<Geofencing> {
                                           MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                     ),
                                     child: Text(
-                                      localizations.cancel.capitalize!,
+                                      localizations.cancel.capitalizeFirst!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.onSecondary,
                                         fontWeight: FontWeight.w500,
@@ -458,7 +510,7 @@ class _GeofencingState extends State<Geofencing> {
                                       _confirmGeofence();
                                     },
                                     child: Text(
-                                      localizations.confirm.capitalize!,
+                                      localizations.confirm.capitalizeFirst!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.onSecondary,
                                         fontWeight: FontWeight.w500,

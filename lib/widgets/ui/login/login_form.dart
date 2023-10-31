@@ -93,7 +93,7 @@ class _LoginFormState extends State<LoginForm> {
         //     if (user.isEmpty) {
         //       Navigator.of(context).pop();
         //       setState(() {
-        //         errorString = localizations.login_error.capitalize!;
+        //         errorString = localizations.login_error.capitalizeFirst!;
         //       });
         //     } else {
         //       _loadDataRemoveThisLater(users, user.first).then((_) {
@@ -115,7 +115,7 @@ class _LoginFormState extends State<LoginForm> {
         // );
       } else {
         setState(() {
-          errorString = localizations.no_wifi.capitalize!;
+          errorString = localizations.no_wifi.capitalizeFirst!;
         });
       }
     }
@@ -124,7 +124,7 @@ class _LoginFormState extends State<LoginForm> {
   /// Method that implements the email validation logic
   String? _validateEmail(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
-      return localizations.empty_field.capitalize!;
+      return localizations.empty_field.capitalizeFirst!;
     }
     return null;
   }
@@ -132,7 +132,7 @@ class _LoginFormState extends State<LoginForm> {
   /// Method that implements the password validation logic
   String? _validatePassword(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
-      return localizations.empty_field.capitalize!;
+      return localizations.empty_field.capitalizeFirst!;
     }
     return null;
   }

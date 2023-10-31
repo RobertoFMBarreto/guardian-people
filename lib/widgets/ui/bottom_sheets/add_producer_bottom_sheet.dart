@@ -21,13 +21,13 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
     double deviceWidth = MediaQuery.of(context).size.width;
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return DefaultBottomSheet(
-      title: '${localizations.add.capitalize!} ${localizations.producer}',
+      title: '${localizations.add.capitalizeFirst!} ${localizations.producer}',
       body: [
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
           child: TextField(
             decoration: InputDecoration(
-              label: Text(localizations.name.capitalize!),
+              label: Text(localizations.name.capitalizeFirst!),
             ),
             onChanged: (value) {
               producerName = value;
@@ -48,7 +48,7 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
                   backgroundColor: MaterialStatePropertyAll(gdCancelBtnColor),
                 ),
                 child: Text(
-                  localizations.cancel.capitalize!,
+                  localizations.cancel.capitalizeFirst!,
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),
@@ -60,7 +60,7 @@ class _AddProducerBottomSheetState extends State<AddProducerBottomSheet> {
               ElevatedButton(
                 onPressed: widget.onAddProducer,
                 child: Text(
-                  localizations.add.capitalize!,
+                  localizations.add.capitalizeFirst!,
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),

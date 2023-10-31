@@ -25,7 +25,7 @@ void showLoadingDialog(BuildContext context) {
                 height: 15,
               ),
               // Some text
-              Text(localizations.loading.capitalize!)
+              Text(localizations.loading.capitalizeFirst!)
             ],
           ),
         ),
@@ -51,18 +51,18 @@ Future<void> showNoWifiDialog(BuildContext context) async {
           builder: (BuildContext context) {
             return AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.background,
-              title: Text(localizations.no_wifi.capitalize!),
+              title: Text(localizations.no_wifi.capitalizeFirst!),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text(localizations.no_wifi_operations.capitalize!),
+                    Text(localizations.no_wifi_operations.capitalizeFirst!),
                   ],
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   child: Text(
-                    localizations.ok.capitalize!,
+                    localizations.ok.capitalizeFirst!,
                     style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                   onPressed: () {
@@ -89,11 +89,11 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(localizations.no_wifi.capitalize!),
+        title: Text(localizations.no_wifi.capitalizeFirst!),
         actions: <Widget>[
           TextButton(
             child: Text(
-              localizations.ok.capitalize!,
+              localizations.ok.capitalizeFirst!,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),
             onPressed: () {

@@ -19,7 +19,7 @@ class SearchWithFilterInput extends StatelessWidget {
         Expanded(
           flex: 12,
           child: SearchFieldInput(
-            label: localizations.search.capitalize!,
+            label: localizations.search.capitalizeFirst!,
             onChanged: onSearchChanged,
           ),
         ),

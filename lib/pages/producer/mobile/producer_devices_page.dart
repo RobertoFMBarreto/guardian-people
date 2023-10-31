@@ -228,7 +228,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text(
-              localizations.devices.capitalize!,
+              localizations.devices.capitalizeFirst!,
               style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
             ),
             centerTitle: true,
@@ -279,7 +279,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                     Navigator.of(context).pop(_selectedAnimals);
                   },
                   label: Text(
-                    localizations.confirm.capitalize!,
+                    localizations.confirm.capitalizeFirst!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -337,7 +337,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       color: theme.colorScheme.secondary,
                                     ),
                                     Text(
-                                      localizations.select_all.capitalize!,
+                                      localizations.select_all.capitalizeFirst!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.secondary,
                                       ),
@@ -350,7 +350,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                         Expanded(
                           child: _animals.isEmpty
                               ? Center(
-                                  child: Text(localizations.no_devices.capitalize!),
+                                  child: Text(localizations.no_devices.capitalizeFirst!),
                                 )
                               : Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20.0),

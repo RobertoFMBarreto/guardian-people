@@ -61,7 +61,7 @@ class _AlertsPageState extends State<AlertsPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            localizations.alerts.capitalize!,
+            localizations.alerts.capitalizeFirst!,
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -84,7 +84,7 @@ class _AlertsPageState extends State<AlertsPage> {
             );
           },
           label: Text(
-            '${localizations.manage.capitalize!} ${localizations.warnings.capitalize!}',
+            '${localizations.manage.capitalizeFirst!} ${localizations.warnings.capitalizeFirst!}',
             style: theme.textTheme.bodyLarge!.copyWith(
               color: theme.colorScheme.onSecondary,
               fontWeight: FontWeight.bold,
@@ -121,7 +121,7 @@ class _AlertsPageState extends State<AlertsPage> {
                                     color: theme.colorScheme.error,
                                   ),
                                   Text(
-                                    '${localizations.remove.capitalize!} ${localizations.all.capitalize!}',
+                                    '${localizations.remove.capitalizeFirst!} ${localizations.all.capitalizeFirst!}',
                                     style: theme.textTheme.bodyLarge!.copyWith(
                                       color: theme.colorScheme.error,
                                     ),
@@ -134,7 +134,7 @@ class _AlertsPageState extends State<AlertsPage> {
                       Expanded(
                         child: _alerts.isEmpty
                             ? Center(
-                                child: Text(localizations.no_notifications.capitalize!),
+                                child: Text(localizations.no_notifications.capitalizeFirst!),
                               )
                             : Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10.0),

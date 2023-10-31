@@ -75,7 +75,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: Text(
-                                  localizations.fences.capitalize!,
+                                  localizations.fences.capitalizeFirst!,
                                   style: theme.textTheme.headlineMedium,
                                 ),
                               ),
@@ -150,7 +150,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                         controller: _nameController,
                                         decoration: InputDecoration(
                                           label: Text(
-                                            localizations.fence_name.capitalize!,
+                                            localizations.fence_name.capitalizeFirst!,
                                           ),
                                         ),
                                       ),
@@ -167,7 +167,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                                 MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                           ),
                                           child: Text(
-                                            localizations.cancel.capitalize!,
+                                            localizations.cancel.capitalizeFirst!,
                                             style: theme.textTheme.bodyLarge!.copyWith(
                                               color: theme.colorScheme.onSecondary,
                                               fontWeight: FontWeight.w500,
@@ -179,7 +179,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                             _confirmGeofence();
                                           },
                                           child: Text(
-                                            localizations.confirm.capitalize!,
+                                            localizations.confirm.capitalizeFirst!,
                                             style: theme.textTheme.bodyLarge!.copyWith(
                                               color: theme.colorScheme.onSecondary,
                                               fontWeight: FontWeight.w500,

@@ -194,19 +194,19 @@ class _AddAlertPageState extends State<AddAlertPage> {
   /// Method that validates the input value
   String? _validateInputValue(String? value, AppLocalizations localizations) {
     if (value == null) {
-      return localizations.insert_value.capitalize!;
+      return localizations.insert_value.capitalizeFirst!;
     } else {
       double? inputValue = double.tryParse(value);
       if (inputValue != null) {
         switch (_alertParameter.idSensor) {
           case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
             if (inputValue < 0 || inputValue > 100) {
-              return localizations.invalid_value.capitalize!;
+              return localizations.invalid_value.capitalizeFirst!;
             }
             break;
         }
       } else {
-        return localizations.invalid_value.capitalize!;
+        return localizations.invalid_value.capitalizeFirst!;
       }
       return null;
     }
@@ -226,7 +226,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(
-            '${widget.isEdit! ? localizations.edit.capitalize! : localizations.add.capitalize!} ${localizations.warnings.capitalize!}',
+            '${widget.isEdit! ? localizations.edit.capitalizeFirst! : localizations.add.capitalizeFirst!} ${localizations.warnings.capitalizeFirst!}',
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -246,7 +246,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          localizations.when.capitalize!,
+                          localizations.when.capitalizeFirst!,
                           style: theme.textTheme.bodyLarge!.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -259,7 +259,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 .map(
                                   (e) => KeyValuePair(
                                     key: parseAlertParameterFromId(e.idSensor, localizations)
-                                        .capitalize!,
+                                        .capitalizeFirst!,
                                     value: e,
                                   ),
                                 )
@@ -281,7 +281,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               values: AlertComparissons.values
                                   .map(
                                     (e) => KeyValuePair(
-                                      key: e.toShortString(context).capitalize!,
+                                      key: e.toShortString(context).capitalizeFirst!,
                                       value: e,
                                     ),
                                   )
@@ -308,7 +308,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                             Expanded(
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  label: Text(localizations.value.capitalize!),
+                                  label: Text(localizations.value.capitalizeFirst!),
                                 ),
                                 keyboardType: TextInputType.number,
                                 initialValue:
@@ -329,7 +329,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            localizations.what_to_do.capitalize!,
+                            localizations.what_to_do.capitalizeFirst!,
                             style: theme.textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -340,7 +340,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                           child: Row(
                             children: [
                               Text(
-                                '${localizations.send.capitalize!} ${localizations.notification.capitalize!}:',
+                                '${localizations.send.capitalizeFirst!} ${localizations.notification.capitalizeFirst!}:',
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Padding(
@@ -372,7 +372,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 color: theme.colorScheme.secondary,
                               ),
                               label: Text(
-                                '${localizations.add.capitalize!} ${localizations.devices.capitalize!}',
+                                '${localizations.add.capitalizeFirst!} ${localizations.devices.capitalizeFirst!}',
                                 style: theme.textTheme.bodyLarge!.copyWith(
                                   color: theme.colorScheme.secondary,
                                   fontWeight: FontWeight.bold,
@@ -420,7 +420,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                   backgroundColor: MaterialStatePropertyAll(gdDarkCancelBtnColor),
                                 ),
                                 child: Text(
-                                  localizations.cancel.capitalize!,
+                                  localizations.cancel.capitalizeFirst!,
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: theme.colorScheme.onSecondary,
                                   ),
@@ -441,8 +441,8 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 },
                                 child: Text(
                                   widget.isEdit!
-                                      ? localizations.confirm.capitalize!
-                                      : localizations.add.capitalize!,
+                                      ? localizations.confirm.capitalizeFirst!
+                                      : localizations.add.capitalizeFirst!,
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: theme.colorScheme.onSecondary,
                                   ),

@@ -176,5 +176,8 @@
       }
     }
   },
-  "realtime": "tempo real"
+  "realtime": "tempo real",
+  "keep_animal": "manter o animal",
+  "inside": "dentro",
+  "outside": "fora"
 }

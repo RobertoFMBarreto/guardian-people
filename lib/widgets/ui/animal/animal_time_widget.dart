@@ -148,7 +148,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                             Navigator.of(context).pop();
                           },
                           child: Text(
-                            localizations.cancel.capitalize!,
+                            localizations.cancel.capitalizeFirst!,
                           ),
                         ),
                         TextButton(
@@ -161,7 +161,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                             Navigator.of(context).pop(true);
                           },
                           child: Text(
-                            localizations.confirm.capitalize!,
+                            localizations.confirm.capitalizeFirst!,
                           ),
                         ),
                       ],
@@ -201,7 +201,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
           ),
         ),
         Text(
-          ' ${localizations.until.capitalize!} ',
+          ' ${localizations.until.capitalizeFirst!} ',
           style: theme.textTheme.bodyLarge,
         ),
         Expanded(

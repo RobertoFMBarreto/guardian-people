@@ -162,7 +162,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            localizations.device_settings.capitalize!,
+            localizations.device_settings.capitalizeFirst!,
             style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
@@ -182,7 +182,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                          label: Text(localizations.name.capitalize!),
+                          label: Text(localizations.name.capitalizeFirst!),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -198,7 +198,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                localizations.device_warnings.capitalize!,
+                                localizations.device_warnings.capitalizeFirst!,
                                 style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                               ),
                               const Icon(Icons.add)
@@ -209,7 +209,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       Expanded(
                         child: _alerts.isEmpty
                             ? Center(
-                                child: Text(localizations.no_selected_alerts.capitalize!),
+                                child: Text(localizations.no_selected_alerts.capitalizeFirst!),
                               )
                             : ListView.builder(
                                 itemCount: _alerts.length,
@@ -239,7 +239,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                localizations.device_fences.capitalize!,
+                                localizations.device_fences.capitalizeFirst!,
                                 style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                               ),
                               _fences.isEmpty ? const Icon(Icons.add) : const SizedBox()
@@ -250,7 +250,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       Expanded(
                         child: _fences.isEmpty
                             ? Center(
-                                child: Text(localizations.no_selected_fences.capitalize!),
+                                child: Text(localizations.no_selected_fences.capitalizeFirst!),
                               )
                             : ListView.builder(
                                 itemCount: _fences.length,
@@ -291,14 +291,14 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   backgroundColor: const MaterialStatePropertyAll(gdCancelBtnColor),
                                 ),
                                 child: Text(
-                                  localizations.cancel.capitalize!,
+                                  localizations.cancel.capitalizeFirst!,
                                 ),
                               ),
                             ),
                             ElevatedButton(
                               onPressed: _updateAnimal,
                               child: Text(
-                                localizations.confirm.capitalize!,
+                                localizations.confirm.capitalizeFirst!,
                               ),
                             ),
                           ],

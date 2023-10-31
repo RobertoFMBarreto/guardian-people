@@ -330,7 +330,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  localizations.normal_map.capitalize!,
+                                  localizations.normal_map.capitalizeFirst!,
                                   style: theme.textTheme.bodyLarge!.copyWith(
                                       color: theme.colorScheme.onBackground,
                                       fontWeight: FontWeight.w500),
@@ -341,7 +341,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  localizations.heatmap.capitalize!,
+                                  localizations.heatmap.capitalizeFirst!,
                                   style: theme.textTheme.bodyLarge!.copyWith(
                                       color: theme.colorScheme.onBackground,
                                       fontWeight: FontWeight.w500),
@@ -356,8 +356,8 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                                 value: e,
                                 child: Text(
                                   e == _dropdownItems.first
-                                      ? localizations.normal_map.capitalize!
-                                      : localizations.heatmap.capitalize!,
+                                      ? localizations.normal_map.capitalizeFirst!
+                                      : localizations.heatmap.capitalizeFirst!,
                                   style: TextStyle(color: theme.colorScheme.onBackground),
                                 ),
                               ),
@@ -411,7 +411,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "${localizations.show.capitalize!} ${localizations.fence.capitalize!}:",
+                                "${localizations.show.capitalizeFirst!} ${localizations.fence.capitalizeFirst!}:",
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Switch(
@@ -441,7 +441,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "${localizations.show.capitalize!} ${localizations.route}",
+                                "${localizations.show.capitalizeFirst!} ${localizations.route}",
                                 style: theme.textTheme.bodyLarge,
                               ),
                               Switch(

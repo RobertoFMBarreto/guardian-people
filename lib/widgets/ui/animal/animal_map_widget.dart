@@ -110,7 +110,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      AppLocalizations.of(context)!.server_error.capitalize!,
+                      AppLocalizations.of(context)!.server_error.capitalizeFirst!,
                     ),
                   ),
                 );

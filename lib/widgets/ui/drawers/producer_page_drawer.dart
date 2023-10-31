@@ -47,7 +47,7 @@ class ProducerPageDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
-                '${localizations.filter.capitalize!} ${localizations.results}',
+                '${localizations.filter.capitalizeFirst!} ${localizations.results}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
@@ -55,7 +55,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: batteryRangeValues,
               max: 100,
               min: 0,
-              title: localizations.battery.capitalize!,
+              title: localizations.battery.capitalizeFirst!,
               label: '${batteryRangeValues.start.round()}% - ${batteryRangeValues.end.round()}%',
               onChanged: onChangedBat,
             ),
@@ -63,7 +63,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: dtUsageRangeValues,
               max: 10,
               min: 0,
-              title: localizations.data_used.capitalize!,
+              title: localizations.data_used.capitalizeFirst!,
               label: '${dtUsageRangeValues.start.round()}MB - ${dtUsageRangeValues.end.round()}MB',
               onChanged: onChangedDtUsg,
             ),
@@ -71,7 +71,7 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: tmpRangeValues,
               max: maxTemp,
               min: 0,
-              title: localizations.temperature.capitalize!,
+              title: localizations.temperature.capitalizeFirst!,
               label: '${tmpRangeValues.start.round()}ºC - ${tmpRangeValues.end.round()}ºC',
               onChanged: onChangedTmp,
             ),
@@ -79,20 +79,20 @@ class ProducerPageDrawer extends StatelessWidget {
               currentRangeValues: elevationRangeValues,
               max: maxElevation,
               min: 0,
-              title: localizations.elevation.capitalize!,
+              title: localizations.elevation.capitalizeFirst!,
               label:
                   '${elevationRangeValues.start.round()}m - ${elevationRangeValues.end.round()}m',
               onChanged: onChangedElev,
             ),
             ElevatedButton(
               onPressed: onConfirm,
-              child:
-                  Text('${localizations.apply.capitalize!} ${localizations.filters.capitalize!}'),
+              child: Text(
+                  '${localizations.apply.capitalizeFirst!} ${localizations.filters.capitalizeFirst!}'),
             ),
             TextButton(
               onPressed: onResetFilters,
               child: Text(
-                '${localizations.clean.capitalize!} ${localizations.filters.capitalize!}',
+                '${localizations.clean.capitalizeFirst!} ${localizations.filters.capitalizeFirst!}',
                 style: theme.textTheme.bodyMedium!.copyWith(
                   color: gdSecondaryColor,
                   fontWeight: FontWeight.w500,

@@ -18,7 +18,7 @@ class Producers extends StatelessWidget {
       child: Padding(
         padding: kIsWeb ? const EdgeInsets.symmetric(horizontal: 40.0) : const EdgeInsets.all(0),
         child: producers.isEmpty
-            ? Center(child: Text(localizations.no_producers.capitalize!))
+            ? Center(child: Text(localizations.no_producers.capitalizeFirst!))
             : GridView.extent(
                 physics: const NeverScrollableScrollPhysics(),
                 childAspectRatio: 1,

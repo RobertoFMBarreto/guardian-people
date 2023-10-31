@@ -41,9 +41,9 @@ class _CustomCircularProgressIndicatorState extends State<CustomCircularProgress
           CircularProgressIndicator(
             color: theme.colorScheme.secondary,
           ),
-          Text('${localizations.loading.capitalize!}...'),
-          if (_showTakingLong) Text('${localizations.longer_than_expected.capitalize!}!'),
-          if (_showVerifyConnection) Text('${localizations.verify_connection.capitalize!}!')
+          Text('${localizations.loading.capitalizeFirst!}...'),
+          if (_showTakingLong) Text('${localizations.longer_than_expected.capitalizeFirst!}!'),
+          if (_showVerifyConnection) Text('${localizations.verify_connection.capitalizeFirst!}!')
         ],
       ),
     );

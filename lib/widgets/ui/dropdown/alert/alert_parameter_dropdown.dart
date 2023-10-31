@@ -28,19 +28,19 @@ class AlertParameterDropdown extends StatelessWidget {
             DropdownMenuItem(
               value: AlertParameter.battery,
               child: Text(
-                localizations.battery.capitalize!,
+                localizations.battery.capitalizeFirst!,
               ),
             ),
             DropdownMenuItem(
               value: AlertParameter.dataUsage,
               child: Text(
-                localizations.data_used.capitalize!,
+                localizations.data_used.capitalizeFirst!,
               ),
             ),
             DropdownMenuItem(
               value: AlertParameter.temperature,
               child: Text(
-                localizations.temperature.capitalize!,
+                localizations.temperature.capitalizeFirst!,
               ),
             ),
           ],

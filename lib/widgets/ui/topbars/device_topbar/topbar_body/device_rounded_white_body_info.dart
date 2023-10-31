@@ -65,12 +65,12 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      localizations.device_data.capitalize!,
+                      localizations.device_data.capitalizeFirst!,
                       style: theme.textTheme.headlineMedium,
                     ),
                     if (device.data.isNotEmpty)
                       Text(
-                        localizations.no_device_data.capitalize!,
+                        localizations.no_device_data.capitalizeFirst!,
                         style: theme.textTheme.bodyLarge!.copyWith(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),

@@ -12,19 +12,39 @@ Future<void> createFencePointFromList(List<LatLng> points, String idFence) async
   /// remove all fence [idFence] points so that they dont stack
   (db.delete(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).go();
 
-  /// add all received [points]
-  await db.batch((batch) {
-    batch.insertAll(
-      db.fencePoints,
-      points.map(
-        (e) => FencePointsCompanion(
-          idFence: drift.Value(idFence),
-          lat: drift.Value(e.latitude),
-          lon: drift.Value(e.longitude),
-        ),
+  if (points.length == 2) {
+    db.fencePoints.insertOnConflictUpdate(
+      FencePointsCompanion(
+        idFence: drift.Value(idFence),
+        lat: drift.Value(points[0].latitude),
+        lon: drift.Value(points[0].longitude),
+        isCenter: const drift.Value(true),
       ),
     );
-  });
+    db.fencePoints.insertOnConflictUpdate(
+      FencePointsCompanion(
+        idFence: drift.Value(idFence),
+        lat: drift.Value(points[1].latitude),
+        lon: drift.Value(points[1].longitude),
+        isCenter: const drift.Value(false),
+      ),
+    );
+  } else {
+    /// add all received [points]
+    await db.batch((batch) {
+      batch.insertAll(
+        db.fencePoints,
+        points.map(
+          (e) => FencePointsCompanion(
+            idFence: drift.Value(idFence),
+            lat: drift.Value(e.latitude),
+            lon: drift.Value(e.longitude),
+            isCenter: const drift.Value(false),
+          ),
+        ),
+      );
+    });
+  }
 }
 
 /// Method for creating a fence point [point]

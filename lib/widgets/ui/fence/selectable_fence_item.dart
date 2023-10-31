@@ -60,7 +60,7 @@ class SelectableFenceItem extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(right: 4.0),
                           child: Text(
-                            '${localizations.color.capitalize!}:',
+                            '${localizations.color.capitalizeFirst!}:',
                             style: theme.textTheme.bodyLarge!.copyWith(
                               fontSize: 16,
                             ),

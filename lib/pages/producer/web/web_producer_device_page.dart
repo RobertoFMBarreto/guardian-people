@@ -256,7 +256,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                 if (_selectedAnimal!.data.isEmpty && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(
-                      AppLocalizations.of(context)!.there_is_no_animal_data.capitalize!,
+                      AppLocalizations.of(context)!.there_is_no_animal_data.capitalizeFirst!,
                     ),
                   ));
                 }
@@ -333,7 +333,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                         Padding(
                                           padding: const EdgeInsets.only(bottom: 8.0),
                                           child: Text(
-                                            localizations.devices.capitalize!,
+                                            localizations.devices.capitalizeFirst!,
                                             style: theme.textTheme.headlineMedium,
                                           ),
                                         ),
@@ -353,7 +353,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                             },
                                             icon: const Icon(Icons.settings),
                                             label: Text(
-                                              localizations.device_settings.capitalize!,
+                                              localizations.device_settings.capitalizeFirst!,
                                             ),
                                           ),
                                         ],
@@ -418,7 +418,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                             .showSnackBar(SnackBar(
                                                           content: Text(
                                                             localizations.there_is_no_animal_data
-                                                                .capitalize!,
+                                                                .capitalizeFirst!,
                                                           ),
                                                         ));
                                                       }
@@ -481,7 +481,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      localizations.device_settings.capitalize!,
+                                      localizations.device_settings.capitalizeFirst!,
                                       style: theme.textTheme.headlineMedium,
                                     ),
                                   ],

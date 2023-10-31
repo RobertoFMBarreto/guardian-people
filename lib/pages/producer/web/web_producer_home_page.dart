@@ -193,7 +193,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                localizations.devices.capitalize!,
+                                localizations.devices.capitalizeFirst!,
                                 style: theme.textTheme.headlineMedium,
                               ),
                             ),
@@ -228,7 +228,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: Text(
-                                  localizations.warnings.capitalize!,
+                                  localizations.warnings.capitalizeFirst!,
                                   style: theme.textTheme.headlineMedium,
                                 ),
                               ),
@@ -238,7 +238,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                                     borderRadius: BorderRadius.circular(8),
                                     child: _notifications.isEmpty
                                         ? Center(
-                                            child: Text(localizations.no_alerts.capitalize!),
+                                            child: Text(localizations.no_alerts.capitalizeFirst!),
                                           )
                                         : ListView.builder(
                                             itemCount: _notifications.length,

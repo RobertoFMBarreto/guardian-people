@@ -138,7 +138,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                   if (widget.animal.data.isEmpty)
                     Expanded(
                       child: Text(
-                        localizations.no_device_data.capitalize!,
+                        localizations.no_device_data.capitalizeFirst!,
                         style: theme.textTheme.bodyLarge!.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
@@ -247,7 +247,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Text(
-                                        localizations.animal_color.capitalize!,
+                                        localizations.animal_color.capitalizeFirst!,
                                         style: theme.textTheme.bodyLarge!.copyWith(
                                           color: theme.colorScheme.onSecondary,
                                         ),

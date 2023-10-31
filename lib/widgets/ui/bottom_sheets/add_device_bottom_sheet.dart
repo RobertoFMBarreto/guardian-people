@@ -23,7 +23,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
     double deviceWidth = MediaQuery.of(context).size.width;
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return DefaultBottomSheet(
-      title: '${localizations.add.capitalize!} ${localizations.device.capitalize!}',
+      title: '${localizations.add.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
       body: [
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
@@ -40,7 +40,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
           padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0, bottom: 20.0),
           child: TextField(
             decoration: InputDecoration(
-              label: Text(localizations.name.capitalize!),
+              label: Text(localizations.name.capitalizeFirst!),
             ),
             onChanged: (value) {
               _name = value;
@@ -61,7 +61,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
                   backgroundColor: MaterialStatePropertyAll(gdCancelBtnColor),
                 ),
                 child: Text(
-                  localizations.cancel.capitalize!,
+                  localizations.cancel.capitalizeFirst!,
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),
@@ -75,7 +75,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
                   widget.onAddDevice(_imei, _name);
                 },
                 child: Text(
-                  localizations.add.capitalize!,
+                  localizations.add.capitalizeFirst!,
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),

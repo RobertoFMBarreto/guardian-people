@@ -122,7 +122,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                       child: Text(
-                        '${localizations.other_producer_devices.capitalize!}:',
+                        '${localizations.other_producer_devices.capitalizeFirst!}:',
                         style: theme.textTheme.headlineSmall!.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -132,7 +132,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                   ),
                   if (_animals.isEmpty)
                     SliverFillRemaining(
-                      child: Center(child: Text(localizations.no_devices.capitalize!)),
+                      child: Center(child: Text(localizations.no_devices.capitalizeFirst!)),
                     ),
                   if (_animals.isNotEmpty)
                     SliverFillRemaining(

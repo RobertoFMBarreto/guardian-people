@@ -44,12 +44,12 @@ class SelectableAlertManagementItem extends StatelessWidget {
                         RichText(
                           maxLines: 2,
                           text: TextSpan(
-                            text: '${localizations.when.capitalize!} ',
+                            text: '${localizations.when.capitalizeFirst!} ',
                             style: theme.textTheme.bodyLarge,
                             children: const [
                               // TextSpan(
                               //   text:
-                              //       '''${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize!} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ${alert.conditionCompTo.value}''',
+                              //       '''${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalizeFirst!} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ${alert.conditionCompTo.value}''',
                               //   style: const TextStyle(fontWeight: FontWeight.bold),
                               // ),
                             ],
@@ -60,7 +60,7 @@ class SelectableAlertManagementItem extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
-                        "${localizations.notification.capitalize!}: ${alert.hasNotification.value ? localizations.yes.capitalize! : localizations.no.capitalize!}",
+                        "${localizations.notification.capitalizeFirst!}: ${alert.hasNotification.value ? localizations.yes.capitalizeFirst! : localizations.no.capitalizeFirst!}",
                         style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),

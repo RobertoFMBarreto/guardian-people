@@ -75,11 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    label: Text(localizations.name.capitalize!),
+                                    label: Text(localizations.name.capitalizeFirst!),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize!;
+                                      return localizations.empty_field.capitalizeFirst!;
                                     }
                                     return null;
                                   },
@@ -93,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize!;
+                                      return localizations.empty_field.capitalizeFirst!;
                                     }
                                     return null;
                                   },
@@ -103,11 +103,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    label: Text(localizations.password.capitalize!),
+                                    label: Text(localizations.password.capitalizeFirst!),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize!;
+                                      return localizations.empty_field.capitalizeFirst!;
                                     }
                                     return null;
                                   },
@@ -117,11 +117,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    label: Text(localizations.password_confirmation.capitalize!),
+                                    label:
+                                        Text(localizations.password_confirmation.capitalizeFirst!),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return localizations.empty_field.capitalize!;
+                                      return localizations.empty_field.capitalizeFirst!;
                                     }
                                     return null;
                                   },
@@ -143,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: const ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll(Colors.grey),
                                   ),
-                                  child: Text(localizations.cancel.capitalize!),
+                                  child: Text(localizations.cancel.capitalizeFirst!),
                                 ),
                                 const SizedBox(
                                   width: 20,
@@ -157,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       );
                                     }
                                   },
-                                  child: Text(localizations.confirm.capitalize!),
+                                  child: Text(localizations.confirm.capitalizeFirst!),
                                 ),
                               ],
                             ),

@@ -185,7 +185,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
               ? CustomFloatingActionButton(
                   options: [
                     CustomFloatingActionButtonOption(
-                      title: '${localizations.add.capitalize!} ${localizations.device.capitalize!}',
+                      title:
+                          '${localizations.add.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
                       icon: Icons.add,
                       onTap: () {
                         showModalBottomSheet(
@@ -214,8 +215,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                     ),
                     CustomFloatingActionButtonOption(
                       title: _isRemoveMode
-                          ? localizations.cancel.capitalize!
-                          : '${localizations.remove.capitalize!} ${localizations.device.capitalize!}',
+                          ? localizations.cancel.capitalizeFirst!
+                          : '${localizations.remove.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
                       icon: _isRemoveMode ? Icons.cancel : Icons.remove,
                       onTap: () {
                         setState(() {
@@ -248,7 +249,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    localizations.devices.capitalize!,
+                                    localizations.devices.capitalizeFirst!,
                                     style: theme.textTheme.headlineSmall!.copyWith(
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -261,7 +262,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                             });
                                           },
                                           child: Text(
-                                            localizations.confirm.capitalize!,
+                                            localizations.confirm.capitalizeFirst!,
                                             style: theme.textTheme.bodyMedium!.copyWith(
                                               color: gdCancelTextColor,
                                             ),
@@ -319,7 +320,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                         ),
                         if (_devices.isEmpty)
                           SliverFillRemaining(
-                            child: Center(child: Text(localizations.no_devices.capitalize!)),
+                            child: Center(child: Text(localizations.no_devices.capitalizeFirst!)),
                           ),
                         if (_devices.isNotEmpty)
                           SliverList.builder(

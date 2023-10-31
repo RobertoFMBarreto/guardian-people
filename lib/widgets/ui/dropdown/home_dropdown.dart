@@ -55,7 +55,7 @@ class HomeDropDown extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(localizations.profile.capitalize!),
+                Text(localizations.profile.capitalizeFirst!),
                 const Icon(
                   Icons.person,
                   size: 15,
@@ -68,7 +68,7 @@ class HomeDropDown extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(localizations.logout.capitalize!),
+              Text(localizations.logout.capitalizeFirst!),
               const Icon(
                 Icons.logout,
                 size: 15,

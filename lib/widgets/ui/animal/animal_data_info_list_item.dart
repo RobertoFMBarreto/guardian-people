@@ -103,7 +103,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                         children: [
                           RichText(
                             text: TextSpan(
-                              text: '${localizations.from_time.capitalize!} ',
+                              text: '${localizations.from_time.capitalizeFirst!} ',
                               style: theme.textTheme.bodyLarge,
                               children: [
                                 TextSpan(
@@ -120,7 +120,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                                   text: states[Random().nextInt(states.length)],
                                   // widget.deviceData[index].state
                                   //     .toShortString(context)
-                                  //     .capitalize!,
+                                  //     .capitalizeFirst!,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: theme.colorScheme.secondary,
@@ -208,7 +208,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                     },
                     icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
                     label: Text(
-                      localizations.hide.capitalize!,
+                      localizations.hide.capitalizeFirst!,
                       style:
                           theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.secondary),
                     )),
@@ -218,7 +218,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                   },
                   icon: Icon(Icons.add, color: theme.colorScheme.secondary),
                   label: Text(
-                    '${localizations.load.capitalize!} ${localizations.more} ${(widget.deviceData.length - _currentTopicExtent) >= 10 ? 10 : widget.deviceData.length - _currentTopicExtent}',
+                    '${localizations.load.capitalizeFirst!} ${localizations.more} ${(widget.deviceData.length - _currentTopicExtent) >= 10 ? 10 : widget.deviceData.length - _currentTopicExtent}',
                     style: theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.secondary),
                   )),
             ],

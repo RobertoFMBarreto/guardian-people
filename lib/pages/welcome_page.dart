@@ -111,7 +111,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${localizations.loading.capitalize!}...",
+                          "${localizations.loading.capitalizeFirst!}...",
                           style: theme.textTheme.bodyLarge!.copyWith(
                             color: theme.colorScheme.onSecondary,
                             shadows: <Shadow>[

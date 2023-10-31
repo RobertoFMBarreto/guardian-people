@@ -50,8 +50,8 @@ Future<void> getCurrentPosition(
           builder: (context) {
             AppLocalizations localizations = AppLocalizations.of(context)!;
             return AlertDialog(
-              title: Text(localizations.no_localization.capitalize!),
-              content: Text(localizations.no_localization_body.capitalize!),
+              title: Text(localizations.no_localization.capitalizeFirst!),
+              content: Text(localizations.no_localization_body.capitalizeFirst!),
             );
           });
       return;

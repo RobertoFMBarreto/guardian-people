@@ -724,9 +724,12 @@ class $FencePointsTable extends FencePoints
   static const VerificationMeta _isCenterMeta =
       const VerificationMeta('isCenter');
   @override
-  late final GeneratedColumn<double> isCenter = GeneratedColumn<double>(
+  late final GeneratedColumn<bool> isCenter = GeneratedColumn<bool>(
       'is_center', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_center" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns =>
       [idFencePoint, idFence, lat, lon, isCenter];
@@ -789,7 +792,7 @@ class $FencePointsTable extends FencePoints
       lon: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}lon'])!,
       isCenter: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}is_center'])!,
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_center'])!,
     );
   }
 
@@ -804,7 +807,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
   final String idFence;
   final double lat;
   final double lon;
-  final double isCenter;
+  final bool isCenter;
   const FencePoint(
       {required this.idFencePoint,
       required this.idFence,
@@ -818,7 +821,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
     map['id_fence'] = Variable<String>(idFence);
     map['lat'] = Variable<double>(lat);
     map['lon'] = Variable<double>(lon);
-    map['is_center'] = Variable<double>(isCenter);
+    map['is_center'] = Variable<bool>(isCenter);
     return map;
   }
 
@@ -840,7 +843,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       idFence: serializer.fromJson<String>(json['idFence']),
       lat: serializer.fromJson<double>(json['lat']),
       lon: serializer.fromJson<double>(json['lon']),
-      isCenter: serializer.fromJson<double>(json['isCenter']),
+      isCenter: serializer.fromJson<bool>(json['isCenter']),
     );
   }
   @override
@@ -851,7 +854,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       'idFence': serializer.toJson<String>(idFence),
       'lat': serializer.toJson<double>(lat),
       'lon': serializer.toJson<double>(lon),
-      'isCenter': serializer.toJson<double>(isCenter),
+      'isCenter': serializer.toJson<bool>(isCenter),
     };
   }
 
@@ -860,7 +863,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
           String? idFence,
           double? lat,
           double? lon,
-          double? isCenter}) =>
+          bool? isCenter}) =>
       FencePoint(
         idFencePoint: idFencePoint ?? this.idFencePoint,
         idFence: idFence ?? this.idFence,
@@ -898,7 +901,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
   final Value<String> idFence;
   final Value<double> lat;
   final Value<double> lon;
-  final Value<double> isCenter;
+  final Value<bool> isCenter;
   final Value<int> rowid;
   const FencePointsCompanion({
     this.idFencePoint = const Value.absent(),
@@ -913,7 +916,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
     required String idFence,
     required double lat,
     required double lon,
-    required double isCenter,
+    required bool isCenter,
     this.rowid = const Value.absent(),
   })  : idFencePoint = Value(idFencePoint),
         idFence = Value(idFence),
@@ -925,7 +928,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
     Expression<String>? idFence,
     Expression<double>? lat,
     Expression<double>? lon,
-    Expression<double>? isCenter,
+    Expression<bool>? isCenter,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -943,7 +946,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
       Value<String>? idFence,
       Value<double>? lat,
       Value<double>? lon,
-      Value<double>? isCenter,
+      Value<bool>? isCenter,
       Value<int>? rowid}) {
     return FencePointsCompanion(
       idFencePoint: idFencePoint ?? this.idFencePoint,
@@ -971,7 +974,7 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
       map['lon'] = Variable<double>(lon.value);
     }
     if (isCenter.present) {
-      map['is_center'] = Variable<double>(isCenter.value);
+      map['is_center'] = Variable<bool>(isCenter.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);

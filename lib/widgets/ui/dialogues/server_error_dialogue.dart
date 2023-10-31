@@ -10,9 +10,9 @@ class ServerErrorDialogue extends StatelessWidget {
   Widget build(BuildContext context) {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(localizations.server_error.capitalize!),
+      title: Text(localizations.server_error.capitalizeFirst!),
       content: Text(
-        localizations.server_error_body.capitalize!,
+        localizations.server_error_body.capitalizeFirst!,
       ),
     );
   }

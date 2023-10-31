@@ -86,7 +86,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.warnings_managment.capitalize!,
+          localizations.warnings_managment.capitalizeFirst!,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -140,8 +140,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                 ),
                                 label: Text(
                                   widget.isSelect
-                                      ? localizations.select_all.capitalize!
-                                      : localizations.remove_all.capitalize!,
+                                      ? localizations.select_all.capitalizeFirst!
+                                      : localizations.remove_all.capitalizeFirst!,
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: widget.isSelect
                                         ? theme.colorScheme.secondary
@@ -157,7 +157,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                         flex: 12,
                         child: _alerts.isEmpty
                             ? Center(
-                                child: Text(localizations.no_alerts.capitalize!),
+                                child: Text(localizations.no_alerts.capitalizeFirst!),
                               )
                             : ListView.builder(
                                 itemCount: _alerts.length,
@@ -240,8 +240,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                   },
                   label: Text(
                     widget.isSelect
-                        ? localizations.confirm.capitalize!
-                        : '${localizations.add.capitalize!} ${localizations.warning.capitalize!}',
+                        ? localizations.confirm.capitalizeFirst!
+                        : '${localizations.add.capitalizeFirst!} ${localizations.warning.capitalizeFirst!}',
                     style: theme.textTheme.bodyLarge!.copyWith(
                       color: theme.colorScheme.onSecondary,
                       fontWeight: FontWeight.bold,

@@ -182,7 +182,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       child: TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                          label: Text(localizations.name.capitalize!),
+                          label: Text(localizations.name.capitalizeFirst!),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -213,7 +213,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations.device_warnings.capitalize!,
+                          localizations.device_warnings.capitalizeFirst!,
                           style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                         ),
                         const Icon(Icons.add)
@@ -224,7 +224,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Expanded(
                   child: _alerts.isEmpty
                       ? Center(
-                          child: Text(localizations.no_selected_alerts.capitalize!),
+                          child: Text(localizations.no_selected_alerts.capitalizeFirst!),
                         )
                       : ListView.builder(
                           itemCount: _alerts.length,
@@ -254,7 +254,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations.device_fences.capitalize!,
+                          localizations.device_fences.capitalizeFirst!,
                           style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                         ),
                         // TODO: se poder ter várias cercas trocar
@@ -266,7 +266,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Expanded(
                   child: _fences.isEmpty
                       ? Center(
-                          child: Text(localizations.no_selected_fences.capitalize!),
+                          child: Text(localizations.no_selected_fences.capitalizeFirst!),
                         )
                       : ListView.builder(
                           itemCount: _fences.length,
@@ -307,7 +307,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                             backgroundColor: const MaterialStatePropertyAll(gdCancelBtnColor),
                           ),
                           child: Text(
-                            localizations.cancel.capitalize!,
+                            localizations.cancel.capitalizeFirst!,
                           ),
                         ),
                       ),
@@ -320,7 +320,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                               .then((value) => Navigator.of(context).pop(newAnimal));
                         },
                         child: Text(
-                          localizations.confirm.capitalize!,
+                          localizations.confirm.capitalizeFirst!,
                         ),
                       ),
                     ],

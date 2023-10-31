@@ -113,7 +113,7 @@ class _DevicePageState extends State<DevicePage> {
         },
         backgroundColor: theme.colorScheme.secondary,
         label: Text(
-          localizations.state_history.capitalize!,
+          localizations.state_history.capitalizeFirst!,
           style: theme.textTheme.bodyLarge!.copyWith(
             fontWeight: FontWeight.w500,
             color: theme.colorScheme.onSecondary,
@@ -139,7 +139,7 @@ class _DevicePageState extends State<DevicePage> {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            localizations.localization.capitalize!,
+                            localizations.localization.capitalizeFirst!,
                             style: theme.textTheme.headlineSmall!.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -163,8 +163,8 @@ class _DevicePageState extends State<DevicePage> {
                           ],
                           totalSwitches: 2,
                           labels: [
-                            localizations.current.capitalize!,
-                            localizations.range.capitalize!,
+                            localizations.current.capitalizeFirst!,
+                            localizations.range.capitalizeFirst!,
                           ],
                           onToggle: (index) {
                             setState(() {
@@ -227,7 +227,7 @@ class _DevicePageState extends State<DevicePage> {
                           FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              localizations.localization.capitalize!,
+                              localizations.localization.capitalizeFirst!,
                               style: theme.textTheme.headlineSmall!.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
@@ -251,8 +251,8 @@ class _DevicePageState extends State<DevicePage> {
                             ],
                             totalSwitches: 2,
                             labels: [
-                              localizations.current.capitalize!,
-                              localizations.range.capitalize!,
+                              localizations.current.capitalizeFirst!,
+                              localizations.range.capitalizeFirst!,
                             ],
                             onToggle: (index) {
                               setState(() {

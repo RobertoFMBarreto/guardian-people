@@ -119,7 +119,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
       appBar: !_isLoading
           ? AppBar(
               title: Text(
-                '${localizations.fence.capitalize!} ${_fence.name}',
+                '${localizations.fence.capitalizeFirst!} ${_fence.name}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
               ),
               centerTitle: true,
@@ -131,7 +131,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       removeFence(_fence.idFence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
-                      localizations.remove.capitalize!,
+                      localizations.remove.capitalizeFirst!,
                       style: theme.textTheme.bodyLarge!
                           .copyWith(color: theme.colorScheme.error, fontWeight: FontWeight.w500),
                     ),
@@ -188,7 +188,8 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             },
                           );
                         },
-                        child: Text('${localizations.edit.capitalize!} ${localizations.fence}'),
+                        child:
+                            Text('${localizations.edit.capitalizeFirst!} ${localizations.fence}'),
                       ),
                     ),
                   Padding(
@@ -197,7 +198,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${localizations.associated_devices.capitalize!}:',
+                          '${localizations.associated_devices.capitalizeFirst!}:',
                           style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
                         if (hasConnection)
@@ -214,7 +215,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                     flex: 2,
                     child: _animals.isEmpty
                         ? Center(
-                            child: Text(localizations.no_selected_devices.capitalize!),
+                            child: Text(localizations.no_selected_devices.capitalizeFirst!),
                           )
                         : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
