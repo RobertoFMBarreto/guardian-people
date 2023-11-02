@@ -143,4 +143,49 @@ class FencingRequests {
       }
     });
   }
+
+  /// Method that allows to request to update a fence
+  static Future<void> updateFence({
+    required FenceCompanion fence,
+    required List<FencePointsCompanion> fencePoints,
+    required BuildContext context,
+    required Function onFailed,
+  }) async {
+    await FencingProvider.updateFence(fence, fencePoints).then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => createFence(
+                fence: fence,
+                fencePoints: fencePoints,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
 }

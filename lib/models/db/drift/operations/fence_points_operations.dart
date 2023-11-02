@@ -11,7 +11,7 @@ Future<void> createFencePointFromList(List<LatLng> points, String idFence) async
   final db = Get.find<GuardianDb>();
 
   /// remove all fence [idFence] points so that they dont stack
-  (db.delete(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).go();
+  await (db.delete(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).go();
 
   if (points.length == 2) {
     db.fencePoints.insertOnConflictUpdate(

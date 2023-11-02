@@ -215,21 +215,63 @@ class _GeofencingState extends State<Geofencing> {
 
   /// Method that stores/updates the fence data and points
   Future<void> _confirmGeofence() async {
-    String idFence;
-    // if is edit mode
-    if (widget.fence != null) {
-      idFence = widget.fence!.idFence;
-      // first udpate the fence
-      await updateFence(
-        widget.fence!
-            .copyWith(
-              name: _fenceName,
-              color: HexColor.toHex(color: _fenceColor),
-            )
-            .toCompanion(true),
+    String idFence = widget.fence != null ? widget.fence!.idFence : const Uuid().v4();
+    List<FencePointsCompanion> fencePoints = [];
+
+    if (_editingPolygon.points.length == 2) {
+      fencePoints.add(
+        FencePointsCompanion(
+          idFencePoint: drift.Value(const Uuid().v4()),
+          idFence: drift.Value(idFence),
+          isCenter: const drift.Value(true),
+          lat: drift.Value(_editingPolygon.points[0].latitude),
+          lon: drift.Value(_editingPolygon.points[0].longitude),
+        ),
+      );
+      fencePoints.add(
+        FencePointsCompanion(
+          idFencePoint: drift.Value(const Uuid().v4()),
+          idFence: drift.Value(idFence),
+          isCenter: const drift.Value(false),
+          lat: drift.Value(_editingPolygon.points[1].latitude),
+          lon: drift.Value(_editingPolygon.points[1].longitude),
+        ),
       );
     } else {
-      idFence = const Uuid().v4();
+      fencePoints.addAll(
+        _editingPolygon.points
+            .map(
+              (e) => FencePointsCompanion(
+                idFencePoint: drift.Value(const Uuid().v4()),
+                idFence: drift.Value(idFence),
+                isCenter: drift.Value(false),
+                lat: drift.Value(e.latitude),
+                lon: drift.Value(e.longitude),
+              ),
+            )
+            .toList(),
+      );
+    }
+    // if is edit mode
+    if (widget.fence != null) {
+      final updatedFence = widget.fence!
+          .copyWith(
+            name: _fenceName,
+            color: HexColor.toHex(color: _fenceColor),
+          )
+          .toCompanion(true);
+      // first udpate the fence
+      await updateFence(
+        updatedFence,
+      ).then(
+        (_) => FencingRequests.updateFence(
+          fence: updatedFence,
+          fencePoints: fencePoints,
+          context: context,
+          onFailed: () {},
+        ),
+      );
+    } else {
       final newFence = FenceCompanion(
         idFence: drift.Value(idFence),
         name: drift.Value(_fenceName),
@@ -237,42 +279,6 @@ class _GeofencingState extends State<Geofencing> {
         idUser: drift.Value((await getUid(context))!),
         isStayInside: drift.Value(_isStayInside),
       );
-      List<FencePointsCompanion> fencePoints = [];
-
-      if (_editingPolygon.points.length == 2) {
-        fencePoints.add(
-          FencePointsCompanion(
-            idFencePoint: drift.Value(const Uuid().v4()),
-            idFence: drift.Value(idFence),
-            isCenter: const drift.Value(true),
-            lat: drift.Value(_editingPolygon.points[0].latitude),
-            lon: drift.Value(_editingPolygon.points[0].longitude),
-          ),
-        );
-        fencePoints.add(
-          FencePointsCompanion(
-            idFencePoint: drift.Value(const Uuid().v4()),
-            idFence: drift.Value(idFence),
-            isCenter: const drift.Value(false),
-            lat: drift.Value(_editingPolygon.points[1].latitude),
-            lon: drift.Value(_editingPolygon.points[1].longitude),
-          ),
-        );
-      } else {
-        fencePoints.addAll(
-          _editingPolygon.points
-              .map(
-                (e) => FencePointsCompanion(
-                  idFencePoint: drift.Value(const Uuid().v4()),
-                  idFence: drift.Value(idFence),
-                  isCenter: drift.Value(false),
-                  lat: drift.Value(e.latitude),
-                  lon: drift.Value(e.longitude),
-                ),
-              )
-              .toList(),
-        );
-      }
 
       await createFence(
         newFence,
