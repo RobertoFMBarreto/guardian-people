@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
@@ -55,7 +56,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   Future<void> _setup() async {
     _animalName = widget.animal.animal.animalName.value;
     await _getDeviceAlerts();
-    await _getDeviceFences();
+    await _getLocalFences();
     controller.text = widget.animal.animal.animalName.value;
   }
 
@@ -67,6 +68,19 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
         setState(() => _alerts.addAll(allAlerts));
       }
     });
+  }
+
+  /// Method that allows to get all fences from api, searching for the device fences then
+  Future<void> _getLocalFences() async {
+    _getDeviceFences().then(
+      (_) => FencingRequests.getUserFences(
+        context: context,
+        onGottenData: (_) async {
+          await _getDeviceFences();
+        },
+        onFailed: () {},
+      ),
+    );
   }
 
   /// Method that load the device fences into the [_fences] list
@@ -122,7 +136,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
         setState(() {
           _fences.add(newFence);
         });
-        createFenceDevice(
+        createFenceAnimal(
           FenceAnimalsCompanion(
             idFence: drift.Value(newFence.idFence),
             idAnimal: widget.animal.animal.idAnimal,

@@ -8,6 +8,7 @@ import 'package:guardian/main.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
@@ -42,21 +43,44 @@ class _FencesPageState extends State<FencesPage> {
 
   /// Method that does the initial setup of the page
   Future<void> _setup() async {
-    await _searchFences();
+    await _searchFences().then(
+      (value) => FencingRequests.getUserFences(
+        context: context,
+        onFailed: () {},
+        onGottenData: (_) {
+          searchFences(_searchString);
+        },
+      ),
+    );
   }
 
   /// Method that searches for the fences with the [searchString] loading them into the [_fences] list
   ///
   /// To prevent duplicates the list is reseted before adding the fences
   Future<void> _searchFences() async {
-    await searchFences(_searchString).then((allFences) {
-      if (mounted) {
-        setState(() {
-          _fences = [];
-          _fences.addAll(allFences);
-        });
-      }
-    });
+    searchFences(_searchString).then(
+      (allFences) {
+        if (mounted) {
+          setState(() {
+            _fences = [];
+            _fences.addAll(allFences);
+          });
+        }
+      },
+    );
+  }
+
+  /// Method that allows to delete a fence and update the fences list
+  Future<void> _deleteFence(String idFence) async {
+    await removeFence(idFence).then(
+      (_) => _searchFences().then(
+        (_) => FencingRequests.removeFence(
+          idFence: idFence,
+          context: context,
+          onFailed: () {},
+        ),
+      ),
+    );
   }
 
   @override
@@ -178,9 +202,7 @@ class _FencesPageState extends State<FencesPage> {
                                                   );
                                             },
                                             onRemove: () {
-                                              // TODO remove item from list
-                                              removeFence(_fences[index].idFence)
-                                                  .then((_) => _searchFences());
+                                              _deleteFence(_fences[index].idFence);
                                             },
                                           ),
                                   ),

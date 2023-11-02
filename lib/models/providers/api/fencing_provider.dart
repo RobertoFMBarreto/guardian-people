@@ -15,7 +15,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences/');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/');
     try {
       final body = jsonEncode({
         "idFence": fence.idFence.value,
@@ -33,6 +33,42 @@ class FencingProvider {
             .toList()
       });
       var response = await post(url, headers: headers, body: body);
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
+  /// Method that allows to remove a fence from the api
+  static Future<Response> removeFence(String idFence) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/$idFence');
+    try {
+      var response = await delete(url, headers: headers);
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
+  /// Method that allows to remove a fence from the api
+  static Future<Response> getUserFences() async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences');
+    try {
+      var response = await get(url, headers: headers);
       return response;
     } on SocketException catch (e) {
       return Response(e.message, 507);

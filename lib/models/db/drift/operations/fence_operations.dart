@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 
 /// Method for creating a fence [fence] returning it as a [FenceCompanion]

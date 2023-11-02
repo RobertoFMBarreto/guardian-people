@@ -5,9 +5,10 @@ import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
@@ -91,7 +92,15 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
         }
       },
     );
-    await _loadAnimalFences();
+    await _loadAnimalFences().then(
+      (_) => FencingRequests.getUserFences(
+        context: context,
+        onGottenData: (_) async {
+          await _loadAnimalFences();
+        },
+        onFailed: () {},
+      ),
+    );
   }
 
   /// Method that loads the animal fences into [_polygons] list

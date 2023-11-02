@@ -4,7 +4,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
@@ -99,7 +99,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
           _animals.addAll(selected);
         });
         for (var animal in selected) {
-          await createFenceDevice(
+          await createFenceAnimal(
             FenceAnimalsCompanion(
               idFence: drift.Value(_fence.idFence),
               idAnimal: animal.animal.idAnimal,

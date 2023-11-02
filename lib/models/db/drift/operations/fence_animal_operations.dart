@@ -4,7 +4,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
 /// Method for creating a [fenceDevice] returning it as a [FenceAnimalsCompanion]
-Future<FenceAnimalsCompanion> createFenceDevice(FenceAnimalsCompanion fenceDevice) async {
+Future<FenceAnimalsCompanion> createFenceAnimal(FenceAnimalsCompanion fenceDevice) async {
   final db = Get.find<GuardianDb>();
   db.into(db.fenceAnimals).insertOnConflictUpdate(fenceDevice);
 

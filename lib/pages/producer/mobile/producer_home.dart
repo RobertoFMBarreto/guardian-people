@@ -8,6 +8,7 @@ import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/notifications_provider.dart';
 import 'package:guardian/models/providers/api/parsers/notifications_parsers.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -107,6 +108,19 @@ class _ProducerHomeState extends State<ProducerHome> {
   ///
   /// Resets the list to avoid duplicates
   Future<void> _loadFences() async {
+    await _loadLocalFences().then((_) {
+      FencingRequests.getUserFences(
+        context: context,
+        onGottenData: (_) async {
+          await _loadLocalFences();
+        },
+        onFailed: () {},
+      );
+    });
+  }
+
+  /// Method that allows to get local fences
+  Future<void> _loadLocalFences() async {
     await getUserFences().then((allFences) {
       _fences = [];
       setState(() {

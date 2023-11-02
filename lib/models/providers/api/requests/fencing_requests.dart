@@ -5,17 +5,18 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/fencing_provider.dart';
+import 'package:guardian/models/providers/api/parsers/fences_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
 class FencingRequests {
+  /// Method that allows to request for the creation of a new fence
   static Future<void> createFence({
     required FenceCompanion fence,
     required List<FencePointsCompanion> fencePoints,
     required BuildContext context,
     required Function onFailed,
   }) async {
-    /// MEthod that allows to request for the creation of a new fence
     await FencingProvider.createFence(fence, fencePoints).then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
@@ -29,6 +30,95 @@ class FencingRequests {
                 fence: fence,
                 fencePoints: fencePoints,
                 onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
+
+  /// Method that allows to request for the creation of a new fence
+  static Future<void> removeFence({
+    required String idFence,
+    required BuildContext context,
+    required Function onFailed,
+  }) async {
+    await FencingProvider.removeFence(idFence).then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => removeFence(
+                idFence: idFence,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
+
+  /// Method that allows to request for the creation of a new fence
+  static Future<void> getUserFences({
+    required BuildContext context,
+    required Function onGottenData,
+    required Function onFailed,
+  }) async {
+    await FencingProvider.getUserFences().then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+        await fencesFromJson(response.body).then(
+          (_) => onGottenData(response.body),
+        );
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => getUserFences(
+                onFailed: onFailed,
+                onGottenData: onGottenData,
                 context: context,
               ),
             );

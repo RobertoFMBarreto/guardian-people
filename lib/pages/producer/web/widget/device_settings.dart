@@ -3,7 +3,7 @@ import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
@@ -153,7 +153,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         setState(() {
           _fences.add(newFence);
         });
-        createFenceDevice(
+        createFenceAnimal(
           FenceAnimalsCompanion(
             idFence: drift.Value(newFence.idFence),
             idAnimal: widget.animal.animal.idAnimal,
