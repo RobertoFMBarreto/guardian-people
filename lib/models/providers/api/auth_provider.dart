@@ -42,4 +42,24 @@ class AuthProvider {
       return Response('error', 507);
     }
   }
+
+  /// Method for refresh user session token
+  static Future<Response> refreshDeviceToken(String deviceToken) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/user/device/token');
+    try {
+      var response =
+          await post(url, headers: headers, body: jsonEncode({"deviceToken": deviceToken}));
+
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
 }

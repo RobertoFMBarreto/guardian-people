@@ -8,8 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/providers/api/auth_provider.dart';
+import 'package:guardian/models/providers/api/requests/auth_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:path/path.dart';
 
 class FCMMessagingProvider {
   @pragma('vm:entry-point')
@@ -123,6 +126,27 @@ class FCMMessagingProvider {
       if (kDebugMode) {
         print(token);
       }
+      AuthRequests.refreshDevicetoken(
+        context: navigatorKey.currentContext!,
+        devicetoken: token ?? '',
+        onDataGotten: () {
+          if (kDebugMode) {
+            print(token);
+          }
+        },
+      );
+    });
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      AuthRequests.refreshDevicetoken(
+        context: navigatorKey.currentContext!,
+        devicetoken: token,
+        onDataGotten: () {
+          if (kDebugMode) {
+            print(token);
+          }
+        },
+      );
     });
 
     // Open notification with app on background but not terminated
