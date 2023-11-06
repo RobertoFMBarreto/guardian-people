@@ -15,6 +15,7 @@ import 'package:guardian/models/helpers/fence.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/models/providers/system_provider.dart';
@@ -57,7 +58,7 @@ class _GeofencingState extends State<Geofencing> {
   Color _fenceColor = Colors.red;
 
   List<LatLng> _fencePoints = [];
-  final List<Animal> _animals = [];
+  List<Animal> _animals = [];
 
   @override
   void dispose() {
@@ -80,9 +81,10 @@ class _GeofencingState extends State<Geofencing> {
   /// 5. init the polygons
   Future<void> _setup() async {
     await _getCurrentPosition();
+    await _loadAnimals();
     if (widget.fence != null) {
       await _loadFencePoints();
-      await _loadAnimals();
+
       if (mounted) {
         setState(() {
           // if there are only 2 points then its a circle
@@ -208,8 +210,24 @@ class _GeofencingState extends State<Geofencing> {
 
   /// Method that loads the animals into the [_animals] list
   Future<void> _loadAnimals() async {
+    _loadLocalAnimals().then(
+      (value) => AnimalRequests.getAnimalsFromApiWithLastLocation(
+        context: context,
+        onDataGotten: () {
+          _loadLocalAnimals();
+        },
+      ),
+    );
+  }
+
+  Future<void> _loadLocalAnimals() async {
     await getUserAnimalsWithData().then(
-      (allDevices) => _animals.addAll(allDevices),
+      (allDevices) {
+        setState(() {
+          _animals = [];
+          _animals.addAll(allDevices);
+        });
+      },
     );
   }
 
@@ -330,8 +348,18 @@ class _GeofencingState extends State<Geofencing> {
                         FlutterMap(
                           key: Key(_fenceColor.toString()),
                           options: MapOptions(
-                            bounds:
-                                widget.fence != null ? LatLngBounds.fromPoints(_fencePoints) : null,
+                            bounds: widget.fence != null && _animals.isEmpty
+                                ? LatLngBounds.fromPoints(_fencePoints)
+                                : _animals.isNotEmpty
+                                    ? LatLngBounds.fromPoints(_animals
+                                        .map(
+                                          (e) => LatLng(
+                                            e.data.first.lat.value!,
+                                            e.data.first.lon.value!,
+                                          ),
+                                        )
+                                        .toList())
+                                    : null,
                             onTap: (_, ll) {
                               _polyEditor.add(_editingPolygon.points, ll);
                             },
@@ -353,10 +381,6 @@ class _GeofencingState extends State<Geofencing> {
                             MarkerLayer(
                               markers: [
                                 ..._animals
-                                    .where((element) =>
-                                        element.data.isNotEmpty &&
-                                        element.data.first.lat.value != null &&
-                                        element.data.first.lon.value != null)
                                     .map(
                                       (device) => Marker(
                                         point: LatLng(device.data.first.lat.value!,
