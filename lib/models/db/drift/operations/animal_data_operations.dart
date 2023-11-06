@@ -80,7 +80,6 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
           AnimalLocationsCompanion(
             accuracy: drift.Value(locationData.data[db.animalLocations.accuracy.name]),
             battery: drift.Value(locationData.data[db.animalLocations.battery.name]),
-            dataUsage: drift.Value(locationData.data[db.animalLocations.dataUsage.name]),
             date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                 locationData.data[db.animalLocations.date.name] * 1000)),
             animalDataId: drift.Value(locationData.data[db.animalLocations.animalDataId.name]),

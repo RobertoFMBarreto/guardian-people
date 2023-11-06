@@ -59,7 +59,6 @@ Future<List<Animal>> getFenceAnimals(String idFence) async {
         ${db.animal.actualTableName}.${db.animal.animalName.name},
         ${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
-        ${db.animalLocations.dataUsage.name},
         ${db.animalLocations.temperature.name},
         ${db.animalLocations.battery.name},
         ${db.animalLocations.lat.name},
@@ -108,7 +107,6 @@ Future<List<Animal>> getFenceAnimals(String idFence) async {
             AnimalLocationsCompanion(
               accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
               battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
-              dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                   deviceData.data[db.animalLocations.date.name] * 1000)),
               animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),

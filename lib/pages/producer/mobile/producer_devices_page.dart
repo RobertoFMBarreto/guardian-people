@@ -11,6 +11,7 @@ import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
@@ -107,45 +108,11 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   ///
   /// If the server takes too long to answer then the user receives and alert
   Future<void> _getAnimalsFromApi() async {
-    AnimalProvider.getAnimals().then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        await animalsFromJson(response.body);
-        await _filterAnimals();
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getAnimalsFromApi();
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
-              }
-            });
-          } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
-          }
+    AnimalRequests.getAnimalsFromApiWithLastLocation(
+        context: context,
+        onDataGotten: () {
+          _filterAnimals();
         });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          }
-        });
-      }
-    });
   }
 
   /// Method that filters all animals loading them into the [_animals] list
@@ -160,7 +127,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
       await getUserFenceUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
-        dtUsageRangeValues: _dtUsageRangeValues,
         searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
         idFence: widget.idFence!,
@@ -172,8 +138,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           });
         }
       });
-    }
-    if (widget.isSelect && widget.idAlert != null) {
+    } else if (widget.isSelect && widget.idAlert != null) {
       await getUserAlertUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
@@ -363,9 +328,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       child: widget.isSelect
                                           ? AnimalItemSelectable(
                                               deviceImei: _animals[index].animal.animalName.value,
-                                              deviceData: _animals[index].data.isNotEmpty
-                                                  ? _animals[index].data.first.dataUsage.value
-                                                  : null,
                                               deviceBattery: _animals[index].data.isNotEmpty
                                                   ? _animals[index].data.first.battery.value
                                                   : null,

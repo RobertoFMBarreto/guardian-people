@@ -138,28 +138,12 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
               body: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: IconText(
-                          icon: Icons.sim_card,
-                          iconColor: theme.colorScheme.secondary,
-                          text: '${widget.deviceData.first.dataUsage.value}/10MB',
-                          fontSize: 15,
-                          iconSize: 25,
-                        ),
-                      ),
-                      IconText(
-                        icon: Icons.device_thermostat,
-                        iconColor: theme.colorScheme.secondary,
-                        text: '${widget.deviceData.first.temperature.value}ºC',
-                        fontSize: 15,
-                        iconSize: 30,
-                      ),
-                    ],
+                  IconText(
+                    icon: Icons.device_thermostat,
+                    iconColor: theme.colorScheme.secondary,
+                    text: '${widget.deviceData.first.temperature.value}ºC',
+                    fontSize: 15,
+                    iconSize: 30,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

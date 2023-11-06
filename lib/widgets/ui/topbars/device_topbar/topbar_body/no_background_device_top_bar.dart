@@ -148,7 +148,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                   if (widget.animal.data.isNotEmpty)
                     Expanded(
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Expanded(child: SizedBox()),
                           Expanded(
@@ -156,9 +156,9 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                             child: FittedBox(
                               fit: BoxFit.fitHeight,
                               child: IconText(
-                                icon: Icons.sim_card,
+                                icon: Icons.device_thermostat,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.dataUsage.value}/10MB',
+                                text: '${widget.animal.data.first.temperature.value}ºC',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -169,11 +169,13 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                             child: FittedBox(
                               fit: BoxFit.fitHeight,
                               child: IconText(
+                                icon: DeviceWidgetProvider.getBatteryIcon(
+                                  deviceBattery: 80,
+                                  color: theme.colorScheme.onSecondary,
+                                ),
                                 isInverted: true,
-                                icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '10000m',
-                                // text: '${widget.device.data.first.elevation.value.round()}m',
+                                text: '${widget.animal.data.first.battery.value}%',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -189,30 +191,14 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                         children: [
                           const Expanded(child: SizedBox()),
                           Expanded(
-                            flex: 2,
                             child: FittedBox(
-                              fit: BoxFit.fitWidth,
+                              fit: BoxFit.fitHeight,
                               child: IconText(
-                                icon: Icons.device_thermostat,
-                                iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.temperature.value}ºC',
-                                textColor: theme.colorScheme.onSecondary,
-                              ),
-                            ),
-                          ),
-                          const Expanded(child: SizedBox()),
-                          Expanded(
-                            flex: 2,
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: IconText(
-                                icon: DeviceWidgetProvider.getBatteryIcon(
-                                  deviceBattery: 80,
-                                  color: theme.colorScheme.onSecondary,
-                                ),
                                 isInverted: true,
+                                icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.battery.value}%',
+                                text: '10000m',
+                                // text: '${widget.device.data.first.elevation.value.round()}m',
                                 textColor: theme.colorScheme.onSecondary,
                               ),
                             ),

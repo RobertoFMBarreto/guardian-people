@@ -76,15 +76,8 @@ class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
                       ),
                     if (device.data.isNotEmpty)
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconText(
-                            icon: Icons.sim_card,
-                            iconColor: theme.colorScheme.secondary,
-                            text: '${device.data.first.dataUsage}/10MB',
-                            fontSize: 23,
-                            iconSize: 25,
-                          ),
                           IconText(
                             isInverted: true,
                             icon: Icons.landscape,

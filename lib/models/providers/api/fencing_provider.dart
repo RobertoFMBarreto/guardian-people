@@ -110,4 +110,40 @@ class FencingProvider {
       return Response('error', 507);
     }
   }
+
+  /// Method that allows to add an animal to a fence in api
+  static Future<Response> addAnimalFence(String fenceId, List<String> animalIds) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/$fenceId/animals');
+    try {
+      var response = await post(url, headers: headers, body: jsonEncode(animalIds));
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
+  /// Method that allows to remove an animal from a fence in api
+  static Future<Response> removeAnimalFence(String fenceId, List<String> animalIds) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/$fenceId/animals');
+    try {
+      var response = await delete(url, headers: headers, body: jsonEncode(animalIds));
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
 }

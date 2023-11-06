@@ -89,7 +89,6 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                 battery: dt['last_device_data']['battery'] != null
                     ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
                     : const drift.Value.absent(),
-                dataUsage: drift.Value(Random().nextInt(10)),
                 date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
                 animalDataId: drift.Value(dt['last_device_data']['id_data']),
                 idAnimal: drift.Value(dt['id_animal']),

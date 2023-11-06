@@ -29,7 +29,6 @@ Future<void> animalDataFromJson(Map<dynamic, dynamic> data, String idAnimal) asy
   List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
   await createAnimalData(
     AnimalLocationsCompanion(
-      dataUsage: drift.Value(Random().nextInt(10)),
       date: drift.Value(DateTime.parse(data['date'])),
       animalDataId: drift.Value(data['id_data']),
       idAnimal: drift.Value(idAnimal),

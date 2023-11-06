@@ -130,12 +130,32 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   /// It also inserts in the database the connection between the fence and the device
   Future<void> _onSelectFence() async {
     Navigator.of(context).pushNamed('/producer/fences', arguments: true).then((newFenceData) {
-      // TODO: Check if its wright
       if (newFenceData != null && newFenceData.runtimeType == FenceData) {
         final newFence = newFenceData as FenceData;
+
         setState(() {
           _fences.add(newFence);
         });
+        FencingRequests.addAnimalFence(
+          animalIds: [widget.animal.animal.idAnimal.value],
+          context: context,
+          fenceId: newFence.idFence,
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            setState(() {
+              _fences.removeWhere(
+                (element) => element.idFence == newFence.idFence,
+              );
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  localizations.server_error.capitalize!,
+                ),
+              ),
+            );
+          },
+        );
         createFenceAnimal(
           FenceAnimalsCompanion(
             idFence: drift.Value(newFence.idFence),
@@ -163,6 +183,30 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
         // TODO: show dialogue
       },
     );
+  }
+
+  Future<void> _removeFence(int index) async {
+    final fence = _fences[index];
+    setState(() {
+      _fences.removeWhere(
+        (element) => element.idFence == _fences[index].idFence,
+      );
+    });
+    FencingRequests.removeAnimalFence(
+      fenceId: fence.idFence,
+      animalIds: [
+        widget.animal.animal.idAnimal.value.toString(),
+      ],
+      context: context,
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        setState(() {
+          _fences.add(fence);
+        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
+      },
+    ).then((value) => removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value));
   }
 
   @override
@@ -275,14 +319,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                     onTap: () {},
                                     color: HexColor(_fences[index].color),
                                     onRemove: () {
-                                      removeAnimalFence(_fences[index].idFence,
-                                          widget.animal.animal.idAnimal.value);
-                                      setState(() {
-                                        _fences.removeWhere(
-                                          (element) => element.idFence == _fences[index].idFence,
-                                        );
-                                      });
-                                      // TODO remove item service call
+                                      _removeFence(index);
                                     },
                                   ),
                                 ),

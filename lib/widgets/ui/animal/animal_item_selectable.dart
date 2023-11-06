@@ -5,7 +5,6 @@ import 'package:guardian/models/helpers/device_helper.dart';
 /// Class that represents an animal item widget that can be selected
 class AnimalItemSelectable extends StatelessWidget {
   final String deviceImei;
-  final int? deviceData;
   final int? deviceBattery;
   final bool isSelected;
   final Function() onSelected;
@@ -14,7 +13,6 @@ class AnimalItemSelectable extends StatelessWidget {
   const AnimalItemSelectable({
     super.key,
     required this.deviceImei,
-    required this.deviceData,
     required this.deviceBattery,
     required this.onSelected,
     this.isPopPush = false,
@@ -30,9 +28,7 @@ class AnimalItemSelectable extends StatelessWidget {
         onTap: onSelected,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: deviceData != null
-              ? const EdgeInsets.all(4.0)
-              : const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,7 +42,7 @@ class AnimalItemSelectable extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: deviceData != null ? 10 : 11,
+                flex: 11,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Column(
@@ -60,11 +56,6 @@ class AnimalItemSelectable extends StatelessWidget {
                           fontSize: 18,
                         ),
                       ),
-                      if (deviceData != null)
-                        Text(
-                          '${deviceData.toString()}/10MB',
-                          style: theme.textTheme.bodyMedium!.copyWith(),
-                        ),
                     ],
                   ),
                 ),

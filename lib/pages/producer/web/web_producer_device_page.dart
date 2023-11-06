@@ -108,7 +108,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                 battery: dt['last_device_data']['battery'] != null
                     ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
                     : const drift.Value.absent(),
-                dataUsage: drift.Value(Random().nextInt(10)),
                 date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
                 animalDataId: drift.Value(dt['last_device_data']['id_data']),
                 idAnimal: drift.Value(dt['id_animal']),
@@ -219,7 +218,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                   battery: dt['battery'] != null
                       ? drift.Value(int.tryParse(dt['battery']))
                       : const drift.Value.absent(),
-                  dataUsage: drift.Value(Random().nextInt(10)),
                   date: drift.Value(DateTime.parse(dt['date'])),
                   animalDataId: drift.Value(dt['id_data']),
                   idAnimal: drift.Value(dt['id_animal']),

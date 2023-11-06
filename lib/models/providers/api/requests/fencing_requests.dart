@@ -188,4 +188,99 @@ class FencingRequests {
       }
     });
   }
+
+  /// Method that allows to request to add an animal to a fence
+  static Future<void> addAnimalFence({
+    required String fenceId,
+    required List<String> animalIds,
+    required BuildContext context,
+    required Function onFailed,
+  }) async {
+    await FencingProvider.addAnimalFence(fenceId, animalIds).then((response) async {
+      print('Response');
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => addAnimalFence(
+                fenceId: fenceId,
+                animalIds: animalIds,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
+
+  /// Method that allows to request to remove an animal from a fence
+  static Future<void> removeAnimalFence({
+    required String fenceId,
+    required List<String> animalIds,
+    required BuildContext context,
+    required Function onFailed,
+  }) async {
+    await FencingProvider.removeAnimalFence(fenceId, animalIds).then((response) async {
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => removeAnimalFence(
+                fenceId: fenceId,
+                animalIds: animalIds,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        onFailed();
+      }
+    });
+  }
 }

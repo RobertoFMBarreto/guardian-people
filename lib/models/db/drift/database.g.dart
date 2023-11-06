@@ -1564,12 +1564,6 @@ class $AnimalLocationsTable extends AnimalLocations
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
-  static const VerificationMeta _dataUsageMeta =
-      const VerificationMeta('dataUsage');
-  @override
-  late final GeneratedColumn<int> dataUsage = GeneratedColumn<int>(
-      'data_usage', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _temperatureMeta =
       const VerificationMeta('temperature');
   @override
@@ -1618,7 +1612,6 @@ class $AnimalLocationsTable extends AnimalLocations
   List<GeneratedColumn> get $columns => [
         animalDataId,
         idAnimal,
-        dataUsage,
         temperature,
         battery,
         lat,
@@ -1648,10 +1641,6 @@ class $AnimalLocationsTable extends AnimalLocations
     if (data.containsKey('id_animal')) {
       context.handle(_idAnimalMeta,
           idAnimal.isAcceptableOrUnknown(data['id_animal']!, _idAnimalMeta));
-    }
-    if (data.containsKey('data_usage')) {
-      context.handle(_dataUsageMeta,
-          dataUsage.isAcceptableOrUnknown(data['data_usage']!, _dataUsageMeta));
     }
     if (data.containsKey('temperature')) {
       context.handle(
@@ -1702,8 +1691,6 @@ class $AnimalLocationsTable extends AnimalLocations
           .read(DriftSqlType.string, data['${effectivePrefix}animal_data_id'])!,
       idAnimal: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id_animal']),
-      dataUsage: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}data_usage']),
       temperature: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}temperature']),
       battery: attachedDatabase.typeMapping
@@ -1732,7 +1719,6 @@ class $AnimalLocationsTable extends AnimalLocations
 class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   final String animalDataId;
   final String? idAnimal;
-  final int? dataUsage;
   final double? temperature;
   final int? battery;
   final double? lat;
@@ -1744,7 +1730,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   const AnimalLocation(
       {required this.animalDataId,
       this.idAnimal,
-      this.dataUsage,
       this.temperature,
       this.battery,
       this.lat,
@@ -1759,9 +1744,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
     map['animal_data_id'] = Variable<String>(animalDataId);
     if (!nullToAbsent || idAnimal != null) {
       map['id_animal'] = Variable<String>(idAnimal);
-    }
-    if (!nullToAbsent || dataUsage != null) {
-      map['data_usage'] = Variable<int>(dataUsage);
     }
     if (!nullToAbsent || temperature != null) {
       map['temperature'] = Variable<double>(temperature);
@@ -1794,9 +1776,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
       idAnimal: idAnimal == null && nullToAbsent
           ? const Value.absent()
           : Value(idAnimal),
-      dataUsage: dataUsage == null && nullToAbsent
-          ? const Value.absent()
-          : Value(dataUsage),
       temperature: temperature == null && nullToAbsent
           ? const Value.absent()
           : Value(temperature),
@@ -1823,7 +1802,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
     return AnimalLocation(
       animalDataId: serializer.fromJson<String>(json['animalDataId']),
       idAnimal: serializer.fromJson<String?>(json['idAnimal']),
-      dataUsage: serializer.fromJson<int?>(json['dataUsage']),
       temperature: serializer.fromJson<double?>(json['temperature']),
       battery: serializer.fromJson<int?>(json['battery']),
       lat: serializer.fromJson<double?>(json['lat']),
@@ -1840,7 +1818,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
     return <String, dynamic>{
       'animalDataId': serializer.toJson<String>(animalDataId),
       'idAnimal': serializer.toJson<String?>(idAnimal),
-      'dataUsage': serializer.toJson<int?>(dataUsage),
       'temperature': serializer.toJson<double?>(temperature),
       'battery': serializer.toJson<int?>(battery),
       'lat': serializer.toJson<double?>(lat),
@@ -1855,7 +1832,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   AnimalLocation copyWith(
           {String? animalDataId,
           Value<String?> idAnimal = const Value.absent(),
-          Value<int?> dataUsage = const Value.absent(),
           Value<double?> temperature = const Value.absent(),
           Value<int?> battery = const Value.absent(),
           Value<double?> lat = const Value.absent(),
@@ -1867,7 +1843,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
       AnimalLocation(
         animalDataId: animalDataId ?? this.animalDataId,
         idAnimal: idAnimal.present ? idAnimal.value : this.idAnimal,
-        dataUsage: dataUsage.present ? dataUsage.value : this.dataUsage,
         temperature: temperature.present ? temperature.value : this.temperature,
         battery: battery.present ? battery.value : this.battery,
         lat: lat.present ? lat.value : this.lat,
@@ -1882,7 +1857,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
     return (StringBuffer('AnimalLocation(')
           ..write('animalDataId: $animalDataId, ')
           ..write('idAnimal: $idAnimal, ')
-          ..write('dataUsage: $dataUsage, ')
           ..write('temperature: $temperature, ')
           ..write('battery: $battery, ')
           ..write('lat: $lat, ')
@@ -1896,15 +1870,14 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   }
 
   @override
-  int get hashCode => Object.hash(animalDataId, idAnimal, dataUsage,
-      temperature, battery, lat, lon, elevation, accuracy, date, state);
+  int get hashCode => Object.hash(animalDataId, idAnimal, temperature, battery,
+      lat, lon, elevation, accuracy, date, state);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AnimalLocation &&
           other.animalDataId == this.animalDataId &&
           other.idAnimal == this.idAnimal &&
-          other.dataUsage == this.dataUsage &&
           other.temperature == this.temperature &&
           other.battery == this.battery &&
           other.lat == this.lat &&
@@ -1918,7 +1891,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
 class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   final Value<String> animalDataId;
   final Value<String?> idAnimal;
-  final Value<int?> dataUsage;
   final Value<double?> temperature;
   final Value<int?> battery;
   final Value<double?> lat;
@@ -1931,7 +1903,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   const AnimalLocationsCompanion({
     this.animalDataId = const Value.absent(),
     this.idAnimal = const Value.absent(),
-    this.dataUsage = const Value.absent(),
     this.temperature = const Value.absent(),
     this.battery = const Value.absent(),
     this.lat = const Value.absent(),
@@ -1945,7 +1916,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   AnimalLocationsCompanion.insert({
     required String animalDataId,
     this.idAnimal = const Value.absent(),
-    this.dataUsage = const Value.absent(),
     this.temperature = const Value.absent(),
     this.battery = const Value.absent(),
     this.lat = const Value.absent(),
@@ -1960,7 +1930,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   static Insertable<AnimalLocation> custom({
     Expression<String>? animalDataId,
     Expression<String>? idAnimal,
-    Expression<int>? dataUsage,
     Expression<double>? temperature,
     Expression<int>? battery,
     Expression<double>? lat,
@@ -1974,7 +1943,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     return RawValuesInsertable({
       if (animalDataId != null) 'animal_data_id': animalDataId,
       if (idAnimal != null) 'id_animal': idAnimal,
-      if (dataUsage != null) 'data_usage': dataUsage,
       if (temperature != null) 'temperature': temperature,
       if (battery != null) 'battery': battery,
       if (lat != null) 'lat': lat,
@@ -1990,7 +1958,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   AnimalLocationsCompanion copyWith(
       {Value<String>? animalDataId,
       Value<String?>? idAnimal,
-      Value<int?>? dataUsage,
       Value<double?>? temperature,
       Value<int?>? battery,
       Value<double?>? lat,
@@ -2003,7 +1970,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     return AnimalLocationsCompanion(
       animalDataId: animalDataId ?? this.animalDataId,
       idAnimal: idAnimal ?? this.idAnimal,
-      dataUsage: dataUsage ?? this.dataUsage,
       temperature: temperature ?? this.temperature,
       battery: battery ?? this.battery,
       lat: lat ?? this.lat,
@@ -2024,9 +1990,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     }
     if (idAnimal.present) {
       map['id_animal'] = Variable<String>(idAnimal.value);
-    }
-    if (dataUsage.present) {
-      map['data_usage'] = Variable<int>(dataUsage.value);
     }
     if (temperature.present) {
       map['temperature'] = Variable<double>(temperature.value);
@@ -2063,7 +2026,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     return (StringBuffer('AnimalLocationsCompanion(')
           ..write('animalDataId: $animalDataId, ')
           ..write('idAnimal: $idAnimal, ')
-          ..write('dataUsage: $dataUsage, ')
           ..write('temperature: $temperature, ')
           ..write('battery: $battery, ')
           ..write('lat: $lat, ')

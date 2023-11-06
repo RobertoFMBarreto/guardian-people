@@ -12,6 +12,7 @@ import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -98,16 +99,54 @@ class _ManageFencePageState extends State<ManageFencePage> {
         setState(() {
           _animals.addAll(selected);
         });
-        for (var animal in selected) {
-          await createFenceAnimal(
-            FenceAnimalsCompanion(
-              idFence: drift.Value(_fence.idFence),
-              idAnimal: animal.animal.idAnimal,
-            ),
-          );
-        }
+        _createFenceAnimals(selected).then(
+          (_) => FencingRequests.addAnimalFence(
+            fenceId: _fence.idFence,
+            animalIds: selected.map((e) => e.animal.idAnimal.value).toList(),
+            context: context,
+            onFailed: () {},
+          ),
+        );
       }
     });
+  }
+
+  Future<void> _createFenceAnimals(List<Animal> selected) async {
+    for (var animal in selected) {
+      await createFenceAnimal(
+        FenceAnimalsCompanion(
+          idFence: drift.Value(_fence.idFence),
+          idAnimal: animal.animal.idAnimal,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onRemoveDevice(int index) async {
+    //store the animal
+    final animal = _animals[index];
+    print(_animals);
+    print(index);
+    setState(() {
+      _animals.removeWhere(
+        (element) => element.animal.idAnimal == _animals[index].animal.idAnimal,
+      );
+    });
+    FencingRequests.removeAnimalFence(
+      animalIds: [animal.animal.idAnimal.value],
+      context: context,
+      fenceId: _fence.idFence,
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
+        setState(() {
+          _animals.add(animal);
+        });
+      },
+    ).then(
+      (_) => removeAnimalFence(_fence.idFence, animal.animal.idAnimal.value),
+    );
   }
 
   @override
@@ -224,22 +263,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                               itemBuilder: (context, index) => AnimalItemRemovable(
                                 key: Key(_animals[index].animal.idAnimal.value.toString()),
                                 animal: _animals[index],
-                                onRemoveDevice: () {
-                                  // TODO: On remove device
-                                  removeAnimalFence(
-                                          _fence.idFence, _animals[index].animal.idAnimal.value)
-                                      .then(
-                                    (_) {
-                                      setState(() {
-                                        _animals.removeWhere(
-                                          (element) =>
-                                              element.animal.idAnimal ==
-                                              _animals[index].animal.idAnimal,
-                                        );
-                                      });
-                                    },
-                                  );
-                                },
+                                onRemoveDevice: () => _onRemoveDevice(index),
                               ),
                             ),
                           ),

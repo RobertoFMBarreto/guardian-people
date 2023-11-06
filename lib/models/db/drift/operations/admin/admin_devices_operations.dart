@@ -34,7 +34,6 @@ Future<List<Animal>> getProducerAnimalsFiltered({
         GROUP BY deviceDt.${db.animalLocations.idAnimal}
       ) deviceData ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = deviceData.${db.animalLocations.idAnimal.name}
       WHERE (${db.animal.idUser.name} = ? AND
-        deviceData.${db.animalLocations.dataUsage.name} >= ? AND  deviceData.${db.animalLocations.dataUsage.name} <= ? AND
         deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
         deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
         deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
@@ -73,7 +72,6 @@ Future<List<Animal>> getProducerAnimalsFiltered({
             AnimalLocationsCompanion(
               accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
               battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
-              dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
                   deviceData.data[db.animalLocations.date.name] * 1000)),
               animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
