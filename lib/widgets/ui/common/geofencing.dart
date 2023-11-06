@@ -262,7 +262,7 @@ class _GeofencingState extends State<Geofencing> {
               (e) => FencePointsCompanion(
                 idFencePoint: drift.Value(const Uuid().v4()),
                 idFence: drift.Value(idFence),
-                isCenter: drift.Value(false),
+                isCenter: const drift.Value(false),
                 lat: drift.Value(e.latitude),
                 lon: drift.Value(e.longitude),
               ),
@@ -363,6 +363,7 @@ class _GeofencingState extends State<Geofencing> {
                             onTap: (_, ll) {
                               _polyEditor.add(_editingPolygon.points, ll);
                             },
+                            boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
                             center: widget.fence == null
                                 ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
                                 : getFenceCenter(_fencePoints),
@@ -425,12 +426,9 @@ class _GeofencingState extends State<Geofencing> {
                                     builder: (context) => CustomColorPickerInput(
                                       pickerColor: _fenceColor,
                                       onSave: (color) {
-                                        // TODO: Logic to update device color
                                         setState(() {
                                           _fenceColor = color;
                                         });
-
-                                        // TODO update fence
                                         _changePolygonColor();
                                       },
                                       hexColor: HexColor.toHex(color: _fenceColor),
