@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:drift/drift.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/requests/auth_requests.dart';
@@ -48,30 +51,52 @@ class FCMMessagingProvider {
     return '';
   }
 
-  static void _notificationClickHandler(
+  static Future<void> _notificationClickHandler(
     RemoteMessage message,
     GlobalKey<NavigatorState> navigatorKey,
-  ) {
+  ) async {
     if (kDebugMode) {
       print("--------------------Click Background--------------------");
+      print(message.data);
     }
     try {
       final payloadData = jsonDecode(message.data['data']);
+      print(payloadData['animal']);
+      print(payloadData['animal']['locationData']);
       if (message.data['channel'] == 'fencing' || message.data['channel'] == 'alerts') {
+        List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
+
         // Receber dados suficientes para construir um animal
-        // enviar o animal para a página
-        Animal animal = Animal(
-          animal: AnimalCompanion(
-            animalColor: Value(payloadData['animal']['animal_color']),
-            animalIdentification: Value(payloadData['animal']['animal_identification']),
-            animalName: Value(payloadData['animal']['animal_name']),
-            idAnimal: Value(payloadData['animal']['id_animal']),
-            idUser: Value(payloadData['animal']['id_user']),
-            isActive: Value(payloadData['animal']['animal_active']),
-          ),
-          data: [],
+        final animal = AnimalCompanion(
+          animalColor: Value(payloadData['animal']['animal_color']),
+          animalIdentification: Value(payloadData['animal']['animal_identification']),
+          animalName: Value(payloadData['animal']['animal_name']),
+          idAnimal: Value(payloadData['animal']['id_animal']),
+          idUser: Value(payloadData['animal']['id_user']),
+          isActive: Value(payloadData['animal']['animal_active']),
         );
-        navigatorKey.currentState!.pushNamed('/producer/device', arguments: {"animal": animal});
+        final location = AnimalLocationsCompanion(
+          accuracy: Value(double.tryParse(payloadData['animal']['locationData']['accuracy'])),
+          animalDataId: Value(payloadData['animal']['locationData']['id_data']),
+          battery: Value(int.parse(payloadData['animal']['locationData']['battery'])),
+          date: Value(DateTime.parse(payloadData['animal']['locationData']['date'])),
+          elevation: Value(double.tryParse(payloadData['animal']['locationData']['altitude'])),
+          idAnimal: Value(payloadData['animal']['id_animal']),
+          lat: Value(double.tryParse(payloadData['animal']['locationData']['lat'])),
+          lon: Value(double.tryParse(payloadData['animal']['locationData']['lon'])),
+          state: Value(states[Random().nextInt(states.length)]),
+          temperature:
+              Value(double.tryParse(payloadData['animal']['locationData']['skintemperature'])),
+        );
+        await createAnimal(animal);
+        await createAnimalData(location);
+        // enviar o animal para a página
+        navigatorKey.currentState!.pushNamed('/producer/device', arguments: {
+          "animal": Animal(
+            animal: animal,
+            data: [location],
+          )
+        });
       }
       if (kDebugMode) {}
     } catch (e) {}
