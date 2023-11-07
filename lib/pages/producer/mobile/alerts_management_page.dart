@@ -7,6 +7,7 @@ import 'package:guardian/models/db/drift/operations/alert_devices_operations.dar
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:get/get.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
@@ -65,17 +66,29 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         },
       );
     } else {
-      await getUserAlerts().then(
-        (allAlerts) {
-          if (mounted) {
-            setState(() {
-              _alerts = [];
-              _alerts.addAll(allAlerts);
-            });
-          }
-        },
+      await _getLocalUserAlerts().then(
+        (value) => AlertRequests.getUserAlertsFromApi(
+          context: context,
+          onDataGotten: (data) {
+            _getLocalUserAlerts();
+          },
+          onFailed: () {},
+        ),
       );
     }
+  }
+
+  Future<void> _getLocalUserAlerts() async {
+    await getUserAlerts().then(
+      (allAlerts) {
+        if (mounted) {
+          setState(() {
+            _alerts = [];
+            _alerts.addAll(allAlerts);
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -98,70 +111,69 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CustomCircularProgressIndicator();
               } else {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-                  child: Column(
-                    children: [
-                      if (hasConnection)
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton.icon(
-                                style: const ButtonStyle(
-                                    minimumSize: MaterialStatePropertyAll(Size(200, 100))),
-                                onPressed: () {
-                                  if (widget.isSelect) {
-                                    if (_selectedAlerts.length == _alerts.length) {
-                                      setState(() {
-                                        _selectedAlerts.removeRange(0, _selectedAlerts.length);
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _selectedAlerts.addAll(_alerts);
-                                      });
-                                    }
-                                  } else {
-                                    deleteAllAlerts();
+                return Column(
+                  children: [
+                    if (hasConnection)
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton.icon(
+                              style: const ButtonStyle(
+                                  minimumSize: MaterialStatePropertyAll(Size(200, 100))),
+                              onPressed: () {
+                                if (widget.isSelect) {
+                                  if (_selectedAlerts.length == _alerts.length) {
                                     setState(() {
-                                      _alerts = [];
+                                      _selectedAlerts.removeRange(0, _selectedAlerts.length);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _selectedAlerts.addAll(_alerts);
                                     });
                                   }
-                                },
-                                icon: Icon(
-                                  !widget.isSelect
-                                      ? Icons.delete_forever
-                                      : _selectedAlerts.length == _alerts.length
-                                          ? Icons.close
-                                          : Icons.done,
+                                } else {
+                                  deleteAllAlerts();
+                                  setState(() {
+                                    _alerts = [];
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                !widget.isSelect
+                                    ? Icons.delete_forever
+                                    : _selectedAlerts.length == _alerts.length
+                                        ? Icons.close
+                                        : Icons.done,
+                                color: widget.isSelect
+                                    ? theme.colorScheme.secondary
+                                    : theme.colorScheme.error,
+                              ),
+                              label: Text(
+                                widget.isSelect
+                                    ? localizations.select_all.capitalizeFirst!
+                                    : '${localizations.remove.capitalizeFirst!} ${localizations.all.capitalizeFirst!}',
+                                style: theme.textTheme.bodyMedium!.copyWith(
                                   color: widget.isSelect
                                       ? theme.colorScheme.secondary
                                       : theme.colorScheme.error,
-                                ),
-                                label: Text(
-                                  widget.isSelect
-                                      ? localizations.select_all.capitalizeFirst!
-                                      : localizations.remove_all.capitalizeFirst!,
-                                  style: theme.textTheme.bodyMedium!.copyWith(
-                                    color: widget.isSelect
-                                        ? theme.colorScheme.secondary
-                                        : theme.colorScheme.error,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      Expanded(
-                        flex: 12,
-                        child: _alerts.isEmpty
-                            ? Center(
-                                child: Text(localizations.no_alerts.capitalizeFirst!),
-                              )
-                            : ListView.builder(
+                      ),
+                    Expanded(
+                      flex: 12,
+                      child: _alerts.isEmpty
+                          ? Center(
+                              child: Text(localizations.no_alerts.capitalizeFirst!),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 40.0),
+                              child: ListView.builder(
                                 itemCount: _alerts.length,
-                                padding: const EdgeInsets.only(bottom: 20.0),
                                 itemBuilder: (context, index) => widget.isSelect
                                     ? SelectableAlertManagementItem(
                                         alert: _alerts[index],
@@ -210,9 +222,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                         ),
                                       ),
                               ),
-                      ),
-                    ],
-                  ),
+                            ),
+                    ),
+                  ],
                 );
               }
             }),

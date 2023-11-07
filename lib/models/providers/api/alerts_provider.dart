@@ -58,4 +58,25 @@ class AlertsProvider {
       return Response('error', 507);
     }
   }
+
+  /// Method that allows to get all user alerts
+  static Future<Response> getAllAlerts() async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/alerts');
+    try {
+      var response = await get(
+        url,
+        headers: headers,
+      );
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
 }

@@ -7,8 +7,15 @@ import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 
 /// Method that allows to read json [body] and parse to an [UserAlertCompanion] inserting it on the database in the process
-Future<void> alertsFromJson(String body) async {
+Future<void> alertsFromJson(dynamic body) async {
   final dt = jsonDecode(body);
+  for (var alert in dt) {
+    await alertFromJson(alert);
+  }
+}
+
+/// Method that allows to read json [dt] and parse to an [UserAlertCompanion] inserting it on the database in the process
+Future<void> alertFromJson(dynamic dt) async {
   await createAlert(UserAlertCompanion(
     comparisson: Value(dt['comparisson']),
     conditionCompTo: Value(dt['conditionCompTo'].toString()),
@@ -21,7 +28,13 @@ Future<void> alertsFromJson(String body) async {
   ));
   await animalsFromJson(jsonEncode(dt['alertAnimals']));
   for (var animal in dt['alertAnimals']) {
-    await addAlertAnimal(AlertAnimalsCompanion(
-        idAnimal: Value(animal['idAnimal']), idAlert: Value(dt['idUserAlert'])));
+    await addAlertAnimal(
+      AlertAnimalsCompanion(
+        idAnimal: Value(animal['idAnimal']),
+        idAlert: Value(
+          dt['idUserAlert'],
+        ),
+      ),
+    );
   }
 }

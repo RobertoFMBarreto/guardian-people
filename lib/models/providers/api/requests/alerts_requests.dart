@@ -74,7 +74,7 @@ class AlertRequests {
     AlertsProvider.createAlert(alert, animals).then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
-        alertsFromJson(response.body).then((_) => onDataGotten(response.body));
+        alertFromJson(response.body).then((_) => onDataGotten(response.body));
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
@@ -86,6 +86,56 @@ class AlertRequests {
                 onDataGotten: onDataGotten,
                 alert: alert,
                 animals: animals,
+                onFailed: onFailed,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        hasShownNoServerConnection().then((hasShown) async {
+          if (!hasShown) {
+            setShownNoServerConnection(true).then(
+              (_) =>
+                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+            );
+          }
+        });
+      }
+    });
+  }
+
+  /// Method that allows to get all user alerts from api
+  static Future<void> getUserAlertsFromApi(
+      {required BuildContext context,
+      required Function(String) onDataGotten,
+      required Function onFailed}) async {
+    AlertsProvider.getAllAlerts().then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+        alertsFromJson(response.body).then((_) => onDataGotten(response.body));
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => getUserAlertsFromApi(
+                context: context,
+                onDataGotten: onDataGotten,
                 onFailed: onFailed,
               ),
             );
