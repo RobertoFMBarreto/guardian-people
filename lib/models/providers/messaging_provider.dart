@@ -11,11 +11,9 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/requests/auth_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:path/path.dart';
 
 class FCMMessagingProvider {
   @pragma('vm:entry-point')
@@ -113,7 +111,6 @@ class FCMMessagingProvider {
         print("--------------------Click Background Terminated--------------------");
         _notificationClickHandler(initialMessage, navigatorKey);
       }
-      //final payloadData = jsonDecode(initialMessage.data['body']);
       if (kDebugMode) {}
     }
     const androidInitialize = AndroidInitializationSettings('icon_512');

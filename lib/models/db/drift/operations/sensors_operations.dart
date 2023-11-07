@@ -9,7 +9,8 @@ Future<SensorsCompanion> createSensor(SensorsCompanion sensor) async {
   return sensor;
 }
 
-Future<List<Sensor>> getAlertableSensors() async {
+/// Method that allows to get all alertable sensors
+Future<List<Sensor>> getLocalAlertableSensors() async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.sensors)..where((tbl) => tbl.canAlert.equals(true))).get();
   return data;

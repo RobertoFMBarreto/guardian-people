@@ -18,8 +18,10 @@ Future<void> animalsFromJson(String body) async {
       animalIdentification: drift.Value(dt['animalIdentification']),
       idAnimal: drift.Value(dt['idAnimal']),
     ));
-    for (var location in dt['locationData']) {
-      await animalDataFromJson(location, dt['idAnimal']);
+    if (dt['locationData'] != null) {
+      for (var location in dt['locationData']) {
+        await animalDataFromJson(location, dt['idAnimal']);
+      }
     }
   }
 }

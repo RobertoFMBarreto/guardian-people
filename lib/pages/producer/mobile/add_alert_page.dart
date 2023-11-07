@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
+import 'package:guardian/models/providers/api/parsers/alerts_parsers.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/helpers/key_value_pair.dart';
@@ -74,41 +76,29 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
-  /// Method that inserts the devices for the alert [idAlert]
-  Future<void> _addAlertDevices(String idAlert) async {
-    for (var device in _alertAnimals) {
-      await addAlertAnimal(
-        AlertAnimalsCompanion(
-          idAnimal: device.animal.idAnimal,
-          idAlert: drift.Value(idAlert),
-        ),
-      );
-    }
-  }
-
   /// Method that updates the [widget.alert] with the new data
   ///
   /// This method replaces all data even if it didn't change
   Future<void> _updateAlert() async {
-    await updateUserAlert(
-      widget.alert!.copyWith(
-        parameter: drift.Value(_alertParameter.toString()),
-        comparisson: drift.Value(_alertComparisson.toString()),
-        conditionCompTo: drift.Value(_comparissonValue),
-        hasNotification: drift.Value(_sendNotification),
-        durationSeconds: const drift.Value(0),
-        isStateParam: const drift.Value(false),
-        isTimed: const drift.Value(false),
-      ),
-    ).then(
-      (_) async => await removeAllAlertAnimals(widget.alert!.idAlert.value).then(
-        (_) async {
-          await _addAlertDevices(widget.alert!.idAlert.value).then(
-            (_) => Navigator.of(context).pop(),
-          );
-        },
-      ),
-    );
+    // await updateUserAlert(
+    //   widget.alert!.copyWith(
+    //     parameter: drift.Value(_alertParameter.toString()),
+    //     comparisson: drift.Value(_alertComparisson.toString()),
+    //     conditionCompTo: drift.Value(_comparissonValue),
+    //     hasNotification: drift.Value(_sendNotification),
+    //     durationSeconds: const drift.Value(0),
+    //     isStateParam: const drift.Value(false),
+    //     isTimed: const drift.Value(false),
+    //   ),
+    // ).then(
+    //   (_) async => await removeAllAlertAnimals(widget.alert!.idAlert.value).then(
+    //     (_) async {
+    //       await _addAlertDevices(widget.alert!.idAlert.value).then(
+    //         (_) => Navigator.of(context).pop(),
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
   /// Method that creates a new [UserAlertCompanion] and inserts on the database
@@ -124,13 +114,15 @@ class _AddAlertPageState extends State<AddAlertPage> {
       isStateParam: const drift.Value(false),
       isTimed: const drift.Value(false),
     );
-    await createAlert(
-      newAlert,
-    ).then((createdAlert) async {
-      await _addAlertDevices(idAlert).then(
-        (_) => Navigator.of(context).pop(),
-      );
-    });
+    await AlertRequests.addAlertToApi(
+      context: context,
+      alert: newAlert,
+      animals: _alertAnimals,
+      onDataGotten: (data) {
+        Navigator.of(context).pop();
+      },
+      onFailed: () {},
+    );
   }
 
   /// Method that removes the alert animal on [index] from the [_alertAnimals] list
@@ -178,16 +170,30 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   Future<void> _getAlertableSensors() async {
-    return await getAlertableSensors().then((allSensors) {
-      _availableSensors = [];
-      if (widget.alert == null) {
-        _alertParameter = allSensors[0];
-      } else {
-        _alertParameter =
-            allSensors.firstWhere((element) => element.idSensor == widget.alert!.parameter.value);
-      }
+    return await _getLocalAlertableSensors().then((_) {
+      AlertRequests.getAlertableSensorsFromApi(
+        context: context,
+        onDataGotten: (data) {
+          _getLocalAlertableSensors();
+        },
+        onFailed: () {},
+      );
+    });
+  }
 
-      _availableSensors.addAll(allSensors);
+  Future<void> _getLocalAlertableSensors() async {
+    return await getLocalAlertableSensors().then((allSensors) {
+      setState(() {
+        _availableSensors = [];
+        if (widget.alert == null) {
+          _alertParameter = allSensors[0];
+        } else {
+          _alertParameter =
+              allSensors.firstWhere((element) => element.idSensor == widget.alert!.parameter.value);
+        }
+
+        _availableSensors.addAll(allSensors);
+      });
     });
   }
 
