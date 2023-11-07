@@ -79,4 +79,25 @@ class AlertsProvider {
       return Response('error', 507);
     }
   }
+
+  /// Method that allows to get all user alerts
+  static Future<Response> deleteAlert(String alertId) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/alerts/$alertId');
+    try {
+      var response = await delete(
+        url,
+        headers: headers,
+      );
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
 }

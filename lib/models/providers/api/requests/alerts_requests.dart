@@ -74,7 +74,7 @@ class AlertRequests {
     AlertsProvider.createAlert(alert, animals).then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
-        alertFromJson(response.body).then((_) => onDataGotten(response.body));
+        alertFromJson(jsonDecode(response.body)).then((_) => onDataGotten(response.body));
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
@@ -135,6 +135,58 @@ class AlertRequests {
             await setSessionToken(newToken).then(
               (value) => getUserAlertsFromApi(
                 context: context,
+                onDataGotten: onDataGotten,
+                onFailed: onFailed,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              }
+            });
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        hasShownNoServerConnection().then((hasShown) async {
+          if (!hasShown) {
+            setShownNoServerConnection(true).then(
+              (_) =>
+                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+            );
+          }
+        });
+      }
+    });
+  }
+
+  /// Method that allows to delete user alert from api
+  static Future<void> deleteUserAlertFromApi(
+      {required BuildContext context,
+      required String alertId,
+      required Function(String) onDataGotten,
+      required Function onFailed}) async {
+    await AlertsProvider.deleteAlert(alertId).then((response) async {
+      if (response.statusCode == 200) {
+        setShownNoServerConnection(false);
+        onDataGotten(response.body);
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => deleteUserAlertFromApi(
+                context: context,
+                alertId: alertId,
                 onDataGotten: onDataGotten,
                 onFailed: onFailed,
               ),

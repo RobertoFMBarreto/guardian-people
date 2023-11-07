@@ -91,6 +91,36 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     );
   }
 
+  Future<void> _deleteAll() async {
+    deleteAllAlerts().then(
+      (value) => setState(() {
+        _alerts = [];
+      }),
+    );
+    _deleteAllFromApi().then((failedAlerts) {
+      if (failedAlerts.isNotEmpty) {
+        setState(() {
+          _alerts.addAll(failedAlerts);
+        });
+      }
+    });
+  }
+
+  Future<List<UserAlertCompanion>> _deleteAllFromApi() async {
+    List<UserAlertCompanion> failedAlerts = [];
+    for (UserAlertCompanion alert in _alerts) {
+      await AlertRequests.deleteUserAlertFromApi(
+        context: context,
+        alertId: alert.idAlert.value,
+        onDataGotten: (data) {},
+        onFailed: () {
+          failedAlerts.add(alert);
+        },
+      );
+    }
+    return failedAlerts;
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -113,7 +143,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
               } else {
                 return Column(
                   children: [
-                    if (hasConnection)
+                    if (hasConnection && _alerts.isNotEmpty)
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -133,10 +163,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                     });
                                   }
                                 } else {
-                                  deleteAllAlerts();
-                                  setState(() {
-                                    _alerts = [];
-                                  });
+                                  _deleteAll();
                                 }
                               },
                               icon: Icon(
