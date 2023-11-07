@@ -15,7 +15,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences/');
     try {
       final body = jsonEncode({
         "idFence": fence.idFence.value,
@@ -48,7 +48,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/$idFence');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences/$idFence');
     try {
       var response = await delete(url, headers: headers);
       return response;
@@ -66,7 +66,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences');
     try {
       var response = await get(url, headers: headers);
       return response;
@@ -85,7 +85,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences/');
     try {
       final body = jsonEncode({
         "idFence": fence.idFence.value,
@@ -118,7 +118,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/$fenceId/animals');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences/$fenceId/animals');
     try {
       var response = await post(url, headers: headers, body: jsonEncode(animalIds));
       return response;
@@ -136,7 +136,7 @@ class FencingProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/fences/$fenceId/animals');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/fences/$fenceId/animals');
     try {
       var response = await delete(url, headers: headers, body: jsonEncode(animalIds));
       return response;

@@ -121,19 +121,21 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
       );
     } else {
       // get last location
-      _getLastLocation().then(
-        (_) => setState(() {
-          _startDate =
-              _animalData.firstWhereOrNull((element) => element.lat.value != null)?.date.value ??
-                  DateTime.now();
-        }),
-      );
+      if (widget.animal.data.isEmpty) {
+        _getLastLocation().then(
+          (_) => setState(() {
+            _startDate =
+                _animalData.firstWhereOrNull((element) => element.lat.value != null)?.date.value ??
+                    DateTime.now();
+          }),
+        );
 
-      AnimalRequests.getAnimalsFromApiWithLastLocation(
-          context: context,
-          onDataGotten: () {
-            _getLastLocation();
-          });
+        AnimalRequests.getAnimalsFromApiWithLastLocation(
+            context: context,
+            onDataGotten: () {
+              _getLastLocation();
+            });
+      }
     }
     if (_endDate == null) {
       // make realtime request

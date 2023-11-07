@@ -15,7 +15,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals');
     try {
       var response = await get(
         url,
@@ -36,7 +36,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/location');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/location');
     try {
       var response = await get(
         url,
@@ -58,7 +58,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/$idAnimal');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/$idAnimal');
     try {
       var response = await post(url,
           headers: headers,
@@ -81,7 +81,7 @@ class AnimalProvider {
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
     var url =
-        Uri.http(kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/start');
+        Uri.https(kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/start');
     try {
       var response = await get(url, headers: headers);
 
@@ -100,8 +100,8 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url =
-        Uri.http(kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/cancel');
+    var url = Uri.https(
+        kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/cancel');
     try {
       var response = await get(url, headers: headers);
 
@@ -119,7 +119,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/animals/');
     try {
       var response = await put(
         url,
