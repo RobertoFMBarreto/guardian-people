@@ -199,13 +199,12 @@ class FCMMessagingProvider {
       AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
         'Guardian',
         'Guardian',
-        groupKey: 'com.example.guardian',
+        groupKey: 'com.linovt.Guardian',
         importance: Importance.high,
         // styleInformation: bigTextStyleInformation,
         styleInformation: const DefaultStyleInformation(true, true),
         color: gdSecondaryColor,
         colorized: true,
-
         priority: Priority.high,
         playSound: true,
         icon: const AndroidInitializationSettings('app_icon').defaultIcon,

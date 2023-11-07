@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -45,17 +48,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAR7i4WPegu51U5tZH_Jnv0zOFKQeLrCNs',
-    appId: '1:127822371110:web:e6f1d3427e1f89887d49e7',
+    appId: '1:127822371110:web:b92bdbe997675ffa7d49e7',
     messagingSenderId: '127822371110',
     projectId: 'guardian-9d8c5',
     authDomain: 'guardian-9d8c5.firebaseapp.com',
     storageBucket: 'guardian-9d8c5.appspot.com',
-    measurementId: 'G-3057P1HE3V',
+    measurementId: 'G-G03KS4P23G',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDlergplLL5cRz8EnfeBSKjwBw5_in4V2Q',
-    appId: '1:127822371110:android:f3b71fd593d5cb217d49e7',
+    appId: '1:127822371110:android:7de5a87f8f93cc717d49e7',
     messagingSenderId: '127822371110',
     projectId: 'guardian-9d8c5',
     storageBucket: 'guardian-9d8c5.appspot.com',
@@ -63,19 +66,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBJLxpDM3fB2mRRRKuA4MqlV3ZYFjoBCSI',
-    appId: '1:127822371110:ios:835cf8dfcc1609597d49e7',
+    appId: '1:127822371110:ios:9cdb778b795b78807d49e7',
     messagingSenderId: '127822371110',
     projectId: 'guardian-9d8c5',
     storageBucket: 'guardian-9d8c5.appspot.com',
-    iosBundleId: 'com.example.augustTesting',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBJLxpDM3fB2mRRRKuA4MqlV3ZYFjoBCSI',
-    appId: '1:127822371110:ios:4b9318bb886068477d49e7',
-    messagingSenderId: '127822371110',
-    projectId: 'guardian-9d8c5',
-    storageBucket: 'guardian-9d8c5.appspot.com',
-    iosBundleId: 'com.example.augustTesting.RunnerTests',
+    iosBundleId: 'com.linovt.Guardian',
   );
 }

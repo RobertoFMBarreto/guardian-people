@@ -1,4 +1,4 @@
-package com.example.guardian
+package com.linovt.Guardian
 
 import io.flutter.embedding.android.FlutterActivity
 

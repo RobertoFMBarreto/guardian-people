@@ -9,7 +9,7 @@ TileLayer getTileLayer(BuildContext context, {Key? key}) {
   return TileLayer(
     key: key,
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    userAgentPackageName: 'com.linovt.guardian',
+    userAgentPackageName: 'com.linovt.Guardian',
     //tileProvider: FMTC.instance('guardian').getTileProvider(),
     tileDisplay: const TileDisplay.fadeIn(),
   );
