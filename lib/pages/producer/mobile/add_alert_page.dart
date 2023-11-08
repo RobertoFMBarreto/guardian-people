@@ -80,25 +80,25 @@ class _AddAlertPageState extends State<AddAlertPage> {
   ///
   /// This method replaces all data even if it didn't change
   Future<void> _updateAlert() async {
-    // await updateUserAlert(
-    //   widget.alert!.copyWith(
-    //     parameter: drift.Value(_alertParameter.toString()),
-    //     comparisson: drift.Value(_alertComparisson.toString()),
-    //     conditionCompTo: drift.Value(_comparissonValue),
-    //     hasNotification: drift.Value(_sendNotification),
-    //     durationSeconds: const drift.Value(0),
-    //     isStateParam: const drift.Value(false),
-    //     isTimed: const drift.Value(false),
-    //   ),
-    // ).then(
-    //   (_) async => await removeAllAlertAnimals(widget.alert!.idAlert.value).then(
-    //     (_) async {
-    //       await _addAlertDevices(widget.alert!.idAlert.value).then(
-    //         (_) => Navigator.of(context).pop(),
-    //       );
-    //     },
-    //   ),
-    // );
+    final updatedAlert = widget.alert!.copyWith(
+      parameter: drift.Value(_alertParameter.idSensor),
+      comparisson: drift.Value(_alertComparisson.toOperator()),
+      conditionCompTo: drift.Value(_comparissonValue),
+      hasNotification: drift.Value(_sendNotification),
+      durationSeconds: const drift.Value(0),
+      isStateParam: const drift.Value(false),
+      isTimed: const drift.Value(false),
+    );
+
+    AlertRequests.updateAlertToApi(
+      context: context,
+      alert: updatedAlert,
+      animals: _alertAnimals,
+      onDataGotten: (data) {
+        Navigator.of(context).pop();
+      },
+      onFailed: () {},
+    );
   }
 
   /// Method that creates a new [UserAlertCompanion] and inserts on the database
@@ -183,17 +183,19 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   Future<void> _getLocalAlertableSensors() async {
     return await getLocalAlertableSensors().then((allSensors) {
-      setState(() {
-        _availableSensors = [];
-        if (widget.alert == null) {
-          _alertParameter = allSensors[0];
-        } else {
-          _alertParameter =
-              allSensors.firstWhere((element) => element.idSensor == widget.alert!.parameter.value);
-        }
+      if (allSensors.isNotEmpty) {
+        setState(() {
+          _availableSensors = [];
+          if (widget.alert == null) {
+            _alertParameter = allSensors[0];
+          } else {
+            _alertParameter = allSensors
+                .firstWhere((element) => element.idSensor == widget.alert!.parameter.value);
+          }
 
-        _availableSensors.addAll(allSensors);
-      });
+          _availableSensors.addAll(allSensors);
+        });
+      }
     });
   }
 

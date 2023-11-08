@@ -59,6 +59,46 @@ class AlertsProvider {
     }
   }
 
+  /// Method for updating an alert
+  static Future<Response> updateAlert(UserAlertCompanion alert, List<Animal> animals) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/alerts/${alert.idAlert.value}');
+    try {
+      print(alert.idAlert.value);
+      print(jsonEncode({
+        "idConditionParameter": alert.parameter.value,
+        "comparisson": alert.comparisson.value,
+        "conditionCompTo": alert.conditionCompTo.value,
+        "durationSeconds": alert.durationSeconds.value,
+        "sendNotification": alert.hasNotification.value,
+        "isTimed": alert.isTimed.value,
+        "isStateParam": alert.isStateParam.value,
+        "alertAnimals": animals.map((e) => e.animal.idAnimal.value).toList()
+      }));
+      var response = await put(url,
+          headers: headers,
+          body: jsonEncode({
+            "idConditionParameter": alert.parameter.value,
+            "comparisson": alert.comparisson.value,
+            "conditionCompTo": alert.conditionCompTo.value,
+            "durationSeconds": alert.durationSeconds.value,
+            "sendNotification": alert.hasNotification.value,
+            "isTimed": alert.isTimed.value,
+            "isStateParam": alert.isStateParam.value,
+            "alertAnimals": animals.map((e) => e.animal.idAnimal.value).toList()
+          }));
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
   /// Method that allows to get all user alerts
   static Future<Response> getAllAlerts() async {
     String? token = await getToken();
