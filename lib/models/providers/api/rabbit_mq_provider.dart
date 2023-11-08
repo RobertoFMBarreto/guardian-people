@@ -2,6 +2,7 @@ import 'package:dart_amqp/dart_amqp.dart';
 import 'package:flutter/foundation.dart';
 import 'package:guardian/settings/app_settings.dart';
 
+/// This class is the provider of RabbitMQ
 class RabbitMQProvider {
   late Consumer consumer;
 

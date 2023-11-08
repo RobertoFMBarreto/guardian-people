@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
+import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:get/get.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
+import 'package:guardian/models/providers/api/requests/notifications_requests.dart';
 
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
@@ -37,11 +40,28 @@ class _AlertsPageState extends State<AlertsPage> {
     await _loadAlerts();
   }
 
-  /// Method that loads all alert notifications in to the [_alerts] list
+  /// Method that loads all alert notifications first locally and then on api
   ///
   /// Resets the list to prevent duplicates
   Future<void> _loadAlerts() async {
-    getAllNotifications().then(
+    _loadLocalAlerts().then(
+      (_) {
+        NotificationsRequests.getUserNotificationsFromApi(
+          context: context,
+          onDataGotten: (data) {
+            _loadLocalAlerts();
+          },
+          onFailed: () {},
+        );
+      },
+    );
+  }
+
+  /// Method that loads all local alert notifications in to the [_alerts] list
+  ///
+  /// Resets the list to prevent duplicates
+  Future<void> _loadLocalAlerts() async {
+    await getAllNotifications().then(
       (allAlerts) {
         if (mounted) {
           setState(() {
@@ -49,6 +69,45 @@ class _AlertsPageState extends State<AlertsPage> {
             _alerts.addAll(allAlerts);
           });
         }
+      },
+    );
+  }
+
+  /// Method that deletes all notifications from api
+  Future<void> _deleteAllNotifications() async {
+    List<AlertNotification> copyAlerts = [];
+    copyAlerts.addAll(_alerts);
+    await NotificationsRequests.deleteAllNotificationsFromApi(
+      context: context,
+      onDataGotten: (data) {
+        removeAllNotifications().then((_) => _loadLocalAlerts());
+      },
+      onFailed: () {
+        setState(() {
+          _alerts.addAll(copyAlerts);
+        });
+      },
+    );
+  }
+
+  /// Method that deletes all notifications from api
+  Future<void> _deleteNotification(int index) async {
+    final deletedAlert = _alerts[index];
+    _alerts.removeAt(index);
+    await NotificationsRequests.deleteNotificationFromApi(
+      context: context,
+      idNotification: deletedAlert.alertNotificationId,
+      onDataGotten: (data) {
+        removeNotification(
+          deletedAlert.alertNotificationId,
+        ).then(
+          (_) async => await _loadAlerts(),
+        );
+      },
+      onFailed: () {
+        setState(() {
+          _alerts.add(deletedAlert);
+        });
       },
     );
   }
@@ -110,9 +169,7 @@ class _AlertsPageState extends State<AlertsPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
-                              onPressed: () {
-                                //removeAllNotifications().then((_) => loadAlerts());
-                              },
+                              onPressed: _deleteAllNotifications,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -142,12 +199,8 @@ class _AlertsPageState extends State<AlertsPage> {
                                   itemCount: _alerts.length,
                                   itemBuilder: (context, index) => AlertItem(
                                     alertNotification: _alerts[index],
-                                    onRemove: () async {
-                                      await removeNotification(
-                                        _alerts[index].alertNotificationId,
-                                      ).then(
-                                        (_) async => await _loadAlerts(),
-                                      );
+                                    onRemove: () {
+                                      _deleteNotification(index);
                                     },
                                   ),
                                 ),

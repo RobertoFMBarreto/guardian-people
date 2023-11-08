@@ -94,11 +94,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
 
   /// Method that allows to delete all user alerts deleting first locally and then from the api
   Future<void> _deleteAll() async {
-    deleteAllAlerts().then(
-      (value) => setState(() {
-        _alerts = [];
-      }),
-    );
+    setState(() {
+      _alerts = [];
+    });
     _deleteAllFromApi().then((failedAlerts) {
       if (failedAlerts.isNotEmpty) {
         setState(() {
@@ -120,7 +118,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         context: context,
         alertId: alert.idAlert.value,
         onDataGotten: (data) {
-          removeAllAlertAnimals(alert.idAlert.value);
+          deleteAlert(alert.idAlert.value).then(
+            (value) => removeAllAlertAnimals(alert.idAlert.value),
+          );
         },
         onFailed: () {
           failedAlerts.add(alert);
@@ -137,7 +137,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   /// In case everything goes wright the animals of alert are removed
   Future<void> _deleteAlert(int index) async {
     final alert = _alerts[index];
-    deleteAlert(alert.idAlert.value);
+
     setState(() {
       _alerts.removeAt(index);
     });
@@ -145,6 +145,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
       context: context,
       alertId: alert.idAlert.value,
       onDataGotten: (data) {
+        deleteAlert(alert.idAlert.value);
         removeAllAlertAnimals(alert.idAlert.value);
       },
       onFailed: () {

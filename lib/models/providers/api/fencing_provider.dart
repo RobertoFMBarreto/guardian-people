@@ -6,6 +6,7 @@ import 'package:guardian/settings/app_settings.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
 
+/// This class is the provider of fencing from the guardian api
 class FencingProvider {
   /// Method that allows to send the new fence to the api
   static Future<Response> createFence(
