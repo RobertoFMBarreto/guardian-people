@@ -78,6 +78,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     }
   }
 
+  /// Method that allows to get all local user alerts
   Future<void> _getLocalUserAlerts() async {
     await getUserAlerts().then(
       (allAlerts) {
@@ -91,6 +92,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     );
   }
 
+  /// Method that allows to delete all user alerts deleting first locally and then from the api
   Future<void> _deleteAll() async {
     deleteAllAlerts().then(
       (value) => setState(() {
@@ -106,19 +108,51 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
     });
   }
 
+  /// Method that allows to delete all alerts from api
+  ///
+  /// In case of fail the alert is added again
+  ///
+  /// In case everything goes wright the animals of alert are removed
   Future<List<UserAlertCompanion>> _deleteAllFromApi() async {
     List<UserAlertCompanion> failedAlerts = [];
     for (UserAlertCompanion alert in _alerts) {
       await AlertRequests.deleteUserAlertFromApi(
         context: context,
         alertId: alert.idAlert.value,
-        onDataGotten: (data) {},
+        onDataGotten: (data) {
+          removeAllAlertAnimals(alert.idAlert.value);
+        },
         onFailed: () {
           failedAlerts.add(alert);
         },
       );
     }
     return failedAlerts;
+  }
+
+  /// Method that allows to delete an alert first locally and then from api
+  ///
+  /// In case of fail the alert is added again
+  ///
+  /// In case everything goes wright the animals of alert are removed
+  Future<void> _deleteAlert(int index) async {
+    final alert = _alerts[index];
+    deleteAlert(alert.idAlert.value);
+    setState(() {
+      _alerts.removeAt(index);
+    });
+    await AlertRequests.deleteUserAlertFromApi(
+      context: context,
+      alertId: alert.idAlert.value,
+      onDataGotten: (data) {
+        removeAllAlertAnimals(alert.idAlert.value);
+      },
+      onFailed: () {
+        setState(() {
+          _alerts.add(alert);
+        });
+      },
+    );
   }
 
   @override
@@ -220,6 +254,7 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                     : Padding(
                                         padding: const EdgeInsets.only(bottom: 8.0),
                                         child: AlertManagementItem(
+                                          key: Key(_alerts[index].idAlert.value.toString()),
                                           onTap: () {
                                             if (hasConnection) {
                                               Future.delayed(const Duration(milliseconds: 300))
@@ -239,12 +274,8 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                             }
                                           },
                                           alert: _alerts[index],
-                                          onDelete: (alert) {
-                                            // TODO: Remove code
-                                            deleteAlert(_alerts[index].idAlert.value);
-                                            setState(() {
-                                              _alerts.removeAt(index);
-                                            });
+                                          onDelete: (_) {
+                                            _deleteAlert(index);
                                           },
                                         ),
                                       ),

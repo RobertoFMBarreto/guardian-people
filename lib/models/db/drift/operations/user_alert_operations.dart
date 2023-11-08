@@ -23,7 +23,6 @@ Future<UserAlertCompanion> updateUserAlert(UserAlertCompanion alert) async {
 /// This process removes all associated animals from the alert
 Future<void> deleteAlert(String idAlert) async {
   final db = Get.find<GuardianDb>();
-  await removeAllAlertAnimals(idAlert);
   (db.delete(db.userAlert)..where((tbl) => tbl.idAlert.equals(idAlert))).go();
 }
 

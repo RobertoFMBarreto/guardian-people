@@ -16,7 +16,7 @@ class AlertsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/sensors');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/sensors');
     try {
       var response = await get(
         url,
@@ -37,7 +37,7 @@ class AlertsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/alerts');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/alerts');
     try {
       var response = await post(url,
           headers: headers,
@@ -66,7 +66,7 @@ class AlertsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/alerts');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/alerts');
     try {
       var response = await get(
         url,
@@ -87,7 +87,7 @@ class AlertsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/alerts/$alertId');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/alerts/$alertId');
     try {
       var response = await delete(
         url,

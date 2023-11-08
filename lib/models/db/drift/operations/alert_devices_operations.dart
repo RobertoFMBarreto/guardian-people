@@ -55,7 +55,7 @@ Future<List<Animal>> getAlertAnimals(String idAlert) async {
         ${db.animalLocations.state.name},
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.alertAnimals.actualTableName}
-      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.userAlert.actualTableName}.${db.alertAnimals.idAnimal.name}
+      LEFT JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAnimal.name}
       LEFT JOIN (
         SELECT * FROM 
           (

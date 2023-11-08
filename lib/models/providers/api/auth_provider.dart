@@ -11,7 +11,7 @@ class AuthProvider {
   /// Method for login based on [email] and [password]
   static Future<Response> login(String email, String password) async {
     Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/login');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/login');
 
     Map<String, dynamic> body = {"email": email, "password": password};
     try {
@@ -31,7 +31,7 @@ class AuthProvider {
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/refresh-token');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/refresh-token');
     try {
       var response = await post(url, headers: headers, body: jsonEncode({"refreshToken": token}));
 
@@ -50,7 +50,7 @@ class AuthProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/user/device/token');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/user/device/token');
     try {
       var response =
           await post(url, headers: headers, body: jsonEncode({"deviceToken": deviceToken}));
