@@ -73,7 +73,6 @@ class _DevicePageState extends State<DevicePage> {
                     size: 30,
                   ),
                   onPressed: () {
-                    //TODO: Code for settings of device
                     Navigator.of(context)
                         .pushNamed(
                       '/producer/device/settings',
@@ -194,7 +193,6 @@ class _DevicePageState extends State<DevicePage> {
                             size: 30,
                           ),
                           onPressed: () {
-                            //TODO: Code for settings of device
                             Navigator.of(context)
                                 .pushNamed(
                               '/producer/device/settings',

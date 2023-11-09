@@ -31,11 +31,6 @@ class _WelcomePageState extends State<WelcomePage> {
         if (idUser != null) {
           // get user data
           getUser(idUser).then((user) {
-            // TODO: To Remove it
-            // loadUserDevices(idUser);
-            //loadUserFences(idUser);
-            // loadAlerts();
-
             // if there is stored data use it for getting his role
             if (user != null) {
               Navigator.pushReplacement(

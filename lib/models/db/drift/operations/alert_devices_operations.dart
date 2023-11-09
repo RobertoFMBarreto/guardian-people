@@ -122,7 +122,7 @@ Future<List<UserAlertCompanion>> getAnimalAlerts(String idAnimal) async {
         comparisson: drift.Value(e.readTable(db.userAlert).comparisson),
         hasNotification: drift.Value(e.readTable(db.userAlert).hasNotification),
         parameter: drift.Value(e.readTable(db.userAlert).parameter),
-        conditionCompTo: drift.Value(e.readTable(db.userAlert).parameter),
+        conditionCompTo: drift.Value(e.readTable(db.userAlert).conditionCompTo),
         durationSeconds: drift.Value(e.readTable(db.userAlert).durationSeconds),
         isStateParam: drift.Value(e.readTable(db.userAlert).isStateParam),
         isTimed: drift.Value(e.readTable(db.userAlert).isTimed),
@@ -136,7 +136,6 @@ Future<List<UserAlertCompanion>> getAnimalAlerts(String idAnimal) async {
 /// Method to get all alerts that aren't associated with the device [idDevice] as a [List<UserAlertCompanion>]
 Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) async {
   final db = Get.find<GuardianDb>();
-  print('Here');
   final data = await db.customSelect(
     '''
       SELECT 

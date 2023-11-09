@@ -179,7 +179,6 @@ class _FencesPageState extends State<FencesPage> {
                                             color: HexColor(_fences[index].color),
                                             isSelected: _fences[index] == _selectedFence,
                                             onSelected: () {
-                                              // TODO: select code
                                               if (_selectedFence == _fences[index]) {
                                                 setState(() {
                                                   _selectedFence = null;

@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/settings/colors.dart';
@@ -109,9 +110,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     ).then((gottenAlerts) async {
       if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
         final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
-        setState(() {
-          _alerts.addAll(selectedAlerts);
-        });
+
         for (var selectedAlert in selectedAlerts) {
           await addAlertAnimal(
             AlertAnimalsCompanion(
@@ -119,8 +118,33 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
               idAlert: selectedAlert.idAlert,
             ),
           );
+          setState(() {
+            _alerts.add(selectedAlert);
+          });
         }
-        // TODO: add service call
+        for (var selectedAlert in selectedAlerts) {
+          getAlertAnimals(selectedAlert.idAlert.value).then(
+            (animals) => AlertRequests.getUserAlertsFromApi(
+              context: context,
+              onDataGotten: (data) {
+                AlertRequests.updateAlertToApi(
+                  context: context,
+                  alert: selectedAlert,
+                  animals: [...animals],
+                  onDataGotten: (data) {},
+                  onFailed: () {
+                    setState(() {
+                      _alerts.removeWhere(
+                        (a) => a.idAlert == selectedAlert.idAlert,
+                      );
+                    });
+                  },
+                );
+              },
+              onFailed: () {},
+            ),
+          );
+        }
       }
     });
   }
@@ -185,6 +209,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
     );
   }
 
+  /// Method that allows to remove a fence
   Future<void> _removeFence(int index) async {
     final fence = _fences[index];
     setState(() {
@@ -207,6 +232,41 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
             .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
       },
     ).then((value) => removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value));
+  }
+
+  /// Method that allows to delete an alert from device
+  Future<void> _deleteAlertFromDevice(UserAlertCompanion alert) async {
+    final removedAlert = alert;
+    await removeAlertAnimal(alert.idAlert.value, widget.animal.animal.idAnimal.value);
+    setState(() {
+      _alerts.removeWhere((element) => element.idAlert == alert.idAlert);
+    });
+
+    getAlertAnimals(alert.idAlert.value).then(
+      (animals) => AlertRequests.getUserAlertsFromApi(
+        context: context,
+        onDataGotten: (data) {
+          AlertRequests.updateAlertToApi(
+            context: context,
+            alert: alert,
+            animals: [...animals],
+            onDataGotten: (data) {},
+            onFailed: () {
+              addAlertAnimal(
+                AlertAnimalsCompanion(
+                  idAlert: alert.idAlert,
+                  idAnimal: widget.animal.animal.idAnimal,
+                ),
+              );
+              setState(() {
+                _alerts.add(removedAlert);
+              });
+            },
+          );
+        },
+        onFailed: () {},
+      ),
+    );
   }
 
   @override
@@ -276,15 +336,7 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                                   child: AlertManagementItem(
                                     alert: _alerts[index],
                                     onTap: () {},
-                                    onDelete: (alert) {
-                                      // TODO: Delete code for alert
-                                      removeAlertAnimal(
-                                          alert.idAlert.value, widget.animal.animal.idAnimal.value);
-                                      setState(() {
-                                        _alerts.removeWhere(
-                                            (element) => element.idAlert == alert.idAlert);
-                                      });
-                                    },
+                                    onDelete: _deleteAlertFromDevice,
                                   ),
                                 ),
                               ),

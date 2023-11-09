@@ -125,8 +125,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
   Future<void> _onRemoveDevice(int index) async {
     //store the animal
     final animal = _animals[index];
-    print(_animals);
-    print(index);
     setState(() {
       _animals.removeWhere(
         (element) => element.animal.idAnimal == _animals[index].animal.idAnimal,
@@ -166,7 +164,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 if (hasConnection)
                   TextButton(
                     onPressed: () {
-                      // TODO call service to delete fence
                       removeFence(_fence.idFence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(

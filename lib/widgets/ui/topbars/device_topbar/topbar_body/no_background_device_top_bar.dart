@@ -51,7 +51,6 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
   }
 
   Future<void> _onColorUpdate(Color color) async {
-    // TODO: Logic to update device color
     setState(() {
       animalColor = color;
       widget.onColorChanged(HexColor.toHex(color: animalColor));

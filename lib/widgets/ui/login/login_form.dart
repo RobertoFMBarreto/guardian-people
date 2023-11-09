@@ -81,37 +81,6 @@ class _LoginFormState extends State<LoginForm> {
             Navigator.pop(context);
           }
         });
-
-        // TODO: Change to services
-        // loadUsers().then(
-        //   (allUsers) async {
-        //     List<UserCompanion> users = allUsers;
-        //     List<UserCompanion> user = users
-        //         .where((element) => element.email.value == _email && _password == 'teste123@')
-        //         .toList();
-        //     if (user.isEmpty) {
-        //       Navigator.of(context).pop();
-        //       setState(() {
-        //         errorString = localizations.login_error.capitalizeFirst!;
-        //       });
-        //     } else {
-        //       _loadDataRemoveThisLater(users, user.first).then((_) {
-        //         // pop loading dialog
-        //         Navigator.of(context).pop();
-        //         // store session data
-        //         setUserSession(user.first.idUser.value, '').then((_) {
-        //           // store user profile
-        //           createUser(user.first).then((_) {
-        //             // send to admin or producer
-        //             Navigator.of(context).popAndPushNamed(
-        //               user.first.isAdmin.value ? '/admin' : '/producer',
-        //             );
-        //           });
-        //         });
-        //       });
-        //     }
-        //   },
-        // );
       } else {
         setState(() {
           errorString = localizations.no_wifi.capitalizeFirst!;

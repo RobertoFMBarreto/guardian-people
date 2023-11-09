@@ -175,7 +175,6 @@ class _ProducerHomeState extends State<ProducerHome> {
   Future<void> _loadLocalAlertNotifications() async {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
-      print(allAlerts);
       setState(() => _alertNotifications.addAll(allAlerts));
     });
   }
@@ -185,7 +184,6 @@ class _ProducerHomeState extends State<ProducerHome> {
     NotificationsRequests.getUserNotificationsFromApi(
       context: context,
       onDataGotten: (data) {
-        print('Data: $data');
         _loadLocalAlertNotifications();
       },
       onFailed: () {},
