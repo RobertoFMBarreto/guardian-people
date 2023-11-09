@@ -136,23 +136,19 @@ Future<List<UserAlertCompanion>> getAnimalAlerts(String idAnimal) async {
 /// Method to get all alerts that aren't associated with the device [idDevice] as a [List<UserAlertCompanion>]
 Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) async {
   final db = Get.find<GuardianDb>();
-  final data = await (db.customSelect('''
+  print('Here');
+  final data = await db.customSelect(
+    '''
       SELECT 
-        ${db.userAlert.actualTableName}.${db.userAlert.idAlert.name},
-        ${db.userAlert.comparisson.name},
-        ${db.userAlert.parameter.name},
-        ${db.userAlert.hasNotification.name},
-        ${db.userAlert.conditionCompTo.name},
-        ${db.userAlert.durationSeconds.name},
-        ${db.userAlert.isStateParam.name},
-        ${db.userAlert.isTimed.name},
+        *
       FROM ${db.userAlert.actualTableName}
       WHERE ${db.userAlert.idAlert.name} NOT IN 
         (SELECT ${db.userAlert.idAlert.name} FROM ${db.alertAnimals.actualTableName} WHERE ${db.alertAnimals.idAnimal.name} = ?)
-''', variables: [drift.Variable(idDevice)])).get();
+      ''',
+    variables: [drift.Variable(idDevice)],
+  ).get();
 
   List<UserAlertCompanion> alerts = [];
-
   alerts.addAll(
     data.map(
       (e) => UserAlertCompanion(
@@ -162,8 +158,8 @@ Future<List<UserAlertCompanion>> getAnimalUnselectedAlerts(String idDevice) asyn
         parameter: drift.Value(e.data[db.userAlert.parameter.name]),
         conditionCompTo: drift.Value(e.data[db.userAlert.conditionCompTo.name]),
         durationSeconds: drift.Value(e.data[db.userAlert.durationSeconds.name]),
-        isStateParam: drift.Value(e.data[db.userAlert.isStateParam.name]),
-        isTimed: drift.Value(e.data[db.userAlert.isTimed.name]),
+        isStateParam: drift.Value(e.data[db.userAlert.isStateParam.name] == 1),
+        isTimed: drift.Value(e.data[db.userAlert.isTimed.name] == 1),
       ),
     ),
   );

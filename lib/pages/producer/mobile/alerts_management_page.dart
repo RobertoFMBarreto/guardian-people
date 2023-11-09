@@ -55,15 +55,14 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
   /// Resets the list to prevent duplicates
   Future<void> _loadAlerts() async {
     if (widget.isSelect) {
-      await getAnimalUnselectedAlerts(widget.idAnimal!).then(
-        (allAlerts) {
-          if (mounted) {
-            setState(() {
-              _alerts = [];
-              _alerts.addAll(allAlerts);
-            });
-          }
-        },
+      await _getLocalUnselectedUserAlerts(widget.idAnimal!).then(
+        (_) => AlertRequests.getUserAlertsFromApi(
+          context: context,
+          onDataGotten: (data) {
+            _getLocalUnselectedUserAlerts(widget.idAnimal!);
+          },
+          onFailed: () {},
+        ),
       );
     } else {
       await _getLocalUserAlerts().then(
@@ -76,6 +75,20 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         ),
       );
     }
+  }
+
+  /// Method that allows to get all local user alerts
+  Future<void> _getLocalUnselectedUserAlerts(String idAnimal) async {
+    await getAnimalUnselectedAlerts(widget.idAnimal!).then(
+      (allAlerts) {
+        if (mounted) {
+          setState(() {
+            _alerts = [];
+            _alerts.addAll(allAlerts);
+          });
+        }
+      },
+    );
   }
 
   /// Method that allows to get all local user alerts
