@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
-import 'package:guardian/models/providers/api/parsers/alerts_parsers.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,7 +7,6 @@ import 'package:guardian/models/helpers/key_value_pair.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
-import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
@@ -122,22 +120,6 @@ class _AddAlertPageState extends State<AddAlertPage> {
         Navigator.of(context).pop();
       },
       onFailed: () {},
-    );
-  }
-
-  /// Method that removes the alert animal on [index] from the [_alertAnimals] list
-  Future<void> _removeAlert(int index) async {
-    await removeAlertAnimal(
-      widget.alert!.idAlert.value,
-      _alertAnimals[index].animal.idAnimal.value,
-    ).then(
-      (_) {
-        setState(() {
-          _alertAnimals.removeWhere(
-            (element) => element.animal.idAnimal == _alertAnimals[index].animal.idAnimal,
-          );
-        });
-      },
     );
   }
 
@@ -320,7 +302,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 ),
                                 keyboardType: TextInputType.number,
                                 initialValue:
-                                    _comparissonValue != 0 ? _comparissonValue.toString() : null,
+                                    _comparissonValue != '0' ? _comparissonValue.toString() : null,
                                 validator: (value) {
                                   return _validateInputValue(value, localizations);
                                 },
@@ -397,18 +379,13 @@ class _AddAlertPageState extends State<AddAlertPage> {
                               key: Key(_alertAnimals[index].animal.idAnimal.value.toString()),
                               animal: _alertAnimals[index],
                               onRemoveDevice: () {
-                                // TODO: On remove device
-                                if (widget.alert != null) {
-                                  _removeAlert(index);
-                                } else {
-                                  setState(() {
-                                    _alertAnimals.removeWhere(
-                                      (element) =>
-                                          element.animal.idAnimal ==
-                                          _alertAnimals[index].animal.idAnimal,
-                                    );
-                                  });
-                                }
+                                setState(() {
+                                  _alertAnimals.removeWhere(
+                                    (element) =>
+                                        element.animal.idAnimal ==
+                                        _alertAnimals[index].animal.idAnimal,
+                                  );
+                                });
                               },
                             ),
                           ),

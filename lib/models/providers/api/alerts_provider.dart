@@ -68,17 +68,6 @@ class AlertsProvider {
     };
     var url = Uri.http(kGDapiServerUrl, '/api/v1/alerts/${alert.idAlert.value}');
     try {
-      print(alert.idAlert.value);
-      print(jsonEncode({
-        "idConditionParameter": alert.parameter.value,
-        "comparisson": alert.comparisson.value,
-        "conditionCompTo": alert.conditionCompTo.value,
-        "durationSeconds": alert.durationSeconds.value,
-        "sendNotification": alert.hasNotification.value,
-        "isTimed": alert.isTimed.value,
-        "isStateParam": alert.isStateParam.value,
-        "alertAnimals": animals.map((e) => e.animal.idAnimal.value).toList()
-      }));
       var response = await put(url,
           headers: headers,
           body: jsonEncode({

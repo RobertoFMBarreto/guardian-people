@@ -197,9 +197,6 @@ class FencingRequests {
     required Function onFailed,
   }) async {
     await FencingProvider.addAnimalFence(fenceId, animalIds).then((response) async {
-      print('Response');
-      print(response.statusCode);
-      print(response.body);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
       } else if (response.statusCode == 401) {
@@ -245,8 +242,6 @@ class FencingRequests {
     required Function onFailed,
   }) async {
     await FencingProvider.removeAnimalFence(fenceId, animalIds).then((response) async {
-      print(response.statusCode);
-      print(response.body);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
       } else if (response.statusCode == 401) {

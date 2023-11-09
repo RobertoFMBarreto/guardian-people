@@ -394,31 +394,6 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
 }) async {
   final db = Get.find<GuardianDb>();
 
-  final data1 = await db.customSelect(
-    '''
-      SELECT
-        *
-      FROM ${db.animal.actualTableName}
-      LEFT JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName}
-          GROUP BY ${db.animalLocations.idAnimal.name}
-          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC
-      ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
-      WHERE ${db.animal.actualTableName}.${db.animal.idAnimal.name} NOT IN (
-            SELECT ${db.animal.idAnimal.name} FROM ${db.fenceAnimals.actualTableName}
-            WHERE ${db.fenceAnimals.actualTableName}.${db.fenceAnimals.idFence.name} = ?
-        )
-    ''',
-    variables: [
-      drift.Variable.withString(idFence),
-    ],
-  ).get();
-  print(data1.length);
-  for (var deviceData in data1) {
-    print(deviceData.data);
-  }
-  print('Here');
   final data = await db.customSelect(
     '''
       SELECT
@@ -522,10 +497,9 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
       SELECT
         ${db.animal.idUser.name},
         ${db.animal.animalName.name},
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name},
         ${db.animal.animalIdentification.name},
         ${db.animal.animalColor.name},
-        ${db.animal.actualTableName}.${db.animal.idAnimal.name},
-        ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
         ${db.animalLocations.temperature.name},
@@ -535,25 +509,28 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
         ${db.animalLocations.elevation.name},
         ${db.animalLocations.accuracy.name},
         ${db.animalLocations.date.name},
-        ${db.animalLocations.state.name},
+        ${db.animalLocations.state.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName} 
+          SELECT * FROM ${db.animalLocations.actualTableName}
           GROUP BY ${db.animalLocations.idAnimal.name}
           HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC 
-          LIMIT 1
+          ORDER BY ${db.animalLocations.date.name} DESC
       ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
-        (
-        deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
-        deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
-        deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ?
-        ${db.animal.animalName.name} LIKE ?) OR 
-        (${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL) AND
-        ${db.animal.actualTableName}.${db.animal.idAnimal.name} NOT IN (SELECT ${db.animal.idAnimal.name} FROM ${db.alertAnimals.actualTableName})
+        ((
+          deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+          deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+          deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+          ${db.animal.animalName.name} LIKE ?) OR
+          (${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL))
+        AND
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name} NOT IN (
+            SELECT ${db.animal.idAnimal.name} FROM ${db.alertAnimals.actualTableName}
+            WHERE ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAlert.name} = ?
+        )
       ORDER BY
-        ${db.animal.animalName.name}
+        ${db.animal.actualTableName}.${db.animal.animalName.name}
     ''',
     variables: [
       drift.Variable.withReal(tmpRangeValues.start),
@@ -564,6 +541,7 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
       drift.Variable.withReal(elevationRangeValues.end),
       drift.Variable.withString('%$searchString%'),
       drift.Variable.withString('%$searchString%'),
+      drift.Variable.withString(idAlert),
     ],
   ).get();
 

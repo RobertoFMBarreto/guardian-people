@@ -1,15 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/helpers/db_helpers.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/notifications_provider.dart';
-import 'package:guardian/models/providers/api/parsers/notifications_parsers.dart';
+import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
-import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/api/requests/notifications_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
@@ -21,7 +19,6 @@ import 'package:guardian/models/helpers/producer_helper.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/animal/square_animals_info.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart';
@@ -45,6 +42,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   List<Animal> _animals = [];
   List<FenceData> _fences = [];
   List<AlertNotification> _alertNotifications = [];
+  List<UserAlertCompanion> _alerts = [];
 
   int _reloadMap = 9999;
 
@@ -65,6 +63,40 @@ class _ProducerHomeState extends State<ProducerHome> {
     await _loadAnimals();
     await _loadFences();
     await _loadAlertNotifications();
+    await _loadAlerts();
+  }
+
+  /// Method that loads the user alerts into the [_alerts] list
+  ///
+  /// If is in select mode ( [widget.isSelect]=`true`) then only the unselected alerts will be shown
+  ///
+  /// If it isnt in select mode then all user alerts will be shown
+  ///
+  /// Resets the list to prevent duplicates
+  Future<void> _loadAlerts() async {
+    await _getLocalUserAlerts().then(
+      (value) => AlertRequests.getUserAlertsFromApi(
+        context: context,
+        onDataGotten: (data) {
+          _getLocalUserAlerts();
+        },
+        onFailed: () {},
+      ),
+    );
+  }
+
+  /// Method that allows to get all local user alerts
+  Future<void> _getLocalUserAlerts() async {
+    await getUserAlerts().then(
+      (allAlerts) {
+        if (mounted) {
+          setState(() {
+            _alerts = [];
+            _alerts.addAll(allAlerts);
+          });
+        }
+      },
+    );
   }
 
   /// Method that loads the user data into [_user]
@@ -134,57 +166,30 @@ class _ProducerHomeState extends State<ProducerHome> {
   ///
   /// Resets the list to avoid duplicates
   Future<void> _loadAlertNotifications() async {
+    _loadLocalAlertNotifications().then((_) => _getNotificationsFromApi());
+  }
+
+  /// Method that loads all alert notifications into the [_alertNotifications] list
+  ///
+  /// Resets the list to avoid duplicates
+  Future<void> _loadLocalAlertNotifications() async {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
+      print(allAlerts);
       setState(() => _alertNotifications.addAll(allAlerts));
-      _getNotificationsFromApi();
     });
   }
 
   /// Method that loads all notifications from api
   Future<void> _getNotificationsFromApi() async {
-    NotificationsProvider.getNotifications().then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        parseNotifications(response.body);
-        await getAllNotifications().then((allAlerts) {
-          _alertNotifications = [];
-          setState(() => _alertNotifications.addAll(allAlerts));
-        });
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getNotificationsFromApi();
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
-              }
-            });
-          } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
-          }
-        });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          }
-        });
-      }
-    });
+    NotificationsRequests.getUserNotificationsFromApi(
+      context: context,
+      onDataGotten: (data) {
+        print('Data: $data');
+        _loadLocalAlertNotifications();
+      },
+      onFailed: () {},
+    );
   }
 
   @override
@@ -219,6 +224,24 @@ class _ProducerHomeState extends State<ProducerHome> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          // ElevatedButton(
+                          //   style: theme.elevatedButtonTheme.style!.copyWith(
+                          //     overlayColor: MaterialStatePropertyAll(
+                          //       Colors.white.withOpacity(0.2),
+                          //     ),
+                          //   ),
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       CustomPageRouter(page: '/producer/fences'),
+                          //     ).then(
+                          //       (_) => _loadFences(),
+                          //     );
+                          //   },
+                          //   child: FittedBox(
+                          //       fit: BoxFit.scaleDown,
+                          //       child: Text(localizations.fences.capitalizeFirst!)),
+                          // ),
                           ElevatedButton(
                             style: theme.elevatedButtonTheme.style!.copyWith(
                               overlayColor: MaterialStatePropertyAll(
@@ -228,19 +251,76 @@ class _ProducerHomeState extends State<ProducerHome> {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                CustomPageRouter(page: '/producer/fences'),
+                                CustomPageRouter(
+                                    page: '/producer/alerts/management',
+                                    settings: const RouteSettings(
+                                      arguments: {'isSelect': false, 'idAnimal': null},
+                                    )),
                               ).then(
-                                (_) => _loadFences(),
+                                (_) => _loadAlerts(),
                               );
                             },
                             child: FittedBox(
                                 fit: BoxFit.scaleDown,
-                                child: Text(localizations.fences.capitalizeFirst!)),
+                                child: Text(localizations.warnings_managment.capitalizeFirst!)),
                           ),
                         ],
                       ),
                     ),
-                    tailWidget: const HomeDropDown(),
+                    tailWidget: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _alertNotifications.isNotEmpty
+                            ? badges.Badge(
+                                position: badges.BadgePosition.bottomEnd(bottom: -10, end: -12),
+                                showBadge: true,
+                                ignorePointer: false,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    CustomPageRouter(page: '/producer/alerts'),
+                                  ).then(
+                                    (_) => _loadAlertNotifications(),
+                                  );
+                                },
+                                badgeContent: Text(
+                                  _alertNotifications.length.toString(),
+                                  style: theme.textTheme.bodyMedium!
+                                      .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                badgeAnimation: const badges.BadgeAnimation.scale(
+                                  animationDuration: Duration(seconds: 1),
+                                  colorChangeAnimationDuration: Duration(seconds: 1),
+                                  loopAnimation: false,
+                                  curve: Curves.fastOutSlowIn,
+                                  colorChangeAnimationCurve: Curves.easeInCubic,
+                                ),
+                                badgeStyle: const badges.BadgeStyle(
+                                  shape: badges.BadgeShape.circle,
+                                  badgeColor: Colors.red,
+                                  padding: EdgeInsets.all(5),
+                                  elevation: 0,
+                                ),
+                                child: const Icon(Icons.notifications_outlined),
+                              )
+                            : IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    CustomPageRouter(page: '/producer/alerts'),
+                                  ).then(
+                                    (_) => _loadAlertNotifications(),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.notifications_outlined,
+                                  color: Colors.white,
+                                ),
+                              ),
+                        const HomeDropDown(),
+                      ],
+                    ),
                   ),
                   pinned: true,
                 ),
@@ -274,18 +354,20 @@ class _ProducerHomeState extends State<ProducerHome> {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 20, left: 8),
                               child: SquareAnimalsInfo(
-                                title: localizations.alerts.capitalizeFirst!,
-                                description: '${_alertNotifications.length}',
-                                isAlert: true,
+                                title: localizations.manage_fences.capitalizeFirst!,
+                                description: '${_alerts.length}',
+                                isFencing: true,
                                 onTap: () {
-                                  Future.delayed(const Duration(milliseconds: 300)).then(
-                                    (value) => Navigator.push(
+                                  Future.delayed(const Duration(milliseconds: 300)).then((value) {
+                                    Navigator.push(
                                       context,
-                                      CustomPageRouter(page: '/producer/alerts'),
+                                      CustomPageRouter(
+                                        page: '/producer/fences',
+                                      ),
                                     ).then(
-                                      (_) => _loadAlertNotifications(),
-                                    ),
-                                  );
+                                      (_) => _loadFences(),
+                                    );
+                                  });
                                 },
                               ),
                             ),

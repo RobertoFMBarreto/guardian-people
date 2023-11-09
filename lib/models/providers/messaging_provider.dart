@@ -59,8 +59,6 @@ class FCMMessagingProvider {
     }
     try {
       final payloadData = jsonDecode(message.data['data']);
-      print(payloadData['animal']);
-      print(payloadData['animal']['locationData']);
       if (message.data['channel'] == 'fencing' || message.data['channel'] == 'alerts') {
         List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
 
@@ -97,6 +95,7 @@ class FCMMessagingProvider {
         });
       }
       if (kDebugMode) {}
+      // ignore: empty_catches
     } catch (e) {}
   }
 
@@ -138,6 +137,7 @@ class FCMMessagingProvider {
               print("data: $payloadData");
             }
           } else {}
+          // ignore: empty_catches
         } catch (e) {}
         return;
       },

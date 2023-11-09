@@ -5,13 +5,13 @@ import 'package:guardian/settings/colors.dart';
 class SquareAnimalsInfo extends StatelessWidget {
   final String title;
   final String description;
-  final bool isAlert;
+  final bool isFencing;
   final Function() onTap;
   const SquareAnimalsInfo({
     super.key,
     required this.title,
     required this.description,
-    this.isAlert = false,
+    this.isFencing = false,
     required this.onTap,
   });
 
@@ -25,10 +25,12 @@ class SquareAnimalsInfo extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: isAlert
+          colors: isFencing
               ? [
-                  const Color.fromRGBO(231, 75, 75, 1),
-                  const Color.fromRGBO(231, 130, 130, 1),
+                  theme.brightness == Brightness.dark
+                      ? gdDarkBlueGradientStart
+                      : gdBlueGradientStart,
+                  theme.brightness == Brightness.dark ? gdDarkBlueGradientEnd : gdBlueGradientEnd,
                 ]
               : [
                   theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
@@ -44,12 +46,23 @@ class SquareAnimalsInfo extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20),
-              child: Text(
-                title,
-                style:
-                    theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.onSecondary),
+            FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 10.0,
+                  left: 10,
+                  right: 10,
+                ),
+                child: Center(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.headlineSmall!.copyWith(
+                      color: theme.colorScheme.onSecondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -65,9 +78,9 @@ class SquareAnimalsInfo extends StatelessWidget {
                       color: theme.colorScheme.onSecondary,
                     ),
                   ),
-                  isAlert
+                  isFencing
                       ? Icon(
-                          Icons.warning,
+                          Icons.fence,
                           size: deviceHeight * 0.08,
                           color: theme.colorScheme.onSecondary.withOpacity(0.8),
                         )

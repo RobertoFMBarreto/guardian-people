@@ -13,7 +13,6 @@ Future<FenceAnimalsCompanion> createFenceAnimal(FenceAnimalsCompanion fenceDevic
 
 /// Method to get the fence of an animal [idAnimal] returning as [FenceData?] because the animal can have no fence
 Future<FenceData?> getAnimalFence(String idAnimal) async {
-  // TODO check if works
   final db = Get.find<GuardianDb>();
   final data = db
       .select(db.fenceAnimals)
@@ -49,7 +48,6 @@ Future<void> removeAllFenceAnimals(String idFence) async {
 /// Method to get all animals [List<Animal>] selected for a fence [idFence]
 Future<List<Animal>> getFenceAnimals(String idFence) async {
   final db = Get.find<GuardianDb>();
-  // TODO try join
   final data = await db.customSelect(
     '''
       SELECT

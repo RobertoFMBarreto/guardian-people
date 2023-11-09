@@ -1,16 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
-import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
-import 'package:guardian/models/providers/api/alerts_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/notifications_provider.dart';
-import 'package:guardian/models/providers/api/parsers/alerts_parsers.dart';
 import 'package:guardian/models/providers/api/parsers/notifications_parsers.dart';
-import 'package:guardian/models/providers/api/parsers/sensor_parser.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 

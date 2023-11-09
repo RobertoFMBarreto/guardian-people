@@ -1,23 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/providers/api/animals_provider.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
-import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_selectable.dart';
-import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
 import '../../../widgets/ui/drawers/producer_page_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

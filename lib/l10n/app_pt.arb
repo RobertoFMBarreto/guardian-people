@@ -179,5 +179,6 @@
   "realtime": "tempo real",
   "keep_animal": "manter o animal",
   "inside": "dentro",
-  "outside": "fora"
+  "outside": "fora",
+  "manage_fences": "gerir cercas"
 }

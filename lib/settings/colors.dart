@@ -16,6 +16,9 @@ const gdOnErrorColor = Color.fromRGBO(215, 215, 215, 1);
 const gdGradientStart = Color.fromRGBO(88, 200, 160, 1);
 const gdGradientEnd = Color.fromRGBO(147, 215, 166, 1);
 
+const gdBlueGradientStart = Color.fromRGBO(88, 151, 200, 1);
+const gdBlueGradientEnd = Color.fromRGBO(115, 169, 209, 1);
+
 const gdTextColor = Colors.black;
 const gdSecondaryTextColor = Colors.grey;
 
@@ -43,6 +46,9 @@ const gdDarkSecondaryAltColor = Color.fromRGBO(147, 215, 166, 0.5);
 
 const gdDarkGradientStart = Color.fromRGBO(62, 144, 115, 1);
 const gdDarkGradientEnd = Color.fromRGBO(118, 176, 135, 1);
+
+const gdDarkBlueGradientStart = Color.fromRGBO(25, 92, 156, 1);
+const gdDarkBlueGradientEnd = Color.fromRGBO(39, 136, 227, 1);
 
 const gdDarkCardBackgroundColor = Color.fromRGBO(5, 5, 5, 1);
 

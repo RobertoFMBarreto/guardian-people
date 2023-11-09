@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
-import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:get/get.dart';
-import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/notifications_requests.dart';
 
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -164,7 +162,7 @@ class _AlertsPageState extends State<AlertsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (hasConnection)
+                      if (hasConnection && _alerts.isNotEmpty)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [

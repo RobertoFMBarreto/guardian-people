@@ -241,7 +241,6 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
                                         alert: _alerts[index],
                                         isSelected: _selectedAlerts.contains(_alerts[index]),
                                         onSelected: () {
-                                          // TODO: select code
                                           if (_selectedAlerts.contains(_alerts[index])) {
                                             setState(() {
                                               _selectedAlerts.remove(_alerts[index]);

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 
 /// Method for creating an user created alert [alert] returning an [UserAlertCompanion]
 Future<UserAlertCompanion> createAlert(UserAlertCompanion alert) async {
