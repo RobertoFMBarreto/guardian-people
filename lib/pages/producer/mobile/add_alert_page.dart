@@ -53,7 +53,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   /// 1. Parse received alert data if there is one
   /// 2. Get alert devices
   Future<void> _setup() async {
-    return await _getAlertableSensors().then((_) async {
+    await _getAlertableSensors().then((_) async {
       if (widget.alert != null) {
         await _getAlertDevices(widget.alert!.idAlert.value).then(
           (_) {
@@ -152,11 +152,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   Future<void> _getAlertableSensors() async {
-    return await _getLocalAlertableSensors().then((_) {
-      AlertRequests.getAlertableSensorsFromApi(
+    await _getLocalAlertableSensors().then((_) async {
+      await AlertRequests.getAlertableSensorsFromApi(
         context: context,
-        onDataGotten: (data) {
-          _getLocalAlertableSensors();
+        onDataGotten: (data) async {
+          await _getLocalAlertableSensors();
         },
         onFailed: () {},
       );
@@ -164,7 +164,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
   }
 
   Future<void> _getLocalAlertableSensors() async {
-    return await getLocalAlertableSensors().then((allSensors) {
+    await getLocalAlertableSensors().then((allSensors) {
       if (allSensors.isNotEmpty) {
         setState(() {
           _availableSensors = [];

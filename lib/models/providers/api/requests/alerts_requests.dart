@@ -18,11 +18,11 @@ class AlertRequests {
       {required BuildContext context,
       required Function(String) onDataGotten,
       required Function onFailed}) async {
-    AlertsProvider.getAlertableSensors().then((response) async {
+    await AlertsProvider.getAlertableSensors().then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
-        parseSensors(response.body).then(
-          (_) => onDataGotten(response.body),
+        await parseSensors(response.body).then(
+          (_) async => await onDataGotten(response.body),
         );
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {

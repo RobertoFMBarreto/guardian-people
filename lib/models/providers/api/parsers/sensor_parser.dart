@@ -16,4 +16,5 @@ Future<void> parseSensors(String body) async {
       ),
     );
   }
+  print("Sensors parsed");
 }
