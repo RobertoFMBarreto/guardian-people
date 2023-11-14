@@ -273,8 +273,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                         _alertNotifications.isNotEmpty
                             ? badges.Badge(
                                 position: badges.BadgePosition.bottomEnd(bottom: -10, end: -12),
-                                showBadge: true,
-                                ignorePointer: false,
+                                showBadge: _alertNotifications.isNotEmpty,
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -284,7 +283,9 @@ class _ProducerHomeState extends State<ProducerHome> {
                                   );
                                 },
                                 badgeContent: Text(
-                                  _alertNotifications.length.toString(),
+                                  _alertNotifications.length <= 9
+                                      ? _alertNotifications.length.toString()
+                                      : '+9',
                                   style: theme.textTheme.bodyMedium!
                                       .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),

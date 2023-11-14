@@ -44,6 +44,9 @@ class _LoginFormState extends State<LoginForm> {
         // search user and verify if its correct
 
         AuthProvider.login(_email, _password).then((resp) {
+          print(resp.headers);
+          print(resp.statusCode);
+          print(resp.body);
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
