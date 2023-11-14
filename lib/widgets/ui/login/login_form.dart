@@ -44,16 +44,10 @@ class _LoginFormState extends State<LoginForm> {
         // search user and verify if its correct
 
         AuthProvider.login(_email, _password).then((resp) {
-          print(resp.statusCode);
-          print(resp.body);
           if (resp.statusCode == 200) {
             setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
-            // print(resp);
-            // print(resp.headers.values);
-            // print(resp.headers['set-cookie']);
-            // print('Doc: ${html.window.document.cookie}');
-            String refreshToken = ''; //resp.headers['set-cookie']!.split('=')[1].split(';')[0];
+            String refreshToken = resp.headers['set-cookie']!.split('=')[1].split(';')[0];
             setUserSession(body['uid'], body['token'], refreshToken).then((_) {
               // store user profile
               createUser(UserCompanion(

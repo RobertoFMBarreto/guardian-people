@@ -354,7 +354,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                               padding: const EdgeInsets.only(right: 20, left: 8),
                               child: SquareAnimalsInfo(
                                 title: localizations.manage_fences.capitalizeFirst!,
-                                description: '${_alerts.length}',
+                                description: '${_fences.length}',
                                 isFencing: true,
                                 onTap: () {
                                   Future.delayed(const Duration(milliseconds: 300)).then((value) {
