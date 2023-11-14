@@ -80,18 +80,20 @@ Future<void> setSessionToken(String value) async {
 /// Method that allows to get the id of the user
 ///
 /// If the id isn't setted then the user will be redirected to login
-Future<String?> getUid(BuildContext context) async {
+Future<String?> getUid(BuildContext context, {bool autoLogin = true}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? dt = prefs.getString('idUser');
   if (dt != null) {
     String? idUser = dt;
     return idUser;
   } else {
-    clearUserSession().then((_) => deleteEverything().then(
-          (_) {
-            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
-          },
-        ));
+    if (autoLogin) {
+      clearUserSession().then((_) => deleteEverything().then(
+            (_) {
+              Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+            },
+          ));
+    }
   }
   return null;
 }

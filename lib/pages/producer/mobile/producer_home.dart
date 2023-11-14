@@ -245,6 +245,7 @@ class _ProducerHomeState extends State<ProducerHome> {
                               overlayColor: MaterialStatePropertyAll(
                                 Colors.white.withOpacity(0.2),
                               ),
+                              backgroundColor: const MaterialStatePropertyAll(gdErrorColor),
                             ),
                             onPressed: () {
                               Navigator.push(

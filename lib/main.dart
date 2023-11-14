@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -10,10 +9,8 @@ import 'package:guardian/firebase_options.dart';
 import 'package:guardian/models/providers/messaging_provider.dart';
 import 'package:guardian/routes/mobile_routes.dart';
 import 'package:guardian/routes/web_routes.dart';
-// import 'package:get/get.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
-// import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
