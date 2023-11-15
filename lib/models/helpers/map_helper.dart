@@ -8,10 +8,16 @@ import 'dart:math' show cos, sqrt, asin;
 TileLayer getTileLayer(BuildContext context, {Key? key}) {
   return TileLayer(
     key: key,
-    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    subdomains: const ['a', 'b', 'c'],
     userAgentPackageName: 'com.linovt.Guardian',
     //tileProvider: FMTC.instance('guardian').getTileProvider(),
     tileDisplay: const TileDisplay.fadeIn(),
+    tileProvider: NetworkNoRetryTileProvider(
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    ),
   );
 }
 

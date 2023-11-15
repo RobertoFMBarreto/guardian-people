@@ -15,6 +15,9 @@ import 'package:get/get.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
+import 'package:guardian/models/providers/api/requests/notifications_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -33,10 +36,10 @@ class WebProducerHomePage extends StatefulWidget {
 
 class _WebProducerHomePageState extends State<WebProducerHomePage> {
   late Future _future;
-
+  int _reloadMap = 9999;
   List<Animal> _animals = [];
-  final List<AlertNotification> _notifications = [];
-  final List<FenceData> _fences = [];
+  List<FenceData> _fences = [];
+  List<AlertNotification> _alertNotifications = [];
 
   @override
   void initState() {
@@ -45,18 +48,41 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     super.initState();
   }
 
-  /// Method that does the initial setup of the page
+  /// Method that doest the initial setup
+  ///
+  /// 1. load user data
+  /// 2. load user animals
+  /// 3. load fences
+  /// 4. load alert notifications
   Future<void> _setup() async {
-    await _loadDevices();
+    await _loadAnimals();
+    await _loadFences();
+    await _loadAlertNotifications();
   }
 
-  /// Method that loads the local devices into the [_animals] list an then loads from api
-  Future<void> _loadDevices() async {
-    getUserAnimalsWithData().then((allAnimals) {
+  /// Method that loads the animals into the [_animals] list
+  ///
+  /// 1. load local animals
+  /// 2. add to list
+  /// 3. load api animals
+  Future<void> _loadAnimals() async {
+    await getUserAnimalsWithLastLocation().then((allAnimals) {
+      _animals = [];
       setState(() {
         _animals.addAll(allAnimals);
       });
-      _getDevicesFromApi();
+      AnimalRequests.getAnimalsFromApiWithLastLocation(
+          context: context,
+          onDataGotten: () {
+            getUserAnimalsWithLastLocation().then((allDevices) {
+              if (mounted) {
+                setState(() {
+                  _animals = [];
+                  _animals.addAll(allDevices);
+                });
+              }
+            });
+          });
     });
   }
 
@@ -153,22 +179,60 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     });
   }
 
-  /// Method that loads the alerts into the [_notifications] list
-  Future<void> _loadAlerts() async {
-    getAllNotifications().then((allNotifications) {
+  /// Method that loads all fences into the [_fences] list
+  ///
+  /// In the process updates the [_reloadMap] variable so that the map reloads
+  ///
+  /// Resets the list to avoid duplicates
+  Future<void> _loadFences() async {
+    await _loadLocalFences().then((_) {
+      FencingRequests.getUserFences(
+        context: context,
+        onGottenData: (_) async {
+          await _loadLocalFences();
+        },
+        onFailed: () {},
+      );
+    });
+  }
+
+  /// Method that allows to get local fences
+  Future<void> _loadLocalFences() async {
+    await getUserFences().then((allFences) {
+      _fences = [];
       setState(() {
-        _notifications.addAll(allNotifications);
+        _fences.addAll(allFences);
+        _reloadMap = Random().nextInt(999999);
       });
     });
   }
 
-  /// Method that loads the fences into the [_fences] list
-  Future<void> _loadFences() async {
-    getUserFences().then((allFences) {
-      setState(() {
-        _fences.addAll(allFences);
-      });
+  /// Method that loads all alert notifications into the [_alertNotifications] list
+  ///
+  /// Resets the list to avoid duplicates
+  Future<void> _loadAlertNotifications() async {
+    _loadLocalAlertNotifications().then((_) => _getNotificationsFromApi());
+  }
+
+  /// Method that loads all alert notifications into the [_alertNotifications] list
+  ///
+  /// Resets the list to avoid duplicates
+  Future<void> _loadLocalAlertNotifications() async {
+    await getAllNotifications().then((allAlerts) {
+      _alertNotifications = [];
+      setState(() => _alertNotifications.addAll(allAlerts));
     });
+  }
+
+  /// Method that loads all notifications from api
+  Future<void> _getNotificationsFromApi() async {
+    NotificationsRequests.getUserNotificationsFromApi(
+      context: context,
+      onDataGotten: (data) {
+        _loadLocalAlertNotifications();
+      },
+      onFailed: () {},
+    );
   }
 
   @override
@@ -235,19 +299,19 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                                 child: Card(
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
-                                    child: _notifications.isEmpty
+                                    child: _alertNotifications.isEmpty
                                         ? Center(
                                             child: Text(localizations.no_alerts.capitalizeFirst!),
                                           )
                                         : ListView.builder(
-                                            itemCount: _notifications.length,
+                                            itemCount: _alertNotifications.length,
                                             itemBuilder: (context, index) => AlertItem(
-                                              alertNotification: _notifications[index],
+                                              alertNotification: _alertNotifications[index],
                                               onRemove: () async {
                                                 await removeNotification(
-                                                  _notifications[index].alertNotificationId,
+                                                  _alertNotifications[index].alertNotificationId,
                                                 ).then(
-                                                  (_) async => await _loadAlerts(),
+                                                  (_) async => await _loadAlertNotifications(),
                                                 );
                                               },
                                             ),

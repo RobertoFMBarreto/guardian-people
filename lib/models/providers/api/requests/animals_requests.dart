@@ -76,6 +76,7 @@ class AnimalRequests {
     required Function onFailed,
   }) async {
     await AnimalProvider.getAnimalData(idAnimal, startDate, endDate).then((response) async {
+      print(response.body);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         final body = jsonDecode(response.body);

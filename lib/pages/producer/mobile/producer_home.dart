@@ -222,24 +222,6 @@ class _ProducerHomeState extends State<ProducerHome> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          // ElevatedButton(
-                          //   style: theme.elevatedButtonTheme.style!.copyWith(
-                          //     overlayColor: MaterialStatePropertyAll(
-                          //       Colors.white.withOpacity(0.2),
-                          //     ),
-                          //   ),
-                          //   onPressed: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       CustomPageRouter(page: '/producer/fences'),
-                          //     ).then(
-                          //       (_) => _loadFences(),
-                          //     );
-                          //   },
-                          //   child: FittedBox(
-                          //       fit: BoxFit.scaleDown,
-                          //       child: Text(localizations.fences.capitalizeFirst!)),
-                          // ),
                           ElevatedButton(
                             style: theme.elevatedButtonTheme.style!.copyWith(
                               overlayColor: MaterialStatePropertyAll(

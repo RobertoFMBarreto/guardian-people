@@ -214,10 +214,10 @@ class FCMMessagingProvider {
 
       await flutterLocalNotificationsPlugin.show(
         0,
-        body['name_animal'], //message.data['title'],
+        message.data['title'], //message.data['title'],
         bodyMessage,
         platformChannelSpecifics,
-        payload: message.data.toString(), //message.data['body'],
+        payload: message.data['body'], //message.data['body'],
       );
     });
   }
