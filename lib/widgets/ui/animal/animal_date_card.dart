@@ -79,7 +79,7 @@ class AnimalDateCard extends StatelessWidget {
                         ],
                       )
                     : FittedBox(
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.fitWidth,
                         child: Center(
                           child: Text(
                             localizations.current.capitalizeFirst!,

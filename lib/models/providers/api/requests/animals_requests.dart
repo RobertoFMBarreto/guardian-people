@@ -184,6 +184,8 @@ class AnimalRequests {
     required Function onFailed,
   }) async {
     await AnimalProvider.stopRealtimeStreaming(idAnimal).then((response) async {
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         onDataGotten();

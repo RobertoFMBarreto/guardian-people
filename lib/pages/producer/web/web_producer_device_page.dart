@@ -96,12 +96,12 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     _batteryRangeValues = const RangeValues(0, 100);
     _dtUsageRangeValues = const RangeValues(0, 10);
 
-    final _maxElevation = await getMaxElevation();
-    final _maxTemperature = await getMaxTemperature();
+    final maxElevation = await getMaxElevation();
+    final maxTemperature = await getMaxTemperature();
     if (mounted) {
       setState(() {
-        _elevationRangeValues = RangeValues(0, _maxElevation);
-        _tmpRangeValues = RangeValues(0, _maxTemperature);
+        _elevationRangeValues = RangeValues(0, maxElevation);
+        _tmpRangeValues = RangeValues(0, maxTemperature);
       });
     }
   }
@@ -305,9 +305,12 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.only(bottom: 8.0),
-                                          child: Text(
-                                            localizations.devices.capitalizeFirst!,
-                                            style: theme.textTheme.headlineMedium,
+                                          child: FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(
+                                              localizations.devices.capitalizeFirst!,
+                                              style: theme.textTheme.headlineMedium,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -501,7 +504,30 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                         ),
                         Expanded(
                           child: DeviceSettings(
+                            key: Key(_selectedAnimal!.animal.idAnimal.value),
                             animal: _selectedAnimal!,
+                            onColorChanged: (color) {
+                              setState(() {
+                                _selectedAnimal = Animal(
+                                  animal: _selectedAnimal!.animal.copyWith(
+                                    animalColor: drift.Value(color),
+                                  ),
+                                  data: _selectedAnimal!.data,
+                                );
+                              });
+                              _loadAnimals();
+                            },
+                            onNameChanged: (name) {
+                              setState(() {
+                                _selectedAnimal = Animal(
+                                  animal: _selectedAnimal!.animal.copyWith(
+                                    animalName: drift.Value(name),
+                                  ),
+                                  data: _selectedAnimal!.data,
+                                );
+                              });
+                              _loadAnimals();
+                            },
                           ),
                         ),
                       ],
