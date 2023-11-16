@@ -86,99 +86,6 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
     });
   }
 
-  /// Method that loads all devices from the API and then loads from database into the [_animals] list
-  ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
-  ///
-  /// If the server takes too long to answer then the user receives and alert
-  Future<void> _getDevicesFromApi() async {
-    AnimalProvider.getAnimals().then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        final data = jsonDecode(response.body);
-        List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
-        for (var dt in data) {
-          await createAnimal(AnimalCompanion(
-            isActive: drift.Value(dt['animal_is_active'] == true),
-            animalName: drift.Value(dt['animal_name']),
-            idUser: drift.Value(dt['id_user']),
-            animalColor: drift.Value(dt['animal_color']),
-            animalIdentification: drift.Value(dt['animal_identification']),
-            idAnimal: drift.Value(dt['id_animal']),
-          ));
-          if (dt['last_device_data'] != null) {
-            await createAnimalData(
-              AnimalLocationsCompanion(
-                accuracy: dt['last_device_data']['accuracy'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
-                    : const drift.Value.absent(),
-                battery: dt['last_device_data']['battery'] != null
-                    ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
-                    : const drift.Value.absent(),
-                date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
-                animalDataId: drift.Value(dt['last_device_data']['id_data']),
-                idAnimal: drift.Value(dt['id_animal']),
-                elevation: dt['last_device_data']['altitude'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
-                    : const drift.Value.absent(),
-                lat: dt['last_device_data']['lat'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['lat']))
-                    : const drift.Value.absent(),
-                lon: dt['last_device_data']['lon'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['lon']))
-                    : const drift.Value.absent(),
-                state: drift.Value(states[Random().nextInt(states.length)]),
-                temperature: dt['last_device_data']['skinTemperature'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['skinTemperature']))
-                    : const drift.Value.absent(),
-              ),
-            );
-          }
-        }
-        getUserAnimalsWithData().then((allDevices) {
-          if (mounted) {
-            setState(() {
-              _animals = [];
-              _animals.addAll(allDevices);
-            });
-          }
-        });
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getDevicesFromApi();
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
-              }
-            });
-          } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
-          }
-        });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          }
-        });
-      }
-    });
-  }
-
   /// Method that loads all fences into the [_fences] list
   ///
   /// In the process updates the [_reloadMap] variable so that the map reloads
@@ -200,10 +107,12 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   Future<void> _loadLocalFences() async {
     await getUserFences().then((allFences) {
       _fences = [];
-      setState(() {
-        _fences.addAll(allFences);
-        _reloadMap = Random().nextInt(999999);
-      });
+      if (mounted) {
+        setState(() {
+          _fences.addAll(allFences);
+          _reloadMap = Random().nextInt(999999);
+        });
+      }
     });
   }
 
@@ -220,7 +129,9 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   Future<void> _loadLocalAlertNotifications() async {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
-      setState(() => _alertNotifications.addAll(allAlerts));
+      if (mounted) {
+        setState(() => _alertNotifications.addAll(allAlerts));
+      }
     });
   }
 

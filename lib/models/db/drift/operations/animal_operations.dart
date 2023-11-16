@@ -303,6 +303,16 @@ Future<List<Animal>> getUserAnimalsFiltered({
   required String searchString,
 }) async {
   final db = Get.find<GuardianDb>();
+  // WHERE
+  //
+  //    (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+  //    deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+  //    deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+  //    ${db.animal.animalIdentification.name} LIKE ?)
+
+  print(tmpRangeValues);
+  print(batteryRangeValues);
+  print(elevationRangeValues);
   final data = await db.customSelect(
     '''
       SELECT
@@ -329,13 +339,15 @@ Future<List<Animal>> getUserAnimalsFiltered({
           ORDER BY ${db.animalLocations.date.name} DESC 
       ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
-        (
-        deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
-        deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
-        deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
-        ${db.animal.animalIdentification.name} LIKE ?) OR (${db.animal.animalIdentification.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL)
+          (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+          deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+          deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+          ${db.animal.animalName.name} LIKE ?)
+        OR
+          ${db.animal.animalName.name} LIKE ?
       ORDER BY
-        ${db.animal.animalIdentification.name}
+        ${db.animal.animalName.name}
+      
     ''',
     variables: [
       drift.Variable.withReal(tmpRangeValues.start),

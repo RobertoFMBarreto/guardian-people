@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dart_mq/dart_mq.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -28,7 +29,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  MQClient.initialize();
   FirebaseMessaging.onBackgroundMessage(FCMMessagingProvider.firebaseMessagingBackgroundHandler);
 
   // if (!kIsWeb) {o

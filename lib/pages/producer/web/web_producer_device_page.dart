@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:dart_amqp/dart_amqp.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -11,9 +12,13 @@ import 'package:get/get.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
+import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
+import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/pages/producer/web/widget/device_settings.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
@@ -43,13 +48,31 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   bool _isInterval = false;
   bool _showSettings = false;
   DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
+  DateTime? _endDate = null;
   double _currentZoom = 17;
   String _searchString = '';
-  final RangeValues _batteryRangeValues = const RangeValues(0, 100);
-  final RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
-  final RangeValues _elevationRangeValues = const RangeValues(0, 1000);
-  final RangeValues _tmpRangeValues = const RangeValues(0, 25);
+  RabbitMQProvider rabbitMQProvider = RabbitMQProvider();
+  late Consumer consumer;
+  RangeValues _batteryRangeValues = const RangeValues(0, 100);
+  RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
+  RangeValues _elevationRangeValues = const RangeValues(0, 1000);
+  RangeValues _tmpRangeValues = const RangeValues(0, 25);
+
+  @override
+  void dispose() {
+    AnimalRequests.stopRealtimeStreaming(
+      idAnimal: _selectedAnimal!.animal.idAnimal.value,
+      context: context,
+      onDataGotten: () {
+        rabbitMQProvider.stop();
+      },
+      onFailed: () {
+        // TODO: Show error dialogue
+      },
+    );
+
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -63,113 +86,159 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     setState(() {
       _selectedAnimal = widget.selectedAnimal;
     });
-    await _loadDevices();
+    await _loadAnimalData();
+    await _loadAnimals();
+    await _setupFilterRanges();
   }
 
-  /// Method that loads the local devices into the [_animals] list
-  ///
-  /// After that loads the devices from the api
-  Future<void> _loadDevices() async {
-    getUserAnimalsWithData().then((allDevices) {
+  /// Method that does the setup of filters based on de database values
+  Future<void> _setupFilterRanges() async {
+    _batteryRangeValues = const RangeValues(0, 100);
+    _dtUsageRangeValues = const RangeValues(0, 10);
+
+    final _maxElevation = await getMaxElevation();
+    final _maxTemperature = await getMaxTemperature();
+    if (mounted) {
       setState(() {
-        _animals.addAll(allDevices);
+        _elevationRangeValues = RangeValues(0, _maxElevation);
+        _tmpRangeValues = RangeValues(0, _maxTemperature);
       });
-
-      _getDevicesFromApi();
-    });
+    }
   }
 
-  /// Method that loads all devices from the API and then loads from database into the [_animals] list
+  /// Method that loads the animals into the [_animals] list
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
-  ///
-  /// If the server takes too long to answer then the user receives and alert
-  Future<void> _getDevicesFromApi() async {
-    AnimalProvider.getAnimals().then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        final data = jsonDecode(response.body);
-        List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
-        for (var dt in data) {
-          await createAnimal(AnimalCompanion(
-            isActive: drift.Value(dt['animal_is_active'] == true),
-            animalName: drift.Value(dt['animal_name']),
-            idUser: drift.Value(dt['id_user']),
-            animalColor: drift.Value(dt['animal_color']),
-            animalIdentification: drift.Value(dt['animal_identification']),
-            idAnimal: drift.Value(dt['id_animal']),
-          ));
-          if (dt['last_device_data'] != null) {
-            await createAnimalData(
-              AnimalLocationsCompanion(
-                accuracy: dt['last_device_data']['accuracy'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['accuracy']))
-                    : const drift.Value.absent(),
-                battery: dt['last_device_data']['battery'] != null
-                    ? drift.Value(int.tryParse(dt['last_device_data']['battery']))
-                    : const drift.Value.absent(),
-                date: drift.Value(DateTime.parse(dt['last_device_data']['date'])),
-                animalDataId: drift.Value(dt['last_device_data']['id_data']),
-                idAnimal: drift.Value(dt['id_animal']),
-                elevation: dt['last_device_data']['altitude'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['altitude']))
-                    : const drift.Value.absent(),
-                lat: dt['last_device_data']['lat'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['lat']))
-                    : const drift.Value.absent(),
-                lon: dt['last_device_data']['lon'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['lon']))
-                    : const drift.Value.absent(),
-                state: drift.Value(states[Random().nextInt(states.length)]),
-                temperature: dt['last_device_data']['skinTemperature'] != null
-                    ? drift.Value(double.tryParse(dt['last_device_data']['skinTemperature']))
-                    : const drift.Value.absent(),
-              ),
-            );
-          }
-        }
-        getUserAnimalsWithData().then((allDevices) {
-          if (mounted) {
-            setState(() {
-              _animals = [];
-              _animals.addAll(allDevices);
-            });
-          }
-        });
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getDevicesFromApi();
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+  /// 1. load local animals
+  /// 2. add to list
+  /// 3. load api animals
+  Future<void> _loadAnimals() async {
+    await getUserAnimalsWithLastLocation().then((allAnimals) {
+      _animals = [];
+      setState(() {
+        _animals.addAll(allAnimals);
+      });
+      AnimalRequests.getAnimalsFromApiWithLastLocation(
+          context: context,
+          onDataGotten: () {
+            getUserAnimalsWithLastLocation().then((allDevices) {
+              if (mounted) {
+                setState(() {
+                  _animals = [];
+                  _animals.addAll(allDevices);
+                });
               }
             });
-          } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
-          }
-        });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          }
-        });
-      }
+          });
     });
+  }
+
+  /// Method that loads that local animal data into the [_animalData] list
+  Future<void> _getAnimalData() async {
+    getAnimalData(
+      startDate: _startDate,
+      endDate: _endDate,
+      idAnimal: _selectedAnimal!.animal.idAnimal.value,
+      isInterval: _isInterval,
+    ).then(
+      (data) async {
+        List<AnimalLocationsCompanion> animalData = [];
+        if (mounted) {
+          setState(() {
+            animalData.addAll(data);
+            _selectedAnimal = Animal(
+              animal: _selectedAnimal!.animal,
+              data: animalData,
+            );
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> _loadAnimalData() async {
+    if (_isInterval) {
+      // get data in interval
+      _getAnimalData();
+      AnimalRequests.getAnimalDataIntervalFromApi(
+        idAnimal: _selectedAnimal!.animal.idAnimal.value,
+        startDate: _startDate,
+        endDate: _endDate ?? DateTime.now(),
+        context: context,
+        onDataGotten: () {
+          _getAnimalData();
+        },
+        onFailed: () {
+          hasShownNoServerConnection().then((hasShown) async {
+            if (mounted) {
+              setState(() {
+                _startDate = DateTime.now();
+                _endDate = DateTime.now();
+              });
+            }
+            if (!hasShown) {
+              setShownNoServerConnection(true).then(
+                (_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
+              );
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.server_error.capitalizeFirst!,
+                    ),
+                  ),
+                );
+              }
+            }
+          });
+        },
+      );
+    } else {
+      // get last location
+      if (_selectedAnimal!.data.isEmpty) {
+        _getLastLocation().then((_) {
+          if (mounted) {
+            setState(() {
+              _startDate = _selectedAnimal!.data
+                      .firstWhereOrNull((element) => element.lat.value != null)
+                      ?.date
+                      .value ??
+                  DateTime.now();
+            });
+          }
+        });
+
+        AnimalRequests.getAnimalsFromApiWithLastLocation(
+            context: context,
+            onDataGotten: () {
+              _getLastLocation();
+            });
+      }
+    }
+    if (_endDate == null) {
+      // make realtime request
+      print('Start Realtime for ${_selectedAnimal!.animal.idAnimal.value}');
+      AnimalRequests.startRealtimeStreaming(
+        idAnimal: _selectedAnimal!.animal.idAnimal.value,
+        context: context,
+        onDataGotten: () {
+          rabbitMQProvider.listen(
+            topicId: _selectedAnimal!.animal.idAnimal.value,
+            onDataReceived: (message) async {
+              if (message['lat'] != null && message['lon'] != null) {
+                animalDataFromJson(message, _selectedAnimal!.animal.idAnimal.value).then(
+                  (_) => _getAnimalData(),
+                );
+              }
+            },
+          );
+        },
+        onFailed: () {
+          // TODO: Show error dialogue
+        },
+      );
+    }
   }
 
   /// Method that filters the animals and loads them into the [_animals] list
@@ -180,122 +249,28 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       dtUsageRangeValues: _dtUsageRangeValues,
       searchString: _searchString,
       tmpRangeValues: _tmpRangeValues,
-    ).then(
-      (filteredAnimals) => setState(() {
-        _animals = [];
-        _animals.addAll(filteredAnimals);
-      }),
-    );
+    ).then((filteredAnimals) {
+      if (mounted) {
+        setState(() {
+          _animals = [];
+          _animals.addAll(filteredAnimals);
+        });
+      }
+    });
   }
 
-  /// Method that loads device data from the api and then loads from database into the [_animals] list
-  Future<void> _getDeviceData() async {
-    await getAnimalData(
-      startDate: _startDate,
-      endDate: _endDate,
-      idAnimal: _selectedAnimal!.animal.idAnimal.value,
-      isInterval: _isInterval,
-    ).then(
-      (data) async {
+  /// Method that allows to get the animal with the last location from api and store it in [_animalData] variable
+  Future<void> _getLastLocation() async {
+    await getUserAnimalWithLastLocation(_selectedAnimal!.animal.idAnimal.value).then((animal) {
+      if (mounted) {
         setState(() {
           _selectedAnimal = Animal(
-            animal: _selectedAnimal!.animal,
-            data: data,
+            animal: animal.first.animal,
+            data: animal.first.data,
           );
         });
-        AnimalProvider.getAnimalData(_selectedAnimal!.animal.idAnimal.value, _startDate, _endDate)
-            .then((response) async {
-          if (response.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final data = jsonDecode(response.body);
-            List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
-            for (var dt in data) {
-              await createAnimalData(
-                AnimalLocationsCompanion(
-                  accuracy: dt['accuracy'] != null
-                      ? drift.Value(double.tryParse(dt['accuracy']))
-                      : const drift.Value.absent(),
-                  battery: dt['battery'] != null
-                      ? drift.Value(int.tryParse(dt['battery']))
-                      : const drift.Value.absent(),
-                  date: drift.Value(DateTime.parse(dt['date'])),
-                  animalDataId: drift.Value(dt['id_data']),
-                  idAnimal: drift.Value(dt['id_animal']),
-                  elevation: dt['altitude'] != null
-                      ? drift.Value(double.tryParse(dt['altitude']))
-                      : const drift.Value.absent(),
-                  lat: dt['lat'] != null
-                      ? drift.Value(double.tryParse(dt['lat']))
-                      : const drift.Value.absent(),
-                  lon: dt['lon'] != null
-                      ? drift.Value(double.tryParse(dt['lon']))
-                      : const drift.Value.absent(),
-                  state: drift.Value(states[Random().nextInt(states.length)]),
-                  temperature: dt['skinTemperature'] != null
-                      ? drift.Value(double.tryParse(dt['skinTemperature']))
-                      : const drift.Value.absent(),
-                ),
-              );
-            }
-
-            await getAnimalData(
-              startDate: _startDate,
-              endDate: _endDate,
-              idAnimal: _selectedAnimal!.animal.idAnimal.value,
-              isInterval: _isInterval,
-            ).then(
-              (data) async {
-                setState(() {
-                  _selectedAnimal = Animal(
-                    animal: _selectedAnimal!.animal,
-                    data: data,
-                  );
-                });
-                if (_selectedAnimal!.data.isEmpty && mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.there_is_no_animal_data.capitalizeFirst!,
-                    ),
-                  ));
-                }
-              },
-            );
-          } else if (response.statusCode == 401) {
-            AuthProvider.refreshToken().then((resp) async {
-              if (resp.statusCode == 200) {
-                setShownNoServerConnection(false);
-                final newToken = jsonDecode(resp.body)['token'];
-                await setSessionToken(newToken);
-                _getDevicesFromApi();
-              } else if (response.statusCode == 507) {
-                hasShownNoServerConnection().then((hasShown) async {
-                  if (!hasShown) {
-                    setShownNoServerConnection(true).then(
-                      (_) => showDialog(
-                          context: context, builder: (context) => const ServerErrorDialogue()),
-                    );
-                  }
-                });
-              } else {
-                clearUserSession().then((_) => deleteEverything().then(
-                      (_) => Navigator.pushNamedAndRemoveUntil(
-                          context, '/login', (Route<dynamic> route) => false),
-                    ));
-              }
-            });
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
-              }
-            });
-          }
-        });
-      },
-    );
+      }
+    });
   }
 
   @override
@@ -386,7 +361,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                     isSelected: _selectedAnimal != null &&
                                                         _animals[index].animal.idAnimal.value ==
                                                             _selectedAnimal!.animal.idAnimal.value,
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       if (_selectedAnimal != null &&
                                                           _selectedAnimal!.animal.idAnimal.value ==
                                                               _animals[index]
@@ -401,12 +376,13 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                         setState(() {
                                                           _selectedAnimal = _animals[index];
                                                         });
-                                                        if (_startDate
-                                                                .difference(_endDate)
-                                                                .inSeconds
-                                                                .abs() >
-                                                            60) {
-                                                          _getDeviceData();
+                                                        if (_endDate == null ||
+                                                            _startDate
+                                                                    .difference(_endDate!)
+                                                                    .inSeconds
+                                                                    .abs() >
+                                                                60) {
+                                                          await _loadAnimalData();
                                                         }
                                                       }
 
@@ -433,33 +409,53 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                             ],
                           ),
                         ),
-                        if (_selectedAnimal != null)
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: AnimalTimeRangeWidget(
-                                  startDate: _startDate,
-                                  endDate: _endDate,
-                                  onStartDateChanged: (newStartDate) {
-                                    if (_selectedAnimal != null) {
+                        if (_selectedAnimal != null) ...[
+                          if (_endDate != null)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    if (mounted) {
                                       setState(() {
-                                        _startDate = newStartDate;
-                                        _isInterval = true;
-                                        _getDeviceData();
+                                        _endDate = null;
+                                        _isInterval = false;
+                                        _loadAnimalData();
                                       });
                                     }
                                   },
-                                  onEndDateChanged: (newEndDate) {
-                                    if (_selectedAnimal != null) {
-                                      setState(() {
-                                        _endDate = newEndDate;
-                                        _isInterval = true;
-                                        _getDeviceData();
-                                      });
-                                    }
-                                  }),
+                                  child: Text(
+                                    localizations.realtime.capitalize!,
+                                    style: theme.textTheme.bodyLarge!
+                                        .copyWith(color: gdSecondaryColor),
+                                  ),
+                                )
+                              ],
                             ),
+                          Expanded(
+                            child: AnimalTimeRangeWidget(
+                                startDate: _startDate,
+                                endDate: _endDate,
+                                onStartDateChanged: (newStartDate) {
+                                  if (_selectedAnimal != null) {
+                                    setState(() {
+                                      _startDate = newStartDate;
+                                      _isInterval = true;
+                                      _loadAnimalData();
+                                    });
+                                  }
+                                },
+                                onEndDateChanged: (newEndDate) {
+                                  if (_selectedAnimal != null) {
+                                    setState(() {
+                                      _endDate = newEndDate;
+                                      _isInterval = true;
+                                      _loadAnimalData();
+                                    });
+                                  }
+                                }),
                           ),
+                        ]
                       ],
                     ),
                   ),
@@ -530,7 +526,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                               },
                               startingZoom: _currentZoom,
                               startDate: _startDate,
-                              endDate: _endDate,
+                              endDate: _endDate ?? DateTime.now(),
                               isInterval: _isInterval,
                               idAnimal: _selectedAnimal!.animal.idAnimal.value,
                               deviceColor: _selectedAnimal!.animal.animalColor.value,

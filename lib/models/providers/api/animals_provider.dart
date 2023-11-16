@@ -80,8 +80,8 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url =
-        Uri.http(kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/start');
+    //f0634838-b721-4eda-8868-dc4973c8daac
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/locations/subscription/$idAnimal/start');
     try {
       var response = await get(url, headers: headers);
 
@@ -100,8 +100,7 @@ class AnimalProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url =
-        Uri.http(kGDapiServerUrl, '/api/v1/animals/animal/locations/subscription/$idAnimal/cancel');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/locations/subscription/$idAnimal/cancel');
     try {
       var response = await get(url, headers: headers);
 
