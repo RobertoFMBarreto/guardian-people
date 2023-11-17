@@ -430,9 +430,13 @@ class _AddAlertPageState extends State<AddAlertPage> {
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     if (widget.alert != null && widget.isEdit!) {
-                                      _updateAlert();
+                                      setState(() {
+                                        _future = _updateAlert();
+                                      });
                                     } else {
-                                      _createAlert();
+                                      setState(() {
+                                        _future = _createAlert();
+                                      });
                                     }
                                   }
                                 },

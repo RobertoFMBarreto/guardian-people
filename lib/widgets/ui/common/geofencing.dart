@@ -614,7 +614,9 @@ class _GeofencingState extends State<Geofencing> {
                                       ),
                                     ElevatedButton(
                                       onPressed: () {
-                                        _confirmGeofence();
+                                        setState(() {
+                                          _future = _confirmGeofence();
+                                        });
                                       },
                                       child: Text(
                                         localizations.confirm.capitalizeFirst!,
