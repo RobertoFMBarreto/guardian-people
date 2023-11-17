@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:badges/badges.dart' as badges;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
@@ -64,6 +65,9 @@ class _ProducerHomeState extends State<ProducerHome> {
     await _loadFences();
     await _loadAlertNotifications();
     await _loadAlerts();
+    FirebaseMessaging.onMessage.listen((event) {
+      _loadAlertNotifications();
+    });
   }
 
   /// Method that loads the user alerts into the [_alerts] list
@@ -166,6 +170,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   ///
   /// Resets the list to avoid duplicates
   Future<void> _loadAlertNotifications() async {
+    print('Load Notifications');
     _loadLocalAlertNotifications().then((_) => _getNotificationsFromApi());
   }
 
@@ -176,6 +181,7 @@ class _ProducerHomeState extends State<ProducerHome> {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
       setState(() => _alertNotifications.addAll(allAlerts));
+      print('Length: ${_alertNotifications.length}');
     });
   }
 
@@ -212,6 +218,7 @@ class _ProducerHomeState extends State<ProducerHome> {
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 SliverPersistentHeader(
+                  key: Key(_alertNotifications.length.toString()),
                   delegate: SliverMainAppBar(
                     imageUrl: '',
                     name: _user.name,
@@ -268,8 +275,11 @@ class _ProducerHomeState extends State<ProducerHome> {
                                   _alertNotifications.length <= 9
                                       ? _alertNotifications.length.toString()
                                       : '+9',
-                                  style: theme.textTheme.bodyMedium!
-                                      .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: _alertNotifications.length <= 9
+                                      ? theme.textTheme.bodyMedium!.copyWith(
+                                          color: Colors.white, fontWeight: FontWeight.bold)
+                                      : theme.textTheme.bodySmall!.copyWith(
+                                          color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                                 badgeAnimation: const badges.BadgeAnimation.scale(
                                   animationDuration: Duration(seconds: 1),
