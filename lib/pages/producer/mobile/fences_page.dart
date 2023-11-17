@@ -46,7 +46,11 @@ class _FencesPageState extends State<FencesPage> {
     await _searchFences().then(
       (value) => FencingRequests.getUserFences(
         context: context,
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
         onGottenData: (_) {
           searchFences(_searchString);
         },
@@ -78,7 +82,11 @@ class _FencesPageState extends State<FencesPage> {
           idFence: idFence,
           context: context,
           onGottenData: () {},
-          onFailed: () {},
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
         ),
       ),
     );

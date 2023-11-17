@@ -98,7 +98,11 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
         onGottenData: (_) async {
           await _loadAnimalFences();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       ),
     );
   }

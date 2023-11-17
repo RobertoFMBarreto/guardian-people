@@ -58,6 +58,11 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
           onDataGotten: () {
             getUserAnimalsWithLastLocation().then((allDevices) {
               if (mounted) {
@@ -79,7 +84,11 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
         onGottenData: (data) async {
           await _loadLocalFences();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       ),
     );
   }
@@ -109,6 +118,9 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
               });
             },
             onFailed: () async {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
               // await createFence(FenceCompanion(
               //   color: drift.Value(fence.color),
               //   idFence: drift.Value(fence.idFence),

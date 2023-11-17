@@ -51,7 +51,9 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
         rabbitMQProvider.stop();
       },
       onFailed: () {
-        // TODO: Show error dialogue
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
       },
     );
 
@@ -132,6 +134,11 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
         AnimalRequests.getAnimalsFromApiWithLastLocation(
             context: context,
+            onFailed: () {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            },
             onDataGotten: () {
               _getLastLocation();
             });
@@ -155,7 +162,9 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
           );
         },
         onFailed: () {
-          // TODO: Show error dialogue
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         },
       );
     }

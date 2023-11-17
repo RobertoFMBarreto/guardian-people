@@ -104,7 +104,11 @@ class _ManageFencePageState extends State<ManageFencePage> {
             fenceId: _fence.idFence,
             animalIds: selected.map((e) => e.animal.idAnimal.value).toList(),
             context: context,
-            onFailed: () {},
+            onFailed: () {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            },
           ),
         );
       }

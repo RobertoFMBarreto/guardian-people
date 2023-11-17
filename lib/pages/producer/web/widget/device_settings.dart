@@ -83,7 +83,11 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         onGottenData: (_) async {
           await _getDeviceFences();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       ),
     );
   }
@@ -142,10 +146,17 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                         (a) => a.idAlert == selectedAlert.idAlert,
                       );
                     });
+                    AppLocalizations localizations = AppLocalizations.of(context)!;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
                   },
                 );
               },
-              onFailed: () {},
+              onFailed: () {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              },
             ),
           );
         }
@@ -209,7 +220,9 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         animal: newAnimal,
         context: context,
         onFailed: () {
-          // TODO: show dialogue
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         },
       ),
     );
@@ -267,10 +280,17 @@ class _DeviceSettingsState extends State<DeviceSettings> {
               setState(() {
                 _alerts.add(removedAlert);
               });
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             },
           );
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       ),
     );
   }

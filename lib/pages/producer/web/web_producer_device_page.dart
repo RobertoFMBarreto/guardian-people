@@ -62,7 +62,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
         rabbitMQProvider.stop();
       },
       onFailed: () {
-        // TODO: Show error dialogue
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
       },
     );
 
@@ -114,6 +116,11 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
           onDataGotten: () {
             getUserAnimalsWithLastLocation().then((allDevices) {
               if (mounted) {
@@ -206,6 +213,11 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
         AnimalRequests.getAnimalsFromApiWithLastLocation(
             context: context,
+            onFailed: () {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            },
             onDataGotten: () {
               _getLastLocation();
             });
@@ -232,7 +244,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
           );
         },
         onFailed: () {
-          // TODO: Show error dialogue
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         },
       );
     }

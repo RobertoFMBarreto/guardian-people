@@ -49,7 +49,11 @@ class _AlertsPageState extends State<AlertsPage> {
           onDataGotten: (data) {
             _loadLocalAlerts();
           },
-          onFailed: () {},
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
         );
       },
     );
@@ -84,6 +88,9 @@ class _AlertsPageState extends State<AlertsPage> {
         setState(() {
           _alerts.addAll(copyAlerts);
         });
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
       },
     );
   }
@@ -106,6 +113,9 @@ class _AlertsPageState extends State<AlertsPage> {
         setState(() {
           _alerts.add(deletedAlert);
         });
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
       },
     );
   }

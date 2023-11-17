@@ -103,6 +103,11 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   Future<void> _getAnimalsFromApi() async {
     AnimalRequests.getAnimalsFromApiWithLastLocation(
         context: context,
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
         onDataGotten: () {
           _filterAnimals();
         });

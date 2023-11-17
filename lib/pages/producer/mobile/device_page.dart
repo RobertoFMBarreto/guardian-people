@@ -47,7 +47,9 @@ class _DevicePageState extends State<DevicePage> {
       animal: _animal,
       context: context,
       onFailed: () {
-        // TODO: show dialogue
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
       },
     );
   }

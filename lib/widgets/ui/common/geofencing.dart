@@ -212,6 +212,11 @@ class _GeofencingState extends State<Geofencing> {
     _loadLocalAnimals().then(
       (value) => AnimalRequests.getAnimalsFromApiWithLastLocation(
         context: context,
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
         onDataGotten: () {
           _loadLocalAnimals();
         },
@@ -285,7 +290,11 @@ class _GeofencingState extends State<Geofencing> {
           fence: updatedFence,
           fencePoints: fencePoints,
           context: context,
-          onFailed: () {},
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
         ),
       );
     } else {
@@ -304,7 +313,11 @@ class _GeofencingState extends State<Geofencing> {
           fence: newFence,
           fencePoints: fencePoints,
           context: context,
-          onFailed: () {},
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
         ),
       );
     }

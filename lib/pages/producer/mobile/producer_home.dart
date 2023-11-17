@@ -84,7 +84,11 @@ class _ProducerHomeState extends State<ProducerHome> {
         onDataGotten: (data) {
           _getLocalUserAlerts();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       ),
     );
   }
@@ -125,6 +129,11 @@ class _ProducerHomeState extends State<ProducerHome> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
           onDataGotten: () {
             getUserAnimalsWithLastLocation().then((allDevices) {
               if (mounted) {
@@ -150,7 +159,11 @@ class _ProducerHomeState extends State<ProducerHome> {
         onGottenData: (_) async {
           await _loadLocalFences();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       );
     });
   }
@@ -190,7 +203,11 @@ class _ProducerHomeState extends State<ProducerHome> {
       onDataGotten: (data) {
         _loadLocalAlertNotifications();
       },
-      onFailed: () {},
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      },
     );
   }
 

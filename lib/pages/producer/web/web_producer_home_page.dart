@@ -65,6 +65,11 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
           onDataGotten: () {
             getUserAnimalsWithLastLocation().then((allDevices) {
               if (mounted) {
@@ -90,7 +95,11 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
         onGottenData: (_) async {
           await _loadLocalFences();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       );
     });
   }
@@ -134,7 +143,11 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
       onDataGotten: (data) {
         _loadLocalAlertNotifications();
       },
-      onFailed: () {},
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      },
     );
   }
 

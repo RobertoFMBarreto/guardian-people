@@ -95,7 +95,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
       onDataGotten: (data) {
         Navigator.of(context).pop();
       },
-      onFailed: () {},
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      },
     );
   }
 
@@ -119,7 +123,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
       onDataGotten: (data) {
         Navigator.of(context).pop();
       },
-      onFailed: () {},
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      },
     );
   }
 
@@ -158,7 +166,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
         onDataGotten: (data) async {
           await _getLocalAlertableSensors();
         },
-        onFailed: () {},
+        onFailed: () {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       );
     });
   }

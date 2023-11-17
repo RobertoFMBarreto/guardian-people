@@ -61,7 +61,11 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
           onDataGotten: (data) {
             _getLocalUnselectedUserAlerts(widget.idAnimal!);
           },
-          onFailed: () {},
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
         ),
       );
     } else {
@@ -71,7 +75,11 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
           onDataGotten: (data) {
             _getLocalUserAlerts();
           },
-          onFailed: () {},
+          onFailed: () {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
         ),
       );
     }
@@ -137,6 +145,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         },
         onFailed: () {
           failedAlerts.add(alert);
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         },
       );
     }
@@ -165,6 +176,9 @@ class _AlertsManagementPageState extends State<AlertsManagementPage> {
         setState(() {
           _alerts.add(alert);
         });
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
       },
     );
   }

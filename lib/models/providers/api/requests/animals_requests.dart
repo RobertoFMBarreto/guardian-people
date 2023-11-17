@@ -16,7 +16,9 @@ class AnimalRequests {
   ///
   /// If the server takes too long to answer then the user receives and alert
   static Future<void> getAnimalsFromApiWithLastLocation(
-      {required BuildContext context, required Function onDataGotten}) async {
+      {required BuildContext context,
+      required Function onDataGotten,
+      required Function onFailed}) async {
     AnimalProvider.getAnimalsWithLastLocation().then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
@@ -31,6 +33,7 @@ class AnimalRequests {
               (value) => getAnimalsFromApiWithLastLocation(
                 context: context,
                 onDataGotten: onDataGotten,
+                onFailed: onFailed,
               ),
             );
           } else if (resp.statusCode == 507) {
@@ -42,6 +45,7 @@ class AnimalRequests {
                 );
               }
             });
+            onFailed();
           } else {
             clearUserSession().then((_) => deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
@@ -58,6 +62,7 @@ class AnimalRequests {
             );
           }
         });
+        onFailed();
       }
     });
   }
