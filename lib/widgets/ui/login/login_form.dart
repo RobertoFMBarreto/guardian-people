@@ -6,6 +6,7 @@ import 'package:guardian/models/helpers/cookies/cookies_stub.dart'
     as cookies_helper;
 import 'package:guardian/models/providers/api/requests/auth_requests.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 import 'package:drift/drift.dart' as drift;

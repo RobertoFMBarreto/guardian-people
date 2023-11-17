@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
-import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/device_helper.dart';

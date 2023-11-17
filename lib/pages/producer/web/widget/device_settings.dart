@@ -311,7 +311,6 @@ class _DeviceSettingsState extends State<DeviceSettings> {
 
   /// Method that update the [_animalColor] and updates the database
   Future<void> _onColorUpdate(Color color) async {
-    // TODO: Logic to update device color
     _animalColor = HexColor.toHex(color: color);
     await _updateAnimal();
     setState(() {

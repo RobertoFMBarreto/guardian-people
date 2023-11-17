@@ -403,6 +403,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
                                                       if (_selectedAnimal != null &&
                                                           _selectedAnimal!.data.isEmpty) {
+                                                        // ignore: use_build_context_synchronously
                                                         ScaffoldMessenger.of(context)
                                                             .showSnackBar(SnackBar(
                                                           content: Text(
