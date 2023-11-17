@@ -77,6 +77,7 @@ class _FencesPageState extends State<FencesPage> {
         (_) => FencingRequests.removeFence(
           idFence: idFence,
           context: context,
+          onGottenData: () {},
           onFailed: () {},
         ),
       ),

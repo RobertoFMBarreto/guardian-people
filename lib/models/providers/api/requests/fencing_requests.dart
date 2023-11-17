@@ -59,11 +59,13 @@ class FencingRequests {
   static Future<void> removeFence({
     required String idFence,
     required BuildContext context,
+    required Function() onGottenData,
     required Function onFailed,
   }) async {
     await FencingProvider.removeFence(idFence).then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
+        onGottenData();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
@@ -73,6 +75,7 @@ class FencingRequests {
               (value) => removeFence(
                 idFence: idFence,
                 onFailed: onFailed,
+                onGottenData: onGottenData,
                 context: context,
               ),
             );
@@ -101,7 +104,7 @@ class FencingRequests {
   /// Method that allows to request for the creation of a new fence
   static Future<void> getUserFences({
     required BuildContext context,
-    required Function onGottenData,
+    required Function(String) onGottenData,
     required Function onFailed,
   }) async {
     await FencingProvider.getUserFences().then((response) async {
@@ -197,6 +200,8 @@ class FencingRequests {
     required Function onFailed,
   }) async {
     await FencingProvider.addAnimalFence(fenceId, animalIds).then((response) async {
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
       } else if (response.statusCode == 401) {

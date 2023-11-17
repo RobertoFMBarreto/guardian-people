@@ -74,6 +74,14 @@ Future<List<LatLng>> getFencePoints(String idFence) async {
   return fencePoints;
 }
 
+/// Method to get all points [List<LatLng>] from fence [idFence]
+Future<List<FencePoint>> getOriginalFencePoints(String idFence) async {
+  final db = Get.find<GuardianDb>();
+  final data = await (db.select(db.fencePoints)..where((tbl) => tbl.idFence.equals(idFence))).get();
+
+  return data;
+}
+
 /// Method to remove all points from a fence [idFence]
 Future<void> removeAllFencePoints(String idFence) async {
   final db = Get.find<GuardianDb>();

@@ -347,7 +347,7 @@ class _GeofencingState extends State<Geofencing> {
                         FlutterMap(
                           key: Key(_fenceColor.toString()),
                           options: MapOptions(
-                            bounds: widget.fence != null && _animals.isEmpty
+                            bounds: widget.fence != null || _animals.isEmpty
                                 ? LatLngBounds.fromPoints(_fencePoints)
                                 : _animals.isNotEmpty
                                     ? LatLngBounds.fromPoints(_animals
@@ -495,120 +495,130 @@ class _GeofencingState extends State<Geofencing> {
                     ),
                   ),
                 ),
-                if (!kIsWeb)
-                  Wrap(
-                      //flex: 3,
-                      children: [
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
-                          child: Center(
-                            child: SingleChildScrollView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: TextField(
-                                      onChanged: (newValue) {
-                                        _fenceName = newValue;
-                                      },
-                                      controller: _nameController,
-                                      decoration: InputDecoration(
-                                        label: Text(
-                                          localizations.fence_name.capitalizeFirst!,
-                                        ),
+                //if (!kIsWeb)
+                Wrap(
+                    //flex: 3,
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
+                        child: Center(
+                          child: SingleChildScrollView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: TextField(
+                                    onChanged: (newValue) {
+                                      _fenceName = newValue;
+                                    },
+                                    controller: _nameController,
+                                    decoration: InputDecoration(
+                                      label: Text(
+                                        localizations.fence_name.capitalizeFirst!,
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
-                                          child: Text(
-                                            '${localizations.keep_animal.capitalizeFirst!}:',
-                                            style: theme.textTheme.bodyLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: theme.brightness == Brightness.light
-                                                  ? gdTextColor
-                                                  : gdDarkTextColor,
-                                            ),
-                                          ),
-                                        ),
-                                        ToggleSwitch(
-                                          initialLabelIndex: _isStayInside ? 0 : 1,
-                                          cornerRadius: 50,
-                                          radiusStyle: true,
-                                          activeBgColor: [theme.colorScheme.secondary],
-                                          activeFgColor: theme.colorScheme.onSecondary,
-                                          inactiveBgColor:
-                                              Theme.of(context).brightness == Brightness.light
-                                                  ? gdToggleGreyArea
-                                                  : gdDarkToggleGreyArea,
-                                          inactiveFgColor:
-                                              Theme.of(context).brightness == Brightness.light
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                          customTextStyles: const [
-                                            TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
-                                            TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
-                                          ],
-                                          totalSwitches: 2,
-                                          labels: [
-                                            localizations.inside.capitalizeFirst!,
-                                            localizations.outside.capitalizeFirst!,
-                                          ],
-                                          onToggle: (index) {
-                                            setState(() {
-                                              _isStayInside = index == 1;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        style: const ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStatePropertyAll(gdDarkCancelBtnColor),
-                                        ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
                                         child: Text(
-                                          localizations.cancel.capitalizeFirst!,
+                                          '${localizations.keep_animal.capitalizeFirst!}:',
                                           style: theme.textTheme.bodyLarge!.copyWith(
-                                            color: theme.colorScheme.onSecondary,
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.bold,
+                                            color: theme.brightness == Brightness.light
+                                                ? gdTextColor
+                                                : gdDarkTextColor,
                                           ),
                                         ),
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          _confirmGeofence();
+                                      ToggleSwitch(
+                                        initialLabelIndex: _isStayInside ? 0 : 1,
+                                        cornerRadius: 50,
+                                        radiusStyle: true,
+                                        activeBgColor: [theme.colorScheme.secondary],
+                                        activeFgColor: theme.colorScheme.onSecondary,
+                                        inactiveBgColor:
+                                            Theme.of(context).brightness == Brightness.light
+                                                ? gdToggleGreyArea
+                                                : gdDarkToggleGreyArea,
+                                        inactiveFgColor:
+                                            Theme.of(context).brightness == Brightness.light
+                                                ? Colors.black
+                                                : Colors.white,
+                                        customTextStyles: const [
+                                          TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
+                                          TextStyle(fontSize: 12.0, fontWeight: FontWeight.w900),
+                                        ],
+                                        totalSwitches: 2,
+                                        labels: [
+                                          localizations.inside.capitalizeFirst!,
+                                          localizations.outside.capitalizeFirst!,
+                                        ],
+                                        onToggle: (index) {
+                                          setState(() {
+                                            _isStayInside = index == 1;
+                                          });
                                         },
-                                        child: Text(
-                                          localizations.confirm.capitalizeFirst!,
-                                          style: theme.textTheme.bodyLarge!.copyWith(
-                                            color: theme.colorScheme.onSecondary,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: kIsWeb
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        if (!kIsWeb) {
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          widget.onFenceCreated!();
+                                        }
+                                      },
+                                      style: const ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(gdDarkCancelBtnColor),
+                                      ),
+                                      child: Text(
+                                        localizations.cancel.capitalizeFirst!,
+                                        style: theme.textTheme.bodyLarge!.copyWith(
+                                          color: theme.colorScheme.onSecondary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    if (kIsWeb)
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _confirmGeofence();
+                                      },
+                                      child: Text(
+                                        localizations.confirm.capitalizeFirst!,
+                                        style: theme.textTheme.bodyLarge!.copyWith(
+                                          color: theme.colorScheme.onSecondary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ])
+                      ),
+                    ])
               ],
             );
           }
