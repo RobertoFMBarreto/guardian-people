@@ -63,19 +63,21 @@ class _LoginFormState extends State<LoginForm> {
               refreshToken = cookies_helper.getRefreshCookie(resp);
             }
 
-            FirebaseMessaging.instance.getToken().then((token) {
-              if (token != null) {
-                AuthRequests.refreshDevicetoken(
-                  context: context,
-                  devicetoken: token,
-                  onDataGotten: () {
-                    if (kDebugMode) {
-                      print(token);
-                    }
-                  },
-                );
-              }
-            });
+            if (!kIsWeb) {
+              FirebaseMessaging.instance.getToken().then((token) {
+                if (token != null) {
+                  AuthRequests.refreshDevicetoken(
+                    context: context,
+                    devicetoken: token,
+                    onDataGotten: () {
+                      if (kDebugMode) {
+                        print(token);
+                      }
+                    },
+                  );
+                }
+              });
+            }
 
             setUserSession(body['uid'], body['token'], refreshToken).then((_) {
               // store user profile

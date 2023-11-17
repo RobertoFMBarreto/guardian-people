@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 
@@ -30,54 +31,51 @@ class IconText extends StatelessWidget {
             ? gdDarkTextColor
             : textColor!;
     return isInverted
-        ? Container(
-            constraints: const BoxConstraints(maxWidth: 70, maxHeight: 20),
+        ? FittedBox(
+            fit: BoxFit.fitHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    text,
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontSize: fontSize,
-                      color: color,
-                    ),
+                AutoSizeText(
+                  text,
+                  maxFontSize: fontSize!,
+                  minFontSize: 1,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                    fontSize: fontSize,
                   ),
                 ),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Icon(
-                    icon,
-                    color: iconColor,
-                    size: 15,
-                  ),
+                Icon(
+                  icon,
+                  color: iconColor,
+                  size: iconSize,
                 ),
               ],
             ),
           )
-        : Container(
-            constraints: const BoxConstraints(maxWidth: 70, maxHeight: 20),
+        : FittedBox(
+            fit: BoxFit.fitWidth,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Icon(
-                    icon,
-                    color: iconColor,
-                    size: iconSize,
-                  ),
+                Icon(
+                  icon,
+                  color: iconColor,
+                  size: iconSize,
                 ),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    text,
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontSize: fontSize,
-                      color: color,
-                    ),
+                AutoSizeText(
+                  text,
+                  maxFontSize: fontSize!,
+                  minFontSize: 1,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                    fontSize: fontSize,
                   ),
                 ),
               ],
