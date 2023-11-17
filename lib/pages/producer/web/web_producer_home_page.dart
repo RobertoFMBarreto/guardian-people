@@ -1,28 +1,20 @@
-import 'dart:convert';
 import 'dart:math';
 
-import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_notifications_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/query_models/alert_notification.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
-import 'package:guardian/models/helpers/db_helpers.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/models/providers/api/requests/notifications_requests.dart';
-import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
-import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
 /// Class that represents the web produce home page
@@ -244,6 +236,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: AnimalsLocationsMap(
+                        key: Key(_reloadMap.toString()),
                         showCurrentPosition: true,
                         animals: _animals,
                         fences: _fences,

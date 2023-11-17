@@ -10,14 +10,10 @@ class RabbitMQProvider {
     required String topicId,
     required Function(Map<dynamic, dynamic>) onDataReceived,
   }) async {
-    print('_Here_');
     Client client = Client(settings: kRabbitMqSettings);
-    print('Here');
     Channel channel =
         await client.channel(); // auto-connect to localhost:5672 using guest credentials
-    print('Here1');
     Queue queue = await channel.queue(topicId, durable: true, autoDelete: true);
-    print('Here2');
     consumer = await queue.consume();
     if (kDebugMode) {
       print(' [x] Listenning for tracking data');

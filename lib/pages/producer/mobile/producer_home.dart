@@ -170,7 +170,6 @@ class _ProducerHomeState extends State<ProducerHome> {
   ///
   /// Resets the list to avoid duplicates
   Future<void> _loadAlertNotifications() async {
-    print('Load Notifications');
     _loadLocalAlertNotifications().then((_) => _getNotificationsFromApi());
   }
 
@@ -181,7 +180,6 @@ class _ProducerHomeState extends State<ProducerHome> {
     await getAllNotifications().then((allAlerts) {
       _alertNotifications = [];
       setState(() => _alertNotifications.addAll(allAlerts));
-      print('Length: ${_alertNotifications.length}');
     });
   }
 

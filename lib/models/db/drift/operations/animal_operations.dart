@@ -310,9 +310,6 @@ Future<List<Animal>> getUserAnimalsFiltered({
   //    deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
   //    ${db.animal.animalIdentification.name} LIKE ?)
 
-  print(tmpRangeValues);
-  print(batteryRangeValues);
-  print(elevationRangeValues);
   final data = await db.customSelect(
     '''
       SELECT

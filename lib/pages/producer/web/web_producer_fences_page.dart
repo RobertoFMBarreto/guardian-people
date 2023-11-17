@@ -10,13 +10,11 @@ import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/common/geofencing.dart';
-import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
-import 'package:drift/drift.dart' as drift;
 
 /// Class that represents the web producer fences page
 class WebProducerFencesPage extends StatefulWidget {
@@ -27,7 +25,6 @@ class WebProducerFencesPage extends StatefulWidget {
 }
 
 class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
-  final TextEditingController _nameController = TextEditingController();
   late Future _future;
 
   FenceData? _selectedFence;
@@ -99,9 +96,9 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
 
   /// Method that allows to delete a fence and update the fences list
   Future<void> _deleteFence(String idFence) async {
-    final fence = _fences.firstWhere(
-      (element) => element.idFence == idFence,
-    );
+    // final fence = _fences.firstWhere(
+    //   (element) => element.idFence == idFence,
+    // );
     await getOriginalFencePoints(idFence).then((fencePoints) => getFenceAnimals(idFence).then(
           (fenceAnimals) => FencingRequests.removeFence(
             idFence: idFence,

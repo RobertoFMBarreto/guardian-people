@@ -184,7 +184,6 @@ class FCMMessagingProvider {
         print('Message: ${message.data}');
       }
 
-      final body = jsonDecode(message.data['data']);
       final bodyMessage = getMessageBody(
           navigatorKey.currentState!.context, message.data['data'], message.data['channel']);
 

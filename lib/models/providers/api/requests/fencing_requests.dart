@@ -200,8 +200,6 @@ class FencingRequests {
     required Function onFailed,
   }) async {
     await FencingProvider.addAnimalFence(fenceId, animalIds).then((response) async {
-      print(response.statusCode);
-      print(response.body);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
       } else if (response.statusCode == 401) {

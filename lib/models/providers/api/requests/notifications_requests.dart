@@ -15,7 +15,6 @@ class NotificationsRequests {
       required Function(String) onDataGotten,
       required Function onFailed}) async {
     NotificationsProvider.getNotifications().then((response) async {
-      print(jsonDecode(response.body).length);
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
         parseNotifications(response.body).then((_) => onDataGotten(response.body));

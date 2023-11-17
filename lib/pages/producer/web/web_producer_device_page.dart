@@ -1,17 +1,12 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:dart_amqp/dart_amqp.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
-import 'package:guardian/models/helpers/db_helpers.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/animals_provider.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
@@ -48,7 +43,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   bool _isInterval = false;
   bool _showSettings = false;
   DateTime _startDate = DateTime.now();
-  DateTime? _endDate = null;
+  DateTime? _endDate;
   double _currentZoom = 17;
   String _searchString = '';
   RabbitMQProvider rabbitMQProvider = RabbitMQProvider();
@@ -218,7 +213,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     }
     if (_endDate == null) {
       // make realtime request
-      print('Start Realtime for ${_selectedAnimal!.animal.idAnimal.value}');
+      if (kDebugMode) {
+        print('Start Realtime for ${_selectedAnimal!.animal.idAnimal.value}');
+      }
       AnimalRequests.startRealtimeStreaming(
         idAnimal: _selectedAnimal!.animal.idAnimal.value,
         context: context,
