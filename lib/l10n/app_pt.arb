@@ -180,5 +180,8 @@
   "keep_animal": "manter o animal",
   "inside": "dentro",
   "outside": "fora",
-  "manage_fences": "gerir cercas"
+  "manage_fences": "gerir cercas",
+  "online": "ligado",
+  "no_gps": "sem localização",
+  "offline": "desligado"
 }

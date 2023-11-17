@@ -347,6 +347,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                             )
                                           : AnimalItem(
                                               animal: _animals[index],
+                                              deviceStatus: _animals[index].deviceStatus!,
                                               onBackFromDeviceScreen: () {
                                                 _filterAnimals();
                                               },

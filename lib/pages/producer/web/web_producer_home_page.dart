@@ -173,6 +173,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                                       itemCount: _animals.length,
                                       itemBuilder: (context, index) => AnimalItem(
                                         animal: _animals[index],
+                                        deviceStatus: _animals[index].deviceStatus!,
                                         onTap: () {
                                           widget.onSelectAnimal(_animals[index]);
                                         },

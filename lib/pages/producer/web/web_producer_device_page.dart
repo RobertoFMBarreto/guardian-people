@@ -358,6 +358,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                 itemBuilder: (context, index) {
                                                   return AnimalItem(
                                                     animal: _animals[index],
+                                                    deviceStatus: _animals[index].deviceStatus!,
                                                     isSelected: _selectedAnimal != null &&
                                                         _animals[index].animal.idAnimal.value ==
                                                             _selectedAnimal!.animal.idAnimal.value,

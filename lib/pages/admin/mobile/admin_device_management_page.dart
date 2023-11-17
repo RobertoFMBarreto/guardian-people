@@ -141,6 +141,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: AnimalItem(
                             animal: _animals[index],
+                            deviceStatus: _animals[index].deviceStatus!,
                             producerId: widget.producerId,
                           ),
                         ),

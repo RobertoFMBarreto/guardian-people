@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
+import 'package:guardian/models/helpers/device_status.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
@@ -15,6 +17,7 @@ class AnimalItem extends StatelessWidget {
   final String? producerId;
   final Function()? onTap;
   final bool isSelected;
+  final DeviceStatus deviceStatus;
 
   const AnimalItem({
     super.key,
@@ -24,6 +27,7 @@ class AnimalItem extends StatelessWidget {
     this.onBackFromDeviceScreen,
     this.onTap,
     this.isSelected = false,
+    required this.deviceStatus,
   });
 
   /// Method that pushes to the correct device page
@@ -77,6 +81,15 @@ class AnimalItem extends StatelessWidget {
                 fontSize: 18,
               ),
             ),
+            subtitle: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: CircleAvatar(radius: 3, backgroundColor: deviceStatus.toColor()),
+                ),
+                Text(deviceStatus.toNameString(context)),
+              ],
+            ),
             trailing: animal.data.isNotEmpty && animal.data.first.battery.value != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +102,7 @@ class AnimalItem extends StatelessWidget {
                             : theme.colorScheme.secondary,
                       ),
                       Text(
-                        '${animal.data.first.battery.value.toString()}%',
+                        '${animal.data.first.battery.value}%',
                         style: theme.textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w500,
                           color: isSelected ? theme.colorScheme.onSecondary : null,

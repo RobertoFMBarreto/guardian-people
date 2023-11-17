@@ -344,6 +344,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                     )
                                   : AnimalItem(
                                       animal: _devices[index],
+                                      deviceStatus: _devices[index].deviceStatus!,
                                       producerId: widget.producerId,
                                     ),
                             ),

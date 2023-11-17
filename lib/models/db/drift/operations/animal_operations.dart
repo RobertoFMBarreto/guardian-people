@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/helpers/device_status.dart';
 
 /// Method for creating an [animal] returning it as an [AnimalCompanion]
 Future<AnimalCompanion> createAnimal(
@@ -34,6 +35,21 @@ Future<AnimalData> getAnimal(String idAnimal) async {
       await (db.select(db.animal)..where((tbl) => tbl.idAnimal.equals(idAnimal))).getSingle();
 
   return data;
+}
+
+/// Method to get animal [idAnimal] information as [AnimalData]
+Future<DeviceStatus> getAnimalStatus(String idAnimal) async {
+  final db = Get.find<GuardianDb>();
+  final data = await (db.select(db.animalLocations)..where((tbl) => tbl.idAnimal.equals(idAnimal)))
+      .getSingleOrNull();
+
+  if (data == null) {
+    return DeviceStatus.offline;
+  } else if (data.lat == null && data.lon == null) {
+    return DeviceStatus.noGps;
+  } else {
+    return DeviceStatus.online;
+  }
 }
 
 /// Method to get all user animals as a [List<AnimalData>]
@@ -82,6 +98,7 @@ Future<Animal> getAnimalWithData(String idAnimal) async {
         idUser: drift.Value(data.data[db.animal.idUser.name]),
         animalIdentification: drift.Value(data.data[db.animal.animalIdentification.name]),
       ),
+      deviceStatus: await getAnimalStatus(data.data[db.animal.idAnimal.name]),
       data: [
         AnimalLocationsCompanion(
           accuracy: drift.Value(data.data['accuracy']),
@@ -137,6 +154,7 @@ Future<List<Animal>> getUserAnimalsWithData() async {
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
           idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
             AnimalLocationsCompanion(
@@ -200,6 +218,7 @@ Future<List<Animal>> getUserAnimalsWithLastLocation() async {
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
           idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
             AnimalLocationsCompanion(
@@ -269,6 +288,7 @@ Future<List<Animal>> getUserAnimalWithLastLocation(String idAnimal) async {
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
           idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
             AnimalLocationsCompanion(
@@ -368,6 +388,7 @@ Future<List<Animal>> getUserAnimalsFiltered({
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
           idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
             AnimalLocationsCompanion(
@@ -468,6 +489,7 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
             idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
           ),
+          deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
           data: [
             if (deviceData.data[db.animalLocations.date.name] != null)
               AnimalLocationsCompanion(
@@ -567,6 +589,7 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
             idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
           ),
+          deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
           data: [
             if (deviceData.data[db.animalLocations.date.name] != null)
               AnimalLocationsCompanion(

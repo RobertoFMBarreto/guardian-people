@@ -181,7 +181,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                             ],
                           ),
                         ),
-                        Expanded(child: SizedBox()),
+                        const Expanded(child: SizedBox()),
                         Expanded(
                           flex: 2,
                           child: Column(
