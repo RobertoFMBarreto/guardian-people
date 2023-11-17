@@ -1,5 +1,10 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:guardian/models/helpers/cookies/cookies_stub.dart'
+    if (dart.library.io) 'package:guardian/models/helpers/cookies/cookies_mobile.dart'
+    if (dart.library.js) 'package:guardian/models/helpers/cookies/cookies_web.dart'
+    as cookies_helper;
+
+import 'package:http/http.dart' as http;
 
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart';
@@ -51,9 +56,9 @@ class _LoginFormState extends State<LoginForm> {
             final body = jsonDecode(resp.body);
             String refreshToken;
             if (kIsWeb) {
-              refreshToken = document.cookie!.split('=')[1].split(';')[0];
+              refreshToken = cookies_helper.getRefreshCookie(http.Response('', 200));
             } else {
-              refreshToken = resp.headers['set-cookie']!.split('=')[1].split(';')[0];
+              refreshToken = cookies_helper.getRefreshCookie(resp);
             }
 
             setUserSession(body['uid'], body['token'], refreshToken).then((_) {

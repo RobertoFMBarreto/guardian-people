@@ -19,7 +19,7 @@ import 'package:guardian/models/providers/system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
-// import 'package:guardian/models/providers/caching/caching_provider.dart';
+import 'package:guardian/models/providers/caching/caching_provider.dart';
 
 late bool hasConnection;
 
@@ -32,9 +32,9 @@ Future<void> main() async {
   MQClient.initialize();
   FirebaseMessaging.onBackgroundMessage(FCMMessagingProvider.firebaseMessagingBackgroundHandler);
 
-  // if (!kIsWeb) {o
-  //   await MapCaching().initMapCaching();
-  // }
+  if (!kIsWeb) {
+    await MapCaching().initMapCaching();
+  }
 
   /// Put the reference to the guardian databe in the get package
   Get.put(GuardianDb());
