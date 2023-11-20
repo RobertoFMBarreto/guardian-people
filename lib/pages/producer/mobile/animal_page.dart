@@ -14,19 +14,19 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Method that represents the device page
-class DevicePage extends StatefulWidget {
+class AnimalPage extends StatefulWidget {
   final Animal animal;
 
-  const DevicePage({
+  const AnimalPage({
     super.key,
     required this.animal,
   });
 
   @override
-  State<DevicePage> createState() => _DevicePageState();
+  State<AnimalPage> createState() => _AnimalPageState();
 }
 
-class _DevicePageState extends State<DevicePage> {
+class _AnimalPageState extends State<AnimalPage> {
   bool _isInterval = false;
   late Animal _animal;
   int _reloadNum = 0;

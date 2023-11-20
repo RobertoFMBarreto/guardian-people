@@ -16,13 +16,13 @@ import '../../../widgets/ui/drawers/producer_page_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Class that represents the producer devices page
-class ProducerDevicesPage extends StatefulWidget {
+class ProducerAnimalsPage extends StatefulWidget {
   final bool isSelect;
   final String? idFence;
   final String? idAlert;
   final List<String>? notToShowAnimals;
 
-  const ProducerDevicesPage({
+  const ProducerAnimalsPage({
     super.key,
     this.isSelect = false,
     this.idFence,
@@ -31,10 +31,10 @@ class ProducerDevicesPage extends StatefulWidget {
   });
 
   @override
-  State<ProducerDevicesPage> createState() => _ProducerDevicesPageState();
+  State<ProducerAnimalsPage> createState() => _ProducerAnimalsPageState();
 }
 
-class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
+class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late double _maxElevation;

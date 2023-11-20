@@ -20,15 +20,15 @@ import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 
 /// Class that represents the device settings page
-class DeviceSettingsPage extends StatefulWidget {
+class AnimalSettingsPage extends StatefulWidget {
   final Animal animal;
-  const DeviceSettingsPage({super.key, required this.animal});
+  const AnimalSettingsPage({super.key, required this.animal});
 
   @override
-  State<DeviceSettingsPage> createState() => _DeviceSettingsPageState();
+  State<AnimalSettingsPage> createState() => _AnimalSettingsPageState();
 }
 
-class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
+class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
   late Future _future;
 
   String _animalName = '';

@@ -81,7 +81,21 @@ class _FencesPageState extends State<FencesPage> {
         (_) => FencingRequests.removeFence(
           idFence: idFence,
           context: context,
-          onGottenData: () {},
+          onGottenData: () async {
+            await _searchFences().then(
+              (value) => FencingRequests.getUserFences(
+                context: context,
+                onFailed: () {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                },
+                onGottenData: (_) {
+                  searchFences(_searchString);
+                },
+              ),
+            );
+          },
           onFailed: () {
             AppLocalizations localizations = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context)
