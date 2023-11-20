@@ -214,18 +214,17 @@ class _DeviceSettingsState extends State<DeviceSettings> {
       ),
       data: widget.animal.data,
     );
-
-    await updateAnimal(newAnimal.animal).then(
-      (_) => AnimalRequests.updateAnimal(
-        animal: newAnimal,
-        context: context,
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-        },
-        onDataGotten: () {},
-      ),
+    AnimalRequests.updateAnimal(
+      animal: newAnimal,
+      context: context,
+      onFailed: () {
+        AppLocalizations localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      },
+      onDataGotten: () async {
+        await updateAnimal(newAnimal.animal);
+      },
     );
   }
 
@@ -251,8 +250,10 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
       },
-      onDataGotten: () {},
-    ).then((value) => removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value));
+      onDataGotten: () async {
+        await removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value);
+      },
+    );
   }
 
   /// Method that allows to delete an alert from device
