@@ -224,6 +224,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         },
+        onDataGotten: () {},
       ),
     );
   }
@@ -250,6 +251,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
       },
+      onDataGotten: () {},
     ).then((value) => removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value));
   }
 

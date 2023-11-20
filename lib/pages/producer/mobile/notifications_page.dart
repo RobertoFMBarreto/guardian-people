@@ -77,17 +77,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   /// Method that deletes all notifications from api
   Future<void> _deleteAllNotifications() async {
-    List<AlertNotification> copyAlerts = [];
-    copyAlerts.addAll(_alerts);
     await NotificationsRequests.deleteAllNotificationsFromApi(
       context: context,
       onDataGotten: (data) {
         removeAllNotifications().then((_) => _loadLocalAlerts());
       },
       onFailed: () {
-        setState(() {
-          _alerts.addAll(copyAlerts);
-        });
         AppLocalizations localizations = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(localizations.server_error)));

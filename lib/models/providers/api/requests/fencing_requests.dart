@@ -243,10 +243,12 @@ class FencingRequests {
     required List<String> animalIds,
     required BuildContext context,
     required Function onFailed,
+    required Function onDataGotten,
   }) async {
     await FencingProvider.removeAnimalFence(fenceId, animalIds).then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
+        await onDataGotten();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
@@ -258,6 +260,7 @@ class FencingRequests {
                 animalIds: animalIds,
                 onFailed: onFailed,
                 context: context,
+                onDataGotten: onDataGotten,
               ),
             );
           } else if (resp.statusCode == 507) {

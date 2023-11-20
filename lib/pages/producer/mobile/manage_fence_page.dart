@@ -138,6 +138,9 @@ class _ManageFencePageState extends State<ManageFencePage> {
       animalIds: [animal.animal.idAnimal.value],
       context: context,
       fenceId: _fence.idFence,
+      onDataGotten: () async {
+        await removeAnimalFence(_fence.idFence, animal.animal.idAnimal.value);
+      },
       onFailed: () {
         AppLocalizations localizations = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
@@ -146,8 +149,6 @@ class _ManageFencePageState extends State<ManageFencePage> {
           _animals.add(animal);
         });
       },
-    ).then(
-      (_) => removeAnimalFence(_fence.idFence, animal.animal.idAnimal.value),
     );
   }
 

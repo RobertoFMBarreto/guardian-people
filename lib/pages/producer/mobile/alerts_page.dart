@@ -115,9 +115,6 @@ class _AlertsPageState extends State<AlertsPage> {
 
   /// Method that allows to delete all user alerts deleting first locally and then from the api
   Future<void> _deleteAll() async {
-    setState(() {
-      _alerts = [];
-    });
     _deleteAllFromApi().then((failedAlerts) {
       if (failedAlerts.isNotEmpty) {
         setState(() {
@@ -139,6 +136,9 @@ class _AlertsPageState extends State<AlertsPage> {
         context: context,
         alertId: alert.idAlert.value,
         onDataGotten: (data) {
+          setState(() {
+            _alerts.removeWhere((element) => element.idAlert.value == alert.idAlert.value);
+          });
           deleteAlert(alert.idAlert.value).then(
             (value) => removeAllAlertAnimals(alert.idAlert.value),
           );

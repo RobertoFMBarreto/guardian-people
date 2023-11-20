@@ -46,6 +46,7 @@ class _AnimalPageState extends State<AnimalPage> {
     AnimalRequests.updateAnimal(
       animal: _animal,
       context: context,
+      onDataGotten: () {},
       onFailed: () {
         AppLocalizations localizations = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)

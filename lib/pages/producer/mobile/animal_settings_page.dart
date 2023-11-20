@@ -206,10 +206,12 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
       data: widget.animal.data,
     );
 
-    updateAnimal(newAnimal.animal).then((value) => Navigator.of(context).pop(newAnimal));
     AnimalRequests.updateAnimal(
       animal: newAnimal,
       context: context,
+      onDataGotten: () {
+        updateAnimal(newAnimal.animal).then((value) => Navigator.of(context).pop(newAnimal));
+      },
       onFailed: () {
         AppLocalizations localizations = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
@@ -232,6 +234,9 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
         widget.animal.animal.idAnimal.value.toString(),
       ],
       context: context,
+      onDataGotten: () async {
+        await removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value);
+      },
       onFailed: () {
         AppLocalizations localizations = AppLocalizations.of(context)!;
         setState(() {
@@ -240,7 +245,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
       },
-    ).then((value) => removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value));
+    );
   }
 
   /// Method that allows to delete an alert from device
@@ -259,7 +264,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
             context: context,
             alert: alert,
             animals: [...animals],
-            onDataGotten: (data) {},
+            onDataGotten: (_) {},
             onFailed: () {
               addAlertAnimal(
                 AlertAnimalsCompanion(
@@ -276,7 +281,20 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
             },
           );
         },
-        onFailed: () {},
+        onFailed: () {
+          addAlertAnimal(
+            AlertAnimalsCompanion(
+              idAlert: alert.idAlert,
+              idAnimal: widget.animal.animal.idAnimal,
+            ),
+          );
+          setState(() {
+            _alerts.add(removedAlert);
+          });
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
       ),
     );
   }

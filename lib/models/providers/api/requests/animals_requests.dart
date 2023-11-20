@@ -235,10 +235,12 @@ class AnimalRequests {
     required Animal animal,
     required BuildContext context,
     required Function onFailed,
+    required Function onDataGotten,
   }) async {
     await AnimalProvider.updateAnimal(animal.animal).then((response) async {
       if (response.statusCode == 200) {
         setShownNoServerConnection(false);
+        await onDataGotten();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
@@ -249,6 +251,7 @@ class AnimalRequests {
                 animal: animal,
                 onFailed: onFailed,
                 context: context,
+                onDataGotten: onDataGotten,
               ),
             );
           } else if (resp.statusCode == 507) {
