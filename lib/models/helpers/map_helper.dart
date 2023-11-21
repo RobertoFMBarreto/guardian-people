@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 // import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as maps;
 import 'dart:math' show cos, sqrt, asin;
+
+import 'package:latlong2/latlong.dart';
 
 /// Method that allows to get the map tile [TileLayer]
 TileLayer getTileLayer(BuildContext context, {Key? key}) {

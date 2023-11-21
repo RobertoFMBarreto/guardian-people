@@ -114,7 +114,7 @@ void showNoConnectionSnackBar() {
     ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
       SnackBar(
         content: Text(
-          localizations.server_error,
+          localizations.no_server_connection.capitalize!,
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white),
         ),

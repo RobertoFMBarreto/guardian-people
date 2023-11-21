@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter/services.dart';
+// import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:guardian/models/utils/map_utils.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
@@ -9,7 +12,8 @@ import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
-import 'package:latlong2/latlong.dart';
+
+// import 'package:latlong2/latlong.dart';
 
 /// Class that represents the animals locations maps for showing all user devices locations
 class AnimalsLocationsMap extends StatefulWidget {
@@ -35,14 +39,16 @@ class AnimalsLocationsMap extends StatefulWidget {
 
 class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
   final _polygons = <Polygon>[];
-  final _circles = <Polygon>[];
+  final _circles = <Circle>[];
+  final List<LatLng> _animalsDataPoints = [];
+  final List<LatLng> _allFencesPoints = [];
 
   late Future _future;
+  late GoogleMapController _mapController;
 
   Position? _currentPosition;
 
-  final List<LatLng> _animalsDataPoints = [];
-  final List<LatLng> _allFencesPoints = [];
+  String _mapStyle = '';
 
   @override
   void initState() {
@@ -56,6 +62,10 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
   /// 2. load fences
   /// 3. load animals
   Future<void> _setup() async {
+    rootBundle.loadString('assets/maps/map_style.json').then((string) {
+      _mapStyle = string;
+    });
+
     await getCurrentPosition(
       context,
       (position) {
@@ -80,33 +90,52 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
     }
   }
 
-  /// Method that loads all fences into the [allCircles], [allPolygons] and [_allFencesPoints] lists
+  _onMapCreated(GoogleMapController controller) async {
+    if (mounted) {
+      setState(() {
+        _mapController = controller;
+        controller.setMapStyle(_mapStyle);
+        controller.animateCamera(
+            CameraUpdate.newLatLngBounds(MapUtils.boundsFromLatLngList(_animalsDataPoints), 50));
+      });
+    }
+  }
+
+  // Method that loads all fences into the [allCircles], [allPolygons] and [_allFencesPoints] lists
   Future<void> _loadFences() async {
     List<Polygon> allPolygons = [];
-    List<Polygon> allCircles = [];
+    List<Circle> allCircles = [];
     if (widget.fences != null) {
       for (FenceData fence in widget.fences!) {
         await getFencePoints(fence.idFence).then((points) {
-          _allFencesPoints.addAll(points);
-          return points.length == 2
-              ? allCircles.add(
-                  Polygon(
-                    points: points,
-                    color: HexColor(fence.color).withOpacity(0.5),
-                    borderColor: HexColor(fence.color),
-                    borderStrokeWidth: 2,
-                    isFilled: true,
-                  ),
-                )
-              : allPolygons.add(
-                  Polygon(
-                    points: points,
-                    color: HexColor(fence.color).withOpacity(0.5),
-                    borderColor: HexColor(fence.color),
-                    borderStrokeWidth: 2,
-                    isFilled: true,
-                  ),
-                );
+          _allFencesPoints.addAll(points.map((e) => LatLng(e.lat, e.lon)).toList());
+          if (points.length == 2) {
+            FencePoint center = points.firstWhere((element) => element.isCenter == true);
+            FencePoint limit = points.firstWhere((element) => element.isCenter == false);
+            return allCircles.add(
+              Circle(
+                circleId: CircleId(fence.idFence),
+                center: LatLng(
+                  center.lat,
+                  center.lon,
+                ),
+                radius: calculateDistance(center.lat, center.lon, limit.lat, limit.lon),
+                fillColor: HexColor(fence.color).withOpacity(0.5),
+                strokeColor: HexColor(fence.color),
+                strokeWidth: 2,
+              ),
+            );
+          } else {
+            return allPolygons.add(
+              Polygon(
+                polygonId: PolygonId(fence.idFence),
+                points: points.map((e) => LatLng(e.lat, e.lon)).toList(),
+                fillColor: HexColor(fence.color).withOpacity(0.5),
+                strokeColor: HexColor(fence.color),
+                strokeWidth: 2,
+              ),
+            );
+          }
         });
       }
     }
@@ -126,66 +155,43 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CustomCircularProgressIndicator();
         } else {
-          return FlutterMap(
-            key: Key(widget.reloadMap ?? ''),
-            options: MapOptions(
-              center: !widget.centerOnPoly && _currentPosition != null
-                  ? LatLng(
-                      _currentPosition!.latitude,
-                      _currentPosition!.longitude,
-                    )
-                  : null,
-              bounds: widget.centerOnPoly
-                  ? LatLngBounds.fromPoints(_allFencesPoints)
-                  : _animalsDataPoints.isNotEmpty
-                      ? LatLngBounds.fromPoints(_animalsDataPoints)
-                      : null,
-              boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
-              zoom: 17,
-              minZoom: 3,
-              maxZoom: 18,
-            ),
-            children: [
-              getTileLayer(context),
-              if (_circles.isNotEmpty) getCircleFences(_circles),
-              if (_polygons.isNotEmpty) getPolygonFences(_polygons),
-              MarkerLayer(
-                markers: [
-                  if (widget.showCurrentPosition && _currentPosition != null)
-                    Marker(
-                      point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                      builder: (context) {
-                        return const Icon(
-                          Icons.circle,
-                          color: gdMapLocationPointColor,
-                          size: 30,
-                        );
-                      },
-                    ),
-                  ...widget.animals
-                      .where((element) =>
-                          element.data.isNotEmpty &&
-                          element.data.first.lat.value != null &&
-                          element.data.first.lon.value != null)
-                      .map(
-                        (animal) => Marker(
-                          point: LatLng(
-                            animal.data.first.lat.value!,
-                            animal.data.first.lon.value!,
-                          ),
-                          builder: (context) {
-                            return Icon(
-                              Icons.location_on,
-                              color: HexColor(animal.animal.animalColor.value),
-                              size: 30,
-                            );
-                          },
-                        ),
-                      )
-                      .toList()
-                ],
+          return GoogleMap(
+            minMaxZoomPreference: const MinMaxZoomPreference(6, 17),
+            mapType: MapType.normal,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+            mapToolbarEnabled: false,
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: LatLng(
+                _currentPosition!.latitude,
+                _currentPosition!.longitude,
               ),
-            ],
+              zoom: 17,
+            ),
+            polygons: {..._polygons},
+            // circles: {..._circles},
+            markers: widget.animals
+                .where((element) =>
+                    element.data.isNotEmpty &&
+                    element.data.first.lat.value != null &&
+                    element.data.first.lon.value != null)
+                .map(
+                  (animal) => Marker(
+                    markerId: MarkerId(animal.data.first.animalDataId.value.toString()),
+                    position: LatLng(animal.data.first.lat.value!, animal.data.first.lon.value!),
+                    draggable: false,
+                    infoWindow: InfoWindow(
+                      title: animal.animal.animalName.value,
+                    ),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                      HSVColor.fromColor(
+                        HexColor(animal.animal.animalColor.value),
+                      ).hue,
+                    ),
+                  ),
+                )
+                .toSet(),
           );
         }
       },

@@ -183,5 +183,6 @@
   "manage_fences": "gerir cercas",
   "online": "ligado",
   "no_gps": "sem localização",
-  "offline": "desligado"
+  "offline": "desligado",
+  "no_server_connection": "modo offline"
 }

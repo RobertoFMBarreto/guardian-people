@@ -141,7 +141,6 @@ class _ProducerHomeState extends State<ProducerHome> {
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
           onFailed: (statusCode) {
-            print(statusCode);
             if (statusCode == 507 || statusCode == 404) {
               if (_firstRun == true) {
                 showNoConnectionSnackBar();

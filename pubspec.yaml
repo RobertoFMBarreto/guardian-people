@@ -102,6 +102,7 @@ flutter:
     - assets/data/devices.json
     - assets/data/fences.json
     - assets/data/alerts.json
+    - assets/maps/map_style.json
 
   # for translations
   generate: true

@@ -16,7 +16,7 @@ import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Class that represents the manage fence page
 class ManageFencePage extends StatefulWidget {
@@ -57,7 +57,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
     await getFencePoints(_fence.idFence).then((fencePoints) {
       setState(() {
         _points = [];
-        _points.addAll(fencePoints);
+        _points.addAll(fencePoints.map((e) => LatLng(e.lat, e.lon)).toList());
       });
     });
   }

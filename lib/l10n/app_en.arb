@@ -183,5 +183,6 @@
   "manage_fences": "manage fences",
   "online": "online",
   "no_gps": "no gps",
-  "offline": "offline"
+  "offline": "offline",
+  "no_server_connection": "offline mode"
 }
