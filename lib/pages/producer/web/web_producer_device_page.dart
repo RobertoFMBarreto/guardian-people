@@ -61,7 +61,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       onDataGotten: () {
         rabbitMQProvider.stop();
       },
-      onFailed: () {
+      onFailed: (statusCode) {
         AppLocalizations localizations = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(localizations.server_error)));
@@ -116,7 +116,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
-          onFailed: () {
+          onFailed: (statusCode) {
             AppLocalizations localizations = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(localizations.server_error)));
@@ -169,7 +169,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
         onDataGotten: () {
           _getAnimalData();
         },
-        onFailed: () {
+        onFailed: (statusCode) {
           hasShownNoServerConnection().then((hasShown) async {
             if (mounted) {
               setState(() {
@@ -213,7 +213,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
         AnimalRequests.getAnimalsFromApiWithLastLocation(
             context: context,
-            onFailed: () {
+            onFailed: (statusCode) {
               AppLocalizations localizations = AppLocalizations.of(context)!;
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(localizations.server_error)));
@@ -243,7 +243,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             },
           );
         },
-        onFailed: () {
+        onFailed: (statusCode) {
           AppLocalizations localizations = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(localizations.server_error)));

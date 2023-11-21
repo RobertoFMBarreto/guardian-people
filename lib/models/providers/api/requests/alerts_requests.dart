@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
+import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/api/alerts_provider.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/api/parsers/alerts_parsers.dart';
@@ -17,9 +19,10 @@ class AlertRequests {
   static Future<void> getAlertableSensorsFromApi(
       {required BuildContext context,
       required Function(String) onDataGotten,
-      required Function onFailed}) async {
+      required Function(int) onFailed}) async {
     await AlertsProvider.getAlertableSensors().then((response) async {
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
         await parseSensors(response.body).then(
           (_) async => await onDataGotten(response.body),
@@ -27,6 +30,7 @@ class AlertRequests {
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
@@ -39,12 +43,12 @@ class AlertRequests {
           } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+                setShownNoServerConnection(true).then((_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                        .then((_) => onFailed(resp.statusCode)));
               }
             });
+            onFailed(resp.statusCode);
           } else {
             clearUserSession().then((_) => deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
@@ -55,12 +59,13 @@ class AlertRequests {
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                    .then((_) => onFailed(response.statusCode)));
           }
         });
+      } else {
+        onFailed(response.statusCode);
       }
     });
   }
@@ -71,14 +76,16 @@ class AlertRequests {
       required UserAlertCompanion alert,
       required List<Animal> animals,
       required Function(String) onDataGotten,
-      required Function onFailed}) async {
+      required Function(int) onFailed}) async {
     AlertsProvider.createAlert(alert, animals).then((response) async {
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
         alertFromJson(jsonDecode(response.body)).then((_) => onDataGotten(response.body));
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
@@ -93,12 +100,12 @@ class AlertRequests {
           } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+                setShownNoServerConnection(true).then((_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                        .then((_) => onFailed(resp.statusCode)));
               }
             });
+            onFailed(resp.statusCode);
           } else {
             clearUserSession().then((_) => deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
@@ -109,12 +116,13 @@ class AlertRequests {
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                    .then((_) => onFailed(response.statusCode)));
           }
         });
+      } else {
+        onFailed(response.statusCode);
       }
     });
   }
@@ -125,9 +133,10 @@ class AlertRequests {
       required UserAlertCompanion alert,
       required List<Animal> animals,
       required Function(String) onDataGotten,
-      required Function onFailed}) async {
+      required Function(int) onFailed}) async {
     AlertsProvider.updateAlert(alert, animals).then((response) async {
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
         removeAllAlertAnimals(alert.idAlert.value).then(
           (_) => alertFromJson(jsonDecode(response.body)).then(
@@ -137,6 +146,7 @@ class AlertRequests {
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
@@ -151,12 +161,12 @@ class AlertRequests {
           } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+                setShownNoServerConnection(true).then((_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                        .then((_) => onFailed(resp.statusCode)));
               }
             });
+            onFailed(resp.statusCode);
           } else {
             clearUserSession().then((_) => deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
@@ -167,12 +177,13 @@ class AlertRequests {
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                    .then((_) => onFailed(response.statusCode)));
           }
         });
+      } else {
+        onFailed(response.statusCode);
       }
     });
   }
@@ -181,14 +192,16 @@ class AlertRequests {
   static Future<void> getUserAlertsFromApi(
       {required BuildContext context,
       required Function(String) onDataGotten,
-      required Function onFailed}) async {
+      required Function(int) onFailed}) async {
     AlertsProvider.getAllAlerts().then((response) async {
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
         alertsFromJson(response.body).then((_) => onDataGotten(response.body));
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
@@ -201,12 +214,12 @@ class AlertRequests {
           } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+                setShownNoServerConnection(true).then((_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                        .then((_) => onFailed(resp.statusCode)));
               }
             });
+            onFailed(resp.statusCode);
           } else {
             clearUserSession().then((_) => deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
@@ -217,12 +230,13 @@ class AlertRequests {
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                    .then((_) => onFailed(response.statusCode)));
           }
         });
+      } else {
+        onFailed(response.statusCode);
       }
     });
   }
@@ -232,14 +246,16 @@ class AlertRequests {
       {required BuildContext context,
       required String alertId,
       required Function(String) onDataGotten,
-      required Function onFailed}) async {
+      required Function(int) onFailed}) async {
     await AlertsProvider.deleteAlert(alertId).then((response) async {
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
         onDataGotten(response.body);
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
@@ -253,12 +269,12 @@ class AlertRequests {
           } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+                setShownNoServerConnection(true).then((_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                        .then((_) => onFailed(resp.statusCode)));
               }
             });
+            onFailed(resp.statusCode);
           } else {
             clearUserSession().then((_) => deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
@@ -269,12 +285,13 @@ class AlertRequests {
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                    .then((_) => onFailed(response.statusCode)));
           }
         });
+      } else {
+        onFailed(response.statusCode);
       }
     });
   }

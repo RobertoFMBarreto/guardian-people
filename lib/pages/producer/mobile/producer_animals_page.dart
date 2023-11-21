@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -49,6 +51,7 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
 
   List<Animal> _selectedAnimals = [];
   List<Animal> _animals = [];
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -63,6 +66,7 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   /// 2. filter the animals to load all local animals
   /// 3. get the animals from the api
   Future<void> _setup() async {
+    isSnackbarActive = false;
     await _setupFilterRanges();
     await _filterAnimals();
     await _getAnimalsFromApi();
@@ -103,10 +107,17 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   Future<void> _getAnimalsFromApi() async {
     AnimalRequests.getAnimalsFromApiWithLastLocation(
         context: context,
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
         onDataGotten: () {
           _filterAnimals();

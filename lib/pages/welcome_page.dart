@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/custom_page_router.dart';
@@ -17,6 +18,7 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
+    isSnackbarActive = false;
     _getToken(context);
 
     super.initState();

@@ -6,6 +6,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:get/get.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
@@ -34,6 +35,7 @@ class _FencesPageState extends State<FencesPage> {
   String _searchString = '';
   List<FenceData> _fences = [];
   FenceData? _selectedFence;
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -43,13 +45,21 @@ class _FencesPageState extends State<FencesPage> {
 
   /// Method that does the initial setup of the page
   Future<void> _setup() async {
+    isSnackbarActive = false;
     await _searchFences().then(
       (value) => FencingRequests.getUserFences(
         context: context,
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
         onGottenData: (_) {
           searchFences(_searchString);
@@ -88,10 +98,17 @@ class _FencesPageState extends State<FencesPage> {
           (_) => _searchFences().then(
             (value) => FencingRequests.getUserFences(
               context: context,
-              onFailed: () {
-                AppLocalizations localizations = AppLocalizations.of(context)!;
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              onFailed: (statusCode) {
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
               },
               onGottenData: (_) {
                 searchFences(_searchString);
@@ -100,13 +117,20 @@ class _FencesPageState extends State<FencesPage> {
           ),
         );
       },
-      onFailed: () {
+      onFailed: (statusCode) {
         setState(() {
           _fences.add(fence);
         });
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }

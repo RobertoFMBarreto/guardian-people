@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
@@ -8,6 +9,7 @@ import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
@@ -38,6 +40,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
   TextEditingController controller = TextEditingController();
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -83,10 +86,17 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         onGottenData: (_) async {
           await _getDeviceFences();
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       ),
     );
@@ -140,22 +150,36 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                   alert: selectedAlert,
                   animals: [...animals],
                   onDataGotten: (data) {},
-                  onFailed: () {
+                  onFailed: (statusCode) {
                     setState(() {
                       _alerts.removeWhere(
                         (a) => a.idAlert == selectedAlert.idAlert,
                       );
                     });
-                    AppLocalizations localizations = AppLocalizations.of(context)!;
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                    if (statusCode == 507 || statusCode == 404) {
+                      if (_firstRun == true) {
+                        showNoConnectionSnackBar();
+                      }
+                      _firstRun = false;
+                    } else if (!isSnackbarActive) {
+                      AppLocalizations localizations = AppLocalizations.of(context)!;
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                    }
                   },
                 );
               },
-              onFailed: () {
-                AppLocalizations localizations = AppLocalizations.of(context)!;
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              onFailed: (statusCode) {
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
               },
             ),
           );
@@ -179,20 +203,22 @@ class _DeviceSettingsState extends State<DeviceSettings> {
           animalIds: [widget.animal.animal.idAnimal.value],
           context: context,
           fenceId: newFence.idFence,
-          onFailed: () {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
+          onFailed: (statusCode) {
             setState(() {
               _fences.removeWhere(
                 (element) => element.idFence == newFence.idFence,
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  localizations.server_error.capitalize!,
-                ),
-              ),
-            );
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
           },
         );
         createFenceAnimal(
@@ -217,10 +243,17 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     AnimalRequests.updateAnimal(
       animal: newAnimal,
       context: context,
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
       onDataGotten: () async {
         await updateAnimal(newAnimal.animal);
@@ -242,13 +275,20 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         widget.animal.animal.idAnimal.value.toString(),
       ],
       context: context,
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
+      onFailed: (statusCode) {
         setState(() {
           _fences.add(fence);
         });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
       onDataGotten: () async {
         await removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value);
@@ -273,7 +313,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
             alert: alert,
             animals: [...animals],
             onDataGotten: (data) {},
-            onFailed: () {
+            onFailed: (statusCode) {
               addAlertAnimal(
                 AlertAnimalsCompanion(
                   idAlert: alert.idAlert,
@@ -283,16 +323,30 @@ class _DeviceSettingsState extends State<DeviceSettings> {
               setState(() {
                 _alerts.add(removedAlert);
               });
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              }
             },
           );
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       ),
     );

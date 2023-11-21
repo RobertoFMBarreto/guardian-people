@@ -58,7 +58,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
-          onFailed: () {
+          onFailed: (statusCode) {
             AppLocalizations localizations = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(localizations.server_error)));
@@ -84,7 +84,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
         onGottenData: (data) async {
           await _loadLocalFences();
         },
-        onFailed: () {
+        onFailed: (statusCode) {
           AppLocalizations localizations = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(localizations.server_error)));
@@ -117,7 +117,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                 await _loadLocalFences();
               });
             },
-            onFailed: () async {
+            onFailed: (statusCode) async {
               AppLocalizations localizations = AppLocalizations.of(context)!;
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(localizations.server_error)));

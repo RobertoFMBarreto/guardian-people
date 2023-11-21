@@ -4,6 +4,7 @@ import 'package:guardian/models/helpers/cookies/cookies_stub.dart'
     if (dart.library.io) 'package:guardian/models/helpers/cookies/cookies_mobile.dart'
     if (dart.library.js) 'package:guardian/models/helpers/cookies/cookies_web.dart'
     as cookies_helper;
+import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/api/requests/auth_requests.dart';
 
 // ignore: depend_on_referenced_packages
@@ -55,6 +56,7 @@ class _LoginFormState extends State<LoginForm> {
 
         AuthProvider.login(_email, _password).then((resp) {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final body = jsonDecode(resp.body);
             String refreshToken;

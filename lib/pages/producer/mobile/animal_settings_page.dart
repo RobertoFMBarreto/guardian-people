@@ -1,7 +1,9 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
@@ -35,6 +37,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
   TextEditingController controller = TextEditingController();
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -55,6 +58,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
   /// 3. get the device fences
   /// 4. setup the text of the controller to the animal name
   Future<void> _setup() async {
+    isSnackbarActive = false;
     _animalName = widget.animal.animal.animalName.value;
     await _getDeviceAlerts();
     await _getLocalFences();
@@ -63,12 +67,28 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
 
   /// Method that loads the device alerts into the [_alerts] list
   Future<void> _getDeviceAlerts() async {
-    await getAnimalAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
-      if (mounted) {
-        _alerts = [];
-        setState(() => _alerts.addAll(allAlerts));
-      }
-    });
+    await AlertRequests.getUserAlertsFromApi(
+        context: context,
+        onDataGotten: (data) async {
+          await getAnimalAlerts(widget.animal.animal.idAnimal.value).then((allAlerts) {
+            if (mounted) {
+              _alerts = [];
+              setState(() => _alerts.addAll(allAlerts));
+            }
+          });
+        },
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        });
   }
 
   /// Method that allows to get all fences from api, searching for the device fences then
@@ -79,10 +99,17 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
         onGottenData: (_) async {
           await _getDeviceFences();
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       ),
     );
@@ -136,19 +163,37 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
                   alert: selectedAlert,
                   animals: [...animals],
                   onDataGotten: (data) {},
-                  onFailed: () {
+                  onFailed: (statusCode) {
                     setState(() {
                       _alerts.removeWhere(
                         (a) => a.idAlert == selectedAlert.idAlert,
                       );
                     });
-                    AppLocalizations localizations = AppLocalizations.of(context)!;
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                    if (statusCode == 507 || statusCode == 404) {
+                      if (_firstRun == true) {
+                        showNoConnectionSnackBar();
+                      }
+                      _firstRun = false;
+                    } else if (!isSnackbarActive) {
+                      AppLocalizations localizations = AppLocalizations.of(context)!;
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                    }
                   },
                 );
               },
-              onFailed: () {},
+              onFailed: (statusCode) {
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
+              },
             ),
           );
         }
@@ -171,20 +216,22 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
           animalIds: [widget.animal.animal.idAnimal.value],
           context: context,
           fenceId: newFence.idFence,
-          onFailed: () {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
+          onFailed: (statusCode) {
             setState(() {
               _fences.removeWhere(
                 (element) => element.idFence == newFence.idFence,
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  localizations.server_error.capitalize!,
-                ),
-              ),
-            );
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
           },
         );
         createFenceAnimal(
@@ -212,10 +259,17 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
       onDataGotten: () {
         updateAnimal(newAnimal.animal).then((value) => Navigator.of(context).pop(newAnimal));
       },
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }
@@ -237,13 +291,20 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
       onDataGotten: () async {
         await removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value);
       },
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
+      onFailed: (statusCode) {
         setState(() {
           _fences.add(fence);
         });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error.capitalize!)));
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }
@@ -265,7 +326,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
             alert: alert,
             animals: [...animals],
             onDataGotten: (_) {},
-            onFailed: () {
+            onFailed: (statusCode) {
               addAlertAnimal(
                 AlertAnimalsCompanion(
                   idAlert: alert.idAlert,
@@ -275,13 +336,20 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
               setState(() {
                 _alerts.add(removedAlert);
               });
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              }
             },
           );
         },
-        onFailed: () {
+        onFailed: (statusCode) {
           addAlertAnimal(
             AlertAnimalsCompanion(
               idAlert: alert.idAlert,
@@ -291,9 +359,16 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
           setState(() {
             _alerts.add(removedAlert);
           });
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       ),
     );

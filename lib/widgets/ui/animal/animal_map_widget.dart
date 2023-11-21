@@ -1,12 +1,14 @@
 import 'package:dart_amqp/dart_amqp.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 // ignore: unused_import
 import 'package:drift/drift.dart' as drift;
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
@@ -42,6 +44,8 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
   late Consumer consumer;
 
+  bool _firstRun = true;
+
   @override
   void dispose() {
     AnimalRequests.stopRealtimeStreaming(
@@ -50,10 +54,17 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
       onDataGotten: () {
         rabbitMQProvider.stop();
       },
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
 
@@ -94,7 +105,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
         onDataGotten: () {
           _getAnimalData();
         },
-        onFailed: () {
+        onFailed: (statusCode) {
           hasShownNoServerConnection().then((hasShown) async {
             if (mounted) {
               setState(() {
@@ -109,13 +120,16 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
               );
             } else {
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.server_error.capitalizeFirst!,
-                    ),
-                  ),
-                );
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
               }
             }
           });
@@ -134,10 +148,17 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
         AnimalRequests.getAnimalsFromApiWithLastLocation(
             context: context,
-            onFailed: () {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            onFailed: (statusCode) {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              }
             },
             onDataGotten: () {
               _getLastLocation();
@@ -161,10 +182,17 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
             },
           );
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       );
     }

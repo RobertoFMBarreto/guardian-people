@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:badges/badges.dart' as badges;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
@@ -44,6 +46,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   List<FenceData> _fences = [];
   List<AlertNotification> _alertNotifications = [];
   List<UserAlertCompanion> _alerts = [];
+  bool _firstRun = true;
 
   int _reloadMap = 9999;
 
@@ -60,6 +63,7 @@ class _ProducerHomeState extends State<ProducerHome> {
   /// 3. load fences
   /// 4. load alert notifications
   Future<void> _setup() async {
+    isSnackbarActive = false;
     await _loadUserData();
     await _loadAnimals();
     await _loadFences();
@@ -84,10 +88,17 @@ class _ProducerHomeState extends State<ProducerHome> {
         onDataGotten: (data) {
           _getLocalUserAlerts();
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       ),
     );
@@ -129,10 +140,18 @@ class _ProducerHomeState extends State<ProducerHome> {
       });
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
-          onFailed: () {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          onFailed: (statusCode) {
+            print(statusCode);
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
           },
           onDataGotten: () {
             getUserAnimalsWithLastLocation().then((allDevices) {
@@ -159,10 +178,17 @@ class _ProducerHomeState extends State<ProducerHome> {
         onGottenData: (_) async {
           await _loadLocalFences();
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       );
     });
@@ -203,10 +229,17 @@ class _ProducerHomeState extends State<ProducerHome> {
       onDataGotten: (data) {
         _loadLocalAlertNotifications();
       },
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }

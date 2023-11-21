@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
@@ -30,8 +31,11 @@ class _AnimalPageState extends State<AnimalPage> {
   bool _isInterval = false;
   late Animal _animal;
   int _reloadNum = 0;
+  bool _firstRun = true;
+
   @override
   void initState() {
+    isSnackbarActive = false;
     _animal = widget.animal;
 
     super.initState();
@@ -47,10 +51,17 @@ class _AnimalPageState extends State<AnimalPage> {
       animal: _animal,
       context: context,
       onDataGotten: () {},
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }

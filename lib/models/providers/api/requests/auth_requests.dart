@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
+import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
@@ -18,11 +20,13 @@ class AuthRequests {
       required Function onDataGotten}) async {
     AuthProvider.refreshDeviceToken(devicetoken).then((response) async {
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
         onDataGotten();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
@@ -35,10 +39,8 @@ class AuthRequests {
           } else if (resp.statusCode == 507) {
             hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
+                setShownNoServerConnection(true).then((_) => showDialog(
+                    context: context, builder: (context) => const ServerErrorDialogue()));
               }
             });
           } else {
@@ -51,10 +53,8 @@ class AuthRequests {
       } else if (response.statusCode == 507) {
         hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue()));
           }
         });
       }

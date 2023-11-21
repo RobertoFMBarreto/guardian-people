@@ -5,6 +5,8 @@ import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:guardian/main.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -62,6 +64,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   bool _showRoute = false;
   bool _showHeatMap = false;
   Position? _currentPosition;
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -98,10 +101,17 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
         onGottenData: (_) async {
           await _loadAnimalFences();
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       ),
     );

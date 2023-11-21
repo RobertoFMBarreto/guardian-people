@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/fence.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
@@ -55,6 +57,7 @@ class _GeofencingState extends State<Geofencing> {
   bool _isStayInside = true;
   String _fenceName = '';
   Color _fenceColor = Colors.red;
+  bool _firstRun = true;
 
   List<LatLng> _fencePoints = [];
   List<Animal> _animals = [];
@@ -79,6 +82,7 @@ class _GeofencingState extends State<Geofencing> {
   /// 4. set the fence data
   /// 5. init the polygons
   Future<void> _setup() async {
+    isSnackbarActive = false;
     await _getCurrentPosition();
     await _loadAnimals();
     if (widget.fence != null) {
@@ -212,10 +216,17 @@ class _GeofencingState extends State<Geofencing> {
     _loadLocalAnimals().then(
       (value) => AnimalRequests.getAnimalsFromApiWithLastLocation(
         context: context,
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
         onDataGotten: () {
           _loadLocalAnimals();
@@ -290,10 +301,17 @@ class _GeofencingState extends State<Geofencing> {
           fence: updatedFence,
           fencePoints: fencePoints,
           context: context,
-          onFailed: () {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          onFailed: (statusCode) {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
           },
         ),
       );
@@ -313,10 +331,17 @@ class _GeofencingState extends State<Geofencing> {
           fence: newFence,
           fencePoints: fencePoints,
           context: context,
-          onFailed: () {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          onFailed: (statusCode) {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
           },
         ),
       );

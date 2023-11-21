@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
@@ -104,4 +105,24 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
       );
     },
   );
+}
+
+void showNoConnectionSnackBar() {
+  print('[VALUE] - $isSnackbarActive');
+  if (!isSnackbarActive) {
+    AppLocalizations localizations = AppLocalizations.of(navigatorKey.currentContext!)!;
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      SnackBar(
+        content: Text(
+          localizations.server_error,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white),
+        ),
+        duration: const Duration(days: 365),
+        backgroundColor: gdErrorColor,
+        padding: const EdgeInsets.only(top: 2, bottom: 4),
+      ),
+    );
+    isSnackbarActive = true;
+  }
 }

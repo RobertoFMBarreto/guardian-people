@@ -1,6 +1,7 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
@@ -30,6 +31,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
 
   /// Method that does the initial setup of the page setting the [_selectedValue] to now and then gets the animal data
   Future<void> _setup() async {
+    isSnackbarActive = false;
     final now = DateTime.now();
     _selectedValue = DateTime(now.year, now.month, now.day);
 

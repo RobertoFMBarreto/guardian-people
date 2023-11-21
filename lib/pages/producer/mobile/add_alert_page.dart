@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -41,9 +43,11 @@ class _AddAlertPageState extends State<AddAlertPage> {
   AlertComparissons _alertComparisson = AlertComparissons.equal;
   String _comparissonValue = "0";
   bool _sendNotification = true;
+  bool _firstRun = true;
 
   @override
   void initState() {
+    isSnackbarActive = false;
     _future = _setup();
     super.initState();
   }
@@ -95,10 +99,17 @@ class _AddAlertPageState extends State<AddAlertPage> {
       onDataGotten: (data) {
         Navigator.of(context).pop();
       },
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }
@@ -123,10 +134,17 @@ class _AddAlertPageState extends State<AddAlertPage> {
       onDataGotten: (data) {
         Navigator.of(context).pop();
       },
-      onFailed: () {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+      onFailed: (statusCode) {
+        if (statusCode == 507 || statusCode == 404) {
+          if (_firstRun == true) {
+            showNoConnectionSnackBar();
+          }
+          _firstRun = false;
+        } else if (!isSnackbarActive) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        }
       },
     );
   }
@@ -166,10 +184,17 @@ class _AddAlertPageState extends State<AddAlertPage> {
         onDataGotten: (data) async {
           await _getLocalAlertableSensors();
         },
-        onFailed: () {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        onFailed: (statusCode) {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         },
       );
     });
