@@ -71,6 +71,7 @@ dependencies:
   dart_amqp: ^0.2.5
   badges: ^3.1.2
   dart_mq: ^1.0.0
+  google_maps_flutter: ^2.5.0
 
 dev_dependencies:
   drift_dev: ^2.11.1

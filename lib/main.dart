@@ -22,6 +22,7 @@ import 'package:guardian/themes/light_theme.dart';
 // import 'package:guardian/models/providers/caching/caching_provider.dart';
 
 late bool hasConnection;
+bool isSnackbarActive = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,7 +86,6 @@ class _MyAppState extends State<MyApp> {
             setState(() {
               hasConnection = false;
             });
-
             await showNoWifiDialog(navigatorKey.currentContext!);
           },
         );
