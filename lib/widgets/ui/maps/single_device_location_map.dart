@@ -1,13 +1,23 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluster/fluster.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter/services.dart';
+// import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
+import 'package:guardian/models/helpers/map_marker.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
+import 'package:guardian/models/utils/map_utils.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
@@ -50,7 +60,8 @@ class SingleAnimalLocationMap extends StatefulWidget {
 class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
-  final MapController _mapController = MapController();
+  AnimalLocationsCompanion? lastLocation;
+  List<AnimalLocationsCompanion> data = [];
 
   late Future _future;
   late String _dropDownValue;
@@ -66,16 +77,94 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   Position? _currentPosition;
   bool _firstRun = true;
 
+  late ClusterManager _clusterManager;
+
+  Completer<GoogleMapController> _mapController = Completer();
+
+  Set<Marker> _markers = Set();
+
+  List<PlaceModel> _places = [];
+
+  String _mapStyle = '';
+
   @override
   void initState() {
     _future = _setup();
     super.initState();
   }
 
+  // @override
+  // void didChangeDependencies() {
+  //   _updateData();
+  //   super.didChangeDependencies();
+  // }
+
   @override
   void dispose() {
-    _mapController.dispose();
     super.dispose();
+  }
+
+  _onMapCreated(GoogleMapController controller) async {
+    if (mounted) {
+      setState(() {
+        _mapController.complete(controller);
+        _clusterManager.setMapId(controller.mapId);
+        controller.setMapStyle(_mapStyle);
+        // controller.animateCamera(
+        //   CameraUpdate.newLatLngBounds(
+        //     MapUtils.boundsFromLatLngList(
+        //       _markers.map((e) => LatLng(e.position.latitude, e.position.longitude)).toList(),
+        //     ),
+        //     50,
+        //   ),
+        // );
+      });
+    }
+  }
+
+  void _updateData() {
+    lastLocation = widget.deviceData
+        .firstWhereOrNull((element) => element.lat.value != null && element.lon.value != null);
+    data = widget.isInterval && widget.deviceData.isNotEmpty
+        ? widget.deviceData
+            .where((element) => element.lat.value != null && element.lon.value != null)
+            .toList()
+        : widget.deviceData.isNotEmpty && lastLocation != null
+            ? [lastLocation!]
+            : [];
+    // _clusterManager.setItems(data
+    //     .map(
+    //       (e) => PlaceModel(
+    //         latLng: LatLng(e.lat.value!, e.lat.value!),
+    //         id: e.animalDataId.value,
+    //       ),
+    //     )
+    //     .toList());
+    final dt = [
+      for (int i = 0; i < 30; i++)
+        PlaceModel(
+            id: 'New Place ${DateTime.now()} $i', latLng: LatLng(48.858265 + i * 0.01, 2.350107))
+    ];
+    _clusterManager.setItems(dt);
+    print("[DEBUG] - Here");
+
+    print('[DEBUG]-Items: ${_clusterManager.items}');
+    //setState(() {});
+  }
+
+  ClusterManager _initClusterManager() {
+    print('[DEBUG]- INIT $_places');
+    return ClusterManager<PlaceModel>(_places, _updateMarkers);
+  }
+
+  Future<void> _updateMarkers(Set<Marker> markers) async {
+    print('[DEBUG]- UPDATE Markers - _cluster ${_clusterManager.items}');
+    print('[DEBUG]- UPDATE Markers - _cluster ${await _clusterManager.getMarkers()}');
+    print('[DEBUG]- UPDATE Markers ${markers.length}');
+
+    setState(() {
+      _markers = markers;
+    });
   }
 
   /// Method that does the initial setup of the widget
@@ -84,6 +173,13 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   /// 2. get current position
   /// 3. load animal fences
   Future<void> _setup() async {
+    _updateData();
+    _clusterManager = _initClusterManager();
+
+    rootBundle.loadString('assets/maps/map_style.json').then((string) {
+      _mapStyle = string;
+    });
+
     setState(() {
       _dropDownValue = _dropdownItems.first;
     });
@@ -146,15 +242,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    AnimalLocationsCompanion? lastLocation = widget.deviceData
-        .firstWhereOrNull((element) => element.lat.value != null && element.lon.value != null);
-    List<AnimalLocationsCompanion> data = widget.isInterval && widget.deviceData.isNotEmpty
-        ? widget.deviceData
-            .where((element) => element.lat.value != null && element.lon.value != null)
-            .toList()
-        : widget.deviceData.isNotEmpty && lastLocation != null
-            ? [lastLocation]
-            : [];
 
     return FutureBuilder(
       future: _future,
@@ -165,6 +252,31 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
           return Stack(
             alignment: Alignment.topRight,
             children: [
+              GoogleMap(
+                minMaxZoomPreference: const MinMaxZoomPreference(6, 17),
+                mapType: MapType.normal,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                mapToolbarEnabled: false,
+                onMapCreated: _onMapCreated,
+                onCameraMove: _clusterManager.onCameraMove,
+                onCameraIdle: _clusterManager.updateMap,
+                initialCameraPosition: CameraPosition(
+                  target: data.isEmpty
+                      ? LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        )
+                      : LatLng(
+                          data.first.lat.value!,
+                          data.first.lon.value!,
+                        ),
+                  zoom: 17,
+                ),
+                //polygons: {..._polygons},
+                // circles: {..._circles},
+                markers: _markers,
+              ),
               // FlutterMap(
               //   key: Key('${widget.deviceData}'),
               //   mapController: _mapController,
@@ -500,3 +612,5 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     );
   }
 }
+
+class Place {}

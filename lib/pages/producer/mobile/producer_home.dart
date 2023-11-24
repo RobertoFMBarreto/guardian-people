@@ -133,12 +133,13 @@ class _ProducerHomeState extends State<ProducerHome> {
   /// 2. add to list
   /// 3. load api animals
   Future<void> _loadAnimals() async {
-    await getUserAnimalsWithLastLocation().then((allAnimals) {
+    await getUserAnimalsWithLastLocation().then((allAnimals) async {
       _animals = [];
       setState(() {
         _animals.addAll(allAnimals);
       });
-      AnimalRequests.getAnimalsFromApiWithLastLocation(
+
+      await AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
           onFailed: (statusCode) {
             if (statusCode == 507 || statusCode == 404) {
@@ -152,8 +153,8 @@ class _ProducerHomeState extends State<ProducerHome> {
                   .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
           },
-          onDataGotten: () {
-            getUserAnimalsWithLastLocation().then((allDevices) {
+          onDataGotten: () async {
+            await getUserAnimalsWithLastLocation().then((allDevices) {
               if (mounted) {
                 setState(() {
                   _animals = [];

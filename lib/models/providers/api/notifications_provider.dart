@@ -13,7 +13,7 @@ class NotificationsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/notifications');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/notifications');
     try {
       var response = await get(
         url,
@@ -34,7 +34,7 @@ class NotificationsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/notifications');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/notifications');
     try {
       var response = await delete(
         url,
@@ -55,7 +55,7 @@ class NotificationsProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.http(kGDapiServerUrl, '/api/v1/notifications/$idNotification');
+    var url = Uri.https(kGDapiServerUrl, '/api/v1/notifications/$idNotification');
     try {
       var response = await delete(
         url,

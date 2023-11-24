@@ -40,15 +40,20 @@ Future<AnimalData> getAnimal(String idAnimal) async {
 /// Method to get animal [idAnimal] information as [AnimalData]
 Future<DeviceStatus> getAnimalStatus(String idAnimal) async {
   final db = Get.find<GuardianDb>();
-  final data = await (db.select(db.animalLocations)..where((tbl) => tbl.idAnimal.equals(idAnimal)))
-      .getSingleOrNull();
-
-  if (data == null) {
-    return DeviceStatus.offline;
-  } else if (data.lat == null && data.lon == null) {
-    return DeviceStatus.noGps;
+  final data = await (db.select(db.animalLocations)
+        ..where((tbl) => tbl.idAnimal.equals(idAnimal))
+        ..orderBy(
+          [(tbl) => drift.OrderingTerm.desc(tbl.date)],
+        ))
+      .get();
+  if (data.isNotEmpty) {
+    if (data.first.lat == null && data.first.lon == null) {
+      return DeviceStatus.noGps;
+    } else {
+      return DeviceStatus.online;
+    }
   } else {
-    return DeviceStatus.online;
+    return DeviceStatus.offline;
   }
 }
 
@@ -205,9 +210,7 @@ Future<List<Animal>> getUserAnimalsWithLastLocation() async {
           ORDER BY ${db.animalLocations.date.name} DESC 
       ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
     ''').get();
-//${db.animalLocations.actualTableName} ON ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
   List<Animal> animals = [];
-
   for (var deviceData in data) {
     Animal animal = Animal(
         animal: AnimalCompanion(

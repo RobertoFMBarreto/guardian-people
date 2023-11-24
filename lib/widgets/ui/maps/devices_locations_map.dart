@@ -76,22 +76,23 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
     );
 
     await _loadFences();
-    for (var animal in widget.animals) {
-      if (animal.data.isNotEmpty &&
-          animal.data.first.lat.value != null &&
-          animal.data.first.lon.value != null) {
-        _animalsDataPoints.add(
-          LatLng(
-            animal.data.first.lat.value!,
-            animal.data.first.lon.value!,
-          ),
-        );
-      }
-    }
   }
 
   _onMapCreated(GoogleMapController controller) async {
     if (mounted) {
+      for (var animal in widget.animals) {
+        if (animal.data.isNotEmpty &&
+            animal.data.first.lat.value != null &&
+            animal.data.first.lon.value != null) {
+          _animalsDataPoints.add(
+            LatLng(
+              animal.data.first.lat.value!,
+              animal.data.first.lon.value!,
+            ),
+          );
+        }
+      }
+      print('[DEBUG] - ${_animalsDataPoints}');
       setState(() {
         _mapController = controller;
         controller.setMapStyle(_mapStyle);
