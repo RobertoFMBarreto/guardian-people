@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 
 /// Method that allows to get the center of a polygon [LatLng] based on its coordinates [points]
 LatLng getFenceCenter(List<LatLng> points) {

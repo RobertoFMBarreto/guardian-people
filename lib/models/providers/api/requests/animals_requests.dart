@@ -21,7 +21,8 @@ class AnimalRequests {
       {required BuildContext context,
       required Function onDataGotten,
       required Function(int) onFailed}) async {
-    AnimalProvider.getAnimalsWithLastLocation().then((response) async {
+    await AnimalProvider.getAnimalsWithLastLocation().then((response) async {
+      print('Response: ${response.body}');
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
@@ -84,6 +85,7 @@ class AnimalRequests {
     required Function(int) onFailed,
   }) async {
     await AnimalProvider.getAnimalData(idAnimal, startDate, endDate).then((response) async {
+      print('DAta: ${response.body}');
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);

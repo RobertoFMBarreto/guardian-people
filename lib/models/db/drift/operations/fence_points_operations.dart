@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:guardian/models/db/drift/database.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
 
 /// Method for creating fence [idFence] points from a list of coordinates [points]

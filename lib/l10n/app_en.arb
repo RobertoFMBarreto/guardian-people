@@ -184,5 +184,6 @@
   "online": "online",
   "no_gps": "no gps",
   "offline": "offline",
-  "no_server_connection": "offline mode"
+  "no_server_connection": "offline mode",
+  "satellite": "satellite"
 }

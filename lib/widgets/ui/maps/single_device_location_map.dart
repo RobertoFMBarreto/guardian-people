@@ -1,33 +1,26 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:fluster/fluster.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 // import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
-import 'package:guardian/models/helpers/map_marker.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
-import 'package:guardian/models/utils/map_utils.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:latlong2/latlong.dart';
 
 /// Class that represents a single animal location map
 class SingleAnimalLocationMap extends StatefulWidget {
@@ -60,32 +53,24 @@ class SingleAnimalLocationMap extends StatefulWidget {
 class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
+  final MapController _mapController = MapController();
+  final List<String> _dropdownItems = [
+    'normal',
+    'heatmap',
+  ];
+
   AnimalLocationsCompanion? lastLocation;
   List<AnimalLocationsCompanion> data = [];
 
   late Future _future;
   late String _dropDownValue;
 
-  final List<String> _dropdownItems = [
-    'normal',
-    'heatmap',
-  ];
-
   bool _showFence = true;
   bool _showRoute = false;
   bool _showHeatMap = false;
+  bool _satellite = false;
   Position? _currentPosition;
   bool _firstRun = true;
-
-  late ClusterManager _clusterManager;
-
-  Completer<GoogleMapController> _mapController = Completer();
-
-  Set<Marker> _markers = Set();
-
-  List<PlaceModel> _places = [];
-
-  String _mapStyle = '';
 
   @override
   void initState() {
@@ -93,33 +78,10 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     super.initState();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   _updateData();
-  //   super.didChangeDependencies();
-  // }
-
   @override
   void dispose() {
+    _mapController.dispose();
     super.dispose();
-  }
-
-  _onMapCreated(GoogleMapController controller) async {
-    if (mounted) {
-      setState(() {
-        _mapController.complete(controller);
-        _clusterManager.setMapId(controller.mapId);
-        controller.setMapStyle(_mapStyle);
-        // controller.animateCamera(
-        //   CameraUpdate.newLatLngBounds(
-        //     MapUtils.boundsFromLatLngList(
-        //       _markers.map((e) => LatLng(e.position.latitude, e.position.longitude)).toList(),
-        //     ),
-        //     50,
-        //   ),
-        // );
-      });
-    }
   }
 
   void _updateData() {
@@ -140,31 +102,8 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     //       ),
     //     )
     //     .toList());
-    final dt = [
-      for (int i = 0; i < 30; i++)
-        PlaceModel(
-            id: 'New Place ${DateTime.now()} $i', latLng: LatLng(48.858265 + i * 0.01, 2.350107))
-    ];
-    _clusterManager.setItems(dt);
-    print("[DEBUG] - Here");
 
-    print('[DEBUG]-Items: ${_clusterManager.items}');
     //setState(() {});
-  }
-
-  ClusterManager _initClusterManager() {
-    print('[DEBUG]- INIT $_places');
-    return ClusterManager<PlaceModel>(_places, _updateMarkers);
-  }
-
-  Future<void> _updateMarkers(Set<Marker> markers) async {
-    print('[DEBUG]- UPDATE Markers - _cluster ${_clusterManager.items}');
-    print('[DEBUG]- UPDATE Markers - _cluster ${await _clusterManager.getMarkers()}');
-    print('[DEBUG]- UPDATE Markers ${markers.length}');
-
-    setState(() {
-      _markers = markers;
-    });
   }
 
   /// Method that does the initial setup of the widget
@@ -174,11 +113,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   /// 3. load animal fences
   Future<void> _setup() async {
     _updateData();
-    _clusterManager = _initClusterManager();
-
-    rootBundle.loadString('assets/maps/map_style.json').then((string) {
-      _mapStyle = string;
-    });
 
     setState(() {
       _dropDownValue = _dropdownItems.first;
@@ -252,197 +186,172 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
           return Stack(
             alignment: Alignment.topRight,
             children: [
-              GoogleMap(
-                minMaxZoomPreference: const MinMaxZoomPreference(6, 17),
-                mapType: MapType.normal,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                mapToolbarEnabled: false,
-                onMapCreated: _onMapCreated,
-                onCameraMove: _clusterManager.onCameraMove,
-                onCameraIdle: _clusterManager.updateMap,
-                initialCameraPosition: CameraPosition(
-                  target: data.isEmpty
-                      ? LatLng(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                        )
-                      : LatLng(
-                          data.first.lat.value!,
-                          data.first.lon.value!,
-                        ),
-                  zoom: 17,
+              FlutterMap(
+                key: Key('${widget.deviceData}'),
+                mapController: _mapController,
+                options: MapOptions(
+                  center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
+                      ? widget.isInterval && data.isEmpty && _currentPosition != null
+                          ? LatLng(
+                              _currentPosition!.latitude,
+                              _currentPosition!.longitude,
+                            )
+                          : widget.isInterval ||
+                                  data.first.lat.value == null ||
+                                  data.first.lon.value == null
+                              ? null
+                              : LatLng(data.first.lat.value!, data.first.lon.value!)
+                      : _currentPosition != null
+                          ? LatLng(
+                              _currentPosition!.latitude,
+                              _currentPosition!.longitude,
+                            )
+                          : null,
+                  onMapReady: () {
+                    _mapController.mapEventStream.listen((evt) {
+                      widget.onZoomChange(_mapController.zoom);
+                    });
+                    // And any other `MapController` dependent non-movement methods
+                  },
+                  zoom: widget.startingZoom,
+                  minZoom: 3,
+                  maxZoom: 18,
+                  boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
+                  bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
+                      ? LatLngBounds.fromPoints(
+                          _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
+                      : widget.isInterval && data.isNotEmpty
+                          ? LatLngBounds.fromPoints(
+                              data.map((e) => LatLng(e.lat.value!, e.lon.value!)).toList(),
+                            )
+                          : null,
                 ),
-                //polygons: {..._polygons},
-                // circles: {..._circles},
-                markers: _markers,
+                children: [
+                  getTileLayer(context, satellite: _satellite),
+                  if (_showFence) ...[
+                    getCircleFences(_circles),
+                    getPolygonFences(_polygons),
+                  ],
+                  if (widget.isInterval && !_showHeatMap && _showRoute)
+                    PolylineLayer(
+                      key: Key('$_showRoute'),
+                      polylines: [
+                        Polyline(
+                          color: gdErrorColor,
+                          strokeWidth: 5,
+                          points: data
+                              .map(
+                                (e) => LatLng(e.lat.value!, e.lon.value!),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  if (data.isNotEmpty && _showHeatMap)
+                    HeatMapLayer(
+                      key: Key('$_showHeatMap'),
+                      heatMapDataSource: InMemoryHeatMapDataSource(
+                        data: data
+                            .map(
+                              (e) => WeightedLatLng(LatLng(e.lat.value!, e.lon.value!), 1),
+                            )
+                            .toList(),
+                      ),
+                    )
+                  else ...[
+                    !_showRoute
+                        ? MarkerClusterLayerWidget(
+                            options: MarkerClusterLayerOptions(
+                              maxClusterRadius: 45,
+                              size: const Size(40, 40),
+                              anchor: AnchorPos.align(AnchorAlign.center),
+                              fitBoundsOptions: const FitBoundsOptions(
+                                padding: EdgeInsets.all(50),
+                                maxZoom: 15,
+                              ),
+                              markers: [
+                                if (_currentPosition != null)
+                                  Marker(
+                                    point: LatLng(
+                                        _currentPosition!.latitude, _currentPosition!.longitude),
+                                    builder: (context) {
+                                      return const Icon(
+                                        Icons.circle,
+                                        color: gdMapLocationPointColor,
+                                        size: 30,
+                                      );
+                                    },
+                                  ),
+                                ...data
+                                    .map(
+                                      (e) => Marker(
+                                        point: LatLng(e.lat.value!, e.lon.value!),
+                                        anchorPos: AnchorPos.align(AnchorAlign.top),
+                                        builder: (context) {
+                                          return Transform.rotate(
+                                            angle: _mapController.rotation * -pi / 180,
+                                            alignment: Alignment.bottomCenter,
+                                            child: Icon(
+                                              Icons.location_on,
+                                              color: HexColor(widget.deviceColor),
+                                              size: 30,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                    .toList()
+                              ],
+                              builder: (context, markers) {
+                                return Transform.rotate(
+                                  angle: _mapController.rotation * -pi / 180,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: HexColor(widget.deviceColor),
+                                    size: 30,
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : MarkerLayer(
+                            markers: [
+                              if (_currentPosition != null)
+                                Marker(
+                                  point: LatLng(
+                                      _currentPosition!.latitude, _currentPosition!.longitude),
+                                  builder: (context) {
+                                    return const Icon(
+                                      Icons.circle,
+                                      color: gdMapLocationPointColor,
+                                      size: 30,
+                                    );
+                                  },
+                                ),
+                              ...[data.first, data.last]
+                                  .map(
+                                    (e) => Marker(
+                                      point: LatLng(e.lat.value!, e.lon.value!),
+                                      anchorPos: AnchorPos.align(AnchorAlign.top),
+                                      builder: (context) {
+                                        return Transform.rotate(
+                                          angle: _mapController.rotation * -pi / 180,
+                                          alignment: Alignment.bottomCenter,
+                                          child: Icon(
+                                            Icons.location_on,
+                                            color: HexColor(widget.deviceColor),
+                                            size: 30,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                  .toList()
+                            ],
+                          )
+                  ]
+                ],
               ),
-              // FlutterMap(
-              //   key: Key('${widget.deviceData}'),
-              //   mapController: _mapController,
-              //   options: MapOptions(
-              //     center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
-              //         ? widget.isInterval && data.isEmpty && _currentPosition != null
-              //             ? LatLng(
-              //                 _currentPosition!.latitude,
-              //                 _currentPosition!.longitude,
-              //               )
-              //             : widget.isInterval ||
-              //                     data.first.lat.value == null ||
-              //                     data.first.lon.value == null
-              //                 ? null
-              //                 : LatLng(data.first.lat.value!, data.first.lon.value!)
-              //         : _currentPosition != null
-              //             ? LatLng(
-              //                 _currentPosition!.latitude,
-              //                 _currentPosition!.longitude,
-              //               )
-              //             : null,
-              //     onMapReady: () {
-              //       _mapController.mapEventStream.listen((evt) {
-              //         widget.onZoomChange(_mapController.zoom);
-              //       });
-              //       // And any other `MapController` dependent non-movement methods
-              //     },
-              //     zoom: widget.startingZoom,
-              //     minZoom: 3,
-              //     maxZoom: 18,
-              //     boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
-              //     bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
-              //         ? LatLngBounds.fromPoints(
-              //             _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
-              //         : widget.isInterval && data.isNotEmpty
-              //             ? LatLngBounds.fromPoints(
-              //                 data.map((e) => LatLng(e.lat.value!, e.lon.value!)).toList(),
-              //               )
-              //             : null,
-              //   ),
-              //   children: [
-              //     getTileLayer(context),
-              //     if (_showFence) ...[
-              //       getCircleFences(_circles),
-              //       getPolygonFences(_polygons),
-              //     ],
-              //     if (widget.isInterval && !_showHeatMap && _showRoute)
-              //       PolylineLayer(
-              //         key: Key('$_showRoute'),
-              //         polylines: [
-              //           Polyline(
-              //             color: gdErrorColor,
-              //             strokeWidth: 5,
-              //             points: data
-              //                 .map(
-              //                   (e) => LatLng(e.lat.value!, e.lon.value!),
-              //                 )
-              //                 .toList(),
-              //           ),
-              //         ],
-              //       ),
-              //     if (data.isNotEmpty && _showHeatMap)
-              //       HeatMapLayer(
-              //         key: Key('$_showHeatMap'),
-              //         heatMapDataSource: InMemoryHeatMapDataSource(
-              //           data: data
-              //               .map(
-              //                 (e) => WeightedLatLng(LatLng(e.lat.value!, e.lon.value!), 1),
-              //               )
-              //               .toList(),
-              //         ),
-              //       )
-              //     else ...[
-              //       !_showRoute
-              //           ? MarkerClusterLayerWidget(
-              //               options: MarkerClusterLayerOptions(
-              //                 maxClusterRadius: 45,
-              //                 size: const Size(40, 40),
-              //                 anchor: AnchorPos.align(AnchorAlign.center),
-              //                 fitBoundsOptions: const FitBoundsOptions(
-              //                   padding: EdgeInsets.all(50),
-              //                   maxZoom: 15,
-              //                 ),
-              //                 markers: [
-              //                   if (_currentPosition != null)
-              //                     Marker(
-              //                       point: LatLng(
-              //                           _currentPosition!.latitude, _currentPosition!.longitude),
-              //                       builder: (context) {
-              //                         return const Icon(
-              //                           Icons.circle,
-              //                           color: gdMapLocationPointColor,
-              //                           size: 30,
-              //                         );
-              //                       },
-              //                     ),
-              //                   ...data
-              //                       .map(
-              //                         (e) => Marker(
-              //                           point: LatLng(e.lat.value!, e.lon.value!),
-              //                           anchorPos: AnchorPos.align(AnchorAlign.top),
-              //                           builder: (context) {
-              //                             return Transform.rotate(
-              //                               angle: _mapController.rotation * -pi / 180,
-              //                               alignment: Alignment.bottomCenter,
-              //                               child: Icon(
-              //                                 Icons.location_on,
-              //                                 color: HexColor(widget.deviceColor),
-              //                                 size: 30,
-              //                               ),
-              //                             );
-              //                           },
-              //                         ),
-              //                       )
-              //                       .toList()
-              //                 ],
-              //                 builder: (context, markers) {
-              //                   return Transform.rotate(
-              //                     angle: _mapController.rotation * -pi / 180,
-              //                     child: Icon(
-              //                       Icons.location_on,
-              //                       color: HexColor(widget.deviceColor),
-              //                       size: 30,
-              //                     ),
-              //                   );
-              //                 },
-              //               ),
-              //             )
-              //           : MarkerLayer(
-              //               markers: [
-              //                 if (_currentPosition != null)
-              //                   Marker(
-              //                     point: LatLng(
-              //                         _currentPosition!.latitude, _currentPosition!.longitude),
-              //                     builder: (context) {
-              //                       return const Icon(
-              //                         Icons.circle,
-              //                         color: gdMapLocationPointColor,
-              //                         size: 30,
-              //                       );
-              //                     },
-              //                   ),
-              //                 ...[data.first, data.last]
-              //                     .map(
-              //                       (e) => Marker(
-              //                         point: LatLng(e.lat.value!, e.lon.value!),
-              //                         anchorPos: AnchorPos.align(AnchorAlign.top),
-              //                         builder: (context) {
-              //                           return Transform.rotate(
-              //                             angle: _mapController.rotation * -pi / 180,
-              //                             alignment: Alignment.bottomCenter,
-              //                             child: Icon(
-              //                               Icons.location_on,
-              //                               color: HexColor(widget.deviceColor),
-              //                               size: 30,
-              //                             ),
-              //                           );
-              //                         },
-              //                       ),
-              //                     )
-              //                     .toList()
-              //               ],
-              //             )
-              //     ]
-              //   ],
-              // ),
               Container(
                 color: theme.colorScheme.background.withOpacity(0.5),
                 height: 50,
@@ -535,9 +444,44 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                           _showRoute = !_showRoute;
                         });
                         break;
+                      case '/satellite':
+                        setState(() {
+                          _satellite = !_satellite;
+                        });
+                        break;
                     }
                   },
                   itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: '/satellite',
+                      child: StatefulBuilder(
+                        builder: (context, setState) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "${localizations.satellite.capitalizeFirst!}:",
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                              Switch(
+                                activeTrackColor: theme.colorScheme.secondary,
+                                inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                                    ? gdToggleGreyArea
+                                    : gdDarkToggleGreyArea,
+                                value: _satellite,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _satellite = value;
+                                  });
+                                  this.setState(() {});
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                     PopupMenuItem(
                       value: '/show_fence',
                       child: StatefulBuilder(
@@ -612,5 +556,3 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     );
   }
 }
-
-class Place {}

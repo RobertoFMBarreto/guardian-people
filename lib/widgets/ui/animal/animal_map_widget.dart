@@ -16,7 +16,6 @@ import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
-import 'package:guardian/widgets/ui/maps/new_map_test.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -93,12 +92,11 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
     setState(() {
       _animalData = widget.animal.data;
     });
-    // await _getAnimalData();
-    // await _getAnimalDataFromApi();
+
     if (widget.isInterval) {
       // get data in interval
       _getAnimalData();
-      AnimalRequests.getAnimalDataIntervalFromApi(
+      await AnimalRequests.getAnimalDataIntervalFromApi(
         idAnimal: widget.animal.animal.idAnimal.value,
         startDate: _startDate,
         endDate: _endDate ?? DateTime.now(),
@@ -147,7 +145,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
           }),
         );
 
-        AnimalRequests.getAnimalsFromApiWithLastLocation(
+        await AnimalRequests.getAnimalsFromApiWithLastLocation(
             context: context,
             onFailed: (statusCode) {
               if (statusCode == 507 || statusCode == 404) {
@@ -166,9 +164,10 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
             });
       }
     }
+
     if (_endDate == null) {
       // make realtime request
-      AnimalRequests.startRealtimeStreaming(
+      await AnimalRequests.startRealtimeStreaming(
         idAnimal: widget.animal.animal.idAnimal.value,
         context: context,
         onDataGotten: () {
@@ -269,38 +268,38 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: NewMapTest(
-                          showCurrentPosition: true,
-                          deviceData: _animalData,
-                          idAnimal: widget.animal.animal.idAnimal.value,
-                          deviceColor: widget.animal.animal.animalColor.value,
-                          isInterval: widget.isInterval,
-                          endDate: _endDate ?? DateTime.now(),
-                          startDate: _startDate,
-                          onZoomChange: (newZoom) {
-                            // No need to setstate because we dont need to update the screen
-                            // just need to store the value in case the map restarts to keep zoom
-                            _currentZoom = newZoom;
-                          },
-                          startingZoom: _currentZoom,
-                        )
-                        // SingleAnimalLocationMap(
-                        // showCurrentPosition: true,
-                        // deviceData: _animalData,
-                        // idAnimal: widget.animal.animal.idAnimal.value,
-                        // deviceColor: widget.animal.animal.animalColor.value,
-                        // isInterval: widget.isInterval,
-                        // endDate: _endDate ?? DateTime.now(),
-                        // startDate: _startDate,
-                        // onZoomChange: (newZoom) {
-                        //   // No need to setstate because we dont need to update the screen
-                        //   // just need to store the value in case the map restarts to keep zoom
-                        //   _currentZoom = newZoom;
-                        // },
-                        // startingZoom: _currentZoom,
-                        // ),
-                        ),
+                      borderRadius: BorderRadius.circular(20),
+                      child: SingleAnimalLocationMap(
+                        showCurrentPosition: true,
+                        deviceData: _animalData,
+                        idAnimal: widget.animal.animal.idAnimal.value,
+                        deviceColor: widget.animal.animal.animalColor.value,
+                        isInterval: widget.isInterval,
+                        endDate: _endDate ?? DateTime.now(),
+                        startDate: _startDate,
+                        onZoomChange: (newZoom) {
+                          // No need to setstate because we dont need to update the screen
+                          // just need to store the value in case the map restarts to keep zoom
+                          _currentZoom = newZoom;
+                        },
+                        startingZoom: _currentZoom,
+                      ),
+                      // NewMapTest(
+                      //   showCurrentPosition: true,
+                      //   deviceData: _animalData,
+                      //   idAnimal: widget.animal.animal.idAnimal.value,
+                      //   deviceColor: widget.animal.animal.animalColor.value,
+                      //   isInterval: widget.isInterval,
+                      //   endDate: _endDate ?? DateTime.now(),
+                      //   startDate: _startDate,
+                      //   onZoomChange: (newZoom) {
+                      //     // No need to setstate because we dont need to update the screen
+                      //     // just need to store the value in case the map restarts to keep zoom
+                      //     _currentZoom = newZoom;
+                      //   },
+                      //   startingZoom: _currentZoom,
+                      // )
+                    ),
                   ),
                 ),
               ],

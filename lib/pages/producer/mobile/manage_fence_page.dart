@@ -16,7 +16,7 @@ import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 
 /// Class that represents the manage fence page
 class ManageFencePage extends StatefulWidget {

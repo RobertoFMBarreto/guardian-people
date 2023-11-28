@@ -16,6 +16,24 @@ class AuthProvider {
     Map<String, dynamic> body = {"email": email, "password": password};
     try {
       var response = await post(url, headers: headers, body: jsonEncode(body));
+      print('HERE - ${response.statusCode} | ${response.body}');
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
+  /// Method that allows to get google tiles session token
+  static Future<Response> getGoogleMapsSessionToken() async {
+    Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+    var url = Uri.https(
+        'tile.googleapis.com/v1/createSession?key=AIzaSyC3PHyr4qbcICi6yE7drsRpqT7A_x7Rsgo');
+
+    Map<String, dynamic> body = {"mapType": "streetview", "language": "en-US", "region": "US"};
+    try {
+      var response = await post(url, headers: headers, body: jsonEncode(body));
 
       return response;
     } on SocketException catch (e) {

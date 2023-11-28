@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 // import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as maps;
 import 'dart:math' show cos, sqrt, asin;
 
 import 'package:latlong2/latlong.dart';
 
 /// Method that allows to get the map tile [TileLayer]
-TileLayer getTileLayer(BuildContext context, {Key? key}) {
+TileLayer getTileLayer(BuildContext context, {Key? key, bool satellite = false}) {
   return TileLayer(
     key: key,
-    urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    subdomains: const ['a', 'b', 'c'],
+    urlTemplate:
+        'https://api.mapbox.com/styles/v1/mapbox/${satellite ? 'satellite-streets-v12' : 'outdoors-v12'}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicm9iZXJ0b2JhcnJldG8iLCJhIjoiY2s4NXRlN2loMDA1MzNncWlybDV5eGNjcSJ9.Dkp_KYWwEcThrpvZ3dEMjg',
+    // additionalOptions: const {
+    //   'accessToken':
+    //       'pk.eyJ1Ijoicm9iZXJ0b2JhcnJldG8iLCJhIjoiY2s4NXRlN2loMDA1MzNncWlybDV5eGNjcSJ9.Dkp_KYWwEcThrpvZ3dEMjg',
+    //   'id': 'mapbox://styles/robertobarreto/clph2ale500kc01po4fqn0gtu'
+    // },
+
     userAgentPackageName: 'com.linovt.Guardian',
     // tileProvider: FMTC.instance('guardian').getTileProvider(),
     tileDisplay: const TileDisplay.fadeIn(),
-    tileProvider: NetworkNoRetryTileProvider(
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    ),
   );
 }
 

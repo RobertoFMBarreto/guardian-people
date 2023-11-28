@@ -184,5 +184,6 @@
   "online": "ligado",
   "no_gps": "sem localização",
   "offline": "desligado",
-  "no_server_connection": "modo offline"
+  "no_server_connection": "modo offline",
+  "satellite": "satélite"
 }
