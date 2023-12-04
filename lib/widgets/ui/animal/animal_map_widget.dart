@@ -1,4 +1,5 @@
 import 'package:dart_amqp/dart_amqp.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
@@ -13,11 +14,15 @@ import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/settings/colors.dart';
+import 'package:guardian/widgets/inputs/date_time_input/time_selector_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 /// Class that represents the animal map widget
 class AnimalMapWidget extends StatefulWidget {
@@ -179,6 +184,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
     if (_endDate == null) {
       // make realtime request
+      // ignore: use_build_context_synchronously
       await AnimalRequests.startRealtimeStreaming(
         idAnimal: widget.animal.animal.idAnimal.value,
         context: context,
@@ -259,23 +265,17 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
               children: [
                 if (widget.isInterval)
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: AnimalTimeRangeWidget(
-                          startDate: _startDate,
-                          endDate: _endDate,
-                          onStartDateChanged: (newStartDate) {
-                            setState(() {
-                              _startDate = newStartDate;
-                              _future = _setup();
-                            });
-                          },
-                          onEndDateChanged: (newEndDate) {
-                            setState(() {
-                              _endDate = newEndDate;
-                              _future = _setup();
-                            });
-                          }),
+                    child: AnimalTimeRangeWidget(
+                      startDate: _startDate,
+                      endDate: _endDate,
+                      onDateChanged: (newStartDate, newEndDate) {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          _startDate = newStartDate;
+                          _endDate = newEndDate;
+                          _future = _setup();
+                        });
+                      },
                     ),
                   ),
                 Expanded(

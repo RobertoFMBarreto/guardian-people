@@ -448,29 +448,29 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 )
                               ],
                             ),
-                          Expanded(
-                            child: AnimalTimeRangeWidget(
-                                startDate: _startDate,
-                                endDate: _endDate,
-                                onStartDateChanged: (newStartDate) {
-                                  if (_selectedAnimal != null) {
-                                    setState(() {
-                                      _startDate = newStartDate;
-                                      _isInterval = true;
-                                      _loadAnimalData();
-                                    });
-                                  }
-                                },
-                                onEndDateChanged: (newEndDate) {
-                                  if (_selectedAnimal != null) {
-                                    setState(() {
-                                      _endDate = newEndDate;
-                                      _isInterval = true;
-                                      _loadAnimalData();
-                                    });
-                                  }
-                                }),
-                          ),
+                          // Expanded(
+                          //   child: AnimalTimeRangeWidget(
+                          //       startDate: _startDate,
+                          //       endDate: _endDate,
+                          //       onStartDateChanged: (newStartDate) {
+                          //         if (_selectedAnimal != null) {
+                          //           setState(() {
+                          //             _startDate = newStartDate;
+                          //             _isInterval = true;
+                          //             _loadAnimalData();
+                          //           });
+                          //         }
+                          //       },
+                          //       onEndDateChanged: (newEndDate) {
+                          //         if (_selectedAnimal != null) {
+                          //           setState(() {
+                          //             _endDate = newEndDate;
+                          //             _isInterval = true;
+                          //             _loadAnimalData();
+                          //           });
+                          //         }
+                          //       }),
+                          // ),
                         ]
                       ],
                     ),
