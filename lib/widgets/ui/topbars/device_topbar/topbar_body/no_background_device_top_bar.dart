@@ -172,8 +172,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                               IconText(
                                 icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text:
-                                    '${widget.animal.data.first.elevation.value!.ceil() ?? 'N/A'}m',
+                                text: '${widget.animal.data.first.elevation.value!.ceil()}m',
                                 // text: '${widget.device.data.first.elevation.value.round()}m',
                                 textColor: theme.colorScheme.onSecondary,
                                 iconSize: 25,
@@ -206,7 +205,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 icon: Icons.info_outline,
                                 isInverted: true,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: states[Random().nextInt(states.length)] ?? 'N/A',
+                                text: states[Random().nextInt(states.length)],
                                 textColor: theme.colorScheme.onSecondary,
                                 iconSize: 25,
                                 fontSize: 25,

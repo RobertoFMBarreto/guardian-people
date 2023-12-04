@@ -108,7 +108,6 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
 }
 
 void showNoConnectionSnackBar() {
-  print('[VALUE] - $isSnackbarActive');
   if (!isSnackbarActive) {
     AppLocalizations localizations = AppLocalizations.of(navigatorKey.currentContext!)!;
     ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(

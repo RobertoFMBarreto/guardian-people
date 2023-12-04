@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/api/animals_provider.dart';
@@ -22,7 +21,6 @@ class AnimalRequests {
       required Function onDataGotten,
       required Function(int) onFailed}) async {
     await AnimalProvider.getAnimalsWithLastLocation().then((response) async {
-      print('Response: ${response.body}');
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
@@ -85,7 +83,6 @@ class AnimalRequests {
     required Function(int) onFailed,
   }) async {
     await AnimalProvider.getAnimalData(idAnimal, startDate, endDate).then((response) async {
-      print('DAta: ${response.body}');
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);

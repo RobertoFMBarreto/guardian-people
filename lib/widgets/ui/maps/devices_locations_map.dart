@@ -4,7 +4,6 @@ import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/device_status.dart';
-import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
@@ -64,7 +63,6 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
       (position) {
         if (mounted) {
           setState(() => _currentPosition = position);
-          print(_currentPosition);
         }
       },
     );
@@ -131,7 +129,6 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CustomCircularProgressIndicator();
         } else {
-          print("${widget.showCurrentPosition && _currentPosition != null}");
           return FlutterMap(
             key: Key(widget.reloadMap ?? ''),
             options: MapOptions(
@@ -157,7 +154,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
               if (_polygons.isNotEmpty) getPolygonFences(_polygons),
               PopupMarkerLayerWidget(
                 options: PopupMarkerLayerOptions(
-                  initiallySelectedMarkers: [],
+                  initiallySelectedMarkers: const [],
                   popupBuilder: (ctx, marker) {
                     final animal = widget.animals
                         .where(

@@ -123,7 +123,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
       (position) {
         if (mounted) {
           setState(() => _currentPosition = position);
-          print(_currentPosition);
         }
       },
     );
