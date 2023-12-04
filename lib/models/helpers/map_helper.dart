@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-// import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 import 'package:latlong2/latlong.dart';
@@ -18,7 +18,7 @@ TileLayer getTileLayer(BuildContext context, {Key? key, bool satellite = false})
     // },
 
     userAgentPackageName: 'com.linovt.Guardian',
-    // tileProvider: FMTC.instance('guardian').getTileProvider(),
+    tileProvider: FMTC.instance('guardian').getTileProvider(),
     tileDisplay: const TileDisplay.fadeIn(),
   );
 }

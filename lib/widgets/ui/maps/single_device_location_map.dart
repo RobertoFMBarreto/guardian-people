@@ -9,6 +9,7 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:guardian/main.dart';
+import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/settings/colors.dart';
@@ -122,6 +123,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
       (position) {
         if (mounted) {
           setState(() => _currentPosition = position);
+          print(_currentPosition);
         }
       },
     );
@@ -152,17 +154,17 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     List<Polygon> allFences = [];
     await getAnimalFence(widget.idAnimal).then((fence) async {
       if (fence != null) {
-        // List<LatLng> fencePoints = [];
-        // fencePoints.addAll(await getFencePoints(fence.idFence));
-        // allFences.add(
-        //   Polygon(
-        //     points: fencePoints,
-        //     color: HexColor(fence.color).withOpacity(0.5),
-        //     borderColor: HexColor(fence.color),
-        //     borderStrokeWidth: 2,
-        //     isFilled: true,
-        //   ),
-        // );
+        List<LatLng> fencePoints = [];
+        fencePoints.addAll((await getFencePoints(fence.idFence)).map((e) => LatLng(e.lat, e.lon)));
+        allFences.add(
+          Polygon(
+            points: fencePoints,
+            color: HexColor(fence.color).withOpacity(0.5),
+            borderColor: HexColor(fence.color),
+            borderStrokeWidth: 2,
+            isFilled: true,
+          ),
+        );
       }
       if (mounted) {
         setState(() {

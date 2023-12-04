@@ -156,14 +156,14 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                         Expanded(
                           flex: 2,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20.0),
                                 child: IconText(
                                   icon: Icons.device_thermostat,
                                   iconColor: theme.colorScheme.onSecondary,
-                                  text: '${widget.animal.data.first.temperature.value}ºC',
+                                  text: '${widget.animal.data.first.temperature.value ?? 'N/A'}ºC',
                                   textColor: theme.colorScheme.onSecondary,
                                   iconSize: 25,
                                   fontSize: 25,
@@ -172,7 +172,8 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                               IconText(
                                 icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.elevation.value!.ceil()}m',
+                                text:
+                                    '${widget.animal.data.first.elevation.value!.ceil() ?? 'N/A'}m',
                                 // text: '${widget.device.data.first.elevation.value.round()}m',
                                 textColor: theme.colorScheme.onSecondary,
                                 iconSize: 25,
@@ -181,11 +182,10 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                             ],
                           ),
                         ),
-                        const Expanded(child: SizedBox()),
                         Expanded(
                           flex: 2,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20.0),
@@ -198,7 +198,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                   fontSize: 25,
                                   isInverted: true,
                                   iconColor: theme.colorScheme.onSecondary,
-                                  text: '${widget.animal.data.first.battery.value}%',
+                                  text: '${widget.animal.data.first.battery.value ?? 'N/A'}%',
                                   textColor: theme.colorScheme.onSecondary,
                                 ),
                               ),
@@ -206,7 +206,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 icon: Icons.info_outline,
                                 isInverted: true,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: states[Random().nextInt(states.length)],
+                                text: states[Random().nextInt(states.length)] ?? 'N/A',
                                 textColor: theme.colorScheme.onSecondary,
                                 iconSize: 25,
                                 fontSize: 25,

@@ -11,30 +11,11 @@ class AuthProvider {
   /// Method for login based on [email] and [password]
   static Future<Response> login(String email, String password) async {
     Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/login');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/login');
 
     Map<String, dynamic> body = {"email": email, "password": password};
     try {
       var response = await post(url, headers: headers, body: jsonEncode(body));
-      print('HERE - ${response.statusCode} | ${response.body}');
-      return response;
-    } on SocketException catch (e) {
-      return Response(e.message, 507);
-    } catch (e) {
-      return Response('error', 507);
-    }
-  }
-
-  /// Method that allows to get google tiles session token
-  static Future<Response> getGoogleMapsSessionToken() async {
-    Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    var url = Uri.https(
-        'tile.googleapis.com/v1/createSession?key=AIzaSyC3PHyr4qbcICi6yE7drsRpqT7A_x7Rsgo');
-
-    Map<String, dynamic> body = {"mapType": "streetview", "language": "en-US", "region": "US"};
-    try {
-      var response = await post(url, headers: headers, body: jsonEncode(body));
-
       return response;
     } on SocketException catch (e) {
       return Response(e.message, 507);
@@ -49,9 +30,9 @@ class AuthProvider {
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/refresh-token');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/refresh-token');
     try {
-      var response = await post(url, headers: headers, body: jsonEncode({"refreshToken": token}));
+      var response = await post(url, headers: headers, body: jsonEncode({"RefreshToken": token}));
 
       return response;
     } on SocketException catch (e) {
@@ -68,7 +49,7 @@ class AuthProvider {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $token',
     };
-    var url = Uri.https(kGDapiServerUrl, '/api/v1/user/device/token');
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/user/device/token');
     try {
       var response =
           await post(url, headers: headers, body: jsonEncode({"deviceToken": deviceToken}));

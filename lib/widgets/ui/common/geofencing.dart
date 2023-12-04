@@ -218,15 +218,19 @@ class _GeofencingState extends State<Geofencing> {
       (value) async => await AnimalRequests.getAnimalsFromApiWithLastLocation(
         context: context,
         onFailed: (statusCode) {
-          if (statusCode == 507 || statusCode == 404) {
-            if (_firstRun == true) {
-              showNoConnectionSnackBar();
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
-            _firstRun = false;
-          } else if (!isSnackbarActive) {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
         },
         onDataGotten: () async {
@@ -303,15 +307,19 @@ class _GeofencingState extends State<Geofencing> {
           fencePoints: fencePoints,
           context: context,
           onFailed: (statusCode) {
-            if (statusCode == 507 || statusCode == 404) {
-              if (_firstRun == true) {
-                showNoConnectionSnackBar();
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
               }
-              _firstRun = false;
-            } else if (!isSnackbarActive) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
           },
         ),
@@ -333,15 +341,19 @@ class _GeofencingState extends State<Geofencing> {
           fencePoints: fencePoints,
           context: context,
           onFailed: (statusCode) {
-            if (statusCode == 507 || statusCode == 404) {
-              if (_firstRun == true) {
-                showNoConnectionSnackBar();
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
               }
-              _firstRun = false;
-            } else if (!isSnackbarActive) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
           },
         ),

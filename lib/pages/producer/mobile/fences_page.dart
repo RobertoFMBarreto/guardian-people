@@ -50,15 +50,19 @@ class _FencesPageState extends State<FencesPage> {
       (value) => FencingRequests.getUserFences(
         context: context,
         onFailed: (statusCode) {
-          if (statusCode == 507 || statusCode == 404) {
-            if (_firstRun == true) {
-              showNoConnectionSnackBar();
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
-            _firstRun = false;
-          } else if (!isSnackbarActive) {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
         },
         onGottenData: (_) {
@@ -99,15 +103,19 @@ class _FencesPageState extends State<FencesPage> {
             (value) => FencingRequests.getUserFences(
               context: context,
               onFailed: (statusCode) {
-                if (statusCode == 507 || statusCode == 404) {
-                  if (_firstRun == true) {
-                    showNoConnectionSnackBar();
+                if (!hasConnection && !isSnackbarActive) {
+                  showNoConnectionSnackBar();
+                } else {
+                  if (statusCode == 507 || statusCode == 404) {
+                    if (_firstRun == true) {
+                      showNoConnectionSnackBar();
+                    }
+                    _firstRun = false;
+                  } else if (!isSnackbarActive) {
+                    AppLocalizations localizations = AppLocalizations.of(context)!;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
                   }
-                  _firstRun = false;
-                } else if (!isSnackbarActive) {
-                  AppLocalizations localizations = AppLocalizations.of(context)!;
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
                 }
               },
               onGottenData: (_) {
@@ -121,15 +129,19 @@ class _FencesPageState extends State<FencesPage> {
         setState(() {
           _fences.add(fence);
         });
-        if (statusCode == 507 || statusCode == 404) {
-          if (_firstRun == true) {
-            showNoConnectionSnackBar();
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
-          _firstRun = false;
-        } else if (!isSnackbarActive) {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         }
       },
     );

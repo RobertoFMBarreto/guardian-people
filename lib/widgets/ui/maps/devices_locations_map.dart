@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/models/helpers/device_status.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
@@ -61,6 +64,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
       (position) {
         if (mounted) {
           setState(() => _currentPosition = position);
+          print(_currentPosition);
         }
       },
     );
@@ -127,6 +131,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CustomCircularProgressIndicator();
         } else {
+          print("${widget.showCurrentPosition && _currentPosition != null}");
           return FlutterMap(
             key: Key(widget.reloadMap ?? ''),
             options: MapOptions(
@@ -150,41 +155,100 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
               getTileLayer(context),
               if (_circles.isNotEmpty) getCircleFences(_circles),
               if (_polygons.isNotEmpty) getPolygonFences(_polygons),
-              MarkerLayer(
-                markers: [
-                  if (widget.showCurrentPosition && _currentPosition != null)
-                    Marker(
-                      point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                      builder: (context) {
-                        return const Icon(
-                          Icons.circle,
-                          color: gdMapLocationPointColor,
-                          size: 30,
+              PopupMarkerLayerWidget(
+                options: PopupMarkerLayerOptions(
+                  initiallySelectedMarkers: [],
+                  popupBuilder: (ctx, marker) {
+                    final animal = widget.animals
+                        .where(
+                          (element) =>
+                              element.data.isNotEmpty &&
+                              element.data.first.lat.value != null &&
+                              element.data.first.lon.value != null &&
+                              element.data.first.lat.value == marker.point.latitude &&
+                              element.data.first.lon.value == marker.point.longitude,
+                        )
+                        .first;
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CustomPageRouter(
+                            page: '/producer/device',
+                            settings: RouteSettings(
+                              arguments: {
+                                'animal': animal,
+                              },
+                            ),
+                          ),
                         );
                       },
-                    ),
-                  ...widget.animals
-                      .where((element) =>
-                          element.data.isNotEmpty &&
-                          element.data.first.lat.value != null &&
-                          element.data.first.lon.value != null)
-                      .map(
-                        (animal) => Marker(
-                          point: LatLng(
-                            animal.data.first.lat.value!,
-                            animal.data.first.lon.value!,
-                          ),
-                          builder: (context) {
-                            return Icon(
-                              Icons.location_on,
-                              color: HexColor(animal.animal.animalColor.value),
-                              size: 30,
-                            );
-                          },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
                         ),
-                      )
-                      .toList()
-                ],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                animal.animal.animalName.value,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(color: Colors.black),
+                              ),
+                              CircleAvatar(
+                                radius: 3,
+                                backgroundColor: animal.deviceStatus! == DeviceStatus.online
+                                    ? Colors.green
+                                    : animal.deviceStatus! == DeviceStatus.noGps
+                                        ? Colors.orange
+                                        : Colors.red,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  markerRotateAlignment: Alignment.center,
+                  markers: [
+                    ...widget.animals
+                        .where((element) =>
+                            element.data.isNotEmpty &&
+                            element.data.first.lat.value != null &&
+                            element.data.first.lon.value != null)
+                        .map(
+                          (animal) => Marker(
+                            point: LatLng(
+                              animal.data.first.lat.value!,
+                              animal.data.first.lon.value!,
+                            ),
+                            builder: (context) {
+                              return Align(
+                                alignment: Alignment.topCenter,
+                                child: Icon(
+                                  Icons.location_on,
+                                  size: 25,
+                                  color: HexColor(animal.animal.animalColor.value),
+                                ),
+                              );
+
+                              // Icon(
+                              //   Icons.location_on,
+                              //   color: HexColor(animal.animal.animalColor.value),
+                              //   size: 30,
+                              // );
+                            },
+                          ),
+                        )
+                        .toList()
+                  ],
+                ),
               ),
             ],
           );

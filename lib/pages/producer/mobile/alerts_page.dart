@@ -65,15 +65,19 @@ class _AlertsPageState extends State<AlertsPage> {
             _getLocalUnselectedUserAlerts(widget.idAnimal!);
           },
           onFailed: (statusCode) {
-            if (statusCode == 507 || statusCode == 404) {
-              if (_firstRun == true) {
-                showNoConnectionSnackBar();
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
               }
-              _firstRun = false;
-            } else if (!isSnackbarActive) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
           },
         ),
@@ -86,15 +90,19 @@ class _AlertsPageState extends State<AlertsPage> {
             _getLocalUserAlerts();
           },
           onFailed: (statusCode) {
-            if (statusCode == 507 || statusCode == 404) {
-              if (_firstRun == true) {
-                showNoConnectionSnackBar();
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
               }
-              _firstRun = false;
-            } else if (!isSnackbarActive) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
           },
         ),
@@ -162,15 +170,19 @@ class _AlertsPageState extends State<AlertsPage> {
         },
         onFailed: (statusCode) {
           failedAlerts.add(alert);
-          if (statusCode == 507 || statusCode == 404) {
-            if (_firstRun == true) {
-              showNoConnectionSnackBar();
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
-            _firstRun = false;
-          } else if (!isSnackbarActive) {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
         },
       );
@@ -200,15 +212,19 @@ class _AlertsPageState extends State<AlertsPage> {
         setState(() {
           _alerts.add(alert);
         });
-        if (statusCode == 507 || statusCode == 404) {
-          if (_firstRun == true) {
-            showNoConnectionSnackBar();
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
-          _firstRun = false;
-        } else if (!isSnackbarActive) {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         }
       },
     );

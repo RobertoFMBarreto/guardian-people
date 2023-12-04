@@ -53,15 +53,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
             _loadLocalAlerts();
           },
           onFailed: (statusCode) {
-            if (statusCode == 507 || statusCode == 404) {
-              if (_firstRun == true) {
-                showNoConnectionSnackBar();
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
               }
-              _firstRun = false;
-            } else if (!isSnackbarActive) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
           },
         );
@@ -93,15 +97,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
         removeAllNotifications().then((_) => _loadLocalAlerts());
       },
       onFailed: (statusCode) {
-        if (statusCode == 507 || statusCode == 404) {
-          if (_firstRun == true) {
-            showNoConnectionSnackBar();
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
-          _firstRun = false;
-        } else if (!isSnackbarActive) {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         }
       },
     );
@@ -125,15 +133,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
         setState(() {
           _alerts.add(deletedAlert);
         });
-        if (statusCode == 507 || statusCode == 404) {
-          if (_firstRun == true) {
-            showNoConnectionSnackBar();
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           }
-          _firstRun = false;
-        } else if (!isSnackbarActive) {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         }
       },
     );
