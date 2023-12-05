@@ -130,7 +130,7 @@ class _AnimalPageState extends State<AnimalPage> {
         },
         isExtended: true,
         backgroundColor: theme.colorScheme.secondary,
-        extendedPadding: EdgeInsets.all(4),
+        extendedPadding: const EdgeInsets.all(4),
         label: Text(
           localizations.state_history.capitalizeFirst!,
           style: theme.textTheme.bodyLarge!.copyWith(

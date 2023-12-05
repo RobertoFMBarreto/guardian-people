@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/widgets/inputs/date_time_input.dart';
 import 'package:guardian/widgets/inputs/date_time_input/time_selector_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_date_card.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -35,40 +34,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
     super.initState();
   }
 
-  /// Method that sets the [_startDate] date keeping the backup time
-  void _onStartDateChanged(DateRangePickerSelectionChangedArgs args) {
-    setState(() {
-      //store last date
-      DateTime backupDate = _startDate;
-      //store new date
-      _startDate = args.value;
-      //add the backup date hours to the new date
-      _startDate = DateTime(
-        _startDate.year,
-        _startDate.month,
-        _startDate.day,
-        backupDate.hour,
-        backupDate.minute,
-      );
-    });
-  }
-
   /// Method that sets the [_startDate] time keeping the backup date
-  void _onStartTimeChanged(DateTime newDate) {
-    DateTime backup = _startDate;
-    final newTime = DateTime(
-      backup.year,
-      backup.month,
-      backup.day,
-      newDate.hour,
-      newDate.minute,
-    );
-
-    setState(() {
-      _startDate = newTime;
-    });
-  }
-
   /// Method that sets the [_endDate] date keeping the backup time
   void _onEndDateChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {

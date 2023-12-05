@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
-import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/device_status.dart';
@@ -186,7 +185,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                   PopupMarkerLayerWidget(
                     options: PopupMarkerLayerOptions(
                       initiallySelectedMarkers: const [],
-                      markerCenterAnimation: MarkerCenterAnimation(),
+                      markerCenterAnimation: const MarkerCenterAnimation(),
                       popupBuilder: (ctx, marker) {
                         final animal = widget.animals
                             .where(

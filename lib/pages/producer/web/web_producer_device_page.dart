@@ -17,7 +17,6 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
-import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
@@ -35,7 +34,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   final List<FenceData> _fences = [];
 
   late Future _future;
-  GlobalKey _firstItemDataKey = GlobalKey();
+  final GlobalKey _firstItemDataKey = GlobalKey();
 
   Animal? _selectedAnimal;
 

@@ -1,5 +1,4 @@
 import 'package:dart_amqp/dart_amqp.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
@@ -14,15 +13,11 @@ import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
-import 'package:guardian/settings/colors.dart';
-import 'package:guardian/widgets/inputs/date_time_input/time_selector_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 import 'package:guardian/widgets/ui/maps/single_device_location_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 /// Class that represents the animal map widget
 class AnimalMapWidget extends StatefulWidget {
