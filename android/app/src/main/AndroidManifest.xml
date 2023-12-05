@@ -9,7 +9,8 @@
     <application
         android:label="Guardian"
         android:name="${applicationName}"
-        android:icon="@drawable/icon_512">
+        android:icon="@drawable/icon_512"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

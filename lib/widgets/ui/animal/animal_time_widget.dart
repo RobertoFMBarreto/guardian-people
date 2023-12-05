@@ -177,6 +177,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                       ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                           onPressed: () {

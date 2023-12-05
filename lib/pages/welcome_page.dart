@@ -39,11 +39,6 @@ class _WelcomePageState extends State<WelcomePage> {
                 context,
                 CustomPageRouter(page: user.isSuperuser ? '/admin' : '/producer'),
               );
-            } else {
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(page: '/login'),
-              );
             }
           });
         }

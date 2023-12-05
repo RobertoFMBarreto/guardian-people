@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/custom_page_router.dart';
-import 'package:guardian/models/db/drift/operations/user_operations.dart';
-import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/login/login_form.dart';
@@ -18,37 +15,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   @override
-  void initState() {
-    _getToken(context);
-
-    super.initState();
-  }
-
-  /// Method that gets the user id and the session token redirecting afterwards to the correct home page
-  ///
-  /// In case the user id or token are null the user is sent to login
-  Future<void> _getToken(BuildContext context) async {
-    await getUid(context, autoLogin: false).then(
-      (idUser) async {
-        if (idUser != null) {
-          // get user data
-          getUser(idUser).then((user) {
-            // if there is stored data use it for getting his role
-            if (user != null) {
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(page: user.isSuperuser ? '/admin' : '/producer'),
-              );
-            }
-          });
-        }
-      },
-    );
+  void didChangeDependencies() {
+    print('Update');
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    print('build');
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
