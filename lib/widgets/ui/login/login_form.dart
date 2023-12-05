@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/cookies/cookies_stub.dart'
     if (dart.library.io) 'package:guardian/models/helpers/cookies/cookies_mobile.dart'
     if (dart.library.js) 'package:guardian/models/helpers/cookies/cookies_web.dart'
@@ -96,8 +97,12 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ).then((_) {
                 // send to admin or producer
-                Navigator.of(context).popAndPushNamed(
-                  body['isProducer'] == false ? '/admin' : '/producer',
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushReplacement(
+                  context,
+                  CustomPageRouter(
+                    page: body['isProducer'] == false ? '/admin' : '/producer',
+                  ),
                 );
               });
             });
@@ -112,7 +117,16 @@ class _LoginFormState extends State<LoginForm> {
             });
           } else {
             setState(() {
-              errorString = resp.body;
+              final body = jsonDecode(resp.body) as Map<String, dynamic>;
+              if (body.containsKey('Error')) {
+                if (body["Error"] == "wrong_email_or_password") {
+                  errorString = localizations.email_password_wrong.capitalizeFirst!;
+                } else {
+                  errorString = localizations.server_error.capitalizeFirst!;
+                }
+              } else {
+                errorString = localizations.server_error.capitalizeFirst!;
+              }
             });
             Navigator.pop(context);
           }

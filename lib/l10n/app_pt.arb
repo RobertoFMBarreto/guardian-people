@@ -185,5 +185,6 @@
   "no_gps": "sem localização",
   "offline": "desligado",
   "no_server_connection": "modo offline",
-  "satellite": "satélite"
+  "satellite": "satélite",
+  "email_password_wrong": "email ou password errados"
 }
