@@ -6,6 +6,8 @@ import 'package:flutter_map/flutter_map.dart';
 // import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:flutter_map_math/flutter_geo_math.dart';
+import 'package:flutter_map_math/lat_lng.dart' as mathLatLon;
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:guardian/main.dart';
@@ -34,6 +36,7 @@ class SingleAnimalLocationMap extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final bool isInterval;
+  final GlobalKey parent;
   const SingleAnimalLocationMap({
     super.key,
     required this.showCurrentPosition,
@@ -45,6 +48,7 @@ class SingleAnimalLocationMap extends StatefulWidget {
     required this.isInterval,
     required this.idAnimal,
     required this.deviceColor,
+    required this.parent,
   });
 
   @override
@@ -55,6 +59,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
   final MapController _mapController = MapController();
+  final GlobalKey _mapParentKey = GlobalKey();
   final List<String> _dropdownItems = [
     'normal',
     'heatmap',
@@ -62,10 +67,13 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
 
   AnimalLocationsCompanion? lastLocation;
   List<AnimalLocationsCompanion> data = [];
+  List<Marker> markersList = [];
 
   late Future _future;
   late String _dropDownValue;
 
+  double _distance = 0;
+  double _lastZoom = 0;
   bool _showFence = true;
   bool _showRoute = false;
   bool _showHeatMap = false;
@@ -118,6 +126,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     setState(() {
       _dropDownValue = _dropdownItems.first;
     });
+
     await getCurrentPosition(
       context,
       (position) {
@@ -185,10 +194,11 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
           return const CustomCircularProgressIndicator();
         } else {
           return Stack(
+            key: _mapParentKey,
             alignment: Alignment.topRight,
             children: [
               FlutterMap(
-                key: Key('${widget.deviceData}'),
+                //key: , //Key('${widget.deviceData}'),
                 mapController: _mapController,
                 options: MapOptions(
                   center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
@@ -209,13 +219,24 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                             )
                           : null,
                   onMapReady: () {
+                    if (_distance == 0 && _lastZoom == 0) {
+                      setState(() {
+                        _distance = calcScaleTo100Pixels(widget.parent, _mapController);
+                      });
+                      _lastZoom = _mapController.zoom;
+                    }
                     _mapController.mapEventStream.listen((evt) {
                       widget.onZoomChange(_mapController.zoom);
+                      if (_mapController.zoom != _lastZoom) {
+                        setState(() {
+                          _distance = calcScaleTo100Pixels(widget.parent, _mapController);
+                        });
+                        _lastZoom = _mapController.zoom;
+                      }
                     });
-                    // And any other `MapController` dependent non-movement methods
                   },
                   zoom: widget.startingZoom,
-                  minZoom: 3,
+                  minZoom: 6,
                   maxZoom: 18,
                   boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
                   bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
@@ -248,6 +269,9 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                         ),
                       ],
                     ),
+                  MarkerLayer(
+                    markers: markersList,
+                  ),
                   if (data.isNotEmpty && _showHeatMap)
                     HeatMapLayer(
                       key: Key('$_showHeatMap'),
@@ -550,6 +574,51 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                   ),
                 ),
               ),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${_distance.ceilToDouble()}m',
+                        style: theme.textTheme.bodyMedium!.copyWith(
+                            color: _satellite ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 2,
+                            height: 10,
+                            child: Container(
+                              color: _satellite ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 100,
+                            height: 2,
+                            child: Container(
+                              color: _satellite ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 2,
+                            height: 10,
+                            child: Container(
+                              color: _satellite ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
             ],
           );
         }

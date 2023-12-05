@@ -35,6 +35,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   final List<FenceData> _fences = [];
 
   late Future _future;
+  GlobalKey _firstItemDataKey = GlobalKey();
 
   Animal? _selectedAnimal;
 
@@ -547,6 +548,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                     ),
                   )),
                 Expanded(
+                  key: _firstItemDataKey,
                   flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
@@ -563,6 +565,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 // just need to store the value in case the map restarts to keep zoom
                                 _currentZoom = newZoom;
                               },
+                              parent: _firstItemDataKey,
                               startingZoom: _currentZoom,
                               startDate: _startDate,
                               endDate: _endDate ?? DateTime.now(),
@@ -574,6 +577,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                               showCurrentPosition: true,
                               animals: _animals,
                               fences: _fences,
+                              parent: _firstItemDataKey,
                             ),
                     ),
                   ),

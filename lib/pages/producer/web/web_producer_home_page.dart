@@ -27,6 +27,7 @@ class WebProducerHomePage extends StatefulWidget {
 }
 
 class _WebProducerHomePageState extends State<WebProducerHomePage> {
+  final GlobalKey _mapParentKey = GlobalKey();
   late Future _future;
   int _reloadMap = 9999;
   List<Animal> _animals = [];
@@ -244,6 +245,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                   ),
                 ),
                 Expanded(
+                  key: _mapParentKey,
                   flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
@@ -251,6 +253,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                       borderRadius: BorderRadius.circular(20),
                       child: AnimalsLocationsMap(
                         key: Key(_reloadMap.toString()),
+                        parent: _mapParentKey,
                         showCurrentPosition: true,
                         animals: _animals,
                         fences: _fences,

@@ -27,6 +27,7 @@ class WebProducerFencesPage extends StatefulWidget {
 class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
   late Future _future;
 
+  final GlobalKey _mapParentKey = GlobalKey();
   FenceData? _selectedFence;
   bool isInteractingFence = false;
   List<Animal> _animals = [];
@@ -273,6 +274,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                   ),
                 ),
                 Expanded(
+                  key: _mapParentKey,
                   flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
@@ -297,6 +299,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                               animals: _animals,
                               fences: _fences,
                               centerOnPoly: _fences.isNotEmpty,
+                              parent: _mapParentKey,
                             ),
                     ),
                   ),

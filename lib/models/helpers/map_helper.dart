@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'dart:math' show cos, sqrt, asin;
 
@@ -68,6 +69,26 @@ double calculateDistance(lat1, lon1, lat2, lon2) {
   var a =
       0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
   return (12742 * asin(sqrt(a))) * 1000;
+}
+
+double calcScaleTo100Pixels(GlobalKey parent, MapController mapController) {
+  RenderBox box = parent.currentContext!.findRenderObject() as RenderBox;
+  Size mapSize = box.size;
+  final p1 = mapController.pointToLatLng(CustomPoint(0, mapSize.height / 2))!;
+
+  // p2 displace 100 pixels in x axis
+  final p2 = mapController.pointToLatLng(CustomPoint(100, mapSize.height / 2))!;
+
+  // distance between p1 & p2
+  final distance = FlutterMapMath().distanceBetween(
+    p1.latitude,
+    p1.longitude,
+    p2.latitude,
+    p2.longitude,
+    "meters",
+  );
+
+  return distance;
 }
 
 const ColorFilter greyscale = ColorFilter.matrix(<double>[

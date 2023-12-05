@@ -298,6 +298,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                           // just need to store the value in case the map restarts to keep zoom
                           _currentZoom = newZoom;
                         },
+                        parent: _firstItemDataKey,
                         startingZoom: _currentZoom,
                       ),
                       // NewMapTest(

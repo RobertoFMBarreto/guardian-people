@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/device_status.dart';
@@ -21,6 +22,7 @@ class AnimalsLocationsMap extends StatefulWidget {
   final String? reloadMap;
   final bool centerOnPoly;
   final bool centerOnDevice;
+  final GlobalKey parent;
   const AnimalsLocationsMap({
     super.key,
     required this.showCurrentPosition,
@@ -29,6 +31,7 @@ class AnimalsLocationsMap extends StatefulWidget {
     this.centerOnPoly = false,
     this.centerOnDevice = false,
     this.reloadMap,
+    required this.parent,
   });
 
   @override
@@ -45,6 +48,14 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
 
   final List<LatLng> _animalsDataPoints = [];
   final List<LatLng> _allFencesPoints = [];
+  final MapController _mapController = MapController();
+
+  final GlobalKey _mapParentKey = GlobalKey();
+
+  double _distance = 0;
+  double _lastZoom = 0;
+
+  List<Marker> markers = [];
 
   @override
   void initState() {
@@ -123,130 +134,197 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CustomCircularProgressIndicator();
         } else {
-          return FlutterMap(
-            key: Key(widget.reloadMap ?? ''),
-            options: MapOptions(
-              center: !widget.centerOnPoly && _currentPosition != null
-                  ? LatLng(
-                      _currentPosition!.latitude,
-                      _currentPosition!.longitude,
-                    )
-                  : null,
-              bounds: widget.centerOnPoly
-                  ? LatLngBounds.fromPoints(_allFencesPoints)
-                  : _animalsDataPoints.isNotEmpty
-                      ? LatLngBounds.fromPoints(_animalsDataPoints)
-                      : null,
-              boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
-              zoom: 17,
-              minZoom: 3,
-              maxZoom: 18,
-            ),
+          return Stack(
             children: [
-              getTileLayer(context),
-              if (_circles.isNotEmpty) getCircleFences(_circles),
-              if (_polygons.isNotEmpty) getPolygonFences(_polygons),
-              PopupMarkerLayerWidget(
-                options: PopupMarkerLayerOptions(
-                  initiallySelectedMarkers: const [],
-                  popupBuilder: (ctx, marker) {
-                    final animal = widget.animals
-                        .where(
-                          (element) =>
-                              element.data.isNotEmpty &&
-                              element.data.first.lat.value != null &&
-                              element.data.first.lon.value != null &&
-                              element.data.first.lat.value == marker.point.latitude &&
-                              element.data.first.lon.value == marker.point.longitude,
+              FlutterMap(
+                key: _mapParentKey,
+                mapController: _mapController,
+                options: MapOptions(
+                  center: !widget.centerOnPoly && _currentPosition != null
+                      ? LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
                         )
-                        .first;
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CustomPageRouter(
-                            page: '/producer/device',
-                            settings: RouteSettings(
-                              arguments: {
-                                'animal': animal,
-                              },
+                      : null,
+                  bounds: widget.centerOnPoly
+                      ? LatLngBounds.fromPoints(_allFencesPoints)
+                      : _animalsDataPoints.isNotEmpty
+                          ? LatLngBounds.fromPoints(_animalsDataPoints)
+                          : null,
+                  boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
+                  zoom: 17,
+                  minZoom: 6,
+                  maxZoom: 18,
+                  onMapReady: () {
+                    if (_distance == 0 && _lastZoom == 0) {
+                      setState(() {
+                        _distance = calcScaleTo100Pixels(widget.parent, _mapController);
+                      });
+                      _lastZoom = _mapController.zoom;
+                    }
+                    _mapController.mapEventStream.listen((evt) {
+                      if (_mapController.zoom != _lastZoom) {
+                        setState(() {
+                          _distance = calcScaleTo100Pixels(widget.parent, _mapController);
+                        });
+                        _lastZoom = _mapController.zoom;
+                      }
+                    });
+                  },
+                ),
+                children: [
+                  getTileLayer(context),
+                  if (_circles.isNotEmpty) getCircleFences(_circles),
+                  if (_polygons.isNotEmpty) getPolygonFences(_polygons),
+                  PopupMarkerLayerWidget(
+                    options: PopupMarkerLayerOptions(
+                      initiallySelectedMarkers: const [],
+                      markerCenterAnimation: MarkerCenterAnimation(),
+                      popupBuilder: (ctx, marker) {
+                        final animal = widget.animals
+                            .where(
+                              (element) =>
+                                  element.data.isNotEmpty &&
+                                  element.data.first.lat.value != null &&
+                                  element.data.first.lon.value != null &&
+                                  element.data.first.lat.value == marker.point.latitude &&
+                                  element.data.first.lon.value == marker.point.longitude,
+                            )
+                            .first;
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CustomPageRouter(
+                                page: '/producer/device',
+                                settings: RouteSettings(
+                                  arguments: {
+                                    'animal': animal,
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey, width: 0.5),
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.white,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    animal.animal.animalName.value,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  CircleAvatar(
+                                    radius: 3,
+                                    backgroundColor: animal.deviceStatus! == DeviceStatus.online
+                                        ? Colors.green
+                                        : animal.deviceStatus! == DeviceStatus.noGps
+                                            ? Colors.orange
+                                            : Colors.red,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                animal.animal.animalName.value,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(color: Colors.black),
-                              ),
-                              CircleAvatar(
-                                radius: 3,
-                                backgroundColor: animal.deviceStatus! == DeviceStatus.online
-                                    ? Colors.green
-                                    : animal.deviceStatus! == DeviceStatus.noGps
-                                        ? Colors.orange
-                                        : Colors.red,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  markerRotateAlignment: Alignment.center,
-                  markers: [
-                    ...widget.animals
-                        .where((element) =>
-                            element.data.isNotEmpty &&
-                            element.data.first.lat.value != null &&
-                            element.data.first.lon.value != null)
-                        .map(
-                          (animal) => Marker(
-                            point: LatLng(
-                              animal.data.first.lat.value!,
-                              animal.data.first.lon.value!,
-                            ),
-                            builder: (context) {
-                              return Align(
-                                alignment: Alignment.topCenter,
-                                child: Icon(
-                                  Icons.location_on,
-                                  size: 25,
-                                  color: HexColor(animal.animal.animalColor.value),
+                      markerRotateAlignment: Alignment.center,
+                      markers: [
+                        ...widget.animals
+                            .where((element) =>
+                                element.data.isNotEmpty &&
+                                element.data.first.lat.value != null &&
+                                element.data.first.lon.value != null)
+                            .map(
+                              (animal) => Marker(
+                                point: LatLng(
+                                  animal.data.first.lat.value!,
+                                  animal.data.first.lon.value!,
                                 ),
-                              );
+                                builder: (context) {
+                                  return Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Icon(
+                                      Icons.location_on,
+                                      size: 25,
+                                      color: HexColor(animal.animal.animalColor.value),
+                                    ),
+                                  );
 
-                              // Icon(
-                              //   Icons.location_on,
-                              //   color: HexColor(animal.animal.animalColor.value),
-                              //   size: 30,
-                              // );
-                            },
-                          ),
-                        )
-                        .toList()
-                  ],
-                ),
+                                  // Icon(
+                                  //   Icons.location_on,
+                                  //   color: HexColor(animal.animal.animalColor.value),
+                                  //   size: 30,
+                                  // );
+                                },
+                              ),
+                            )
+                            .toList()
+                      ],
+                    ),
+                  ),
+                ],
               ),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${_distance.ceilToDouble()}m',
+                        style: theme.textTheme.bodyMedium!
+                            .copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 2,
+                            height: 10,
+                            child: Container(
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 100,
+                            height: 2,
+                            child: Container(
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 2,
+                            height: 10,
+                            child: Container(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
             ],
           );
         }

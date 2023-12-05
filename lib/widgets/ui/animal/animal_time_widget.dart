@@ -213,7 +213,9 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
                     Row(
                       children: [
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                           child: Text(localizations.cancel),
                         ),
                         TextButton(

@@ -32,6 +32,8 @@ class ManageFencePage extends StatefulWidget {
 }
 
 class _ManageFencePageState extends State<ManageFencePage> {
+  final GlobalKey _mapParentKey = GlobalKey();
+
   List<Animal> _animals = [];
   List<LatLng> _points = [];
 
@@ -238,6 +240,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
+                    key: _mapParentKey,
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
@@ -248,6 +251,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             borderRadius: BorderRadius.circular(20),
                             child: AnimalsLocationsMap(
                               key: Key('${_fence.color}$_points'),
+                              parent: _mapParentKey,
                               showCurrentPosition: true,
                               animals: _animals,
                               centerOnPoly: true,

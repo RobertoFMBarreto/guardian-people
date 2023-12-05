@@ -39,6 +39,8 @@ class ProducerHome extends StatefulWidget {
 }
 
 class _ProducerHomeState extends State<ProducerHome> {
+  final GlobalKey _mapParentKey = GlobalKey();
+
   late UserData _user;
   late Future<void> _loadData;
 
@@ -47,7 +49,6 @@ class _ProducerHomeState extends State<ProducerHome> {
   List<AlertNotification> _alertNotifications = [];
   List<UserAlertCompanion> _alerts = [];
   bool _firstRun = true;
-
   int _reloadMap = 9999;
 
   @override
@@ -435,12 +436,14 @@ class _ProducerHomeState extends State<ProducerHome> {
                 ),
                 SliverFillRemaining(
                   child: Padding(
+                    key: _mapParentKey,
                     padding:
                         const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 20.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: AnimalsLocationsMap(
                         key: Key(_reloadMap.toString()),
+                        parent: _mapParentKey,
                         showCurrentPosition: true,
                         animals: _animals,
                         fences: _fences,
