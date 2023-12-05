@@ -186,7 +186,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
+    _updateData();
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
