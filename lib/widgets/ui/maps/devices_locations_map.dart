@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/device_status.dart';
@@ -43,8 +45,6 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
 
   late Future _future;
 
-  Position? _currentPosition;
-
   final List<LatLng> _animalsDataPoints = [];
   final List<LatLng> _allFencesPoints = [];
   final MapController _mapController = MapController();
@@ -68,15 +68,6 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
   /// 2. load fences
   /// 3. load animals
   Future<void> _setup() async {
-    await getCurrentPosition(
-      context,
-      (position) {
-        if (mounted) {
-          setState(() => _currentPosition = position);
-        }
-      },
-    );
-
     await _loadFences();
     for (var animal in widget.animals) {
       if (animal.data.isNotEmpty &&
@@ -146,18 +137,12 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                 key: _mapParentKey,
                 mapController: _mapController,
                 options: MapOptions(
-                  center: !widget.centerOnPoly && _currentPosition != null
-                      ? LatLng(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                        )
-                      : null,
                   bounds: widget.centerOnPoly
                       ? LatLngBounds.fromPoints(_allFencesPoints)
                       : _animalsDataPoints.isNotEmpty
                           ? LatLngBounds.fromPoints(_animalsDataPoints)
                           : null,
-                  boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
+                  boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(60)),
                   zoom: 17,
                   minZoom: 6,
                   maxZoom: 18,
@@ -180,6 +165,14 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                 ),
                 children: [
                   getTileLayer(context),
+                  CurrentLocationLayer(
+                    followOnLocationUpdate: !widget.centerOnPoly && widget.animals.isEmpty
+                        ? FollowOnLocationUpdate.always
+                        : FollowOnLocationUpdate.never,
+                    followAnimationCurve: Curves.linear,
+                    rotateAnimationCurve: Curves.linear,
+                    moveAnimationCurve: Curves.linear,
+                  ),
                   if (_circles.isNotEmpty) getCircleFences(_circles),
                   if (_polygons.isNotEmpty) getPolygonFences(_polygons),
                   PopupMarkerLayerWidget(
@@ -256,15 +249,41 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                                   animal.data.first.lat.value!,
                                   animal.data.first.lon.value!,
                                 ),
+                                height: 50,
                                 builder: (context) {
-                                  return Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Icon(
-                                      Icons.location_on,
-                                      size: 25,
-                                      color: HexColor(animal.animal.animalColor.value),
+                                  return Center(
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: getMarker(animal.animal.animalColor.value),
+                                        ),
+                                        Expanded(
+                                          child: SizedBox(),
+                                        ),
+                                      ],
                                     ),
                                   );
+
+                                  // Center(
+                                  //   child: Align(
+                                  //     alignment: Alignment.topCenter,
+                                  //     child: Stack(
+                                  //       children: [
+                                  //         Icon(
+                                  //           Icons.location_on,
+                                  //           size: 25,
+                                  //           color: HexColor(animal.animal.animalColor.value),
+                                  //         ),
+                                  //         Icon(
+                                  //           Icons.location_on_outlined,
+                                  //           size: 25,
+                                  //           color: HexColor(animal.animal.animalColor.value)
+                                  //               .withRed(150),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // );
 
                                   // Icon(
                                   //   Icons.location_on,

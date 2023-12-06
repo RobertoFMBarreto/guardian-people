@@ -70,6 +70,9 @@ dependencies:
   dart_mq: ^1.0.0
   flutter_map_marker_popup: ^4.1.0
   flutter_map_math: ^0.1.6
+  flutter_map_location_marker: ^6.0.0
+  flutter_compass: ^0.7.0
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   drift_dev: ^2.11.1
@@ -101,6 +104,7 @@ flutter:
     - assets/data/fences.json
     - assets/data/alerts.json
     - assets/maps/map_style.json
+    - assets/svgs/marker.svg
 
   # for translations
   generate: true

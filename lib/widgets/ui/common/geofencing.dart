@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -423,6 +424,11 @@ class _GeofencingState extends State<Geofencing> {
                           ),
                           children: [
                             getTileLayer(context),
+                            CurrentLocationLayer(
+                              followAnimationCurve: Curves.linear,
+                              rotateAnimationCurve: Curves.linear,
+                              moveAnimationCurve: Curves.linear,
+                            ),
                             if (_polyEditor.points.length >= 2 && _isCircle)
                               getCircleFences(_polygons),
                             getPolygonFences(_polygons),
@@ -436,29 +442,24 @@ class _GeofencingState extends State<Geofencing> {
                                       (device) => Marker(
                                         point: LatLng(device.data.first.lat.value!,
                                             device.data.first.lon.value!),
+                                        height: 50,
                                         builder: (context) {
-                                          return Icon(
-                                            Icons.location_on,
-                                            color: HexColor(device.animal.animalColor.value),
-                                            size: 30,
+                                          return Center(
+                                            child: Column(
+                                              children: [
+                                                Expanded(
+                                                  child: getMarker(device.animal.animalColor.value),
+                                                ),
+                                                Expanded(
+                                                  child: SizedBox(),
+                                                ),
+                                              ],
+                                            ),
                                           );
                                         },
                                       ),
                                     )
                                     .toList(),
-                                Marker(
-                                  point: LatLng(
-                                    _currentPosition!.latitude,
-                                    _currentPosition!.longitude,
-                                  ),
-                                  builder: (context) {
-                                    return const Icon(
-                                      Icons.circle,
-                                      color: gdMapLocationPointColor,
-                                      size: 30,
-                                    );
-                                  },
-                                )
                               ],
                             )
                           ],

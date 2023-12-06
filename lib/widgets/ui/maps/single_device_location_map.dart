@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -99,16 +100,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
         : widget.deviceData.isNotEmpty && lastLocation != null
             ? [lastLocation!]
             : [];
-    // _clusterManager.setItems(data
-    //     .map(
-    //       (e) => PlaceModel(
-    //         latLng: LatLng(e.lat.value!, e.lat.value!),
-    //         id: e.animalDataId.value,
-    //       ),
-    //     )
-    //     .toList());
-
-    //setState(() {});
   }
 
   /// Method that does the initial setup of the widget
@@ -122,15 +113,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     setState(() {
       _dropDownValue = _dropdownItems.first;
     });
-
-    await getCurrentPosition(
-      context,
-      (position) {
-        if (mounted) {
-          setState(() => _currentPosition = position);
-        }
-      },
-    );
     await _loadAnimalFences().then(
       (_) => FencingRequests.getUserFences(
         context: context,
@@ -198,22 +180,12 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                 mapController: _mapController,
                 options: MapOptions(
                   center: data.isNotEmpty && (_polygons.isEmpty || _circles.isEmpty)
-                      ? widget.isInterval && data.isEmpty && _currentPosition != null
-                          ? LatLng(
-                              _currentPosition!.latitude,
-                              _currentPosition!.longitude,
-                            )
-                          : widget.isInterval ||
-                                  data.first.lat.value == null ||
-                                  data.first.lon.value == null
-                              ? null
-                              : LatLng(data.first.lat.value!, data.first.lon.value!)
-                      : _currentPosition != null
-                          ? LatLng(
-                              _currentPosition!.latitude,
-                              _currentPosition!.longitude,
-                            )
-                          : null,
+                      ? widget.isInterval ||
+                              data.first.lat.value == null ||
+                              data.first.lon.value == null
+                          ? null
+                          : LatLng(data.first.lat.value!, data.first.lon.value!)
+                      : null,
                   onMapReady: () {
                     if (_distance == 0 && _lastZoom == 0) {
                       setState(() {
@@ -246,6 +218,12 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                 ),
                 children: [
                   getTileLayer(context, satellite: _satellite),
+                  if (widget.isInterval && data.isEmpty)
+                    CurrentLocationLayer(
+                      followAnimationCurve: Curves.linear,
+                      rotateAnimationCurve: Curves.linear,
+                      moveAnimationCurve: Curves.linear,
+                    ),
                   if (_showFence) ...[
                     getCircleFences(_circles),
                     getPolygonFences(_polygons),
@@ -265,9 +243,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                         ),
                       ],
                     ),
-                  MarkerLayer(
-                    markers: markersList,
-                  ),
                   if (data.isNotEmpty && _showHeatMap)
                     HeatMapLayer(
                       key: Key('$_showHeatMap'),
@@ -291,31 +266,23 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                                 maxZoom: 15,
                               ),
                               markers: [
-                                if (_currentPosition != null)
-                                  Marker(
-                                    point: LatLng(
-                                        _currentPosition!.latitude, _currentPosition!.longitude),
-                                    builder: (context) {
-                                      return const Icon(
-                                        Icons.circle,
-                                        color: gdMapLocationPointColor,
-                                        size: 30,
-                                      );
-                                    },
-                                  ),
                                 ...data
                                     .map(
                                       (e) => Marker(
                                         point: LatLng(e.lat.value!, e.lon.value!),
                                         anchorPos: AnchorPos.align(AnchorAlign.top),
+                                        height: 50,
                                         builder: (context) {
-                                          return Transform.rotate(
-                                            angle: _mapController.rotation * -pi / 180,
-                                            alignment: Alignment.bottomCenter,
-                                            child: Icon(
-                                              Icons.location_on,
-                                              color: HexColor(widget.deviceColor),
-                                              size: 30,
+                                          return Center(
+                                            child: Column(
+                                              children: [
+                                                Expanded(
+                                                  child: getMarker(widget.deviceColor),
+                                                ),
+                                                Expanded(
+                                                  child: SizedBox(),
+                                                ),
+                                              ],
                                             ),
                                           );
                                         },
@@ -337,18 +304,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                           )
                         : MarkerLayer(
                             markers: [
-                              if (_currentPosition != null)
-                                Marker(
-                                  point: LatLng(
-                                      _currentPosition!.latitude, _currentPosition!.longitude),
-                                  builder: (context) {
-                                    return const Icon(
-                                      Icons.circle,
-                                      color: gdMapLocationPointColor,
-                                      size: 30,
-                                    );
-                                  },
-                                ),
                               ...[data.first, data.last]
                                   .map(
                                     (e) => Marker(
