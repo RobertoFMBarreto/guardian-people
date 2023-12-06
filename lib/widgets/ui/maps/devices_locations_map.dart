@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/device_status.dart';
 import 'package:guardian/models/db/drift/database.dart';
@@ -11,7 +9,6 @@ import 'package:guardian/models/db/drift/operations/fence_points_operations.dart
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
-import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -257,7 +254,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                                         Expanded(
                                           child: getMarker(animal.animal.animalColor.value),
                                         ),
-                                        Expanded(
+                                        const Expanded(
                                           child: SizedBox(),
                                         ),
                                       ],

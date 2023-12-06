@@ -450,7 +450,7 @@ class _GeofencingState extends State<Geofencing> {
                                                 Expanded(
                                                   child: getMarker(device.animal.animalColor.value),
                                                 ),
-                                                Expanded(
+                                                const Expanded(
                                                   child: SizedBox(),
                                                 ),
                                               ],

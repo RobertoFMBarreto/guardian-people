@@ -6,7 +6,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
@@ -17,6 +16,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
+// ignore: unused_import
 import 'package:guardian/models/providers/system_provider.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -75,7 +75,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   bool _showRoute = false;
   bool _showHeatMap = false;
   bool _satellite = false;
-  Position? _currentPosition;
   bool _firstRun = true;
 
   @override
@@ -279,7 +278,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                                                 Expanded(
                                                   child: getMarker(widget.deviceColor),
                                                 ),
-                                                Expanded(
+                                                const Expanded(
                                                   child: SizedBox(),
                                                 ),
                                               ],

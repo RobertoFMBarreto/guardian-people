@@ -16,14 +16,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   void didChangeDependencies() {
-    print('Update');
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    print('build');
     return GestureDetector(
       onTap: () {
         CustomFocusManager.unfocus(context);
