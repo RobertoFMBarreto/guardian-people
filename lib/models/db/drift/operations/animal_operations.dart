@@ -142,9 +142,8 @@ Future<List<Animal>> getUserAnimalsWithData() async {
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName} 
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
-          ORDER BY ${db.animalLocations.date.name} DESC 
       ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
     ''').get();
 
@@ -204,14 +203,16 @@ Future<List<Animal>> getUserAnimalsWithLastLocation() async {
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.animal.actualTableName}
       JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName} 
+          SELECT * FROM  (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
           HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC 
       ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
     ''').get();
+
   List<Animal> animals = [];
   for (var deviceData in data) {
+    print(
+        '${DateTime.fromMillisecondsSinceEpoch(deviceData.data[db.animalLocations.date.name] * 1000)} | ${deviceData.data[db.animal.idAnimal.name]}');
     Animal animal = Animal(
         animal: AnimalCompanion(
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
@@ -267,10 +268,9 @@ Future<List<Animal>> getUserAnimalWithLastLocation(String idAnimal) async {
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.animal.actualTableName}
       JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName} 
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
           HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC 
       ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ?
     ''',
@@ -282,6 +282,8 @@ Future<List<Animal>> getUserAnimalWithLastLocation(String idAnimal) async {
   List<Animal> animals = [];
 
   for (var deviceData in data) {
+    print(
+        '${DateTime.fromMillisecondsSinceEpoch(deviceData.data[db.animalLocations.date.name] * 1000)} | ${deviceData.data[db.animal.idAnimal.name]}');
     Animal animal = Animal(
         animal: AnimalCompanion(
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
@@ -353,10 +355,9 @@ Future<List<Animal>> getUserAnimalsFiltered({
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName} 
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
           HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC 
       ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
           (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
@@ -447,10 +448,9 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
         ${db.animalLocations.state.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName}
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
           HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC
       ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
         ((
@@ -546,10 +546,9 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
         ${db.animalLocations.state.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-          SELECT * FROM ${db.animalLocations.actualTableName}
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
           HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
-          ORDER BY ${db.animalLocations.date.name} DESC
       ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
         ((

@@ -143,8 +143,17 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
         },
       );
     } else {
+      print("HEREEEEE: ${widget.animal.data.length}");
       // get last location
-      if (widget.animal.data.isEmpty) {
+      if (widget.animal.data.isNotEmpty) {
+        setState(() {
+          _startDate = widget.animal.data
+                  .firstWhereOrNull((element) => element.lat.value != null)
+                  ?.date
+                  .value ??
+              DateTime.now();
+        });
+      } else {
         _getLastLocation().then(
           (_) => setState(() {
             _startDate =
@@ -152,7 +161,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
                     DateTime.now();
           }),
         );
-
         await AnimalRequests.getAnimalsFromApiWithLastLocation(
             context: context,
             onFailed: (statusCode) {
@@ -217,6 +225,8 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
   /// Method that loads that local animal data into the [_animalData] list
   Future<void> _getAnimalData() async {
+    print("StartDate: $_startDate");
+    print("EndDate: $_endDate");
     getAnimalData(
       startDate: _startDate,
       endDate: _endDate,

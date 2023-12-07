@@ -254,78 +254,55 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                       ),
                     )
                   else ...[
-                    !_showRoute
-                        ? MarkerClusterLayerWidget(
-                            options: MarkerClusterLayerOptions(
-                              maxClusterRadius: 45,
-                              size: const Size(40, 40),
-                              anchor: AnchorPos.align(AnchorAlign.center),
-                              fitBoundsOptions: const FitBoundsOptions(
-                                padding: EdgeInsets.all(50),
-                                maxZoom: 15,
-                              ),
-                              rotate: true,
-                              rotateAlignment: Alignment.center,
-                              markers: [
-                                ...data
-                                    .map(
-                                      (e) => Marker(
-                                        point: LatLng(e.lat.value!, e.lon.value!),
-                                        anchorPos: AnchorPos.align(AnchorAlign.center),
-                                        height: 50,
-                                        builder: (context) {
-                                          return Center(
-                                            child: Column(
-                                              children: [
-                                                Expanded(
-                                                  child: getMarker(widget.deviceColor),
-                                                ),
-                                                const Expanded(
-                                                  child: SizedBox(),
-                                                ),
-                                              ],
+                    if (!_showRoute)
+                      MarkerClusterLayerWidget(
+                        options: MarkerClusterLayerOptions(
+                          maxClusterRadius: 45,
+                          size: const Size(40, 40),
+                          anchor: AnchorPos.align(AnchorAlign.center),
+                          fitBoundsOptions: const FitBoundsOptions(
+                            padding: EdgeInsets.all(50),
+                            maxZoom: 15,
+                          ),
+                          rotate: true,
+                          rotateAlignment: Alignment.center,
+                          markers: [
+                            ...data
+                                .map(
+                                  (e) => Marker(
+                                    point: LatLng(e.lat.value!, e.lon.value!),
+                                    anchorPos: AnchorPos.align(AnchorAlign.center),
+                                    height: 50,
+                                    builder: (context) {
+                                      return Center(
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: getMarker(widget.deviceColor),
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                    .toList()
-                              ],
-                              builder: (context, markers) {
-                                return Transform.rotate(
-                                  angle: _mapController.rotation * -pi / 180,
-                                  child: Icon(
-                                    Icons.location_on,
-                                    color: HexColor(widget.deviceColor),
-                                    size: 30,
+                                            const Expanded(
+                                              child: SizedBox(),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
-                                );
-                              },
-                            ),
-                          )
-                        : MarkerLayer(
-                            markers: [
-                              ...[data.first, data.last]
-                                  .map(
-                                    (e) => Marker(
-                                      point: LatLng(e.lat.value!, e.lon.value!),
-                                      anchorPos: AnchorPos.align(AnchorAlign.top),
-                                      builder: (context) {
-                                        return Transform.rotate(
-                                          angle: _mapController.rotation * -pi / 180,
-                                          alignment: Alignment.bottomCenter,
-                                          child: Icon(
-                                            Icons.location_on,
-                                            color: HexColor(widget.deviceColor),
-                                            size: 30,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
-                                  .toList()
-                            ],
-                          )
+                                )
+                                .toList()
+                          ],
+                          builder: (context, markers) {
+                            return Transform.rotate(
+                              angle: _mapController.rotation * -pi / 180,
+                              child: Icon(
+                                Icons.location_on,
+                                color: HexColor(widget.deviceColor),
+                                size: 30,
+                              ),
+                            );
+                          },
+                        ),
+                      )
                   ]
                 ],
               ),
