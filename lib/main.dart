@@ -19,7 +19,11 @@ import 'package:guardian/models/providers/system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
-import 'package:guardian/models/providers/caching/caching_provider.dart';
+
+import 'package:guardian/models/providers/caching/caching_stub.dart'
+    if (dart.library.io) 'package:guardian/models/providers/caching/caching_provider_mobile.dart'
+    if (dart.library.js) 'package:guardian/models/providers/caching/caching_provider_web.dart'
+    as caching_helper;
 
 late bool hasConnection;
 bool isSnackbarActive = false;
@@ -34,7 +38,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(FCMMessagingProvider.firebaseMessagingBackgroundHandler);
 
   if (!kIsWeb) {
-    await MapCaching().initMapCaching();
+    await caching_helper.MapCaching().initMapCaching();
   }
 
   /// Put the reference to the guardian databe in the get package

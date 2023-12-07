@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
-import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'dart:math' show cos, sqrt, asin;
-
 import 'package:latlong2/latlong.dart';
+import 'package:guardian/models/helpers/tiles/tile_stub.dart'
+    if (dart.library.io) 'package:guardian/models/helpers/tiles/tile_mobile.dart'
+    if (dart.library.js) 'package:guardian/models/helpers/tiles/tile_web.dart' as tile_provider;
 
 /// Method that allows to get the map tile [TileLayer]
 TileLayer getTileLayer(BuildContext context, {Key? key, bool satellite = false}) {
@@ -14,14 +15,8 @@ TileLayer getTileLayer(BuildContext context, {Key? key, bool satellite = false})
     key: key,
     urlTemplate:
         'https://api.mapbox.com/styles/v1/mapbox/${satellite ? 'satellite-streets-v12' : 'outdoors-v12'}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicm9iZXJ0b2JhcnJldG8iLCJhIjoiY2s4NXRlN2loMDA1MzNncWlybDV5eGNjcSJ9.Dkp_KYWwEcThrpvZ3dEMjg',
-    // additionalOptions: const {
-    //   'accessToken':
-    //       'pk.eyJ1Ijoicm9iZXJ0b2JhcnJldG8iLCJhIjoiY2s4NXRlN2loMDA1MzNncWlybDV5eGNjcSJ9.Dkp_KYWwEcThrpvZ3dEMjg',
-    //   'id': 'mapbox://styles/robertobarreto/clph2ale500kc01po4fqn0gtu'
-    // },
-
     userAgentPackageName: 'com.linovt.Guardian',
-    tileProvider: FMTC.instance('guardian').getTileProvider(),
+    tileProvider: tile_provider.getTileProvider('guardian'),
     tileDisplay: const TileDisplay.fadeIn(),
   );
 }
