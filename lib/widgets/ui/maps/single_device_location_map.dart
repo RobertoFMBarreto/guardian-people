@@ -264,12 +264,14 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                                 padding: EdgeInsets.all(50),
                                 maxZoom: 15,
                               ),
+                              rotate: true,
+                              rotateAlignment: Alignment.center,
                               markers: [
                                 ...data
                                     .map(
                                       (e) => Marker(
                                         point: LatLng(e.lat.value!, e.lon.value!),
-                                        anchorPos: AnchorPos.align(AnchorAlign.top),
+                                        anchorPos: AnchorPos.align(AnchorAlign.center),
                                         height: 50,
                                         builder: (context) {
                                           return Center(
