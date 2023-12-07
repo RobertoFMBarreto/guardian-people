@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
@@ -48,10 +49,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           body: const SafeArea(
             child: Center(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: LoginForm(),
-              ),
+              child: LoginForm(),
             ),
           ),
         ),

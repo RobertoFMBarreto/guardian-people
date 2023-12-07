@@ -105,6 +105,7 @@ flutter:
     - assets/data/alerts.json
     - assets/maps/map_style.json
     - assets/svgs/marker.svg
+    - assets/logo/GuardianLogo_white_shadow.png
 
   # for translations
   generate: true
