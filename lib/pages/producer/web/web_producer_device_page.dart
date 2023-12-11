@@ -137,7 +137,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
   /// Method that loads that local animal data into the [_animalData] list
   Future<void> _getAnimalData() async {
-    getAnimalData(
+    await getAnimalData(
       startDate: _startDate,
       endDate: _endDate,
       idAnimal: _selectedAnimal!.animal.idAnimal.value,
@@ -159,49 +159,51 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     );
   }
 
-  Future<void> _loadAnimalData() async {
+  Future<void> _loadIntervalData() async {
+    print('Here Load: $_isInterval');
     if (_isInterval) {
       // get data in interval
-      _getAnimalData();
-      AnimalRequests.getAnimalDataIntervalFromApi(
-        idAnimal: _selectedAnimal!.animal.idAnimal.value,
-        startDate: _startDate,
-        endDate: _endDate ?? DateTime.now(),
-        context: context,
-        onDataGotten: () {
-          _getAnimalData();
-        },
-        onFailed: (statusCode) {
-          hasShownNoServerConnection().then((hasShown) async {
-            if (mounted) {
-              setState(() {
-                _startDate = DateTime.now();
-                _endDate = DateTime.now();
-              });
-            }
-            if (!hasShown) {
-              setShownNoServerConnection(true).then(
-                (_) =>
-                    showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-              );
-            } else {
+      await _getAnimalData().then(
+        (_) => AnimalRequests.getAnimalDataIntervalFromApi(
+          idAnimal: _selectedAnimal!.animal.idAnimal.value,
+          startDate: _startDate,
+          endDate: _endDate ?? DateTime.now(),
+          context: context,
+          onDataGotten: () {
+            _getAnimalData();
+          },
+          onFailed: (statusCode) {
+            hasShownNoServerConnection().then((hasShown) async {
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.server_error.capitalizeFirst!,
-                    ),
-                  ),
-                );
+                setState(() {
+                  _startDate = DateTime.now();
+                  _endDate = DateTime.now();
+                });
               }
-            }
-          });
-        },
+              if (!hasShown) {
+                setShownNoServerConnection(true).then(
+                  (_) => showDialog(
+                      context: context, builder: (context) => const ServerErrorDialogue()),
+                );
+              } else {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.server_error.capitalizeFirst!,
+                      ),
+                    ),
+                  );
+                }
+              }
+            });
+          },
+        ),
       );
     } else {
       // get last location
       if (_selectedAnimal!.data.isEmpty) {
-        _getLastLocation().then((_) {
+        await _getLastLocation().then((_) async {
           if (mounted) {
             setState(() {
               _startDate = _selectedAnimal!.data
@@ -210,48 +212,53 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       .value ??
                   DateTime.now();
             });
+            await AnimalRequests.getAnimalsFromApiWithLastLocation(
+                context: context,
+                onFailed: (statusCode) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                },
+                onDataGotten: () {
+                  _getLastLocation();
+                });
           }
         });
+      }
+    }
+  }
 
-        AnimalRequests.getAnimalsFromApiWithLastLocation(
-            context: context,
-            onFailed: (statusCode) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-            },
-            onDataGotten: () {
-              _getLastLocation();
-            });
+  Future<void> _loadAnimalData() async {
+    await _loadIntervalData().then((value) async {
+      if (_endDate == null) {
+        // make realtime request
+        if (kDebugMode) {
+          print('Start Realtime for ${_selectedAnimal!.animal.idAnimal.value}');
+        }
+
+        await AnimalRequests.startRealtimeStreaming(
+          idAnimal: _selectedAnimal!.animal.idAnimal.value,
+          context: context,
+          onDataGotten: () {
+            rabbitMQProvider.listen(
+              topicId: _selectedAnimal!.animal.idAnimal.value,
+              onDataReceived: (message) async {
+                if (message['lat'] != null && message['lon'] != null) {
+                  animalDataFromJson(message, _selectedAnimal!.animal.idAnimal.value).then(
+                    (_) => _getAnimalData(),
+                  );
+                }
+              },
+            );
+          },
+          onFailed: (statusCode) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
+        );
       }
-    }
-    if (_endDate == null) {
-      // make realtime request
-      if (kDebugMode) {
-        print('Start Realtime for ${_selectedAnimal!.animal.idAnimal.value}');
-      }
-      AnimalRequests.startRealtimeStreaming(
-        idAnimal: _selectedAnimal!.animal.idAnimal.value,
-        context: context,
-        onDataGotten: () {
-          rabbitMQProvider.listen(
-            topicId: _selectedAnimal!.animal.idAnimal.value,
-            onDataReceived: (message) async {
-              if (message['lat'] != null && message['lon'] != null) {
-                animalDataFromJson(message, _selectedAnimal!.animal.idAnimal.value).then(
-                  (_) => _getAnimalData(),
-                );
-              }
-            },
-          );
-        },
-        onFailed: (statusCode) {
-          AppLocalizations localizations = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-        },
-      );
-    }
+    });
   }
 
   /// Method that filters the animals and loads them into the [_animals] list
@@ -387,6 +394,15 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                         _animals[index].animal.idAnimal.value ==
                                                             _selectedAnimal!.animal.idAnimal.value,
                                                     onTap: () async {
+                                                      if (_selectedAnimal != null) {
+                                                        await AnimalRequests.stopRealtimeStreaming(
+                                                          idAnimal: _selectedAnimal!
+                                                              .animal.idAnimal.value,
+                                                          context: context,
+                                                          onDataGotten: () {},
+                                                          onFailed: (status) {},
+                                                        );
+                                                      }
                                                       if (_selectedAnimal != null &&
                                                           _selectedAnimal!.animal.idAnimal.value ==
                                                               _animals[index]
@@ -445,7 +461,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                     if (mounted) {
                                       setState(() {
                                         _endDate = null;
+                                        _startDate = DateTime.now();
                                         _isInterval = false;
+
                                         _loadAnimalData();
                                       });
                                     }
@@ -459,19 +477,19 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                               ],
                             ),
                           Expanded(
-                            child: Expanded(
-                              child: AnimalTimeRangeWidget(
-                                startDate: _startDate,
-                                endDate: _endDate,
-                                onDateChanged: (newStartDate, newEndDate) {
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    _startDate = newStartDate;
-                                    _endDate = newEndDate;
-                                    _future = _setup();
-                                  });
-                                },
-                              ),
+                            child: AnimalTimeRangeWidget(
+                              key: Key('$_startDate|$_endDate'),
+                              startDate: _startDate,
+                              endDate: _endDate,
+                              onDateChanged: (newStartDate, newEndDate) {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  _startDate = newStartDate;
+                                  _endDate = newEndDate;
+                                  _isInterval = true;
+                                  _future = _loadAnimalData();
+                                });
+                              },
                             ),
                           ),
                         ]

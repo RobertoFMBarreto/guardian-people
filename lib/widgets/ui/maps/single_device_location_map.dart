@@ -258,7 +258,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                       MarkerClusterLayerWidget(
                         options: MarkerClusterLayerOptions(
                           maxClusterRadius: 45,
-                          size: const Size(40, 40),
+                          size: const Size(25, 50),
                           anchor: AnchorPos.align(AnchorAlign.center),
                           fitBoundsOptions: const FitBoundsOptions(
                             padding: EdgeInsets.all(50),
@@ -294,10 +294,17 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                           builder: (context, markers) {
                             return Transform.rotate(
                               angle: _mapController.rotation * -pi / 180,
-                              child: Icon(
-                                Icons.location_on,
-                                color: HexColor(widget.deviceColor),
-                                size: 30,
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: getMarker(widget.deviceColor),
+                                    ),
+                                    const Expanded(
+                                      child: SizedBox(),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
