@@ -211,8 +211,6 @@ Future<List<Animal>> getUserAnimalsWithLastLocation() async {
 
   List<Animal> animals = [];
   for (var deviceData in data) {
-    print(
-        '${DateTime.fromMillisecondsSinceEpoch(deviceData.data[db.animalLocations.date.name] * 1000)} | ${deviceData.data[db.animal.idAnimal.name]}');
     Animal animal = Animal(
         animal: AnimalCompanion(
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
@@ -282,8 +280,6 @@ Future<List<Animal>> getUserAnimalWithLastLocation(String idAnimal) async {
   List<Animal> animals = [];
 
   for (var deviceData in data) {
-    print(
-        '${DateTime.fromMillisecondsSinceEpoch(deviceData.data[db.animalLocations.date.name] * 1000)} | ${deviceData.data[db.animal.idAnimal.name]}');
     Animal animal = Animal(
         animal: AnimalCompanion(
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),

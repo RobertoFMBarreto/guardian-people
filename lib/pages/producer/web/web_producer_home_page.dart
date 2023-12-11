@@ -64,7 +64,6 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
       setState(() {
         _animals.addAll(allAnimals);
       });
-      print('HERE');
       AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
           onFailed: (statusCode) {

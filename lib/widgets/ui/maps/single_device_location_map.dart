@@ -207,7 +207,9 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                   minZoom: 6,
                   maxZoom: 18,
                   boundsOptions: FitBoundsOptions(
-                      padding: kIsWeb || isBigScreen ? EdgeInsets.all(100) : EdgeInsets.all(20)),
+                      padding: kIsWeb || isBigScreen
+                          ? const EdgeInsets.all(100)
+                          : const EdgeInsets.all(20)),
                   bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
                       ? LatLngBounds.fromPoints(
                           _polygons.isEmpty ? _circles.first.points : _polygons.first.points)

@@ -146,7 +146,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       (data) async {
         List<AnimalLocationsCompanion> animalData = [];
         if (mounted) {
-          print('Animal Data: ${data}');
           setState(() {
             animalData.addAll(data);
             _selectedAnimal = Animal(
@@ -160,7 +159,6 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   }
 
   Future<void> _loadIntervalData() async {
-    print('Here Load: $_isInterval');
     if (_isInterval) {
       // get data in interval
       await _getAnimalData().then(
@@ -351,7 +349,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                               },
                                               child: Row(
                                                 children: [
-                                                  Icon(Icons.settings),
+                                                  const Icon(Icons.settings),
                                                   Text(localizations
                                                       .device_settings.capitalizeFirst!)
                                                 ],

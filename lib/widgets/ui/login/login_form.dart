@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/helpers/cookies/cookies_stub.dart'
     if (dart.library.io) 'package:guardian/models/helpers/cookies/cookies_mobile.dart'
     if (dart.library.js) 'package:guardian/models/helpers/cookies/cookies_web.dart'
@@ -189,7 +188,7 @@ class _LoginFormState extends State<LoginForm> {
                               key: _formKey,
                               child: Center(
                                 child: SingleChildScrollView(
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   child: Column(
                                     children: [
                                       Padding(

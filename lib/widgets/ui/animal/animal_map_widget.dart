@@ -143,7 +143,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
         },
       );
     } else {
-      print("HEREEEEE: ${widget.animal.data.length}");
       // get last location
       if (widget.animal.data.isNotEmpty) {
         setState(() {
@@ -225,8 +224,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
 
   /// Method that loads that local animal data into the [_animalData] list
   Future<void> _getAnimalData() async {
-    print("StartDate: $_startDate");
-    print("EndDate: $_endDate");
     getAnimalData(
       startDate: _startDate,
       endDate: _endDate,
