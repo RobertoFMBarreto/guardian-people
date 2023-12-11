@@ -1,16 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:get/get.dart';
 import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/device_status.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/map_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Class that represents the animals locations maps for showing all user devices locations
 class AnimalsLocationsMap extends StatefulWidget {
@@ -50,6 +55,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
 
   double _distance = 0;
   double _lastZoom = 0;
+  bool _satellite = false;
 
   List<Marker> markers = [];
 
@@ -122,6 +128,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    AppLocalizations localizations = AppLocalizations.of(context)!;
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
@@ -139,7 +146,9 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                       : _animalsDataPoints.isNotEmpty
                           ? LatLngBounds.fromPoints(_animalsDataPoints)
                           : null,
-                  boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(60)),
+                  boundsOptions: FitBoundsOptions(
+                      padding:
+                          kIsWeb || isBigScreen ? const EdgeInsets.all(100) : EdgeInsets.all(60)),
                   zoom: 17,
                   minZoom: 6,
                   maxZoom: 18,
@@ -161,7 +170,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                   },
                 ),
                 children: [
-                  getTileLayer(context),
+                  getTileLayer(context, satellite: _satellite),
                   CurrentLocationLayer(
                     followOnLocationUpdate: !widget.centerOnPoly && widget.animals.isEmpty
                         ? FollowOnLocationUpdate.always
@@ -306,8 +315,9 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                     children: [
                       Text(
                         '${_distance.ceilToDouble()}m',
-                        style: theme.textTheme.bodyMedium!
-                            .copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodyMedium!.copyWith(
+                            color: _satellite ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.bold),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -317,21 +327,21 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                             width: 2,
                             height: 10,
                             child: Container(
-                              color: Colors.black,
+                              color: _satellite ? Colors.white : Colors.black,
                             ),
                           ),
                           SizedBox(
                             width: 100,
                             height: 2,
                             child: Container(
-                              color: Colors.black,
+                              color: _satellite ? Colors.white : Colors.black,
                             ),
                           ),
                           SizedBox(
                             width: 2,
                             height: 10,
                             child: Container(
-                              color: Colors.black,
+                              color: _satellite ? Colors.white : Colors.black,
                             ),
                           ),
                         ],
@@ -339,7 +349,62 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                     ],
                   ),
                 ),
-              )
+              ),
+              Container(
+                color: theme.colorScheme.background.withOpacity(0.5),
+                height: 50,
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: PopupMenuButton(
+                  onSelected: (value) {
+                    switch (value) {
+                      case '/satellite':
+                        setState(() {
+                          _satellite = !_satellite;
+                        });
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: '/satellite',
+                      child: StatefulBuilder(
+                        builder: (context, setState) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "${localizations.satellite.capitalizeFirst!}:",
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                              Switch(
+                                activeTrackColor: theme.colorScheme.secondary,
+                                inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                                    ? gdToggleGreyArea
+                                    : gdDarkToggleGreyArea,
+                                value: _satellite,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _satellite = value;
+                                  });
+                                  this.setState(() {});
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                  icon: Icon(
+                    Icons.tune,
+                    color: theme.colorScheme.onBackground,
+                    size: 30,
+                  ),
+                ),
+              ),
             ],
           );
         }

@@ -59,7 +59,7 @@ class _GeofencingState extends State<Geofencing> {
   String _fenceName = '';
   Color _fenceColor = Colors.red;
   bool _firstRun = true;
-
+  bool _satellite = false;
   List<LatLng> _fencePoints = [];
   List<Animal> _animals = [];
 
@@ -414,7 +414,10 @@ class _GeofencingState extends State<Geofencing> {
                             onTap: (_, ll) {
                               _polyEditor.add(_editingPolygon.points, ll);
                             },
-                            boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
+                            boundsOptions: FitBoundsOptions(
+                                padding: kIsWeb || isBigScreen
+                                    ? const EdgeInsets.all(100)
+                                    : EdgeInsets.all(20)),
                             center: widget.fence == null
                                 ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
                                 : getFenceCenter(_fencePoints),
@@ -423,7 +426,7 @@ class _GeofencingState extends State<Geofencing> {
                             maxZoom: 18,
                           ),
                           children: [
-                            getTileLayer(context),
+                            getTileLayer(context, satellite: _satellite),
                             CurrentLocationLayer(
                               followAnimationCurve: Curves.linear,
                               rotateAnimationCurve: Curves.linear,
@@ -542,6 +545,65 @@ class _GeofencingState extends State<Geofencing> {
                               ],
                             ),
                           ],
+                        ),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            color: theme.colorScheme.background.withOpacity(0.5),
+                            height: 50,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: PopupMenuButton(
+                            onSelected: (value) {
+                              switch (value) {
+                                case '/satellite':
+                                  setState(() {
+                                    _satellite = !_satellite;
+                                  });
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: '/satellite',
+                                child: StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "${localizations.satellite.capitalizeFirst!}:",
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
+                                        Switch(
+                                          activeTrackColor: theme.colorScheme.secondary,
+                                          inactiveTrackColor:
+                                              Theme.of(context).brightness == Brightness.light
+                                                  ? gdToggleGreyArea
+                                                  : gdDarkToggleGreyArea,
+                                          value: _satellite,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _satellite = value;
+                                            });
+                                            this.setState(() {});
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                            icon: Icon(
+                              Icons.tune,
+                              color: theme.colorScheme.onBackground,
+                              size: 30,
+                            ),
+                          ),
                         ),
                       ],
                     ),
