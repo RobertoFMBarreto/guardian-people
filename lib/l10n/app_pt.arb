@@ -186,5 +186,6 @@
   "offline": "desligado",
   "no_server_connection": "modo offline",
   "satellite": "satélite",
-  "email_password_wrong": "email ou password errados"
+  "email_password_wrong": "email ou password errados",
+  "configurations": "configurações"
 }

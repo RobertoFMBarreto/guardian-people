@@ -75,68 +75,70 @@ class _WebProducerPageState extends State<WebProducerPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return Scaffold(
-      body: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
-                    theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
+      body: SafeArea(
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+                      theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
+                    ],
+                  ),
+                ),
+                child: NavigationRail(
+                  backgroundColor: Colors.transparent,
+                  onDestinationSelected: (value) {
+                    goToPage(value);
+                  },
+                  leading: const CircleAvatarBorder(
+                    radius: 30,
+                  ),
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home_outlined),
+                      selectedIcon: Icon(Icons.home),
+                      label: Text('First'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.account_circle_outlined),
+                      selectedIcon: Icon(Icons.account_circle),
+                      label: Text('First'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.sensors),
+                      selectedIcon: Icon(Icons.sensors),
+                      label: Text('First'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.fence),
+                      selectedIcon: Icon(Icons.fence),
+                      label: Text('First'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.warning_amber_sharp),
+                      selectedIcon: Icon(Icons.warning_outlined),
+                      label: Text('First'),
+                    ),
                   ],
+                  selectedIndex: _selectedDestination,
                 ),
               ),
-              child: NavigationRail(
-                backgroundColor: Colors.transparent,
-                onDestinationSelected: (value) {
-                  goToPage(value);
-                },
-                leading: const CircleAvatarBorder(
-                  radius: 30,
-                ),
-                destinations: const [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home),
-                    label: Text('First'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.account_circle_outlined),
-                    selectedIcon: Icon(Icons.account_circle),
-                    label: Text('First'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.sensors),
-                    selectedIcon: Icon(Icons.sensors),
-                    label: Text('First'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.fence),
-                    selectedIcon: Icon(Icons.fence),
-                    label: Text('First'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.warning_amber_sharp),
-                    selectedIcon: Icon(Icons.warning_outlined),
-                    label: Text('First'),
-                  ),
-                ],
-                selectedIndex: _selectedDestination,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: _currentPage,
               ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: _currentPage,
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

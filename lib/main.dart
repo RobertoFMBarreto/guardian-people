@@ -27,6 +27,7 @@ import 'package:guardian/models/providers/caching/caching_stub.dart'
 
 late bool hasConnection;
 bool isSnackbarActive = false;
+bool isBigScreen = true;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -115,6 +116,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    if (width >= 1000 || height >= 1000) {
+      isBigScreen = true;
+    } else {
+      isBigScreen = false;
+    }
+
     /// Change status bar color
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
@@ -126,7 +135,8 @@ class _MyAppState extends State<MyApp> {
     /// Set orientation only to portait
     if (!kIsWeb) {
       SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
+        if (!kIsWeb && !isBigScreen) DeviceOrientation.portraitUp,
+        if (isBigScreen) ...[DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]
       ]);
     }
     return MaterialApp(
@@ -139,7 +149,7 @@ class _MyAppState extends State<MyApp> {
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
       initialRoute: '/',
-      routes: kIsWeb ? webRoutes : mobileRoutes,
+      routes: kIsWeb || isBigScreen ? webRoutes : mobileRoutes,
     );
   }
 }

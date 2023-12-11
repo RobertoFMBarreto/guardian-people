@@ -98,12 +98,8 @@ class _LoginFormState extends State<LoginForm> {
               ).then((_) {
                 // send to admin or producer
                 Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.pushReplacement(
-                  context,
-                  CustomPageRouter(
-                    page: body['isProducer'] == false ? '/admin' : '/producer',
-                  ),
-                );
+                Navigator.of(context)
+                    .pushReplacementNamed(body['isProducer'] == false ? '/admin' : '/producer');
               });
             });
           } else if (resp.statusCode == 507) {
@@ -159,7 +155,7 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-    return kIsWeb
+    return kIsWeb || isBigScreen
         ? Row(
             children: [
               Expanded(
@@ -186,96 +182,96 @@ class _LoginFormState extends State<LoginForm> {
                     padding: const EdgeInsets.all(15),
                     child: Column(
                       children: [
-                        const Expanded(child: SizedBox()),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15.0),
                             child: Form(
                               key: _formKey,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                      child: Text(
-                                        'Login',
-                                        style: theme.textTheme.headlineMedium,
+                              child: Center(
+                                child: SingleChildScrollView(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                                        child: Text(
+                                          'Login',
+                                          style: theme.textTheme.headlineMedium,
+                                        ),
                                       ),
-                                    ),
-                                    errorString.isNotEmpty
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: gdAltErrorColor,
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(5),
+                                      errorString.isNotEmpty
+                                          ? Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: gdAltErrorColor,
+                                                  borderRadius: BorderRadius.all(
+                                                    Radius.circular(5),
+                                                  ),
                                                 ),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  errorString,
-                                                  style: theme.textTheme.bodyMedium!.copyWith(
-                                                    color: gdOnErrorColor,
-                                                    fontWeight: FontWeight.bold,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    errorString,
+                                                    style: theme.textTheme.bodyMedium!.copyWith(
+                                                      color: gdOnErrorColor,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          )
-                                        : const SizedBox(),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: TextFormField(
-                                        decoration: const InputDecoration(
-                                          label: Text('Email'),
+                                            )
+                                          : const SizedBox(),
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: TextFormField(
+                                          decoration: const InputDecoration(
+                                            label: Text('Email'),
+                                          ),
+                                          validator: (value) {
+                                            return _validateEmail(value, localizations);
+                                          },
+                                          onChanged: (newValue) {
+                                            _email = newValue;
+                                          },
                                         ),
-                                        validator: (value) {
-                                          return _validateEmail(value, localizations);
-                                        },
-                                        onChanged: (newValue) {
-                                          _email = newValue;
-                                        },
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: TextFormField(
-                                        obscureText: true,
-                                        enableSuggestions: false,
-                                        autocorrect: false,
-                                        decoration: const InputDecoration(
-                                          label: Text('Password'),
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: TextFormField(
+                                          obscureText: true,
+                                          enableSuggestions: false,
+                                          autocorrect: false,
+                                          decoration: const InputDecoration(
+                                            label: Text('Password'),
+                                          ),
+                                          validator: (value) {
+                                            return _validatePassword(value, localizations);
+                                          },
+                                          onChanged: (newValue) {
+                                            _password = newValue;
+                                          },
+                                          onFieldSubmitted: (text) {
+                                            _onLogin(localizations);
+                                          },
                                         ),
-                                        validator: (value) {
-                                          return _validatePassword(value, localizations);
-                                        },
-                                        onChanged: (newValue) {
-                                          _password = newValue;
-                                        },
-                                        onFieldSubmitted: (text) {
-                                          _onLogin(localizations);
-                                        },
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          _onLogin(localizations);
-                                        },
-                                        child: const Text('Login'),
+                                      Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            _onLogin(localizations);
+                                          },
+                                          child: const Text('Login'),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const Expanded(child: SizedBox()),
                       ],
                     ),
                   ),

@@ -32,7 +32,9 @@ class AnimalItem extends StatelessWidget {
   /// Method that pushes to the correct device page
   void _onTapDevice(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 300)).then((value) {
-      if (!kIsWeb) {
+      double width = MediaQuery.of(context).size.width;
+      double height = MediaQuery.of(context).size.height;
+      if (!kIsWeb && (width < 1000 && height < 1000)) {
         getUid(context).then((idUser) {
           if (idUser != null) {
             userIsAdmin(idUser).then((isAdmin) {

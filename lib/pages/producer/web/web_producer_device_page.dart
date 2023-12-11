@@ -15,6 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/pages/producer/web/widget/device_settings.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
+import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
@@ -83,8 +84,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     setState(() {
       _selectedAnimal = widget.selectedAnimal;
     });
-    await _loadAnimalData();
     await _loadAnimals();
+    await _loadAnimalData();
     await _setupFilterRanges();
   }
 
@@ -145,6 +146,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       (data) async {
         List<AnimalLocationsCompanion> animalData = [];
         if (mounted) {
+          print('Animal Data: ${data}');
           setState(() {
             animalData.addAll(data);
             _selectedAnimal = Animal(
@@ -309,15 +311,14 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Expanded(
+                                    flex: 2,
                                     child: Row(
-                                      mainAxisAlignment: _selectedAnimal != null
-                                          ? MainAxisAlignment.end
-                                          : MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.only(bottom: 8.0),
                                           child: FittedBox(
-                                            fit: BoxFit.fitWidth,
+                                            fit: BoxFit.scaleDown,
                                             child: Text(
                                               localizations.devices.capitalizeFirst!,
                                               style: theme.textTheme.headlineMedium,
@@ -328,23 +329,32 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                     ),
                                   ),
                                   if (_selectedAnimal != null)
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          TextButton.icon(
-                                            onPressed: () {
-                                              setState(() {
-                                                _showSettings = !_showSettings;
-                                              });
-                                            },
-                                            icon: const Icon(Icons.settings),
-                                            label: Text(
-                                              localizations.device_settings.capitalizeFirst!,
-                                            ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                            child: !_showSettings
+                                                ? GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _showSettings = !_showSettings;
+                                                      });
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.settings),
+                                                        Text(localizations
+                                                            .device_settings.capitalizeFirst!)
+                                                      ],
+                                                    ),
+                                                  )
+                                                : SizedBox(),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     )
                                 ],
                               ),
@@ -448,29 +458,22 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 )
                               ],
                             ),
-                          // Expanded(
-                          //   child: AnimalTimeRangeWidget(
-                          //       startDate: _startDate,
-                          //       endDate: _endDate,
-                          //       onStartDateChanged: (newStartDate) {
-                          //         if (_selectedAnimal != null) {
-                          //           setState(() {
-                          //             _startDate = newStartDate;
-                          //             _isInterval = true;
-                          //             _loadAnimalData();
-                          //           });
-                          //         }
-                          //       },
-                          //       onEndDateChanged: (newEndDate) {
-                          //         if (_selectedAnimal != null) {
-                          //           setState(() {
-                          //             _endDate = newEndDate;
-                          //             _isInterval = true;
-                          //             _loadAnimalData();
-                          //           });
-                          //         }
-                          //       }),
-                          // ),
+                          Expanded(
+                            child: Expanded(
+                              child: AnimalTimeRangeWidget(
+                                startDate: _startDate,
+                                endDate: _endDate,
+                                onDateChanged: (newStartDate, newEndDate) {
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    _startDate = newStartDate;
+                                    _endDate = newEndDate;
+                                    _future = _setup();
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
                         ]
                       ],
                     ),
@@ -478,74 +481,74 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                 ),
                 if (_selectedAnimal != null && _showSettings)
                   Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20, right: 20),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20, right: 20),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
                                       localizations.device_settings.capitalizeFirst!,
                                       style: theme.textTheme.headlineMedium,
                                     ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _showSettings = false;
-                                        });
-                                      },
-                                      icon: const Icon(Icons.close),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: DeviceSettings(
-                            key: Key(_selectedAnimal!.animal.idAnimal.value),
-                            animal: _selectedAnimal!,
-                            onColorChanged: (color) {
-                              setState(() {
-                                _selectedAnimal = Animal(
-                                  animal: _selectedAnimal!.animal.copyWith(
-                                    animalColor: drift.Value(color),
                                   ),
-                                  data: _selectedAnimal!.data,
-                                );
-                              });
-                              _loadAnimals();
-                            },
-                            onNameChanged: (name) {
-                              setState(() {
-                                _selectedAnimal = Animal(
-                                  animal: _selectedAnimal!.animal.copyWith(
-                                    animalName: drift.Value(name),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _showSettings = false;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.close),
+                                      )
+                                    ],
                                   ),
-                                  data: _selectedAnimal!.data,
-                                );
-                              });
-                              _loadAnimals();
-                            },
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: DeviceSettings(
+                              key: Key(_selectedAnimal!.animal.idAnimal.value),
+                              animal: _selectedAnimal!,
+                              onColorChanged: (color) {
+                                setState(() {
+                                  _selectedAnimal = Animal(
+                                    animal: _selectedAnimal!.animal.copyWith(
+                                      animalColor: drift.Value(color),
+                                    ),
+                                    data: _selectedAnimal!.data,
+                                  );
+                                });
+                                _loadAnimals();
+                              },
+                              onNameChanged: (name) {
+                                setState(() {
+                                  _selectedAnimal = Animal(
+                                    animal: _selectedAnimal!.animal.copyWith(
+                                      animalName: drift.Value(name),
+                                    ),
+                                    data: _selectedAnimal!.data,
+                                  );
+                                });
+                                _loadAnimals();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                 Expanded(
                   key: _firstItemDataKey,
                   flex: 2,
@@ -555,6 +558,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       borderRadius: BorderRadius.circular(20),
                       child: _selectedAnimal != null
                           ? SingleAnimalLocationMap(
+                              key: Key(
+                                  '${_selectedAnimal != null ? _selectedAnimal!.animal.idAnimal.value : null}'),
                               showCurrentPosition: true,
                               deviceData: _selectedAnimal!.data
                                   .where((element) => element.lat.value != null)

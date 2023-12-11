@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/date_time_input/time_selector_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_date_card.dart';
@@ -94,7 +95,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
           scale: curve,
           child: Dialog(
             child: Container(
-              constraints: kIsWeb ? const BoxConstraints(maxWidth: 400) : null,
+              constraints: kIsWeb || isBigScreen ? const BoxConstraints(maxWidth: 400) : null,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

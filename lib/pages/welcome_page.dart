@@ -35,10 +35,7 @@ class _WelcomePageState extends State<WelcomePage> {
           getUser(idUser).then((user) {
             // if there is stored data use it for getting his role
             if (user != null) {
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(page: user.isSuperuser ? '/admin' : '/producer'),
-              );
+              Navigator.of(context).pushReplacementNamed(user.isSuperuser ? '/admin' : '/producer');
             }
           });
         }
