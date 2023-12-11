@@ -147,8 +147,9 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                           ? LatLngBounds.fromPoints(_animalsDataPoints)
                           : null,
                   boundsOptions: FitBoundsOptions(
-                      padding:
-                          kIsWeb || isBigScreen ? const EdgeInsets.all(100) : EdgeInsets.all(60)),
+                      padding: kIsWeb || isBigScreen
+                          ? const EdgeInsets.all(100)
+                          : const EdgeInsets.all(60)),
                   zoom: 17,
                   minZoom: 6,
                   maxZoom: 18,

@@ -1,28 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:get/get.dart';
-import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
-import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/pages/producer/web/widget/add_alert.dart';
-import 'package:guardian/widgets/ui/alert/alert_item.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
-import 'package:guardian/widgets/ui/common/geofencing.dart';
-import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 
 /// Class that represents the web producer fences page
@@ -94,6 +86,7 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
     await getUserAlerts().then(
       (allAlerts) {
         if (mounted) {
+          print('alerts: $allAlerts');
           setState(() {
             _alerts = [];
             _alerts.addAll(allAlerts);
@@ -245,7 +238,7 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
                                                   isInteractingAlert = !isInteractingAlert;
                                                 });
                                               },
-                                              icon: Icon(Icons.add),
+                                              icon: const Icon(Icons.add),
                                               label: Text(
                                                 '${localizations.add.capitalizeFirst!} ${localizations.alert.capitalizeFirst!}',
                                               ),
@@ -344,8 +337,13 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
                             child: AddAlert(
                               alert: _selectedAlert,
                               isEdit: _selectedAlert != null,
-                              onCreate: () {
-                                _loadAlerts();
+                              onCreate: () async {
+                                await _loadAlerts().then(
+                                  (_) => setState(() {
+                                    isInteractingAlert = false;
+                                    _selectedAlert = null;
+                                  }),
+                                );
                               },
                             ),
                           ),

@@ -94,12 +94,12 @@ class _AddAlertState extends State<AddAlert> {
       isTimed: const drift.Value(false),
     );
 
-    AlertRequests.updateAlertToApi(
+    await AlertRequests.updateAlertToApi(
       context: context,
       alert: updatedAlert,
       animals: _alertAnimals,
       onDataGotten: (data) {
-        Navigator.of(context).pop();
+        print('Gotten: $data');
       },
       onFailed: (statusCode) {
         if (!hasConnection && !isSnackbarActive) {
@@ -137,9 +137,7 @@ class _AddAlertState extends State<AddAlert> {
       context: context,
       alert: newAlert,
       animals: _alertAnimals,
-      onDataGotten: (data) {
-        Navigator.of(context).pop();
-      },
+      onDataGotten: (data) {},
       onFailed: (statusCode) {
         if (!hasConnection && !isSnackbarActive) {
           showNoConnectionSnackBar();
@@ -256,7 +254,6 @@ class _AddAlertState extends State<AddAlert> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    double deviceWidth = MediaQuery.of(context).size.width;
     AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return GestureDetector(

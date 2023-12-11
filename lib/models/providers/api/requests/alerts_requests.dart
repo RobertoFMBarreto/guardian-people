@@ -133,7 +133,7 @@ class AlertRequests {
       required List<Animal> animals,
       required Function(String) onDataGotten,
       required Function(int) onFailed}) async {
-    AlertsProvider.updateAlert(alert, animals).then((response) async {
+    await AlertsProvider.updateAlert(alert, animals).then((response) async {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);

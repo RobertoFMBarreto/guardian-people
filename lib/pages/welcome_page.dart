@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/settings/colors.dart';

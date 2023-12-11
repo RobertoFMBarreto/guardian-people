@@ -417,7 +417,7 @@ class _GeofencingState extends State<Geofencing> {
                             boundsOptions: FitBoundsOptions(
                                 padding: kIsWeb || isBigScreen
                                     ? const EdgeInsets.all(100)
-                                    : EdgeInsets.all(20)),
+                                    : const EdgeInsets.all(20)),
                             center: widget.fence == null
                                 ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
                                 : getFenceCenter(_fencePoints),

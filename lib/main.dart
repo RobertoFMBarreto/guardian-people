@@ -80,36 +80,38 @@ class _MyAppState extends State<MyApp> {
   /// 1. check if there is connection
   /// 2. setup the connection checker
   Future<StreamSubscription?> _setup() async {
-    if (!kIsWeb) {
-      return _setupInitialConnectionState().then((_) async {
-        subscription = wifiConnectionChecker(
-          onHasConnection: () async {
-            setState(() {
-              hasConnection = true;
-            });
-            await setShownNoWifiDialog(false);
-            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
-            setState(() {
-              isSnackbarActive = false;
-            });
-          },
-          onNotHasConnection: () async {
-            setState(() {
-              hasConnection = false;
-            });
-            await showNoWifiDialog(navigatorKey.currentContext!);
-            if (!isSnackbarActive) {
-              showNoConnectionSnackBar();
-            }
-          },
-        );
-        await FCMMessagingProvider.initInfo(navigatorKey);
-        return subscription;
-      });
-    } else {
-      hasConnection = true;
-    }
-    return null;
+    return await _getAlertableSensors().then((_) {
+      if (!kIsWeb) {
+        return _setupInitialConnectionState().then((_) async {
+          subscription = wifiConnectionChecker(
+            onHasConnection: () async {
+              setState(() {
+                hasConnection = true;
+              });
+              await setShownNoWifiDialog(false);
+              ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
+              setState(() {
+                isSnackbarActive = false;
+              });
+            },
+            onNotHasConnection: () async {
+              setState(() {
+                hasConnection = false;
+              });
+              await showNoWifiDialog(navigatorKey.currentContext!);
+              if (!isSnackbarActive) {
+                showNoConnectionSnackBar();
+              }
+            },
+          );
+          await FCMMessagingProvider.initInfo(navigatorKey);
+          return subscription;
+        });
+      } else {
+        hasConnection = true;
+      }
+      return null;
+    });
   }
 
   Future<void> _setupInitialConnectionState() async {
