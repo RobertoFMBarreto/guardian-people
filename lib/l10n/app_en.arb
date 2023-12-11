@@ -187,5 +187,6 @@
   "no_server_connection": "offline mode",
   "satellite": "satellite",
   "email_password_wrong": "wrong email or password",
-  "configurations": "configurations"
+  "configurations": "configurations",
+  "alert": "alert"
 }

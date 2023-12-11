@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:guardian/firebase_options.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/messaging_provider.dart';
 import 'package:guardian/routes/mobile_routes.dart';
 import 'package:guardian/routes/web_routes.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late StreamSubscription subscription;
+  bool _firstRun = true;
 
   @override
   void dispose() {
@@ -112,6 +114,29 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _setupInitialConnectionState() async {
     if (kIsWeb) hasConnection = await checkInternetConnection(context);
+  }
+
+  Future<void> _getAlertableSensors() async {
+    await AlertRequests.getAlertableSensorsFromApi(
+      context: context,
+      onDataGotten: (data) async {},
+      onFailed: (statusCode) {
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+      },
+    );
   }
 
   @override

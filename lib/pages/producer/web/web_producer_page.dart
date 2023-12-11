@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/pages/producer/web/web_producer_alerts_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_fences_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_home_page.dart';
@@ -33,7 +34,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
       const Placeholder(),
       const WebProducerDevicePage(),
       const WebProducerFencesPage(),
-      const Placeholder(),
+      const WebProducerAlertsPage(),
     ];
     goToPage(0);
 
