@@ -318,7 +318,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Expanded(
-                                    flex: 2,
+                                    flex: _showSettings || _selectedAnimal == null ? 1 : 2,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -335,7 +335,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                       ],
                                     ),
                                   ),
-                                  if (_selectedAnimal != null)
+                                  if (_selectedAnimal != null && !_showSettings)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -343,22 +343,20 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                           fit: BoxFit.scaleDown,
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                            child: !_showSettings
-                                                ? GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _showSettings = !_showSettings;
-                                                      });
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons.settings),
-                                                        Text(localizations
-                                                            .device_settings.capitalizeFirst!)
-                                                      ],
-                                                    ),
-                                                  )
-                                                : SizedBox(),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _showSettings = !_showSettings;
+                                                });
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.settings),
+                                                  Text(localizations
+                                                      .device_settings.capitalizeFirst!)
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -481,14 +479,14 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                               key: Key('$_startDate|$_endDate'),
                               startDate: _startDate,
                               endDate: _endDate,
-                              onDateChanged: (newStartDate, newEndDate) {
+                              onDateChanged: (newStartDate, newEndDate) async {
                                 Navigator.of(context).pop();
                                 setState(() {
                                   _startDate = newStartDate;
                                   _endDate = newEndDate;
                                   _isInterval = true;
-                                  _future = _loadAnimalData();
                                 });
+                                await _loadAnimalData();
                               },
                             ),
                           ),
@@ -577,7 +575,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       child: _selectedAnimal != null
                           ? SingleAnimalLocationMap(
                               key: Key(
-                                  '${_selectedAnimal != null ? _selectedAnimal!.animal.idAnimal.value : null}'),
+                                  '${_selectedAnimal?.animal.idAnimal.value}|${_selectedAnimal?.data}'),
                               showCurrentPosition: true,
                               deviceData: _selectedAnimal!.data
                                   .where((element) => element.lat.value != null)

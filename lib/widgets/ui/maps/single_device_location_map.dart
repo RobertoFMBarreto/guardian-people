@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
@@ -205,7 +206,8 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                   zoom: widget.startingZoom,
                   minZoom: 6,
                   maxZoom: 18,
-                  boundsOptions: const FitBoundsOptions(padding: EdgeInsets.all(20)),
+                  boundsOptions: FitBoundsOptions(
+                      padding: kIsWeb || isBigScreen ? EdgeInsets.all(100) : EdgeInsets.all(20)),
                   bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
                       ? LatLngBounds.fromPoints(
                           _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
