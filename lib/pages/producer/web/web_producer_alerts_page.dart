@@ -86,7 +86,6 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
     await getUserAlerts().then(
       (allAlerts) {
         if (mounted) {
-          print('alerts: $allAlerts');
           setState(() {
             _alerts = [];
             _alerts.addAll(allAlerts);
@@ -335,17 +334,23 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
                           ),
                           Expanded(
                             child: AddAlert(
-                              alert: _selectedAlert,
-                              isEdit: _selectedAlert != null,
-                              onCreate: () async {
-                                await _loadAlerts().then(
-                                  (_) => setState(() {
+                                key: Key('${_selectedAlert?.idAlert.value}'),
+                                alert: _selectedAlert,
+                                isEdit: _selectedAlert != null,
+                                onCreate: () async {
+                                  await _loadAlerts().then(
+                                    (_) => setState(() {
+                                      isInteractingAlert = false;
+                                      _selectedAlert = null;
+                                    }),
+                                  );
+                                },
+                                onCancel: () {
+                                  setState(() {
                                     isInteractingAlert = false;
                                     _selectedAlert = null;
-                                  }),
-                                );
-                              },
-                            ),
+                                  });
+                                }),
                           ),
                         ],
                       ),

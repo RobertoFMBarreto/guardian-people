@@ -3,6 +3,7 @@ import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
+import 'package:guardian/pages/producer/web/widget/select_device_dialogue.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/helpers/key_value_pair.dart';
@@ -23,11 +24,13 @@ class AddAlert extends StatefulWidget {
   final UserAlertCompanion? alert;
   final bool? isEdit;
   final Function onCreate;
+  final Function onCancel;
   const AddAlert({
     super.key,
     this.alert,
     this.isEdit = false,
     required this.onCreate,
+    required this.onCancel,
   });
 
   @override
@@ -98,9 +101,7 @@ class _AddAlertState extends State<AddAlert> {
       context: context,
       alert: updatedAlert,
       animals: _alertAnimals,
-      onDataGotten: (data) {
-        print('Gotten: $data');
-      },
+      onDataGotten: (data) {},
       onFailed: (statusCode) {
         if (!hasConnection && !isSnackbarActive) {
           showNoConnectionSnackBar();
@@ -161,21 +162,28 @@ class _AddAlertState extends State<AddAlert> {
   ///
   /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
   Future<void> _onAddAnimals() async {
-    Navigator.of(context)
-        .pushNamed(
-      '/producer/devices',
-      arguments: widget.alert != null
-          ? {
-              'isSelect': true,
-              'idAlert': widget.alert!.idAlert.value,
-              'notToShowAnimals': _alertAnimals.map((e) => e.animal.idAnimal.value).toList(),
-            }
-          : {
-              'isSelect': true,
-              'notToShowAnimals': _alertAnimals.map((e) => e.animal.idAnimal.value).toList(),
-            },
-    )
-        .then((selectedDevices) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        ThemeData theme = Theme.of(context);
+        return Dialog(
+          backgroundColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Scaffold(
+                body: SelectDeviceDialogue(
+                  idAlert: widget.alert?.idAlert.value,
+                  notToShowAnimals: _alertAnimals.map((e) => e.animal.idAnimal.value).toList(),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((selectedDevices) async {
       if (selectedDevices != null && selectedDevices.runtimeType == List<Animal>) {
         final selected = selectedDevices as List<Animal>;
         setState(() {
@@ -437,7 +445,7 @@ class _AddAlertState extends State<AddAlert> {
                             ElevatedButton(
                               onPressed: () {
                                 CustomFocusManager.unfocus(context);
-                                Navigator.of(context).pop();
+                                widget.onCancel();
                               },
                               style: const ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(gdDarkCancelBtnColor),
