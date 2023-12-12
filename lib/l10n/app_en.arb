@@ -188,5 +188,6 @@
   "satellite": "satellite",
   "email_password_wrong": "wrong email or password",
   "configurations": "configurations",
-  "alert": "alert"
+  "alert": "alert",
+  "animals": "animals"
 }

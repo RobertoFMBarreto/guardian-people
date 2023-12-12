@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
@@ -6,9 +9,13 @@ import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
+import 'package:guardian/pages/producer/web/widget/select_device_dialogue.dart';
+import 'package:guardian/settings/colors.dart';
+import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/common/geofencing.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -30,7 +37,9 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
   final GlobalKey _mapParentKey = GlobalKey();
   FenceData? _selectedFence;
   bool isInteractingFence = false;
+  bool _firstRun = true;
   List<Animal> _animals = [];
+  List<Animal> _fenceAnimals = [];
   List<FenceData> _fences = [];
 
   @override
@@ -83,7 +92,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
       (_) => FencingRequests.getUserFences(
         context: context,
         onGottenData: (data) async {
-          await _loadLocalFences();
+          await _loadLocalFences().then((value) => null);
         },
         onFailed: (statusCode) {
           AppLocalizations localizations = AppLocalizations.of(context)!;
@@ -91,6 +100,15 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
               .showSnackBar(SnackBar(content: Text(localizations.server_error)));
         },
       ),
+    );
+  }
+
+  Future<void> _loadFenceAnimals() async {
+    await getFenceAnimals(_selectedFence!.idFence).then(
+      (allDevices) => setState(() {
+        _fenceAnimals = [];
+        _fenceAnimals.addAll(allDevices);
+      }),
     );
   }
 
@@ -106,9 +124,9 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
 
   /// Method that allows to delete a fence and update the fences list
   Future<void> _deleteFence(String idFence) async {
-    // final fence = _fences.firstWhere(
-    //   (element) => element.idFence == idFence,
-    // );
+    final fence = _fences.firstWhere(
+      (element) => element.idFence == idFence,
+    );
     await getOriginalFencePoints(idFence).then((fencePoints) => getFenceAnimals(idFence).then(
           (fenceAnimals) => FencingRequests.removeFence(
             idFence: idFence,
@@ -119,31 +137,146 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
               });
             },
             onFailed: (statusCode) async {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-              // await createFence(FenceCompanion(
-              //   color: drift.Value(fence.color),
-              //   idFence: drift.Value(fence.idFence),
-              //   idUser: drift.Value(fence.idUser),
-              //   isStayInside: drift.Value(fence.isStayInside),
-              //   name: drift.Value(fence.name),
-              // ));
-              // for (var point in fencePoints) {
-              //   await createFencePoint(point.toCompanion(true));
-              // }
-              // for (var animal in fenceAnimals) {
-              //   await createFenceAnimal(
-              //     FenceAnimalsCompanion(
-              //       idAnimal: animal.animal.idAnimal,
-              //       idFence: drift.Value(idFence),
-              //     ),
-              //   );
-              // }
-              // await _loadFences();
+              if (kIsWeb) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              } else {
+                if (!hasConnection && !isSnackbarActive) {
+                  showNoConnectionSnackBar();
+                } else {
+                  if (statusCode == 507 || statusCode == 404) {
+                    if (_firstRun == true) {
+                      showNoConnectionSnackBar();
+                    }
+                    _firstRun = false;
+                  } else if (!isSnackbarActive) {
+                    AppLocalizations localizations = AppLocalizations.of(context)!;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                  }
+                }
+              }
+              setState(() {
+                _fences.add(fence);
+              });
             },
           ),
         ));
+  }
+
+  Future<void> _onRemoveDevice(int index) async {
+    //store the animal
+    final animal = _fenceAnimals[index];
+    final fence = _selectedFence;
+    setState(() {
+      _fenceAnimals.removeWhere(
+        (element) => element.animal.idAnimal == _fenceAnimals[index].animal.idAnimal,
+      );
+    });
+    await FencingRequests.removeAnimalFence(
+      animalIds: [animal.animal.idAnimal.value],
+      context: context,
+      fenceId: fence!.idFence,
+      onDataGotten: () async {
+        print('Here');
+        await removeAnimalFence(fence.idFence, animal.animal.idAnimal.value);
+      },
+      onFailed: (statusCode) {
+        if (kIsWeb) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        } else {
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
+          }
+          setState(() {
+            _fenceAnimals.add(animal);
+          });
+        }
+      },
+    );
+  }
+
+  /// Method that pushes to the devices pages and allows to select the devices for the alert
+  ///
+  /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
+  Future<void> _onAddAnimals() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        ThemeData theme = Theme.of(context);
+        return Dialog(
+          backgroundColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Scaffold(
+                body: SelectDeviceDialogue(
+                  idAlert: _selectedFence?.idFence,
+                  notToShowAnimals: _fenceAnimals.map((e) => e.animal.idAnimal.value).toList(),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((selectedDevices) async {
+      if (selectedDevices != null && selectedDevices.runtimeType == List<Animal>) {
+        final selected = selectedDevices as List<Animal>;
+        setState(() {
+          _fenceAnimals.addAll(selected);
+        });
+        _createFenceAnimals(selected).then(
+          (_) => FencingRequests.addAnimalFence(
+            fenceId: _selectedFence!.idFence,
+            animalIds: selected.map((e) => e.animal.idAnimal.value).toList(),
+            context: context,
+            onFailed: (statusCode) {
+              if (!hasConnection && !isSnackbarActive) {
+                showNoConnectionSnackBar();
+              } else {
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
+              }
+            },
+          ),
+        );
+      }
+    });
+  }
+
+  Future<void> _createFenceAnimals(List<Animal> selected) async {
+    for (var animal in selected) {
+      await createFenceAnimal(
+        FenceAnimalsCompanion(
+          idFence: drift.Value(_selectedFence!.idFence),
+          idAnimal: animal.animal.idAnimal,
+        ),
+      );
+    }
   }
 
   @override
@@ -251,6 +384,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                                           _selectedFence = _fences[index];
                                                           isInteractingFence = true;
                                                         });
+                                                        _loadFenceAnimals();
                                                       }
                                                     },
                                                     color: HexColor(_fences[index].color),
@@ -273,6 +407,82 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                     ),
                   ),
                 ),
+                if (isInteractingFence)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20, right: 20),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      localizations.animals.capitalizeFirst!,
+                                      style: theme.textTheme.headlineMedium,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            isInteractingFence = false;
+                                            _selectedFence = null;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.close),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton.icon(
+                                onPressed: _onAddAnimals,
+                                icon: Icon(
+                                  Icons.add,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                                label: Text(
+                                  '${localizations.add.capitalizeFirst!} ${localizations.devices.capitalizeFirst!}',
+                                  style: theme.textTheme.bodyLarge!.copyWith(
+                                    color: theme.colorScheme.secondary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: ListView.builder(
+                                key: Key('$_fenceAnimals'),
+                                itemCount: _fenceAnimals.length,
+                                itemBuilder: (context, index) => AnimalItemRemovable(
+                                  key: Key(_fenceAnimals[index].animal.idAnimal.value.toString()),
+                                  animal: _fenceAnimals[index],
+                                  onRemoveDevice: () => _onRemoveDevice(index),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 Expanded(
                   key: _mapParentKey,
                   flex: 2,

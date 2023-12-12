@@ -157,7 +157,6 @@ class _SelectDeviceDialogueState extends State<SelectDeviceDialogue> {
         tmpRangeValues: _tmpRangeValues,
       ).then(
         (filteredDevices) => setState(() {
-          print('filtered: $filteredDevices');
           _animals = [];
           if (widget.notToShowAnimals != null) {
             _animals.addAll(
@@ -198,39 +197,41 @@ class _SelectDeviceDialogueState extends State<SelectDeviceDialogue> {
                     },
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        if (_selectedAnimals.length == _animals.length) {
-                          setState(() {
-                            _selectedAnimals = [];
-                          });
-                        } else {
-                          setState(() {
-                            _selectedAnimals = _animals;
-                          });
-                        }
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            _selectedAnimals.length == _animals.length ? Icons.remove : Icons.add,
-                            color: theme.colorScheme.secondary,
-                          ),
-                          Text(
-                            localizations.select_all.capitalizeFirst!,
-                            style: theme.textTheme.bodyLarge!.copyWith(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          if (_selectedAnimals.length == _animals.length) {
+                            setState(() {
+                              _selectedAnimals = [];
+                            });
+                          } else {
+                            setState(() {
+                              _selectedAnimals = _animals;
+                            });
+                          }
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              _selectedAnimals.length == _animals.length ? Icons.remove : Icons.add,
                               color: theme.colorScheme.secondary,
                             ),
-                          ),
-                        ],
+                            Text(
+                              localizations.select_all.capitalizeFirst!,
+                              style: theme.textTheme.bodyLarge!.copyWith(
+                                color: theme.colorScheme.secondary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: _animals.isEmpty
