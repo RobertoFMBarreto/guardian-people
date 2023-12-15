@@ -14,6 +14,7 @@ import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
+import 'package:guardian/pages/producer/web/widget/select_alerts_dialogue.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
@@ -129,75 +130,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
           settings: RouteSettings(
             arguments: {'isSelect': true, 'idAnimal': widget.animal.animal.idAnimal.value},
           )),
-    ).then((gottenAlerts) async {
-      if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
-        final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
-
-        for (var selectedAlert in selectedAlerts) {
-          await addAlertAnimal(
-            AlertAnimalsCompanion(
-              idAnimal: widget.animal.animal.idAnimal,
-              idAlert: selectedAlert.idAlert,
-            ),
-          );
-          setState(() {
-            _alerts.add(selectedAlert);
-          });
-        }
-        for (var selectedAlert in selectedAlerts) {
-          getAlertAnimals(selectedAlert.idAlert.value).then(
-            (animals) => AlertRequests.getUserAlertsFromApi(
-              context: context,
-              onDataGotten: (data) {
-                AlertRequests.updateAlertToApi(
-                  context: context,
-                  alert: selectedAlert,
-                  animals: [...animals],
-                  onDataGotten: (data) {},
-                  onFailed: (statusCode) {
-                    setState(() {
-                      _alerts.removeWhere(
-                        (a) => a.idAlert == selectedAlert.idAlert,
-                      );
-                    });
-                    if (!hasConnection && !isSnackbarActive) {
-                      showNoConnectionSnackBar();
-                    } else {
-                      if (statusCode == 507 || statusCode == 404) {
-                        if (_firstRun == true) {
-                          showNoConnectionSnackBar();
-                        }
-                        _firstRun = false;
-                      } else if (!isSnackbarActive) {
-                        AppLocalizations localizations = AppLocalizations.of(context)!;
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-                      }
-                    }
-                  },
-                );
-              },
-              onFailed: (statusCode) {
-                if (!hasConnection && !isSnackbarActive) {
-                  showNoConnectionSnackBar();
-                } else {
-                  if (statusCode == 507 || statusCode == 404) {
-                    if (_firstRun == true) {
-                      showNoConnectionSnackBar();
-                    }
-                    _firstRun = false;
-                  } else if (!isSnackbarActive) {
-                    AppLocalizations localizations = AppLocalizations.of(context)!;
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-                  }
-                }
-              },
-            ),
-          );
-        }
-      }
-    });
+    ).then((gottenAlerts) async {});
   }
 
   /// Method that pushes the fences page in select mode and loads the fence into the [_fences] list
@@ -407,6 +340,101 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     });
   }
 
+  /// Method that pushes to the devices pages and allows to select the devices for the alert
+  ///
+  /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
+  Future<void> _onAddAlerts() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        ThemeData theme = Theme.of(context);
+        return Dialog(
+          backgroundColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Scaffold(
+                body: SelectAlertsDialogue(
+                  idAnimal: widget.animal.animal.idAnimal.value,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((selectedDevices) async {
+      if (selectedDevices.runtimeType == List<UserAlertCompanion>) {
+        final selectedAlerts = selectedDevices as List<UserAlertCompanion>;
+
+        for (var selectedAlert in selectedAlerts) {
+          await addAlertAnimal(
+            AlertAnimalsCompanion(
+              idAnimal: widget.animal.animal.idAnimal,
+              idAlert: selectedAlert.idAlert,
+            ),
+          );
+          setState(() {
+            _alerts.add(selectedAlert);
+          });
+        }
+        for (var selectedAlert in selectedAlerts) {
+          getAlertAnimals(selectedAlert.idAlert.value).then(
+            (animals) => AlertRequests.getUserAlertsFromApi(
+              context: context,
+              onDataGotten: (data) {
+                AlertRequests.updateAlertToApi(
+                  context: context,
+                  alert: selectedAlert,
+                  animals: [...animals],
+                  onDataGotten: (data) {},
+                  onFailed: (statusCode) {
+                    setState(() {
+                      _alerts.removeWhere(
+                        (a) => a.idAlert == selectedAlert.idAlert,
+                      );
+                    });
+                    if (!hasConnection && !isSnackbarActive) {
+                      showNoConnectionSnackBar();
+                    } else {
+                      if (statusCode == 507 || statusCode == 404) {
+                        if (_firstRun == true) {
+                          showNoConnectionSnackBar();
+                        }
+                        _firstRun = false;
+                      } else if (!isSnackbarActive) {
+                        AppLocalizations localizations = AppLocalizations.of(context)!;
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                      }
+                    }
+                  },
+                );
+              },
+              onFailed: (statusCode) {
+                if (!hasConnection && !isSnackbarActive) {
+                  showNoConnectionSnackBar();
+                } else {
+                  if (statusCode == 507 || statusCode == 404) {
+                    if (_firstRun == true) {
+                      showNoConnectionSnackBar();
+                    }
+                    _firstRun = false;
+                  } else if (!isSnackbarActive) {
+                    AppLocalizations localizations = AppLocalizations.of(context)!;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                  }
+                }
+              },
+            ),
+          );
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -452,7 +480,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: GestureDetector(
-                    onTap: _onSelectAlerts,
+                    onTap: _onAddAlerts,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

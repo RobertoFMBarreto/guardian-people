@@ -16,12 +16,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart';
 
 class SelectAlertsDialogue extends StatefulWidget {
-  final bool isSelect;
   final String? idAnimal;
 
   const SelectAlertsDialogue({
     super.key,
-    this.isSelect = false,
     this.idAnimal,
   });
 
@@ -56,57 +54,30 @@ class _SelectAlertsDialogueState extends State<SelectAlertsDialogue> {
   ///
   /// Resets the list to prevent duplicates
   Future<void> _loadAlerts() async {
-    if (widget.isSelect) {
-      await _getLocalUnselectedUserAlerts(widget.idAnimal!).then(
-        (_) => AlertRequests.getUserAlertsFromApi(
-          context: context,
-          onDataGotten: (data) {
-            _getLocalUnselectedUserAlerts(widget.idAnimal!);
-          },
-          onFailed: (statusCode) {
-            if (!hasConnection && !isSnackbarActive) {
-              showNoConnectionSnackBar();
-            } else {
-              if (statusCode == 507 || statusCode == 404) {
-                if (_firstRun == true) {
-                  showNoConnectionSnackBar();
-                }
-                _firstRun = false;
-              } else if (!isSnackbarActive) {
-                AppLocalizations localizations = AppLocalizations.of(context)!;
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+    await _getLocalUnselectedUserAlerts(widget.idAnimal!).then(
+      (_) => AlertRequests.getUserAlertsFromApi(
+        context: context,
+        onDataGotten: (data) {
+          _getLocalUnselectedUserAlerts(widget.idAnimal!);
+        },
+        onFailed: (statusCode) {
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
               }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
             }
-          },
-        ),
-      );
-    } else {
-      await _getLocalUserAlerts().then(
-        (value) => AlertRequests.getUserAlertsFromApi(
-          context: context,
-          onDataGotten: (data) {
-            _getLocalUserAlerts();
-          },
-          onFailed: (statusCode) {
-            if (!hasConnection && !isSnackbarActive) {
-              showNoConnectionSnackBar();
-            } else {
-              if (statusCode == 507 || statusCode == 404) {
-                if (_firstRun == true) {
-                  showNoConnectionSnackBar();
-                }
-                _firstRun = false;
-              } else if (!isSnackbarActive) {
-                AppLocalizations localizations = AppLocalizations.of(context)!;
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-              }
-            }
-          },
-        ),
-      );
-    }
+          }
+        },
+      ),
+    );
   }
 
   /// Method that allows to get all local user alerts
@@ -237,7 +208,7 @@ class _SelectAlertsDialogueState extends State<SelectAlertsDialogue> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.warnings_managment.capitalizeFirst!,
+          localizations.alerts.capitalizeFirst!,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -260,38 +231,24 @@ class _SelectAlertsDialogueState extends State<SelectAlertsDialogue> {
                               style: const ButtonStyle(
                                   minimumSize: MaterialStatePropertyAll(Size(200, 100))),
                               onPressed: () {
-                                if (widget.isSelect) {
-                                  if (_selectedAlerts.length == _alerts.length) {
-                                    setState(() {
-                                      _selectedAlerts.removeRange(0, _selectedAlerts.length);
-                                    });
-                                  } else {
-                                    setState(() {
-                                      _selectedAlerts.addAll(_alerts);
-                                    });
-                                  }
+                                if (_selectedAlerts.length == _alerts.length) {
+                                  setState(() {
+                                    _selectedAlerts.removeRange(0, _selectedAlerts.length);
+                                  });
                                 } else {
-                                  _deleteAll();
+                                  setState(() {
+                                    _selectedAlerts.addAll(_alerts);
+                                  });
                                 }
                               },
                               icon: Icon(
-                                !widget.isSelect
-                                    ? Icons.delete_forever
-                                    : _selectedAlerts.length == _alerts.length
-                                        ? Icons.close
-                                        : Icons.done,
-                                color: widget.isSelect
-                                    ? theme.colorScheme.secondary
-                                    : theme.colorScheme.error,
+                                Icons.delete_forever,
+                                color: theme.colorScheme.secondary,
                               ),
                               label: Text(
-                                widget.isSelect
-                                    ? localizations.select_all.capitalizeFirst!
-                                    : '${localizations.remove.capitalizeFirst!} ${localizations.all.capitalizeFirst!}',
+                                localizations.select_all.capitalizeFirst!,
                                 style: theme.textTheme.bodyMedium!.copyWith(
-                                  color: widget.isSelect
-                                      ? theme.colorScheme.secondary
-                                      : theme.colorScheme.error,
+                                  color: theme.colorScheme.secondary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -308,51 +265,21 @@ class _SelectAlertsDialogueState extends State<SelectAlertsDialogue> {
                           : Padding(
                               padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 40.0),
                               child: ListView.builder(
-                                itemCount: _alerts.length,
-                                itemBuilder: (context, index) => widget.isSelect
-                                    ? SelectableAlertManagementItem(
-                                        alert: _alerts[index],
-                                        isSelected: _selectedAlerts.contains(_alerts[index]),
-                                        onSelected: () {
-                                          if (_selectedAlerts.contains(_alerts[index])) {
-                                            setState(() {
-                                              _selectedAlerts.remove(_alerts[index]);
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _selectedAlerts.add(_alerts[index]);
-                                            });
-                                          }
-                                        })
-                                    : Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0),
-                                        child: AlertManagementItem(
-                                          key: Key(_alerts[index].idAlert.value.toString()),
-                                          onTap: () {
-                                            if (hasConnection) {
-                                              Future.delayed(const Duration(milliseconds: 300))
-                                                  .then((value) => Navigator.push(
-                                                        context,
-                                                        CustomPageRouter(
-                                                            page: '/producer/alerts/add',
-                                                            settings: RouteSettings(
-                                                              arguments: {
-                                                                'isEdit': true,
-                                                                'alert': _alerts[index],
-                                                              },
-                                                            )),
-                                                      ).then(
-                                                        (_) => _loadAlerts(),
-                                                      ));
-                                            }
-                                          },
-                                          alert: _alerts[index],
-                                          onDelete: (_) {
-                                            _deleteAlert(index);
-                                          },
-                                        ),
-                                      ),
-                              ),
+                                  itemCount: _alerts.length,
+                                  itemBuilder: (context, index) => SelectableAlertManagementItem(
+                                      alert: _alerts[index],
+                                      isSelected: _selectedAlerts.contains(_alerts[index]),
+                                      onSelected: () {
+                                        if (_selectedAlerts.contains(_alerts[index])) {
+                                          setState(() {
+                                            _selectedAlerts.remove(_alerts[index]);
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _selectedAlerts.add(_alerts[index]);
+                                          });
+                                        }
+                                      })),
                             ),
                     ),
                   ],
@@ -360,42 +287,28 @@ class _SelectAlertsDialogueState extends State<SelectAlertsDialogue> {
               }
             }),
       ),
-      floatingActionButton:
-          (widget.isSelect && _selectedAlerts.isNotEmpty) || !widget.isSelect && hasConnection
-              ? FloatingActionButton.extended(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  backgroundColor: theme.colorScheme.secondary,
-                  onPressed: () {
-                    if (!widget.isSelect) {
-                      Navigator.push(
-                        context,
-                        CustomPageRouter(
-                          page: '/producer/alerts/add',
-                        ),
-                      ).then(
-                        (_) => _loadAlerts(),
-                      );
-                    } else {
-                      Navigator.of(context).pop(_selectedAlerts);
-                    }
-                  },
-                  label: Text(
-                    widget.isSelect
-                        ? localizations.confirm.capitalizeFirst!
-                        : '${localizations.add.capitalizeFirst!} ${localizations.warning.capitalizeFirst!}',
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      color: theme.colorScheme.onSecondary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  icon: Icon(
-                    widget.isSelect ? Icons.done : Icons.add,
-                    color: theme.colorScheme.onSecondary,
-                  ),
-                )
-              : null,
+      floatingActionButton: hasConnection
+          ? FloatingActionButton.extended(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
+              backgroundColor: theme.colorScheme.secondary,
+              onPressed: () {
+                Navigator.of(context).pop(_selectedAlerts);
+              },
+              label: Text(
+                localizations.confirm.capitalizeFirst!,
+                style: theme.textTheme.bodyLarge!.copyWith(
+                  color: theme.colorScheme.onSecondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              icon: Icon(
+                Icons.done,
+                color: theme.colorScheme.onSecondary,
+              ),
+            )
+          : null,
     );
   }
 }
