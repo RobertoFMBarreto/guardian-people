@@ -15,6 +15,7 @@ import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/pages/producer/web/widget/select_alerts_dialogue.dart';
+import 'package:guardian/pages/producer/web/widget/select_fences_dialogue.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
@@ -115,67 +116,6 @@ class _DeviceSettingsState extends State<DeviceSettings> {
           _fences = [];
           setState(() => _fences.add(deviceFence));
         }
-      }
-    });
-  }
-
-  /// Method that pushes to the alerts management page in select mode and loads the selected alerts into the [_alerts] list
-  ///
-  /// It also inserts in the database the connection between the animal and the alert
-  Future<void> _onSelectAlerts() async {
-    Navigator.push(
-      context,
-      CustomPageRouter(
-          page: '/producer/alerts/management',
-          settings: RouteSettings(
-            arguments: {'isSelect': true, 'idAnimal': widget.animal.animal.idAnimal.value},
-          )),
-    ).then((gottenAlerts) async {});
-  }
-
-  /// Method that pushes the fences page in select mode and loads the fence into the [_fences] list
-  ///
-  /// It also inserts in the database the connection between the fence and the device
-  Future<void> _onSelectFence() async {
-    Navigator.of(context).pushNamed('/producer/fences', arguments: true).then((newFenceData) {
-      if (newFenceData != null && newFenceData.runtimeType == FenceData) {
-        final newFence = newFenceData as FenceData;
-
-        setState(() {
-          _fences.add(newFence);
-        });
-        FencingRequests.addAnimalFence(
-          animalIds: [widget.animal.animal.idAnimal.value],
-          context: context,
-          fenceId: newFence.idFence,
-          onFailed: (statusCode) {
-            setState(() {
-              _fences.removeWhere(
-                (element) => element.idFence == newFence.idFence,
-              );
-            });
-            if (!hasConnection && !isSnackbarActive) {
-              showNoConnectionSnackBar();
-            } else {
-              if (statusCode == 507 || statusCode == 404) {
-                if (_firstRun == true) {
-                  showNoConnectionSnackBar();
-                }
-                _firstRun = false;
-              } else if (!isSnackbarActive) {
-                AppLocalizations localizations = AppLocalizations.of(context)!;
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-              }
-            }
-          },
-        );
-        createFenceAnimal(
-          FenceAnimalsCompanion(
-            idFence: drift.Value(newFence.idFence),
-            idAnimal: widget.animal.animal.idAnimal,
-          ),
-        );
       }
     });
   }
@@ -340,9 +280,9 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     });
   }
 
-  /// Method that pushes to the devices pages and allows to select the devices for the alert
+  /// Method that pushes to the alerts management page in select mode and loads the selected alerts into the [_alerts] list
   ///
-  /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
+  /// It also inserts in the database the connection between the animal and the alert
   Future<void> _onAddAlerts() async {
     showDialog(
       context: context,
@@ -435,6 +375,71 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     });
   }
 
+  /// Method that pushes to the devices pages and allows to select the devices for the alert
+  ///
+  /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
+  Future<void> _onAddFence() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        ThemeData theme = Theme.of(context);
+        return Dialog(
+          backgroundColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Scaffold(
+                body: SelectFencesDialogue(),
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((selectedFences) async {
+      if (selectedFences != null && selectedFences.runtimeType == FenceData) {
+        final newFence = selectedFences as FenceData;
+
+        setState(() {
+          _fences.add(newFence);
+        });
+        FencingRequests.addAnimalFence(
+          animalIds: [widget.animal.animal.idAnimal.value],
+          context: context,
+          fenceId: newFence.idFence,
+          onFailed: (statusCode) {
+            setState(() {
+              _fences.removeWhere(
+                (element) => element.idFence == newFence.idFence,
+              );
+            });
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              }
+            }
+          },
+        );
+        createFenceAnimal(
+          FenceAnimalsCompanion(
+            idFence: drift.Value(newFence.idFence),
+            idAnimal: widget.animal.animal.idAnimal,
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -513,7 +518,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: GestureDetector(
-                    onTap: _onSelectFence,
+                    onTap: _onAddFence,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
