@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 /// Class that represents the
 class AnimalDateCard extends StatelessWidget {
-  final DateTime date;
+  final DateTime? date;
   final Function() onTap;
   const AnimalDateCard({super.key, required this.date, required this.onTap});
 
@@ -29,58 +29,74 @@ class AnimalDateCard extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: FittedBox(
-                        fit: BoxFit.fitHeight,
-                        child: Text(
-                          '${date.day}',
-                          style: theme.textTheme.bodyLarge!.copyWith(
-                            fontWeight: FontWeight.w500,
+                child: date != null
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.fitHeight,
+                              child: Text(
+                                '${date!.day}',
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      DateFormat.MMMM(localizations.localeName)
+                                          .format(date!)
+                                          .capitalizeFirst!,
+                                      style: theme.textTheme.bodyLarge!.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      '${date!.year}',
+                                      style: theme.textTheme.bodyLarge!.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Center(
+                          child: Text(
+                            localizations.current.capitalizeFirst!,
+                            style: theme.textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Text(
-                                DateFormat.MMMM(localizations.localeName).format(date).capitalize(),
-                                style: theme.textTheme.bodyLarge!.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Text(
-                                '${date.year}',
-                                style: theme.textTheme.bodyLarge!.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
               const Divider(thickness: 0.1),
               Expanded(
                 child: Center(
                   child: Text(
-                    '${date.hour <= 9 ? "0${date.hour}" : date.hour}:${date.minute <= 9 ? "0${date.minute}" : date.minute}',
+                    date != null
+                        ? '${date!.hour <= 9 ? "0${date!.hour}" : date!.hour}:${date!.minute <= 9 ? "0${date!.minute}" : date!.minute}'
+                        : localizations.realtime.capitalizeFirst!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.w500,
                       fontSize: 20,

@@ -7,7 +7,7 @@ import 'package:guardian/models/db/drift/query_models/animal.dart';
 ///
 /// The [device] holds all of the related device information with last location as [Animal]
 class AlertNotification {
-  final BigInt alertNotificationId;
+  final String alertNotificationId;
   final UserAlertCompanion alert;
   final Animal device;
 

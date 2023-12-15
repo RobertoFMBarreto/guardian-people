@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents the alert parameter dropdown widget
 class AlertParameterDropdown extends StatelessWidget {
@@ -28,19 +28,19 @@ class AlertParameterDropdown extends StatelessWidget {
             DropdownMenuItem(
               value: AlertParameter.battery,
               child: Text(
-                localizations.battery.capitalize(),
+                localizations.battery.capitalizeFirst!,
               ),
             ),
             DropdownMenuItem(
               value: AlertParameter.dataUsage,
               child: Text(
-                localizations.data_used.capitalize(),
+                localizations.data_used.capitalizeFirst!,
               ),
             ),
             DropdownMenuItem(
               value: AlertParameter.temperature,
               child: Text(
-                localizations.temperature.capitalize(),
+                localizations.temperature.capitalizeFirst!,
               ),
             ),
           ],

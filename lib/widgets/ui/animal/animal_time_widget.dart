@@ -1,23 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/widgets/inputs/date_time_input.dart';
+import 'package:get/get.dart';
+import 'package:guardian/main.dart';
+import 'package:guardian/settings/colors.dart';
+import 'package:guardian/widgets/inputs/date_time_input/time_selector_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_date_card.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 /// Class that represents the animal time range widget
 class AnimalTimeRangeWidget extends StatefulWidget {
   final DateTime startDate;
-  final DateTime endDate;
-  final Function(DateTime) onStartDateChanged;
-  final Function(DateTime) onEndDateChanged;
+  final DateTime? endDate;
+  final Function(DateTime, DateTime) onDateChanged;
   const AnimalTimeRangeWidget({
     super.key,
     required this.startDate,
     required this.endDate,
-    required this.onStartDateChanged,
-    required this.onEndDateChanged,
+    required this.onDateChanged,
   });
 
   @override
@@ -26,7 +26,7 @@ class AnimalTimeRangeWidget extends StatefulWidget {
 
 class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
   DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
+  DateTime? _endDate = DateTime.now();
 
   @override
   void initState() {
@@ -35,49 +35,16 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
     super.initState();
   }
 
-  /// Method that sets the [_startDate] date keeping the backup time
-  void _onStartDateChanged(DateRangePickerSelectionChangedArgs args) {
-    setState(() {
-      //store last date
-      DateTime backupDate = _startDate;
-      //store new date
-      _startDate = args.value;
-      //add the backup date hours to the new date
-      _startDate = DateTime(
-        _startDate.year,
-        _startDate.month,
-        _startDate.day,
-        backupDate.hour,
-        backupDate.minute,
-      );
-    });
-  }
-
   /// Method that sets the [_startDate] time keeping the backup date
-  void _onStartTimeChanged(DateTime newDate) {
-    DateTime backup = _startDate;
-    final newTime = DateTime(
-      backup.year,
-      backup.month,
-      backup.day,
-      newDate.hour,
-      newDate.minute,
-    );
-
-    setState(() {
-      _startDate = newTime;
-    });
-  }
-
   /// Method that sets the [_endDate] date keeping the backup time
   void _onEndDateChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       //store last date
-      DateTime backupDate = _endDate;
+      DateTime backupDate = _endDate ?? DateTime.now();
       //store new date
       _endDate = args.value;
       //add the backup date hours to the new date
-      _endDate = _endDate.add(
+      _endDate = _endDate!.add(
         Duration(
           hours: backupDate.hour,
           minutes: backupDate.minute,
@@ -88,7 +55,7 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
 
   /// Method that sets the [_endDate] time keeping the backup date
   void _onEndTimeChanged(DateTime newDate) {
-    DateTime backup = _endDate;
+    DateTime backup = _endDate ?? DateTime.now();
     final newTime = DateTime(
       backup.year,
       backup.month,
@@ -121,48 +88,109 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
         return Container();
       },
       transitionBuilder: (ctx, a1, a2, child) {
+        ThemeData theme = Theme.of(ctx);
+        AppLocalizations localizations = AppLocalizations.of(ctx)!;
         var curve = Curves.easeInOut.transform(a1.value);
         return Transform.scale(
           scale: curve,
           child: Dialog(
             child: Container(
-              constraints: kIsWeb ? const BoxConstraints(maxWidth: 400) : null,
+              constraints: kIsWeb || isBigScreen ? const BoxConstraints(maxWidth: 400) : null,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    DateTimeInput(
-                      onSelectionChanged: onSelectionChanged,
-                      date: date,
-                      onTimeChange: onTimeChange,
-                      maxDate: maxDate,
-                      minDate: minDate,
+                    SfDateRangePicker(
+                      onSelectionChanged: (args) {
+                        final range = args.value as PickerDateRange;
+                        if (range.startDate != null) {
+                          _startDate = DateTime(
+                            range.startDate!.year,
+                            range.startDate!.month,
+                            range.startDate!.day,
+                            _startDate.hour,
+                            _startDate.minute,
+                            _startDate.second,
+                          );
+                          _endDate = DateTime(
+                            (range.endDate ?? range.startDate)!.year,
+                            (range.endDate ?? range.startDate)!.month,
+                            (range.endDate ?? range.startDate)!.day,
+                            (_endDate ?? DateTime.now()).hour,
+                            (_endDate ?? DateTime.now()).minute,
+                            (_endDate ?? DateTime.now()).second,
+                          );
+                        }
+                      },
+                      selectionMode: DateRangePickerSelectionMode.range,
+                      initialSelectedRange: PickerDateRange(
+                        _startDate,
+                        _endDate,
+                      ),
+                      initialDisplayDate: _startDate,
+                      startRangeSelectionColor: theme.brightness == Brightness.light
+                          ? gdSecondaryColor
+                          : gdDarkSecondaryColor,
+                      endRangeSelectionColor: theme.brightness == Brightness.light
+                          ? gdSecondaryColor
+                          : gdDarkSecondaryColor,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            Text(localizations.start_date),
+                            TimeSelectorInput(
+                              onTimeChange: (time) {
+                                _startDate = DateTime(
+                                  _startDate.year,
+                                  _startDate.month,
+                                  _startDate.day,
+                                  time.hour,
+                                  time.minute,
+                                  time.second,
+                                );
+                              },
+                              time: DateTime.now(),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(localizations.end_date),
+                            TimeSelectorInput(
+                              onTimeChange: (time) {
+                                _endDate = DateTime(
+                                  (_endDate ?? DateTime.now()).year,
+                                  (_endDate ?? DateTime.now()).month,
+                                  (_endDate ?? DateTime.now()).day,
+                                  time.hour,
+                                  time.minute,
+                                  time.second,
+                                );
+                              },
+                              time: DateTime.now(),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Navigator.pop(context);
                           },
-                          child: Text(
-                            localizations.cancel.capitalize(),
-                          ),
+                          child: Text(localizations.cancel),
                         ),
                         TextButton(
                           onPressed: () {
-                            if (isStartDate) {
-                              widget.onStartDateChanged(_startDate);
-                            } else {
-                              widget.onEndDateChanged(_endDate);
-                            }
-                            Navigator.of(context).pop(true);
+                            widget.onDateChanged(_startDate, _endDate ?? DateTime.now());
                           },
-                          child: Text(
-                            localizations.confirm.capitalize(),
-                          ),
+                          child: Text(localizations.confirm),
                         ),
                       ],
                     )
@@ -185,15 +213,15 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
       children: [
         Expanded(
           child: AnimalDateCard(
-            date: widget.startDate,
+            date: _startDate,
             onTap: () {
               _showDateDateSelector(
                 context,
                 localizations,
-                onSelectionChanged: _onStartDateChanged,
-                date: widget.startDate,
-                onTimeChange: _onStartTimeChanged,
-                maxDate: widget.endDate,
+                onSelectionChanged: (date) {},
+                date: _startDate,
+                onTimeChange: (time) {},
+                maxDate: widget.endDate ?? DateTime.now(),
                 isStartDate: true,
               );
               //_showStartDateDateSelector(context, localizations);
@@ -201,18 +229,18 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
           ),
         ),
         Text(
-          ' ${localizations.until.capitalize()} ',
+          ' ${localizations.until.capitalizeFirst!} ',
           style: theme.textTheme.bodyLarge,
         ),
         Expanded(
           child: AnimalDateCard(
-            date: widget.endDate,
+            date: _endDate,
             onTap: () {
               _showDateDateSelector(
                 context,
                 localizations,
                 onSelectionChanged: _onEndDateChanged,
-                date: widget.endDate,
+                date: _endDate ?? DateTime.now(),
                 onTimeChange: _onEndTimeChanged,
                 maxDate: DateTime.now(),
                 minDate: widget.startDate,
@@ -222,6 +250,45 @@ class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
             },
           ),
         ),
+        // Expanded(
+        //   child: AnimalDateCard(
+        //     date: widget.startDate,
+        //     onTap: () {
+        //       _showDateDateSelector(
+        //         context,
+        //         localizations,
+        //         onSelectionChanged: _onStartDateChanged,
+        //         date: widget.startDate,
+        //         onTimeChange: _onStartTimeChanged,
+        //         maxDate: widget.endDate ?? DateTime.now(),
+        //         isStartDate: true,
+        //       );
+        //       //_showStartDateDateSelector(context, localizations);
+        //     },
+        //   ),
+        // ),
+        // Text(
+        //   ' ${localizations.until.capitalizeFirst!} ',
+        //   style: theme.textTheme.bodyLarge,
+        // ),
+        // Expanded(
+        //   child: AnimalDateCard(
+        //     date: widget.endDate,
+        //     onTap: () {
+        //       _showDateDateSelector(
+        //         context,
+        //         localizations,
+        //         onSelectionChanged: _onEndDateChanged,
+        //         date: widget.endDate ?? DateTime.now(),
+        //         onTimeChange: _onEndTimeChanged,
+        //         maxDate: DateTime.now(),
+        //         minDate: widget.startDate,
+        //         isStartDate: false,
+        //       );
+        //       // _showEndDateDateSelector(context, localizations);
+        //     },
+        //   ),
+        // ),
       ],
     );
   }

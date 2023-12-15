@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents the custom circular progress indicator
 ///
@@ -41,9 +41,9 @@ class _CustomCircularProgressIndicatorState extends State<CustomCircularProgress
           CircularProgressIndicator(
             color: theme.colorScheme.secondary,
           ),
-          Text('${localizations.loading.capitalize()}...'),
-          if (_showTakingLong) Text('${localizations.longer_than_expected.capitalize()}!'),
-          if (_showVerifyConnection) Text('${localizations.verify_connection.capitalize()}!')
+          Text('${localizations.loading.capitalizeFirst!}...'),
+          if (_showTakingLong) Text('${localizations.longer_than_expected.capitalizeFirst!}!'),
+          if (_showVerifyConnection) Text('${localizations.verify_connection.capitalizeFirst!}!')
         ],
       ),
     );

@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents an alert management item widget
 class AlertManagementItem extends StatelessWidget {
@@ -32,52 +32,41 @@ class AlertManagementItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      RichText(
-                        maxLines: 2,
-                        text: TextSpan(
-                          text: '${localizations.when.capitalize()} ',
-                          style: theme.textTheme.bodyLarge,
-                          children: [
-                            TextSpan(
-                              text:
-                                  '${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize()} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          RichText(
+                            maxLines: 2,
+                            text: TextSpan(
+                              text: '${localizations.when.capitalizeFirst!} ',
+                              style: theme.textTheme.bodyLarge,
+                              children: [
+                                TextSpan(
+                                  text:
+                                      '${parseAlertParameterFromId(alert.parameter.value, localizations).capitalizeFirst!} ${parseComparissonFromString(alert.comparisson.value, localizations)} ${alert.comparisson.value != '=' ? localizations.than : localizations.to} ${getValue(alert.parameter.value, alert.conditionCompTo.value, localizations)}${getValueType(alert.parameter.value, localizations)}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      RichText(
-                        maxLines: 2,
-                        text: TextSpan(
-                          text:
-                              '${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ',
-                          style: theme.textTheme.bodyLarge,
-                          children: [
-                            TextSpan(
-                              text: alert.value.value.toString(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      "${localizations.notification.capitalize()}: ${alert.hasNotification.value ? localizations.yes.capitalize() : localizations.no.capitalize()}",
-                      style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "${localizations.notification.capitalizeFirst!}: ${alert.hasNotification.value ? localizations.yes.capitalizeFirst! : localizations.no.capitalizeFirst!}",
+                        style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               if (hasConnection)
                 IconButton(

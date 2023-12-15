@@ -7,9 +7,8 @@ import 'package:guardian/models/db/drift/tables/animal.dart';
 ///
 /// [idAnimal] relates with the table [Animal] on its primary key
 class AnimalLocations extends Table {
-  Int64Column get animalDataId => int64()();
-  Int64Column get idAnimal => int64().references(Animal, #idAnimal).nullable()();
-  IntColumn get dataUsage => integer().nullable()();
+  TextColumn get animalDataId => text()();
+  TextColumn get idAnimal => text().references(Animal, #idAnimal).nullable()();
   RealColumn get temperature => real().nullable()();
   IntColumn get battery => integer().nullable()();
   RealColumn get lat => real().nullable()();

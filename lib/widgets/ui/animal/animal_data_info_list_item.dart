@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -66,12 +66,8 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
             });
           },
           children: List.generate(animalDataInfo.length, (index) {
-            int from = Random().nextInt(23);
-            int to = Random().nextInt(23);
-            while (to <= from) {
-              from = Random().nextInt(23);
-              to = Random().nextInt(23);
-            }
+            int from = index + 1;
+            int to = index + 2;
 
             return ExpansionPanel(
               isExpanded: animalDataInfo[index],
@@ -107,7 +103,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                         children: [
                           RichText(
                             text: TextSpan(
-                              text: '${localizations.from_time.capitalize()} ',
+                              text: '${localizations.from_time.capitalizeFirst!} ',
                               style: theme.textTheme.bodyLarge,
                               children: [
                                 TextSpan(
@@ -124,7 +120,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                                   text: states[Random().nextInt(states.length)],
                                   // widget.deviceData[index].state
                                   //     .toShortString(context)
-                                  //     .capitalize(),
+                                  //     .capitalizeFirst!,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: theme.colorScheme.secondary,
@@ -142,28 +138,12 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
               body: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: IconText(
-                          icon: Icons.sim_card,
-                          iconColor: theme.colorScheme.secondary,
-                          text: '${widget.deviceData.first.dataUsage.value}/10MB',
-                          fontSize: 15,
-                          iconSize: 25,
-                        ),
-                      ),
-                      IconText(
-                        icon: Icons.device_thermostat,
-                        iconColor: theme.colorScheme.secondary,
-                        text: '${widget.deviceData.first.temperature.value}ºC',
-                        fontSize: 15,
-                        iconSize: 30,
-                      ),
-                    ],
+                  IconText(
+                    icon: Icons.device_thermostat,
+                    iconColor: theme.colorScheme.secondary,
+                    text: '${widget.deviceData.first.temperature.value}ºC',
+                    fontSize: 15,
+                    iconSize: 30,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -212,7 +192,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                     },
                     icon: Icon(Icons.remove, color: theme.colorScheme.secondary),
                     label: Text(
-                      localizations.hide.capitalize(),
+                      localizations.hide.capitalizeFirst!,
                       style:
                           theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.secondary),
                     )),
@@ -222,7 +202,7 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                   },
                   icon: Icon(Icons.add, color: theme.colorScheme.secondary),
                   label: Text(
-                    '${localizations.load.capitalize()} ${localizations.more} ${(widget.deviceData.length - _currentTopicExtent) >= 10 ? 10 : widget.deviceData.length - _currentTopicExtent}',
+                    '${localizations.load.capitalizeFirst!} ${localizations.more} ${(widget.deviceData.length - _currentTopicExtent) >= 10 ? 10 : widget.deviceData.length - _currentTopicExtent}',
                     style: theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.secondary),
                   )),
             ],

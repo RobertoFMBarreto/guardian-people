@@ -7,15 +7,15 @@ import 'package:guardian/pages/admin/mobile/admin_home_page.dart';
 import 'package:guardian/pages/admin/mobile/admin_producer_page.dart';
 import 'package:guardian/pages/login_page.dart';
 import 'package:guardian/pages/producer/mobile/add_alert_page.dart';
-import 'package:guardian/pages/producer/mobile/alerts_management_page.dart';
 import 'package:guardian/pages/producer/mobile/alerts_page.dart';
-import 'package:guardian/pages/producer/mobile/device_history_page.dart';
-import 'package:guardian/pages/producer/mobile/device_page.dart';
-import 'package:guardian/pages/producer/mobile/device_settings_page.dart';
+import 'package:guardian/pages/producer/mobile/notifications_page.dart';
+import 'package:guardian/pages/producer/mobile/animal_history_page.dart';
+import 'package:guardian/pages/producer/mobile/animal_page.dart';
+import 'package:guardian/pages/producer/mobile/animal_settings_page.dart';
 import 'package:guardian/pages/producer/mobile/fences_page.dart';
 import 'package:guardian/pages/producer/mobile/geofencing_page.dart';
 import 'package:guardian/pages/producer/mobile/manage_fence_page.dart';
-import 'package:guardian/pages/producer/mobile/producer_devices_page.dart';
+import 'package:guardian/pages/producer/mobile/producer_animals_page.dart';
 import 'package:guardian/pages/producer/mobile/producer_home.dart';
 import 'package:guardian/pages/producer/web/web_producer_page.dart';
 import 'package:guardian/pages/profile_page.dart';
@@ -27,9 +27,9 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
   '/profile': (context) => const ProfilePage(),
   '/admin': (context) => const AdminHomePage(),
   '/admin/producer': (context) {
-    if (ModalRoute.of(context)!.settings.arguments.runtimeType == BigInt) {
+    if (ModalRoute.of(context)!.settings.arguments.runtimeType == String) {
       return AdminProducerPage(
-        producerId: ModalRoute.of(context)!.settings.arguments as BigInt,
+        producerId: ModalRoute.of(context)!.settings.arguments as String,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -40,7 +40,7 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
       final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       return AdminDeviceManagementPage(
         device: args['device'] as Animal,
-        producerId: args['producerId'] as BigInt,
+        producerId: args['producerId'] as String,
       );
     } else {
       throw ErrorDescription('Device not provided');
@@ -75,34 +75,34 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
     if (args != null) {
       final data = (args as Map<String, dynamic>);
 
-      return ProducerDevicesPage(
+      return ProducerAnimalsPage(
         isSelect: data['isSelect'] as bool,
-        idFence: data.containsKey('idFence') ? data['idFence'] as BigInt : null,
-        idAlert: data.containsKey('idAlert') ? data['idAlert'] as BigInt : null,
+        idFence: data.containsKey('idFence') ? data['idFence'] as String : null,
+        idAlert: data.containsKey('idAlert') ? data['idAlert'] as String : null,
         notToShowAnimals:
-            data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<BigInt> : null,
+            data.containsKey('notToShowDevices') ? data['notToShowDevices'] as List<String> : null,
       );
     } else {
-      return const ProducerDevicesPage();
+      return const ProducerAnimalsPage();
     }
   },
   '/producer/device': (context) {
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      return DevicePage(
-        animal: data['device'] as Animal,
+      return AnimalPage(
+        animal: data['animal'] as Animal,
       );
     } else {
-      throw ErrorDescription('Device not provided');
+      throw ErrorDescription('Animal not provided');
     }
   },
   '/producer/device/settings': (context) {
     if (ModalRoute.of(context)!.settings.arguments.runtimeType == Animal) {
-      return DeviceSettingsPage(
+      return AnimalSettingsPage(
         animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {
-      throw ErrorDescription('Device not provided');
+      throw ErrorDescription('Animal not provided');
     }
   },
   '/producer/device/history': (context) {
@@ -111,10 +111,10 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
         animal: ModalRoute.of(context)!.settings.arguments as Animal,
       );
     } else {
-      throw ErrorDescription('Device not provided');
+      throw ErrorDescription('Animal not provided');
     }
   },
-  '/producer/alerts': (context) => const AlertsPage(),
+  '/producer/alerts': (context) => const NotificationsPage(),
   '/producer/alerts/add': (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     if (args != null) {
@@ -131,9 +131,9 @@ Map<String, Widget Function(BuildContext)> mobileRoutes = {
     final args = ModalRoute.of(context)!.settings.arguments;
     if (args != null) {
       final data = args as Map<String, dynamic>;
-      return AlertsManagementPage(
+      return AlertsPage(
         isSelect: data['isSelect'] as bool,
-        idAnimal: (data['idAnimal'] as BigInt?).toString(),
+        idAnimal: (data['idAnimal'] as String?).toString(),
       );
     } else {
       throw ErrorDescription('isSelect not provided');

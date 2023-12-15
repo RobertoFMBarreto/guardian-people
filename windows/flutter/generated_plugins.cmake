@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
+  firebase_core
   geolocator_windows
   isar_flutter_libs
   sqlite3_flutter_libs

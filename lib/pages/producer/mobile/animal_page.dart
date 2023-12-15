@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/animal/animal_map_widget.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/sliver_device_app_bar.dart';
@@ -13,27 +15,59 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Method that represents the device page
-class DevicePage extends StatefulWidget {
+class AnimalPage extends StatefulWidget {
   final Animal animal;
 
-  const DevicePage({
+  const AnimalPage({
     super.key,
     required this.animal,
   });
 
   @override
-  State<DevicePage> createState() => _DevicePageState();
+  State<AnimalPage> createState() => _AnimalPageState();
 }
 
-class _DevicePageState extends State<DevicePage> {
+class _AnimalPageState extends State<AnimalPage> {
   bool _isInterval = false;
   late Animal _animal;
   int _reloadNum = 0;
+  bool _firstRun = true;
+
   @override
   void initState() {
+    isSnackbarActive = false;
     _animal = widget.animal;
 
     super.initState();
+  }
+
+  /// Method that allows to update animal on api
+  Future<void> _updateAnimal(String newColor) async {
+    setState(() {
+      _animal = Animal(
+          animal: _animal.animal.copyWith(animalColor: drift.Value(newColor)), data: _animal.data);
+    });
+    AnimalRequests.updateAnimal(
+      animal: _animal,
+      context: context,
+      onDataGotten: () {},
+      onFailed: (statusCode) {
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -47,6 +81,7 @@ class _DevicePageState extends State<DevicePage> {
                   ? gdGradientEnd
                   : gdDarkGradientEnd,
               title: Text(widget.animal.animal.animalName.value),
+              foregroundColor: Colors.white,
               centerTitle: true,
               actions: [
                 IconButton(
@@ -56,7 +91,6 @@ class _DevicePageState extends State<DevicePage> {
                     size: 30,
                   ),
                   onPressed: () {
-                    //TODO: Code for settings of device
                     Navigator.of(context)
                         .pushNamed(
                       '/producer/device/settings',
@@ -94,9 +128,11 @@ class _DevicePageState extends State<DevicePage> {
                 )),
           );
         },
+        isExtended: true,
         backgroundColor: theme.colorScheme.secondary,
+        extendedPadding: const EdgeInsets.all(4),
         label: Text(
-          localizations.state_history.capitalize(),
+          localizations.state_history.capitalizeFirst!,
           style: theme.textTheme.bodyLarge!.copyWith(
             fontWeight: FontWeight.w500,
             color: theme.colorScheme.onSecondary,
@@ -113,13 +149,7 @@ class _DevicePageState extends State<DevicePage> {
                 pinned: true,
                 delegate: SliverDeviceAppBar(
                   maxHeight: MediaQuery.of(context).size.height * 0.4,
-                  onColorChanged: (newColor) {
-                    setState(() {
-                      _animal = Animal(
-                          animal: _animal.animal.copyWith(animalColor: drift.Value(newColor)),
-                          data: _animal.data);
-                    });
-                  },
+                  onColorChanged: _updateAnimal,
                   title: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
@@ -128,7 +158,7 @@ class _DevicePageState extends State<DevicePage> {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            localizations.localization.capitalize(),
+                            localizations.localization.capitalizeFirst!,
                             style: theme.textTheme.headlineSmall!.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -152,8 +182,8 @@ class _DevicePageState extends State<DevicePage> {
                           ],
                           totalSwitches: 2,
                           labels: [
-                            localizations.current.capitalize(),
-                            localizations.range.capitalize(),
+                            localizations.current.capitalizeFirst!,
+                            localizations.range.capitalizeFirst!,
                           ],
                           onToggle: (index) {
                             setState(() {
@@ -183,7 +213,6 @@ class _DevicePageState extends State<DevicePage> {
                             size: 30,
                           ),
                           onPressed: () {
-                            //TODO: Code for settings of device
                             Navigator.of(context)
                                 .pushNamed(
                               '/producer/device/settings',
@@ -216,7 +245,7 @@ class _DevicePageState extends State<DevicePage> {
                           FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              localizations.localization.capitalize(),
+                              localizations.localization.capitalizeFirst!,
                               style: theme.textTheme.headlineSmall!.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
@@ -240,8 +269,8 @@ class _DevicePageState extends State<DevicePage> {
                             ],
                             totalSwitches: 2,
                             labels: [
-                              localizations.current.capitalize(),
-                              localizations.range.capitalize(),
+                              localizations.current.capitalizeFirst!,
+                              localizations.range.capitalizeFirst!,
                             ],
                             onToggle: (index) {
                               setState(() {
@@ -254,7 +283,7 @@ class _DevicePageState extends State<DevicePage> {
                     ),
                   Expanded(
                     child: AnimalMapWidget(
-                      key: Key(_reloadNum.toString()),
+                      key: Key('$_reloadNum'),
                       animal: _animal,
                       isInterval: _isInterval,
                     ),

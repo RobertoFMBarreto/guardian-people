@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/models/providers/tmp/read_json.dart';
+import 'package:guardian/main.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/operations/user_operations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 
 /// Class that represents the welcome page
@@ -16,8 +17,11 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  bool _firstRun = true;
+
   @override
   void initState() {
+    isSnackbarActive = false;
     _getToken(context);
 
     super.initState();
@@ -31,25 +35,39 @@ class _WelcomePageState extends State<WelcomePage> {
       (idUser) async {
         if (idUser != null) {
           // get user data
-          getUser(idUser).then((user) {
-            // TODO: To Remove it
-            // loadUserDevices(idUser);
-            loadUserFences(idUser);
-            // loadAlerts();
-
+          await getUser(idUser).then((user) async {
             // if there is stored data use it for getting his role
             if (user != null) {
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(page: user.isSuperuser ? '/admin' : '/producer'),
-              );
-            } else {
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(page: '/login'),
+              await _getAlertableSensors().then(
+                (_) => Navigator.of(context).pushReplacementNamed(
+                  user.isSuperuser ? '/admin' : '/producer',
+                ),
               );
             }
           });
+        }
+      },
+    );
+  }
+
+  Future<void> _getAlertableSensors() async {
+    await AlertRequests.getAlertableSensorsFromApi(
+      context: context,
+      onDataGotten: (data) async {},
+      onFailed: (statusCode) {
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
         }
       },
     );
@@ -112,7 +130,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${localizations.loading.capitalize()}...",
+                          "${localizations.loading.capitalizeFirst!}...",
                           style: theme.textTheme.bodyLarge!.copyWith(
                             color: theme.colorScheme.onSecondary,
                             shadows: <Shadow>[

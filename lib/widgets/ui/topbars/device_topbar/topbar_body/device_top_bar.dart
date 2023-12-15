@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardian/models/helpers/device_status.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/device_min_top_bar.dart';
@@ -44,6 +45,13 @@ class DeviceTopBar extends StatelessWidget {
               tailWidget: tailWidget,
               onColorChanged: onColorChanged!,
               maxHeight: maxHeight,
+              deviceStatus: device.data.isEmpty
+                  ? DeviceStatus.offline
+                  : device.data.isNotEmpty &&
+                          device.data.first.lat.value == null &&
+                          device.data.first.lon.value == null
+                      ? DeviceStatus.noGps
+                      : DeviceStatus.online,
             ),
     );
   }

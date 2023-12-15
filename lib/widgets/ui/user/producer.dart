@@ -6,7 +6,7 @@ import 'circle_avatar_border.dart';
 
 /// Class that represents a producer widget
 class Producer extends StatelessWidget {
-  final BigInt idUser;
+  final String idUser;
   final String producerName;
   final String devicesInfo;
   final String imageUrl;

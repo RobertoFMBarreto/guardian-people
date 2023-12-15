@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents the option button widget
 class OptionButton extends StatelessWidget {
@@ -33,7 +33,7 @@ class OptionButton extends StatelessWidget {
                   color: theme.colorScheme.error,
                 ),
                 label: Text(
-                  '${localizations.remove.capitalize()} ${localizations.device.capitalize()}',
+                  '${localizations.remove.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
                   style: theme.textTheme.bodyLarge!.copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -54,7 +54,7 @@ class OptionButton extends StatelessWidget {
                   color: theme.colorScheme.error,
                 ),
                 label: Text(
-                  '${animal.animal.isActive.value ? localizations.unblock.capitalize() : localizations.block.capitalize()} ${localizations.device.capitalize()}',
+                  '${animal.animal.isActive.value ? localizations.unblock.capitalizeFirst! : localizations.block.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
                   style: theme.textTheme.bodyLarge!.copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),

@@ -8,7 +8,7 @@ import 'package:guardian/models/db/drift/query_models/producer_with_devices_amou
 /// Gets the producer data based on [idUser] that is the id of the producer
 ///
 /// Returns all all user data in [Future<UserData>]
-Future<UserData> getProducer(BigInt idUser) async {
+Future<UserData> getProducer(String idUser) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.user)..where((tbl) => tbl.idUser.equals(idUser))).getSingle();
 

@@ -4,10 +4,20 @@ import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/login/login_form.dart';
 
 /// Class that represents the login page
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({
     super.key,
   });
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +48,7 @@ class LoginPage extends StatelessWidget {
           ),
           body: const SafeArea(
             child: Center(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: LoginForm(),
-              ),
+              child: LoginForm(),
             ),
           ),
         ),

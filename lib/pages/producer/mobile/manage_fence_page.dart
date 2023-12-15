@@ -4,14 +4,16 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_removable.dart';
 import 'package:guardian/widgets/ui/maps/devices_locations_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -30,16 +32,21 @@ class ManageFencePage extends StatefulWidget {
 }
 
 class _ManageFencePageState extends State<ManageFencePage> {
+  final GlobalKey _mapParentKey = GlobalKey();
+
   List<Animal> _animals = [];
   List<LatLng> _points = [];
 
   late FenceData _fence;
 
   bool _isLoading = true;
+  bool _firstRun = true;
 
   @override
   void initState() {
     super.initState();
+
+    isSnackbarActive = false;
     _fence = widget.fence;
     _loadAnimals();
     _reloadFence();
@@ -52,7 +59,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
     await getFencePoints(_fence.idFence).then((fencePoints) {
       setState(() {
         _points = [];
-        _points.addAll(fencePoints);
+        _points.addAll(fencePoints.map((e) => LatLng(e.lat, e.lon)).toList());
       });
     });
   }
@@ -61,12 +68,33 @@ class _ManageFencePageState extends State<ManageFencePage> {
   ///
   /// Resets the list to prevent duplicates
   Future<void> _loadAnimals() async {
-    await getFenceAnimals(_fence.idFence).then(
-      (allDevices) => setState(() {
-        _animals = [];
-        _animals.addAll(allDevices);
-        _isLoading = false;
-      }),
+    await FencingRequests.getUserFences(
+      context: context,
+      onFailed: (statusCode) {
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+      },
+      onGottenData: (data) async {
+        await getFenceAnimals(_fence.idFence).then(
+          (allDevices) => setState(() {
+            _animals = [];
+            _animals.addAll(allDevices);
+            _isLoading = false;
+          }),
+        );
+      },
     );
   }
 
@@ -98,16 +126,79 @@ class _ManageFencePageState extends State<ManageFencePage> {
         setState(() {
           _animals.addAll(selected);
         });
-        for (var animal in selected) {
-          await createFenceDevice(
-            FenceAnimalsCompanion(
-              idFence: drift.Value(_fence.idFence),
-              idAnimal: animal.animal.idAnimal,
-            ),
-          );
-        }
+        _createFenceAnimals(selected).then(
+          (_) => FencingRequests.addAnimalFence(
+            fenceId: _fence.idFence,
+            animalIds: selected.map((e) => e.animal.idAnimal.value).toList(),
+            context: context,
+            onFailed: (statusCode) {
+              if (!hasConnection && !isSnackbarActive) {
+                showNoConnectionSnackBar();
+              } else {
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
+              }
+            },
+          ),
+        );
       }
     });
+  }
+
+  Future<void> _createFenceAnimals(List<Animal> selected) async {
+    for (var animal in selected) {
+      await createFenceAnimal(
+        FenceAnimalsCompanion(
+          idFence: drift.Value(_fence.idFence),
+          idAnimal: animal.animal.idAnimal,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onRemoveDevice(int index) async {
+    //store the animal
+    final animal = _animals[index];
+    setState(() {
+      _animals.removeWhere(
+        (element) => element.animal.idAnimal == _animals[index].animal.idAnimal,
+      );
+    });
+    FencingRequests.removeAnimalFence(
+      animalIds: [animal.animal.idAnimal.value],
+      context: context,
+      fenceId: _fence.idFence,
+      onDataGotten: () async {
+        await removeAnimalFence(_fence.idFence, animal.animal.idAnimal.value);
+      },
+      onFailed: (statusCode) {
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+        setState(() {
+          _animals.add(animal);
+        });
+      },
+    );
   }
 
   @override
@@ -119,7 +210,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
       appBar: !_isLoading
           ? AppBar(
               title: Text(
-                '${localizations.fence.capitalize()} ${_fence.name}',
+                '${localizations.fence.capitalizeFirst!} ${_fence.name}',
                 style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
               ),
               centerTitle: true,
@@ -127,11 +218,10 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 if (hasConnection)
                   TextButton(
                     onPressed: () {
-                      // TODO call service to delete fence
                       removeFence(_fence.idFence).then((_) => Navigator.of(context).pop());
                     },
                     child: Text(
-                      localizations.remove.capitalize(),
+                      localizations.remove.capitalizeFirst!,
                       style: theme.textTheme.bodyLarge!
                           .copyWith(color: theme.colorScheme.error, fontWeight: FontWeight.w500),
                     ),
@@ -150,6 +240,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
+                    key: _mapParentKey,
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
@@ -160,6 +251,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             borderRadius: BorderRadius.circular(20),
                             child: AnimalsLocationsMap(
                               key: Key('${_fence.color}$_points'),
+                              parent: _mapParentKey,
                               showCurrentPosition: true,
                               animals: _animals,
                               centerOnPoly: true,
@@ -188,7 +280,8 @@ class _ManageFencePageState extends State<ManageFencePage> {
                             },
                           );
                         },
-                        child: Text('${localizations.edit.capitalize()} ${localizations.fence}'),
+                        child:
+                            Text('${localizations.edit.capitalizeFirst!} ${localizations.fence}'),
                       ),
                     ),
                   Padding(
@@ -197,7 +290,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${localizations.associated_devices.capitalize()}:',
+                          '${localizations.associated_devices.capitalizeFirst!}:',
                           style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                         ),
                         if (hasConnection)
@@ -214,7 +307,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                     flex: 2,
                     child: _animals.isEmpty
                         ? Center(
-                            child: Text(localizations.no_selected_devices.capitalize()),
+                            child: Text(localizations.no_selected_devices.capitalizeFirst!),
                           )
                         : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -223,22 +316,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
                               itemBuilder: (context, index) => AnimalItemRemovable(
                                 key: Key(_animals[index].animal.idAnimal.value.toString()),
                                 animal: _animals[index],
-                                onRemoveDevice: () {
-                                  // TODO: On remove device
-                                  removeAnimalFence(
-                                          _fence.idFence, _animals[index].animal.idAnimal.value)
-                                      .then(
-                                    (_) {
-                                      setState(() {
-                                        _animals.removeWhere(
-                                          (element) =>
-                                              element.animal.idAnimal ==
-                                              _animals[index].animal.idAnimal,
-                                        );
-                                      });
-                                    },
-                                  );
-                                },
+                                onRemoveDevice: () => _onRemoveDevice(index),
                               ),
                             ),
                           ),

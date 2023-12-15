@@ -10,9 +10,9 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
   $UserTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idUserMeta = const VerificationMeta('idUser');
   @override
-  late final GeneratedColumn<BigInt> idUser = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idUser = GeneratedColumn<String>(
       'id_user', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -46,9 +46,18 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'CHECK ("is_producer" IN (0, 1))'));
+  static const VerificationMeta _isOverViewerMeta =
+      const VerificationMeta('isOverViewer');
+  @override
+  late final GeneratedColumn<bool> isOverViewer = GeneratedColumn<bool>(
+      'is_over_viewer', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_over_viewer" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns =>
-      [idUser, name, email, phone, isSuperuser, isProducer];
+      [idUser, name, email, phone, isSuperuser, isProducer, isOverViewer];
   @override
   String get aliasedName => _alias ?? 'user';
   @override
@@ -61,6 +70,8 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
     if (data.containsKey('id_user')) {
       context.handle(_idUserMeta,
           idUser.isAcceptableOrUnknown(data['id_user']!, _idUserMeta));
+    } else if (isInserting) {
+      context.missing(_idUserMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -96,6 +107,14 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
     } else if (isInserting) {
       context.missing(_isProducerMeta);
     }
+    if (data.containsKey('is_over_viewer')) {
+      context.handle(
+          _isOverViewerMeta,
+          isOverViewer.isAcceptableOrUnknown(
+              data['is_over_viewer']!, _isOverViewerMeta));
+    } else if (isInserting) {
+      context.missing(_isOverViewerMeta);
+    }
     return context;
   }
 
@@ -106,7 +125,7 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UserData(
       idUser: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_user'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_user'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       email: attachedDatabase.typeMapping
@@ -117,6 +136,8 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
           .read(DriftSqlType.bool, data['${effectivePrefix}is_superuser'])!,
       isProducer: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_producer'])!,
+      isOverViewer: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_over_viewer'])!,
     );
   }
 
@@ -127,28 +148,31 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
 }
 
 class UserData extends DataClass implements Insertable<UserData> {
-  final BigInt idUser;
+  final String idUser;
   final String name;
   final String email;
   final int phone;
   final bool isSuperuser;
   final bool isProducer;
+  final bool isOverViewer;
   const UserData(
       {required this.idUser,
       required this.name,
       required this.email,
       required this.phone,
       required this.isSuperuser,
-      required this.isProducer});
+      required this.isProducer,
+      required this.isOverViewer});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_user'] = Variable<BigInt>(idUser);
+    map['id_user'] = Variable<String>(idUser);
     map['name'] = Variable<String>(name);
     map['email'] = Variable<String>(email);
     map['phone'] = Variable<int>(phone);
     map['is_superuser'] = Variable<bool>(isSuperuser);
     map['is_producer'] = Variable<bool>(isProducer);
+    map['is_over_viewer'] = Variable<bool>(isOverViewer);
     return map;
   }
 
@@ -160,6 +184,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       phone: Value(phone),
       isSuperuser: Value(isSuperuser),
       isProducer: Value(isProducer),
+      isOverViewer: Value(isOverViewer),
     );
   }
 
@@ -167,34 +192,37 @@ class UserData extends DataClass implements Insertable<UserData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UserData(
-      idUser: serializer.fromJson<BigInt>(json['idUser']),
+      idUser: serializer.fromJson<String>(json['idUser']),
       name: serializer.fromJson<String>(json['name']),
       email: serializer.fromJson<String>(json['email']),
       phone: serializer.fromJson<int>(json['phone']),
       isSuperuser: serializer.fromJson<bool>(json['isSuperuser']),
       isProducer: serializer.fromJson<bool>(json['isProducer']),
+      isOverViewer: serializer.fromJson<bool>(json['isOverViewer']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idUser': serializer.toJson<BigInt>(idUser),
+      'idUser': serializer.toJson<String>(idUser),
       'name': serializer.toJson<String>(name),
       'email': serializer.toJson<String>(email),
       'phone': serializer.toJson<int>(phone),
       'isSuperuser': serializer.toJson<bool>(isSuperuser),
       'isProducer': serializer.toJson<bool>(isProducer),
+      'isOverViewer': serializer.toJson<bool>(isOverViewer),
     };
   }
 
   UserData copyWith(
-          {BigInt? idUser,
+          {String? idUser,
           String? name,
           String? email,
           int? phone,
           bool? isSuperuser,
-          bool? isProducer}) =>
+          bool? isProducer,
+          bool? isOverViewer}) =>
       UserData(
         idUser: idUser ?? this.idUser,
         name: name ?? this.name,
@@ -202,6 +230,7 @@ class UserData extends DataClass implements Insertable<UserData> {
         phone: phone ?? this.phone,
         isSuperuser: isSuperuser ?? this.isSuperuser,
         isProducer: isProducer ?? this.isProducer,
+        isOverViewer: isOverViewer ?? this.isOverViewer,
       );
   @override
   String toString() {
@@ -211,14 +240,15 @@ class UserData extends DataClass implements Insertable<UserData> {
           ..write('email: $email, ')
           ..write('phone: $phone, ')
           ..write('isSuperuser: $isSuperuser, ')
-          ..write('isProducer: $isProducer')
+          ..write('isProducer: $isProducer, ')
+          ..write('isOverViewer: $isOverViewer')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(idUser, name, email, phone, isSuperuser, isProducer);
+  int get hashCode => Object.hash(
+      idUser, name, email, phone, isSuperuser, isProducer, isOverViewer);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -228,16 +258,19 @@ class UserData extends DataClass implements Insertable<UserData> {
           other.email == this.email &&
           other.phone == this.phone &&
           other.isSuperuser == this.isSuperuser &&
-          other.isProducer == this.isProducer);
+          other.isProducer == this.isProducer &&
+          other.isOverViewer == this.isOverViewer);
 }
 
 class UserCompanion extends UpdateCompanion<UserData> {
-  final Value<BigInt> idUser;
+  final Value<String> idUser;
   final Value<String> name;
   final Value<String> email;
   final Value<int> phone;
   final Value<bool> isSuperuser;
   final Value<bool> isProducer;
+  final Value<bool> isOverViewer;
+  final Value<int> rowid;
   const UserCompanion({
     this.idUser = const Value.absent(),
     this.name = const Value.absent(),
@@ -245,26 +278,34 @@ class UserCompanion extends UpdateCompanion<UserData> {
     this.phone = const Value.absent(),
     this.isSuperuser = const Value.absent(),
     this.isProducer = const Value.absent(),
+    this.isOverViewer = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   UserCompanion.insert({
-    this.idUser = const Value.absent(),
+    required String idUser,
     required String name,
     required String email,
     required int phone,
     required bool isSuperuser,
     required bool isProducer,
-  })  : name = Value(name),
+    required bool isOverViewer,
+    this.rowid = const Value.absent(),
+  })  : idUser = Value(idUser),
+        name = Value(name),
         email = Value(email),
         phone = Value(phone),
         isSuperuser = Value(isSuperuser),
-        isProducer = Value(isProducer);
+        isProducer = Value(isProducer),
+        isOverViewer = Value(isOverViewer);
   static Insertable<UserData> custom({
-    Expression<BigInt>? idUser,
+    Expression<String>? idUser,
     Expression<String>? name,
     Expression<String>? email,
     Expression<int>? phone,
     Expression<bool>? isSuperuser,
     Expression<bool>? isProducer,
+    Expression<bool>? isOverViewer,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idUser != null) 'id_user': idUser,
@@ -273,16 +314,20 @@ class UserCompanion extends UpdateCompanion<UserData> {
       if (phone != null) 'phone': phone,
       if (isSuperuser != null) 'is_superuser': isSuperuser,
       if (isProducer != null) 'is_producer': isProducer,
+      if (isOverViewer != null) 'is_over_viewer': isOverViewer,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   UserCompanion copyWith(
-      {Value<BigInt>? idUser,
+      {Value<String>? idUser,
       Value<String>? name,
       Value<String>? email,
       Value<int>? phone,
       Value<bool>? isSuperuser,
-      Value<bool>? isProducer}) {
+      Value<bool>? isProducer,
+      Value<bool>? isOverViewer,
+      Value<int>? rowid}) {
     return UserCompanion(
       idUser: idUser ?? this.idUser,
       name: name ?? this.name,
@@ -290,6 +335,8 @@ class UserCompanion extends UpdateCompanion<UserData> {
       phone: phone ?? this.phone,
       isSuperuser: isSuperuser ?? this.isSuperuser,
       isProducer: isProducer ?? this.isProducer,
+      isOverViewer: isOverViewer ?? this.isOverViewer,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -297,7 +344,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idUser.present) {
-      map['id_user'] = Variable<BigInt>(idUser.value);
+      map['id_user'] = Variable<String>(idUser.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -314,6 +361,12 @@ class UserCompanion extends UpdateCompanion<UserData> {
     if (isProducer.present) {
       map['is_producer'] = Variable<bool>(isProducer.value);
     }
+    if (isOverViewer.present) {
+      map['is_over_viewer'] = Variable<bool>(isOverViewer.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -325,7 +378,9 @@ class UserCompanion extends UpdateCompanion<UserData> {
           ..write('email: $email, ')
           ..write('phone: $phone, ')
           ..write('isSuperuser: $isSuperuser, ')
-          ..write('isProducer: $isProducer')
+          ..write('isProducer: $isProducer, ')
+          ..write('isOverViewer: $isOverViewer, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -339,9 +394,17 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
   static const VerificationMeta _idFenceMeta =
       const VerificationMeta('idFence');
   @override
-  late final GeneratedColumn<BigInt> idFence = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idFence = GeneratedColumn<String>(
       'id_fence', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _idUserMeta = const VerificationMeta('idUser');
+  @override
+  late final GeneratedColumn<String> idUser = GeneratedColumn<String>(
+      'id_user', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES user (id_user)'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -352,8 +415,18 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
   late final GeneratedColumn<String> color = GeneratedColumn<String>(
       'color', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _isStayInsideMeta =
+      const VerificationMeta('isStayInside');
   @override
-  List<GeneratedColumn> get $columns => [idFence, name, color];
+  late final GeneratedColumn<bool> isStayInside = GeneratedColumn<bool>(
+      'is_stay_inside', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_stay_inside" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idFence, idUser, name, color, isStayInside];
   @override
   String get aliasedName => _alias ?? 'fence';
   @override
@@ -366,6 +439,14 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
     if (data.containsKey('id_fence')) {
       context.handle(_idFenceMeta,
           idFence.isAcceptableOrUnknown(data['id_fence']!, _idFenceMeta));
+    } else if (isInserting) {
+      context.missing(_idFenceMeta);
+    }
+    if (data.containsKey('id_user')) {
+      context.handle(_idUserMeta,
+          idUser.isAcceptableOrUnknown(data['id_user']!, _idUserMeta));
+    } else if (isInserting) {
+      context.missing(_idUserMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -379,6 +460,14 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
     } else if (isInserting) {
       context.missing(_colorMeta);
     }
+    if (data.containsKey('is_stay_inside')) {
+      context.handle(
+          _isStayInsideMeta,
+          isStayInside.isAcceptableOrUnknown(
+              data['is_stay_inside']!, _isStayInsideMeta));
+    } else if (isInserting) {
+      context.missing(_isStayInsideMeta);
+    }
     return context;
   }
 
@@ -389,11 +478,15 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FenceData(
       idFence: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_fence'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_fence'])!,
+      idUser: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id_user'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       color: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}color'])!,
+      isStayInside: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_stay_inside'])!,
     );
   }
 
@@ -404,25 +497,35 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
 }
 
 class FenceData extends DataClass implements Insertable<FenceData> {
-  final BigInt idFence;
+  final String idFence;
+  final String idUser;
   final String name;
   final String color;
+  final bool isStayInside;
   const FenceData(
-      {required this.idFence, required this.name, required this.color});
+      {required this.idFence,
+      required this.idUser,
+      required this.name,
+      required this.color,
+      required this.isStayInside});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_fence'] = Variable<BigInt>(idFence);
+    map['id_fence'] = Variable<String>(idFence);
+    map['id_user'] = Variable<String>(idUser);
     map['name'] = Variable<String>(name);
     map['color'] = Variable<String>(color);
+    map['is_stay_inside'] = Variable<bool>(isStayInside);
     return map;
   }
 
   FenceCompanion toCompanion(bool nullToAbsent) {
     return FenceCompanion(
       idFence: Value(idFence),
+      idUser: Value(idUser),
       name: Value(name),
       color: Value(color),
+      isStayInside: Value(isStayInside),
     );
   }
 
@@ -430,81 +533,122 @@ class FenceData extends DataClass implements Insertable<FenceData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FenceData(
-      idFence: serializer.fromJson<BigInt>(json['idFence']),
+      idFence: serializer.fromJson<String>(json['idFence']),
+      idUser: serializer.fromJson<String>(json['idUser']),
       name: serializer.fromJson<String>(json['name']),
       color: serializer.fromJson<String>(json['color']),
+      isStayInside: serializer.fromJson<bool>(json['isStayInside']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idFence': serializer.toJson<BigInt>(idFence),
+      'idFence': serializer.toJson<String>(idFence),
+      'idUser': serializer.toJson<String>(idUser),
       'name': serializer.toJson<String>(name),
       'color': serializer.toJson<String>(color),
+      'isStayInside': serializer.toJson<bool>(isStayInside),
     };
   }
 
-  FenceData copyWith({BigInt? idFence, String? name, String? color}) =>
+  FenceData copyWith(
+          {String? idFence,
+          String? idUser,
+          String? name,
+          String? color,
+          bool? isStayInside}) =>
       FenceData(
         idFence: idFence ?? this.idFence,
+        idUser: idUser ?? this.idUser,
         name: name ?? this.name,
         color: color ?? this.color,
+        isStayInside: isStayInside ?? this.isStayInside,
       );
   @override
   String toString() {
     return (StringBuffer('FenceData(')
           ..write('idFence: $idFence, ')
+          ..write('idUser: $idUser, ')
           ..write('name: $name, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('isStayInside: $isStayInside')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idFence, name, color);
+  int get hashCode => Object.hash(idFence, idUser, name, color, isStayInside);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is FenceData &&
           other.idFence == this.idFence &&
+          other.idUser == this.idUser &&
           other.name == this.name &&
-          other.color == this.color);
+          other.color == this.color &&
+          other.isStayInside == this.isStayInside);
 }
 
 class FenceCompanion extends UpdateCompanion<FenceData> {
-  final Value<BigInt> idFence;
+  final Value<String> idFence;
+  final Value<String> idUser;
   final Value<String> name;
   final Value<String> color;
+  final Value<bool> isStayInside;
+  final Value<int> rowid;
   const FenceCompanion({
     this.idFence = const Value.absent(),
+    this.idUser = const Value.absent(),
     this.name = const Value.absent(),
     this.color = const Value.absent(),
+    this.isStayInside = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FenceCompanion.insert({
-    this.idFence = const Value.absent(),
+    required String idFence,
+    required String idUser,
     required String name,
     required String color,
-  })  : name = Value(name),
-        color = Value(color);
+    required bool isStayInside,
+    this.rowid = const Value.absent(),
+  })  : idFence = Value(idFence),
+        idUser = Value(idUser),
+        name = Value(name),
+        color = Value(color),
+        isStayInside = Value(isStayInside);
   static Insertable<FenceData> custom({
-    Expression<BigInt>? idFence,
+    Expression<String>? idFence,
+    Expression<String>? idUser,
     Expression<String>? name,
     Expression<String>? color,
+    Expression<bool>? isStayInside,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idFence != null) 'id_fence': idFence,
+      if (idUser != null) 'id_user': idUser,
       if (name != null) 'name': name,
       if (color != null) 'color': color,
+      if (isStayInside != null) 'is_stay_inside': isStayInside,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FenceCompanion copyWith(
-      {Value<BigInt>? idFence, Value<String>? name, Value<String>? color}) {
+      {Value<String>? idFence,
+      Value<String>? idUser,
+      Value<String>? name,
+      Value<String>? color,
+      Value<bool>? isStayInside,
+      Value<int>? rowid}) {
     return FenceCompanion(
       idFence: idFence ?? this.idFence,
+      idUser: idUser ?? this.idUser,
       name: name ?? this.name,
       color: color ?? this.color,
+      isStayInside: isStayInside ?? this.isStayInside,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -512,13 +656,22 @@ class FenceCompanion extends UpdateCompanion<FenceData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idFence.present) {
-      map['id_fence'] = Variable<BigInt>(idFence.value);
+      map['id_fence'] = Variable<String>(idFence.value);
+    }
+    if (idUser.present) {
+      map['id_user'] = Variable<String>(idUser.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
     if (color.present) {
       map['color'] = Variable<String>(color.value);
+    }
+    if (isStayInside.present) {
+      map['is_stay_inside'] = Variable<bool>(isStayInside.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -527,8 +680,11 @@ class FenceCompanion extends UpdateCompanion<FenceData> {
   String toString() {
     return (StringBuffer('FenceCompanion(')
           ..write('idFence: $idFence, ')
+          ..write('idUser: $idUser, ')
           ..write('name: $name, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('isStayInside: $isStayInside, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -543,15 +699,15 @@ class $FencePointsTable extends FencePoints
   static const VerificationMeta _idFencePointMeta =
       const VerificationMeta('idFencePoint');
   @override
-  late final GeneratedColumn<BigInt> idFencePoint = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idFencePoint = GeneratedColumn<String>(
       'id_fence_point', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _idFenceMeta =
       const VerificationMeta('idFence');
   @override
-  late final GeneratedColumn<BigInt> idFence = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idFence = GeneratedColumn<String>(
       'id_fence', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES fence (id_fence)'));
@@ -565,8 +721,18 @@ class $FencePointsTable extends FencePoints
   late final GeneratedColumn<double> lon = GeneratedColumn<double>(
       'lon', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _isCenterMeta =
+      const VerificationMeta('isCenter');
   @override
-  List<GeneratedColumn> get $columns => [idFencePoint, idFence, lat, lon];
+  late final GeneratedColumn<bool> isCenter = GeneratedColumn<bool>(
+      'is_center', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_center" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idFencePoint, idFence, lat, lon, isCenter];
   @override
   String get aliasedName => _alias ?? 'fence_points';
   @override
@@ -581,6 +747,8 @@ class $FencePointsTable extends FencePoints
           _idFencePointMeta,
           idFencePoint.isAcceptableOrUnknown(
               data['id_fence_point']!, _idFencePointMeta));
+    } else if (isInserting) {
+      context.missing(_idFencePointMeta);
     }
     if (data.containsKey('id_fence')) {
       context.handle(_idFenceMeta,
@@ -600,6 +768,12 @@ class $FencePointsTable extends FencePoints
     } else if (isInserting) {
       context.missing(_lonMeta);
     }
+    if (data.containsKey('is_center')) {
+      context.handle(_isCenterMeta,
+          isCenter.isAcceptableOrUnknown(data['is_center']!, _isCenterMeta));
+    } else if (isInserting) {
+      context.missing(_isCenterMeta);
+    }
     return context;
   }
 
@@ -610,13 +784,15 @@ class $FencePointsTable extends FencePoints
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FencePoint(
       idFencePoint: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_fence_point'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_fence_point'])!,
       idFence: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_fence'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_fence'])!,
       lat: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}lat'])!,
       lon: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}lon'])!,
+      isCenter: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_center'])!,
     );
   }
 
@@ -627,22 +803,25 @@ class $FencePointsTable extends FencePoints
 }
 
 class FencePoint extends DataClass implements Insertable<FencePoint> {
-  final BigInt idFencePoint;
-  final BigInt idFence;
+  final String idFencePoint;
+  final String idFence;
   final double lat;
   final double lon;
+  final bool isCenter;
   const FencePoint(
       {required this.idFencePoint,
       required this.idFence,
       required this.lat,
-      required this.lon});
+      required this.lon,
+      required this.isCenter});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_fence_point'] = Variable<BigInt>(idFencePoint);
-    map['id_fence'] = Variable<BigInt>(idFence);
+    map['id_fence_point'] = Variable<String>(idFencePoint);
+    map['id_fence'] = Variable<String>(idFence);
     map['lat'] = Variable<double>(lat);
     map['lon'] = Variable<double>(lon);
+    map['is_center'] = Variable<bool>(isCenter);
     return map;
   }
 
@@ -652,6 +831,7 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       idFence: Value(idFence),
       lat: Value(lat),
       lon: Value(lon),
+      isCenter: Value(isCenter),
     );
   }
 
@@ -659,30 +839,37 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FencePoint(
-      idFencePoint: serializer.fromJson<BigInt>(json['idFencePoint']),
-      idFence: serializer.fromJson<BigInt>(json['idFence']),
+      idFencePoint: serializer.fromJson<String>(json['idFencePoint']),
+      idFence: serializer.fromJson<String>(json['idFence']),
       lat: serializer.fromJson<double>(json['lat']),
       lon: serializer.fromJson<double>(json['lon']),
+      isCenter: serializer.fromJson<bool>(json['isCenter']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idFencePoint': serializer.toJson<BigInt>(idFencePoint),
-      'idFence': serializer.toJson<BigInt>(idFence),
+      'idFencePoint': serializer.toJson<String>(idFencePoint),
+      'idFence': serializer.toJson<String>(idFence),
       'lat': serializer.toJson<double>(lat),
       'lon': serializer.toJson<double>(lon),
+      'isCenter': serializer.toJson<bool>(isCenter),
     };
   }
 
   FencePoint copyWith(
-          {BigInt? idFencePoint, BigInt? idFence, double? lat, double? lon}) =>
+          {String? idFencePoint,
+          String? idFence,
+          double? lat,
+          double? lon,
+          bool? isCenter}) =>
       FencePoint(
         idFencePoint: idFencePoint ?? this.idFencePoint,
         idFence: idFence ?? this.idFence,
         lat: lat ?? this.lat,
         lon: lon ?? this.lon,
+        isCenter: isCenter ?? this.isCenter,
       );
   @override
   String toString() {
@@ -690,13 +877,14 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
           ..write('idFencePoint: $idFencePoint, ')
           ..write('idFence: $idFence, ')
           ..write('lat: $lat, ')
-          ..write('lon: $lon')
+          ..write('lon: $lon, ')
+          ..write('isCenter: $isCenter')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idFencePoint, idFence, lat, lon);
+  int get hashCode => Object.hash(idFencePoint, idFence, lat, lon, isCenter);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -704,52 +892,69 @@ class FencePoint extends DataClass implements Insertable<FencePoint> {
           other.idFencePoint == this.idFencePoint &&
           other.idFence == this.idFence &&
           other.lat == this.lat &&
-          other.lon == this.lon);
+          other.lon == this.lon &&
+          other.isCenter == this.isCenter);
 }
 
 class FencePointsCompanion extends UpdateCompanion<FencePoint> {
-  final Value<BigInt> idFencePoint;
-  final Value<BigInt> idFence;
+  final Value<String> idFencePoint;
+  final Value<String> idFence;
   final Value<double> lat;
   final Value<double> lon;
+  final Value<bool> isCenter;
+  final Value<int> rowid;
   const FencePointsCompanion({
     this.idFencePoint = const Value.absent(),
     this.idFence = const Value.absent(),
     this.lat = const Value.absent(),
     this.lon = const Value.absent(),
+    this.isCenter = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FencePointsCompanion.insert({
-    this.idFencePoint = const Value.absent(),
-    required BigInt idFence,
+    required String idFencePoint,
+    required String idFence,
     required double lat,
     required double lon,
-  })  : idFence = Value(idFence),
+    required bool isCenter,
+    this.rowid = const Value.absent(),
+  })  : idFencePoint = Value(idFencePoint),
+        idFence = Value(idFence),
         lat = Value(lat),
-        lon = Value(lon);
+        lon = Value(lon),
+        isCenter = Value(isCenter);
   static Insertable<FencePoint> custom({
-    Expression<BigInt>? idFencePoint,
-    Expression<BigInt>? idFence,
+    Expression<String>? idFencePoint,
+    Expression<String>? idFence,
     Expression<double>? lat,
     Expression<double>? lon,
+    Expression<bool>? isCenter,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idFencePoint != null) 'id_fence_point': idFencePoint,
       if (idFence != null) 'id_fence': idFence,
       if (lat != null) 'lat': lat,
       if (lon != null) 'lon': lon,
+      if (isCenter != null) 'is_center': isCenter,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FencePointsCompanion copyWith(
-      {Value<BigInt>? idFencePoint,
-      Value<BigInt>? idFence,
+      {Value<String>? idFencePoint,
+      Value<String>? idFence,
       Value<double>? lat,
-      Value<double>? lon}) {
+      Value<double>? lon,
+      Value<bool>? isCenter,
+      Value<int>? rowid}) {
     return FencePointsCompanion(
       idFencePoint: idFencePoint ?? this.idFencePoint,
       idFence: idFence ?? this.idFence,
       lat: lat ?? this.lat,
       lon: lon ?? this.lon,
+      isCenter: isCenter ?? this.isCenter,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -757,16 +962,22 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idFencePoint.present) {
-      map['id_fence_point'] = Variable<BigInt>(idFencePoint.value);
+      map['id_fence_point'] = Variable<String>(idFencePoint.value);
     }
     if (idFence.present) {
-      map['id_fence'] = Variable<BigInt>(idFence.value);
+      map['id_fence'] = Variable<String>(idFence.value);
     }
     if (lat.present) {
       map['lat'] = Variable<double>(lat.value);
     }
     if (lon.present) {
       map['lon'] = Variable<double>(lon.value);
+    }
+    if (isCenter.present) {
+      map['is_center'] = Variable<bool>(isCenter.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -777,7 +988,9 @@ class FencePointsCompanion extends UpdateCompanion<FencePoint> {
           ..write('idFencePoint: $idFencePoint, ')
           ..write('idFence: $idFence, ')
           ..write('lat: $lat, ')
-          ..write('lon: $lon')
+          ..write('lon: $lon, ')
+          ..write('isCenter: $isCenter, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -791,14 +1004,14 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
   static const VerificationMeta _idAnimalMeta =
       const VerificationMeta('idAnimal');
   @override
-  late final GeneratedColumn<BigInt> idAnimal = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAnimal = GeneratedColumn<String>(
       'id_animal', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _idUserMeta = const VerificationMeta('idUser');
   @override
-  late final GeneratedColumn<BigInt> idUser = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idUser = GeneratedColumn<String>(
       'id_user', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES user (id_user)'));
@@ -850,6 +1063,8 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
     if (data.containsKey('id_animal')) {
       context.handle(_idAnimalMeta,
           idAnimal.isAcceptableOrUnknown(data['id_animal']!, _idAnimalMeta));
+    } else if (isInserting) {
+      context.missing(_idAnimalMeta);
     }
     if (data.containsKey('id_user')) {
       context.handle(_idUserMeta,
@@ -897,9 +1112,9 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AnimalData(
       idAnimal: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_animal'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_animal'])!,
       idUser: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_user'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_user'])!,
       animalIdentification: attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}animal_identification'])!,
@@ -919,8 +1134,8 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
 }
 
 class AnimalData extends DataClass implements Insertable<AnimalData> {
-  final BigInt idAnimal;
-  final BigInt idUser;
+  final String idAnimal;
+  final String idUser;
   final String animalIdentification;
   final String animalName;
   final String animalColor;
@@ -935,8 +1150,8 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_animal'] = Variable<BigInt>(idAnimal);
-    map['id_user'] = Variable<BigInt>(idUser);
+    map['id_animal'] = Variable<String>(idAnimal);
+    map['id_user'] = Variable<String>(idUser);
     map['animal_identification'] = Variable<String>(animalIdentification);
     map['animal_name'] = Variable<String>(animalName);
     map['animal_color'] = Variable<String>(animalColor);
@@ -959,8 +1174,8 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AnimalData(
-      idAnimal: serializer.fromJson<BigInt>(json['idAnimal']),
-      idUser: serializer.fromJson<BigInt>(json['idUser']),
+      idAnimal: serializer.fromJson<String>(json['idAnimal']),
+      idUser: serializer.fromJson<String>(json['idUser']),
       animalIdentification:
           serializer.fromJson<String>(json['animalIdentification']),
       animalName: serializer.fromJson<String>(json['animalName']),
@@ -972,8 +1187,8 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idAnimal': serializer.toJson<BigInt>(idAnimal),
-      'idUser': serializer.toJson<BigInt>(idUser),
+      'idAnimal': serializer.toJson<String>(idAnimal),
+      'idUser': serializer.toJson<String>(idUser),
       'animalIdentification': serializer.toJson<String>(animalIdentification),
       'animalName': serializer.toJson<String>(animalName),
       'animalColor': serializer.toJson<String>(animalColor),
@@ -982,8 +1197,8 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
   }
 
   AnimalData copyWith(
-          {BigInt? idAnimal,
-          BigInt? idUser,
+          {String? idAnimal,
+          String? idUser,
           String? animalIdentification,
           String? animalName,
           String? animalColor,
@@ -1025,12 +1240,13 @@ class AnimalData extends DataClass implements Insertable<AnimalData> {
 }
 
 class AnimalCompanion extends UpdateCompanion<AnimalData> {
-  final Value<BigInt> idAnimal;
-  final Value<BigInt> idUser;
+  final Value<String> idAnimal;
+  final Value<String> idUser;
   final Value<String> animalIdentification;
   final Value<String> animalName;
   final Value<String> animalColor;
   final Value<bool> isActive;
+  final Value<int> rowid;
   const AnimalCompanion({
     this.idAnimal = const Value.absent(),
     this.idUser = const Value.absent(),
@@ -1038,26 +1254,30 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
     this.animalName = const Value.absent(),
     this.animalColor = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AnimalCompanion.insert({
-    this.idAnimal = const Value.absent(),
-    required BigInt idUser,
+    required String idAnimal,
+    required String idUser,
     required String animalIdentification,
     required String animalName,
     required String animalColor,
     required bool isActive,
-  })  : idUser = Value(idUser),
+    this.rowid = const Value.absent(),
+  })  : idAnimal = Value(idAnimal),
+        idUser = Value(idUser),
         animalIdentification = Value(animalIdentification),
         animalName = Value(animalName),
         animalColor = Value(animalColor),
         isActive = Value(isActive);
   static Insertable<AnimalData> custom({
-    Expression<BigInt>? idAnimal,
-    Expression<BigInt>? idUser,
+    Expression<String>? idAnimal,
+    Expression<String>? idUser,
     Expression<String>? animalIdentification,
     Expression<String>? animalName,
     Expression<String>? animalColor,
     Expression<bool>? isActive,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idAnimal != null) 'id_animal': idAnimal,
@@ -1067,16 +1287,18 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
       if (animalName != null) 'animal_name': animalName,
       if (animalColor != null) 'animal_color': animalColor,
       if (isActive != null) 'is_active': isActive,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   AnimalCompanion copyWith(
-      {Value<BigInt>? idAnimal,
-      Value<BigInt>? idUser,
+      {Value<String>? idAnimal,
+      Value<String>? idUser,
       Value<String>? animalIdentification,
       Value<String>? animalName,
       Value<String>? animalColor,
-      Value<bool>? isActive}) {
+      Value<bool>? isActive,
+      Value<int>? rowid}) {
     return AnimalCompanion(
       idAnimal: idAnimal ?? this.idAnimal,
       idUser: idUser ?? this.idUser,
@@ -1084,6 +1306,7 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
       animalName: animalName ?? this.animalName,
       animalColor: animalColor ?? this.animalColor,
       isActive: isActive ?? this.isActive,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1091,10 +1314,10 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idAnimal.present) {
-      map['id_animal'] = Variable<BigInt>(idAnimal.value);
+      map['id_animal'] = Variable<String>(idAnimal.value);
     }
     if (idUser.present) {
-      map['id_user'] = Variable<BigInt>(idUser.value);
+      map['id_user'] = Variable<String>(idUser.value);
     }
     if (animalIdentification.present) {
       map['animal_identification'] =
@@ -1109,6 +1332,9 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1120,7 +1346,8 @@ class AnimalCompanion extends UpdateCompanion<AnimalData> {
           ..write('animalIdentification: $animalIdentification, ')
           ..write('animalName: $animalName, ')
           ..write('animalColor: $animalColor, ')
-          ..write('isActive: $isActive')
+          ..write('isActive: $isActive, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1135,18 +1362,18 @@ class $FenceAnimalsTable extends FenceAnimals
   static const VerificationMeta _idFenceMeta =
       const VerificationMeta('idFence');
   @override
-  late final GeneratedColumn<BigInt> idFence = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idFence = GeneratedColumn<String>(
       'id_fence', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES fence (id_fence)'));
   static const VerificationMeta _idAnimalMeta =
       const VerificationMeta('idAnimal');
   @override
-  late final GeneratedColumn<BigInt> idAnimal = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAnimal = GeneratedColumn<String>(
       'id_animal', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
@@ -1183,9 +1410,9 @@ class $FenceAnimalsTable extends FenceAnimals
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FenceAnimal(
       idFence: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_fence'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_fence'])!,
       idAnimal: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_animal'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_animal'])!,
     );
   }
 
@@ -1196,14 +1423,14 @@ class $FenceAnimalsTable extends FenceAnimals
 }
 
 class FenceAnimal extends DataClass implements Insertable<FenceAnimal> {
-  final BigInt idFence;
-  final BigInt idAnimal;
+  final String idFence;
+  final String idAnimal;
   const FenceAnimal({required this.idFence, required this.idAnimal});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_fence'] = Variable<BigInt>(idFence);
-    map['id_animal'] = Variable<BigInt>(idAnimal);
+    map['id_fence'] = Variable<String>(idFence);
+    map['id_animal'] = Variable<String>(idAnimal);
     return map;
   }
 
@@ -1218,20 +1445,20 @@ class FenceAnimal extends DataClass implements Insertable<FenceAnimal> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FenceAnimal(
-      idFence: serializer.fromJson<BigInt>(json['idFence']),
-      idAnimal: serializer.fromJson<BigInt>(json['idAnimal']),
+      idFence: serializer.fromJson<String>(json['idFence']),
+      idAnimal: serializer.fromJson<String>(json['idAnimal']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idFence': serializer.toJson<BigInt>(idFence),
-      'idAnimal': serializer.toJson<BigInt>(idAnimal),
+      'idFence': serializer.toJson<String>(idFence),
+      'idAnimal': serializer.toJson<String>(idAnimal),
     };
   }
 
-  FenceAnimal copyWith({BigInt? idFence, BigInt? idAnimal}) => FenceAnimal(
+  FenceAnimal copyWith({String? idFence, String? idAnimal}) => FenceAnimal(
         idFence: idFence ?? this.idFence,
         idAnimal: idAnimal ?? this.idAnimal,
       );
@@ -1255,8 +1482,8 @@ class FenceAnimal extends DataClass implements Insertable<FenceAnimal> {
 }
 
 class FenceAnimalsCompanion extends UpdateCompanion<FenceAnimal> {
-  final Value<BigInt> idFence;
-  final Value<BigInt> idAnimal;
+  final Value<String> idFence;
+  final Value<String> idAnimal;
   final Value<int> rowid;
   const FenceAnimalsCompanion({
     this.idFence = const Value.absent(),
@@ -1264,14 +1491,14 @@ class FenceAnimalsCompanion extends UpdateCompanion<FenceAnimal> {
     this.rowid = const Value.absent(),
   });
   FenceAnimalsCompanion.insert({
-    required BigInt idFence,
-    required BigInt idAnimal,
+    required String idFence,
+    required String idAnimal,
     this.rowid = const Value.absent(),
   })  : idFence = Value(idFence),
         idAnimal = Value(idAnimal);
   static Insertable<FenceAnimal> custom({
-    Expression<BigInt>? idFence,
-    Expression<BigInt>? idAnimal,
+    Expression<String>? idFence,
+    Expression<String>? idAnimal,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1282,7 +1509,7 @@ class FenceAnimalsCompanion extends UpdateCompanion<FenceAnimal> {
   }
 
   FenceAnimalsCompanion copyWith(
-      {Value<BigInt>? idFence, Value<BigInt>? idAnimal, Value<int>? rowid}) {
+      {Value<String>? idFence, Value<String>? idAnimal, Value<int>? rowid}) {
     return FenceAnimalsCompanion(
       idFence: idFence ?? this.idFence,
       idAnimal: idAnimal ?? this.idAnimal,
@@ -1294,10 +1521,10 @@ class FenceAnimalsCompanion extends UpdateCompanion<FenceAnimal> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idFence.present) {
-      map['id_fence'] = Variable<BigInt>(idFence.value);
+      map['id_fence'] = Variable<String>(idFence.value);
     }
     if (idAnimal.present) {
-      map['id_animal'] = Variable<BigInt>(idAnimal.value);
+      map['id_animal'] = Variable<String>(idAnimal.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1325,24 +1552,18 @@ class $AnimalLocationsTable extends AnimalLocations
   static const VerificationMeta _animalDataIdMeta =
       const VerificationMeta('animalDataId');
   @override
-  late final GeneratedColumn<BigInt> animalDataId = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> animalDataId = GeneratedColumn<String>(
       'animal_data_id', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _idAnimalMeta =
       const VerificationMeta('idAnimal');
   @override
-  late final GeneratedColumn<BigInt> idAnimal = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAnimal = GeneratedColumn<String>(
       'id_animal', aliasedName, true,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
-  static const VerificationMeta _dataUsageMeta =
-      const VerificationMeta('dataUsage');
-  @override
-  late final GeneratedColumn<int> dataUsage = GeneratedColumn<int>(
-      'data_usage', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _temperatureMeta =
       const VerificationMeta('temperature');
   @override
@@ -1391,7 +1612,6 @@ class $AnimalLocationsTable extends AnimalLocations
   List<GeneratedColumn> get $columns => [
         animalDataId,
         idAnimal,
-        dataUsage,
         temperature,
         battery,
         lat,
@@ -1415,14 +1635,12 @@ class $AnimalLocationsTable extends AnimalLocations
           _animalDataIdMeta,
           animalDataId.isAcceptableOrUnknown(
               data['animal_data_id']!, _animalDataIdMeta));
+    } else if (isInserting) {
+      context.missing(_animalDataIdMeta);
     }
     if (data.containsKey('id_animal')) {
       context.handle(_idAnimalMeta,
           idAnimal.isAcceptableOrUnknown(data['id_animal']!, _idAnimalMeta));
-    }
-    if (data.containsKey('data_usage')) {
-      context.handle(_dataUsageMeta,
-          dataUsage.isAcceptableOrUnknown(data['data_usage']!, _dataUsageMeta));
     }
     if (data.containsKey('temperature')) {
       context.handle(
@@ -1470,11 +1688,9 @@ class $AnimalLocationsTable extends AnimalLocations
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AnimalLocation(
       animalDataId: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}animal_data_id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}animal_data_id'])!,
       idAnimal: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_animal']),
-      dataUsage: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}data_usage']),
+          .read(DriftSqlType.string, data['${effectivePrefix}id_animal']),
       temperature: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}temperature']),
       battery: attachedDatabase.typeMapping
@@ -1501,9 +1717,8 @@ class $AnimalLocationsTable extends AnimalLocations
 }
 
 class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
-  final BigInt animalDataId;
-  final BigInt? idAnimal;
-  final int? dataUsage;
+  final String animalDataId;
+  final String? idAnimal;
   final double? temperature;
   final int? battery;
   final double? lat;
@@ -1515,7 +1730,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   const AnimalLocation(
       {required this.animalDataId,
       this.idAnimal,
-      this.dataUsage,
       this.temperature,
       this.battery,
       this.lat,
@@ -1527,12 +1741,9 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['animal_data_id'] = Variable<BigInt>(animalDataId);
+    map['animal_data_id'] = Variable<String>(animalDataId);
     if (!nullToAbsent || idAnimal != null) {
-      map['id_animal'] = Variable<BigInt>(idAnimal);
-    }
-    if (!nullToAbsent || dataUsage != null) {
-      map['data_usage'] = Variable<int>(dataUsage);
+      map['id_animal'] = Variable<String>(idAnimal);
     }
     if (!nullToAbsent || temperature != null) {
       map['temperature'] = Variable<double>(temperature);
@@ -1565,9 +1776,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
       idAnimal: idAnimal == null && nullToAbsent
           ? const Value.absent()
           : Value(idAnimal),
-      dataUsage: dataUsage == null && nullToAbsent
-          ? const Value.absent()
-          : Value(dataUsage),
       temperature: temperature == null && nullToAbsent
           ? const Value.absent()
           : Value(temperature),
@@ -1592,9 +1800,8 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AnimalLocation(
-      animalDataId: serializer.fromJson<BigInt>(json['animalDataId']),
-      idAnimal: serializer.fromJson<BigInt?>(json['idAnimal']),
-      dataUsage: serializer.fromJson<int?>(json['dataUsage']),
+      animalDataId: serializer.fromJson<String>(json['animalDataId']),
+      idAnimal: serializer.fromJson<String?>(json['idAnimal']),
       temperature: serializer.fromJson<double?>(json['temperature']),
       battery: serializer.fromJson<int?>(json['battery']),
       lat: serializer.fromJson<double?>(json['lat']),
@@ -1609,9 +1816,8 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'animalDataId': serializer.toJson<BigInt>(animalDataId),
-      'idAnimal': serializer.toJson<BigInt?>(idAnimal),
-      'dataUsage': serializer.toJson<int?>(dataUsage),
+      'animalDataId': serializer.toJson<String>(animalDataId),
+      'idAnimal': serializer.toJson<String?>(idAnimal),
       'temperature': serializer.toJson<double?>(temperature),
       'battery': serializer.toJson<int?>(battery),
       'lat': serializer.toJson<double?>(lat),
@@ -1624,9 +1830,8 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   }
 
   AnimalLocation copyWith(
-          {BigInt? animalDataId,
-          Value<BigInt?> idAnimal = const Value.absent(),
-          Value<int?> dataUsage = const Value.absent(),
+          {String? animalDataId,
+          Value<String?> idAnimal = const Value.absent(),
           Value<double?> temperature = const Value.absent(),
           Value<int?> battery = const Value.absent(),
           Value<double?> lat = const Value.absent(),
@@ -1638,7 +1843,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
       AnimalLocation(
         animalDataId: animalDataId ?? this.animalDataId,
         idAnimal: idAnimal.present ? idAnimal.value : this.idAnimal,
-        dataUsage: dataUsage.present ? dataUsage.value : this.dataUsage,
         temperature: temperature.present ? temperature.value : this.temperature,
         battery: battery.present ? battery.value : this.battery,
         lat: lat.present ? lat.value : this.lat,
@@ -1653,7 +1857,6 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
     return (StringBuffer('AnimalLocation(')
           ..write('animalDataId: $animalDataId, ')
           ..write('idAnimal: $idAnimal, ')
-          ..write('dataUsage: $dataUsage, ')
           ..write('temperature: $temperature, ')
           ..write('battery: $battery, ')
           ..write('lat: $lat, ')
@@ -1667,15 +1870,14 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
   }
 
   @override
-  int get hashCode => Object.hash(animalDataId, idAnimal, dataUsage,
-      temperature, battery, lat, lon, elevation, accuracy, date, state);
+  int get hashCode => Object.hash(animalDataId, idAnimal, temperature, battery,
+      lat, lon, elevation, accuracy, date, state);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AnimalLocation &&
           other.animalDataId == this.animalDataId &&
           other.idAnimal == this.idAnimal &&
-          other.dataUsage == this.dataUsage &&
           other.temperature == this.temperature &&
           other.battery == this.battery &&
           other.lat == this.lat &&
@@ -1687,9 +1889,8 @@ class AnimalLocation extends DataClass implements Insertable<AnimalLocation> {
 }
 
 class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
-  final Value<BigInt> animalDataId;
-  final Value<BigInt?> idAnimal;
-  final Value<int?> dataUsage;
+  final Value<String> animalDataId;
+  final Value<String?> idAnimal;
   final Value<double?> temperature;
   final Value<int?> battery;
   final Value<double?> lat;
@@ -1698,10 +1899,10 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   final Value<double?> accuracy;
   final Value<DateTime> date;
   final Value<String?> state;
+  final Value<int> rowid;
   const AnimalLocationsCompanion({
     this.animalDataId = const Value.absent(),
     this.idAnimal = const Value.absent(),
-    this.dataUsage = const Value.absent(),
     this.temperature = const Value.absent(),
     this.battery = const Value.absent(),
     this.lat = const Value.absent(),
@@ -1710,11 +1911,11 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     this.accuracy = const Value.absent(),
     this.date = const Value.absent(),
     this.state = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AnimalLocationsCompanion.insert({
-    this.animalDataId = const Value.absent(),
+    required String animalDataId,
     this.idAnimal = const Value.absent(),
-    this.dataUsage = const Value.absent(),
     this.temperature = const Value.absent(),
     this.battery = const Value.absent(),
     this.lat = const Value.absent(),
@@ -1723,11 +1924,12 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     this.accuracy = const Value.absent(),
     required DateTime date,
     this.state = const Value.absent(),
-  }) : date = Value(date);
+    this.rowid = const Value.absent(),
+  })  : animalDataId = Value(animalDataId),
+        date = Value(date);
   static Insertable<AnimalLocation> custom({
-    Expression<BigInt>? animalDataId,
-    Expression<BigInt>? idAnimal,
-    Expression<int>? dataUsage,
+    Expression<String>? animalDataId,
+    Expression<String>? idAnimal,
     Expression<double>? temperature,
     Expression<int>? battery,
     Expression<double>? lat,
@@ -1736,11 +1938,11 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     Expression<double>? accuracy,
     Expression<DateTime>? date,
     Expression<String>? state,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (animalDataId != null) 'animal_data_id': animalDataId,
       if (idAnimal != null) 'id_animal': idAnimal,
-      if (dataUsage != null) 'data_usage': dataUsage,
       if (temperature != null) 'temperature': temperature,
       if (battery != null) 'battery': battery,
       if (lat != null) 'lat': lat,
@@ -1749,13 +1951,13 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
       if (accuracy != null) 'accuracy': accuracy,
       if (date != null) 'date': date,
       if (state != null) 'state': state,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   AnimalLocationsCompanion copyWith(
-      {Value<BigInt>? animalDataId,
-      Value<BigInt?>? idAnimal,
-      Value<int?>? dataUsage,
+      {Value<String>? animalDataId,
+      Value<String?>? idAnimal,
       Value<double?>? temperature,
       Value<int?>? battery,
       Value<double?>? lat,
@@ -1763,11 +1965,11 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
       Value<double?>? elevation,
       Value<double?>? accuracy,
       Value<DateTime>? date,
-      Value<String?>? state}) {
+      Value<String?>? state,
+      Value<int>? rowid}) {
     return AnimalLocationsCompanion(
       animalDataId: animalDataId ?? this.animalDataId,
       idAnimal: idAnimal ?? this.idAnimal,
-      dataUsage: dataUsage ?? this.dataUsage,
       temperature: temperature ?? this.temperature,
       battery: battery ?? this.battery,
       lat: lat ?? this.lat,
@@ -1776,6 +1978,7 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
       accuracy: accuracy ?? this.accuracy,
       date: date ?? this.date,
       state: state ?? this.state,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1783,13 +1986,10 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (animalDataId.present) {
-      map['animal_data_id'] = Variable<BigInt>(animalDataId.value);
+      map['animal_data_id'] = Variable<String>(animalDataId.value);
     }
     if (idAnimal.present) {
-      map['id_animal'] = Variable<BigInt>(idAnimal.value);
-    }
-    if (dataUsage.present) {
-      map['data_usage'] = Variable<int>(dataUsage.value);
+      map['id_animal'] = Variable<String>(idAnimal.value);
     }
     if (temperature.present) {
       map['temperature'] = Variable<double>(temperature.value);
@@ -1815,6 +2015,9 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     if (state.present) {
       map['state'] = Variable<String>(state.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1823,7 +2026,6 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
     return (StringBuffer('AnimalLocationsCompanion(')
           ..write('animalDataId: $animalDataId, ')
           ..write('idAnimal: $idAnimal, ')
-          ..write('dataUsage: $dataUsage, ')
           ..write('temperature: $temperature, ')
           ..write('battery: $battery, ')
           ..write('lat: $lat, ')
@@ -1831,7 +2033,279 @@ class AnimalLocationsCompanion extends UpdateCompanion<AnimalLocation> {
           ..write('elevation: $elevation, ')
           ..write('accuracy: $accuracy, ')
           ..write('date: $date, ')
-          ..write('state: $state')
+          ..write('state: $state, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SensorsTable extends Sensors with TableInfo<$SensorsTable, Sensor> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SensorsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idSensorMeta =
+      const VerificationMeta('idSensor');
+  @override
+  late final GeneratedColumn<String> idSensor = GeneratedColumn<String>(
+      'id_sensor', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _sensorNameMeta =
+      const VerificationMeta('sensorName');
+  @override
+  late final GeneratedColumn<String> sensorName = GeneratedColumn<String>(
+      'sensor_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _fullSensorNameMeta =
+      const VerificationMeta('fullSensorName');
+  @override
+  late final GeneratedColumn<String> fullSensorName = GeneratedColumn<String>(
+      'full_sensor_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _canAlertMeta =
+      const VerificationMeta('canAlert');
+  @override
+  late final GeneratedColumn<bool> canAlert = GeneratedColumn<bool>(
+      'can_alert', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("can_alert" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idSensor, sensorName, fullSensorName, canAlert];
+  @override
+  String get aliasedName => _alias ?? 'sensors';
+  @override
+  String get actualTableName => 'sensors';
+  @override
+  VerificationContext validateIntegrity(Insertable<Sensor> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_sensor')) {
+      context.handle(_idSensorMeta,
+          idSensor.isAcceptableOrUnknown(data['id_sensor']!, _idSensorMeta));
+    } else if (isInserting) {
+      context.missing(_idSensorMeta);
+    }
+    if (data.containsKey('sensor_name')) {
+      context.handle(
+          _sensorNameMeta,
+          sensorName.isAcceptableOrUnknown(
+              data['sensor_name']!, _sensorNameMeta));
+    } else if (isInserting) {
+      context.missing(_sensorNameMeta);
+    }
+    if (data.containsKey('full_sensor_name')) {
+      context.handle(
+          _fullSensorNameMeta,
+          fullSensorName.isAcceptableOrUnknown(
+              data['full_sensor_name']!, _fullSensorNameMeta));
+    } else if (isInserting) {
+      context.missing(_fullSensorNameMeta);
+    }
+    if (data.containsKey('can_alert')) {
+      context.handle(_canAlertMeta,
+          canAlert.isAcceptableOrUnknown(data['can_alert']!, _canAlertMeta));
+    } else if (isInserting) {
+      context.missing(_canAlertMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idSensor};
+  @override
+  Sensor map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Sensor(
+      idSensor: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id_sensor'])!,
+      sensorName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sensor_name'])!,
+      fullSensorName: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}full_sensor_name'])!,
+      canAlert: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}can_alert'])!,
+    );
+  }
+
+  @override
+  $SensorsTable createAlias(String alias) {
+    return $SensorsTable(attachedDatabase, alias);
+  }
+}
+
+class Sensor extends DataClass implements Insertable<Sensor> {
+  final String idSensor;
+  final String sensorName;
+  final String fullSensorName;
+  final bool canAlert;
+  const Sensor(
+      {required this.idSensor,
+      required this.sensorName,
+      required this.fullSensorName,
+      required this.canAlert});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_sensor'] = Variable<String>(idSensor);
+    map['sensor_name'] = Variable<String>(sensorName);
+    map['full_sensor_name'] = Variable<String>(fullSensorName);
+    map['can_alert'] = Variable<bool>(canAlert);
+    return map;
+  }
+
+  SensorsCompanion toCompanion(bool nullToAbsent) {
+    return SensorsCompanion(
+      idSensor: Value(idSensor),
+      sensorName: Value(sensorName),
+      fullSensorName: Value(fullSensorName),
+      canAlert: Value(canAlert),
+    );
+  }
+
+  factory Sensor.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Sensor(
+      idSensor: serializer.fromJson<String>(json['idSensor']),
+      sensorName: serializer.fromJson<String>(json['sensorName']),
+      fullSensorName: serializer.fromJson<String>(json['fullSensorName']),
+      canAlert: serializer.fromJson<bool>(json['canAlert']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idSensor': serializer.toJson<String>(idSensor),
+      'sensorName': serializer.toJson<String>(sensorName),
+      'fullSensorName': serializer.toJson<String>(fullSensorName),
+      'canAlert': serializer.toJson<bool>(canAlert),
+    };
+  }
+
+  Sensor copyWith(
+          {String? idSensor,
+          String? sensorName,
+          String? fullSensorName,
+          bool? canAlert}) =>
+      Sensor(
+        idSensor: idSensor ?? this.idSensor,
+        sensorName: sensorName ?? this.sensorName,
+        fullSensorName: fullSensorName ?? this.fullSensorName,
+        canAlert: canAlert ?? this.canAlert,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Sensor(')
+          ..write('idSensor: $idSensor, ')
+          ..write('sensorName: $sensorName, ')
+          ..write('fullSensorName: $fullSensorName, ')
+          ..write('canAlert: $canAlert')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(idSensor, sensorName, fullSensorName, canAlert);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Sensor &&
+          other.idSensor == this.idSensor &&
+          other.sensorName == this.sensorName &&
+          other.fullSensorName == this.fullSensorName &&
+          other.canAlert == this.canAlert);
+}
+
+class SensorsCompanion extends UpdateCompanion<Sensor> {
+  final Value<String> idSensor;
+  final Value<String> sensorName;
+  final Value<String> fullSensorName;
+  final Value<bool> canAlert;
+  final Value<int> rowid;
+  const SensorsCompanion({
+    this.idSensor = const Value.absent(),
+    this.sensorName = const Value.absent(),
+    this.fullSensorName = const Value.absent(),
+    this.canAlert = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SensorsCompanion.insert({
+    required String idSensor,
+    required String sensorName,
+    required String fullSensorName,
+    required bool canAlert,
+    this.rowid = const Value.absent(),
+  })  : idSensor = Value(idSensor),
+        sensorName = Value(sensorName),
+        fullSensorName = Value(fullSensorName),
+        canAlert = Value(canAlert);
+  static Insertable<Sensor> custom({
+    Expression<String>? idSensor,
+    Expression<String>? sensorName,
+    Expression<String>? fullSensorName,
+    Expression<bool>? canAlert,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (idSensor != null) 'id_sensor': idSensor,
+      if (sensorName != null) 'sensor_name': sensorName,
+      if (fullSensorName != null) 'full_sensor_name': fullSensorName,
+      if (canAlert != null) 'can_alert': canAlert,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SensorsCompanion copyWith(
+      {Value<String>? idSensor,
+      Value<String>? sensorName,
+      Value<String>? fullSensorName,
+      Value<bool>? canAlert,
+      Value<int>? rowid}) {
+    return SensorsCompanion(
+      idSensor: idSensor ?? this.idSensor,
+      sensorName: sensorName ?? this.sensorName,
+      fullSensorName: fullSensorName ?? this.fullSensorName,
+      canAlert: canAlert ?? this.canAlert,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idSensor.present) {
+      map['id_sensor'] = Variable<String>(idSensor.value);
+    }
+    if (sensorName.present) {
+      map['sensor_name'] = Variable<String>(sensorName.value);
+    }
+    if (fullSensorName.present) {
+      map['full_sensor_name'] = Variable<String>(fullSensorName.value);
+    }
+    if (canAlert.present) {
+      map['can_alert'] = Variable<bool>(canAlert.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorsCompanion(')
+          ..write('idSensor: $idSensor, ')
+          ..write('sensorName: $sensorName, ')
+          ..write('fullSensorName: $fullSensorName, ')
+          ..write('canAlert: $canAlert, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1846,9 +2320,27 @@ class $UserAlertTable extends UserAlert
   static const VerificationMeta _idAlertMeta =
       const VerificationMeta('idAlert');
   @override
-  late final GeneratedColumn<BigInt> idAlert = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAlert = GeneratedColumn<String>(
       'id_alert', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _comparissonMeta =
+      const VerificationMeta('comparisson');
+  @override
+  late final GeneratedColumn<String> comparisson = GeneratedColumn<String>(
+      'comparisson', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _conditionCompToMeta =
+      const VerificationMeta('conditionCompTo');
+  @override
+  late final GeneratedColumn<String> conditionCompTo = GeneratedColumn<String>(
+      'condition_comp_to', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _durationSecondsMeta =
+      const VerificationMeta('durationSeconds');
+  @override
+  late final GeneratedColumn<int> durationSeconds = GeneratedColumn<int>(
+      'duration_seconds', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _hasNotificationMeta =
       const VerificationMeta('hasNotification');
   @override
@@ -1858,26 +2350,44 @@ class $UserAlertTable extends UserAlert
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'CHECK ("has_notification" IN (0, 1))'));
+  static const VerificationMeta _isTimedMeta =
+      const VerificationMeta('isTimed');
+  @override
+  late final GeneratedColumn<bool> isTimed = GeneratedColumn<bool>(
+      'is_timed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_timed" IN (0, 1))'));
+  static const VerificationMeta _isStateParamMeta =
+      const VerificationMeta('isStateParam');
+  @override
+  late final GeneratedColumn<bool> isStateParam = GeneratedColumn<bool>(
+      'is_state_param', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_state_param" IN (0, 1))'));
   static const VerificationMeta _parameterMeta =
       const VerificationMeta('parameter');
   @override
   late final GeneratedColumn<String> parameter = GeneratedColumn<String>(
       'parameter', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _comparissonMeta =
-      const VerificationMeta('comparisson');
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES sensors (id_sensor)'));
   @override
-  late final GeneratedColumn<String> comparisson = GeneratedColumn<String>(
-      'comparisson', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _valueMeta = const VerificationMeta('value');
-  @override
-  late final GeneratedColumn<double> value = GeneratedColumn<double>(
-      'value', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [idAlert, hasNotification, parameter, comparisson, value];
+  List<GeneratedColumn> get $columns => [
+        idAlert,
+        comparisson,
+        conditionCompTo,
+        durationSeconds,
+        hasNotification,
+        isTimed,
+        isStateParam,
+        parameter
+      ];
   @override
   String get aliasedName => _alias ?? 'user_alert';
   @override
@@ -1890,20 +2400,8 @@ class $UserAlertTable extends UserAlert
     if (data.containsKey('id_alert')) {
       context.handle(_idAlertMeta,
           idAlert.isAcceptableOrUnknown(data['id_alert']!, _idAlertMeta));
-    }
-    if (data.containsKey('has_notification')) {
-      context.handle(
-          _hasNotificationMeta,
-          hasNotification.isAcceptableOrUnknown(
-              data['has_notification']!, _hasNotificationMeta));
     } else if (isInserting) {
-      context.missing(_hasNotificationMeta);
-    }
-    if (data.containsKey('parameter')) {
-      context.handle(_parameterMeta,
-          parameter.isAcceptableOrUnknown(data['parameter']!, _parameterMeta));
-    } else if (isInserting) {
-      context.missing(_parameterMeta);
+      context.missing(_idAlertMeta);
     }
     if (data.containsKey('comparisson')) {
       context.handle(
@@ -1913,11 +2411,49 @@ class $UserAlertTable extends UserAlert
     } else if (isInserting) {
       context.missing(_comparissonMeta);
     }
-    if (data.containsKey('value')) {
+    if (data.containsKey('condition_comp_to')) {
       context.handle(
-          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+          _conditionCompToMeta,
+          conditionCompTo.isAcceptableOrUnknown(
+              data['condition_comp_to']!, _conditionCompToMeta));
     } else if (isInserting) {
-      context.missing(_valueMeta);
+      context.missing(_conditionCompToMeta);
+    }
+    if (data.containsKey('duration_seconds')) {
+      context.handle(
+          _durationSecondsMeta,
+          durationSeconds.isAcceptableOrUnknown(
+              data['duration_seconds']!, _durationSecondsMeta));
+    } else if (isInserting) {
+      context.missing(_durationSecondsMeta);
+    }
+    if (data.containsKey('has_notification')) {
+      context.handle(
+          _hasNotificationMeta,
+          hasNotification.isAcceptableOrUnknown(
+              data['has_notification']!, _hasNotificationMeta));
+    } else if (isInserting) {
+      context.missing(_hasNotificationMeta);
+    }
+    if (data.containsKey('is_timed')) {
+      context.handle(_isTimedMeta,
+          isTimed.isAcceptableOrUnknown(data['is_timed']!, _isTimedMeta));
+    } else if (isInserting) {
+      context.missing(_isTimedMeta);
+    }
+    if (data.containsKey('is_state_param')) {
+      context.handle(
+          _isStateParamMeta,
+          isStateParam.isAcceptableOrUnknown(
+              data['is_state_param']!, _isStateParamMeta));
+    } else if (isInserting) {
+      context.missing(_isStateParamMeta);
+    }
+    if (data.containsKey('parameter')) {
+      context.handle(_parameterMeta,
+          parameter.isAcceptableOrUnknown(data['parameter']!, _parameterMeta));
+    } else if (isInserting) {
+      context.missing(_parameterMeta);
     }
     return context;
   }
@@ -1929,15 +2465,21 @@ class $UserAlertTable extends UserAlert
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UserAlertData(
       idAlert: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_alert'])!,
-      hasNotification: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}has_notification'])!,
-      parameter: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}parameter'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_alert'])!,
       comparisson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}comparisson'])!,
-      value: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
+      conditionCompTo: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}condition_comp_to'])!,
+      durationSeconds: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}duration_seconds'])!,
+      hasNotification: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}has_notification'])!,
+      isTimed: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_timed'])!,
+      isStateParam: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_state_param'])!,
+      parameter: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}parameter'])!,
     );
   }
 
@@ -1948,35 +2490,47 @@ class $UserAlertTable extends UserAlert
 }
 
 class UserAlertData extends DataClass implements Insertable<UserAlertData> {
-  final BigInt idAlert;
-  final bool hasNotification;
-  final String parameter;
+  final String idAlert;
   final String comparisson;
-  final double value;
+  final String conditionCompTo;
+  final int durationSeconds;
+  final bool hasNotification;
+  final bool isTimed;
+  final bool isStateParam;
+  final String parameter;
   const UserAlertData(
       {required this.idAlert,
-      required this.hasNotification,
-      required this.parameter,
       required this.comparisson,
-      required this.value});
+      required this.conditionCompTo,
+      required this.durationSeconds,
+      required this.hasNotification,
+      required this.isTimed,
+      required this.isStateParam,
+      required this.parameter});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_alert'] = Variable<BigInt>(idAlert);
-    map['has_notification'] = Variable<bool>(hasNotification);
-    map['parameter'] = Variable<String>(parameter);
+    map['id_alert'] = Variable<String>(idAlert);
     map['comparisson'] = Variable<String>(comparisson);
-    map['value'] = Variable<double>(value);
+    map['condition_comp_to'] = Variable<String>(conditionCompTo);
+    map['duration_seconds'] = Variable<int>(durationSeconds);
+    map['has_notification'] = Variable<bool>(hasNotification);
+    map['is_timed'] = Variable<bool>(isTimed);
+    map['is_state_param'] = Variable<bool>(isStateParam);
+    map['parameter'] = Variable<String>(parameter);
     return map;
   }
 
   UserAlertCompanion toCompanion(bool nullToAbsent) {
     return UserAlertCompanion(
       idAlert: Value(idAlert),
-      hasNotification: Value(hasNotification),
-      parameter: Value(parameter),
       comparisson: Value(comparisson),
-      value: Value(value),
+      conditionCompTo: Value(conditionCompTo),
+      durationSeconds: Value(durationSeconds),
+      hasNotification: Value(hasNotification),
+      isTimed: Value(isTimed),
+      isStateParam: Value(isStateParam),
+      parameter: Value(parameter),
     );
   }
 
@@ -1984,115 +2538,165 @@ class UserAlertData extends DataClass implements Insertable<UserAlertData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UserAlertData(
-      idAlert: serializer.fromJson<BigInt>(json['idAlert']),
-      hasNotification: serializer.fromJson<bool>(json['hasNotification']),
-      parameter: serializer.fromJson<String>(json['parameter']),
+      idAlert: serializer.fromJson<String>(json['idAlert']),
       comparisson: serializer.fromJson<String>(json['comparisson']),
-      value: serializer.fromJson<double>(json['value']),
+      conditionCompTo: serializer.fromJson<String>(json['conditionCompTo']),
+      durationSeconds: serializer.fromJson<int>(json['durationSeconds']),
+      hasNotification: serializer.fromJson<bool>(json['hasNotification']),
+      isTimed: serializer.fromJson<bool>(json['isTimed']),
+      isStateParam: serializer.fromJson<bool>(json['isStateParam']),
+      parameter: serializer.fromJson<String>(json['parameter']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idAlert': serializer.toJson<BigInt>(idAlert),
-      'hasNotification': serializer.toJson<bool>(hasNotification),
-      'parameter': serializer.toJson<String>(parameter),
+      'idAlert': serializer.toJson<String>(idAlert),
       'comparisson': serializer.toJson<String>(comparisson),
-      'value': serializer.toJson<double>(value),
+      'conditionCompTo': serializer.toJson<String>(conditionCompTo),
+      'durationSeconds': serializer.toJson<int>(durationSeconds),
+      'hasNotification': serializer.toJson<bool>(hasNotification),
+      'isTimed': serializer.toJson<bool>(isTimed),
+      'isStateParam': serializer.toJson<bool>(isStateParam),
+      'parameter': serializer.toJson<String>(parameter),
     };
   }
 
   UserAlertData copyWith(
-          {BigInt? idAlert,
-          bool? hasNotification,
-          String? parameter,
+          {String? idAlert,
           String? comparisson,
-          double? value}) =>
+          String? conditionCompTo,
+          int? durationSeconds,
+          bool? hasNotification,
+          bool? isTimed,
+          bool? isStateParam,
+          String? parameter}) =>
       UserAlertData(
         idAlert: idAlert ?? this.idAlert,
-        hasNotification: hasNotification ?? this.hasNotification,
-        parameter: parameter ?? this.parameter,
         comparisson: comparisson ?? this.comparisson,
-        value: value ?? this.value,
+        conditionCompTo: conditionCompTo ?? this.conditionCompTo,
+        durationSeconds: durationSeconds ?? this.durationSeconds,
+        hasNotification: hasNotification ?? this.hasNotification,
+        isTimed: isTimed ?? this.isTimed,
+        isStateParam: isStateParam ?? this.isStateParam,
+        parameter: parameter ?? this.parameter,
       );
   @override
   String toString() {
     return (StringBuffer('UserAlertData(')
           ..write('idAlert: $idAlert, ')
-          ..write('hasNotification: $hasNotification, ')
-          ..write('parameter: $parameter, ')
           ..write('comparisson: $comparisson, ')
-          ..write('value: $value')
+          ..write('conditionCompTo: $conditionCompTo, ')
+          ..write('durationSeconds: $durationSeconds, ')
+          ..write('hasNotification: $hasNotification, ')
+          ..write('isTimed: $isTimed, ')
+          ..write('isStateParam: $isStateParam, ')
+          ..write('parameter: $parameter')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(idAlert, hasNotification, parameter, comparisson, value);
+  int get hashCode => Object.hash(idAlert, comparisson, conditionCompTo,
+      durationSeconds, hasNotification, isTimed, isStateParam, parameter);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is UserAlertData &&
           other.idAlert == this.idAlert &&
-          other.hasNotification == this.hasNotification &&
-          other.parameter == this.parameter &&
           other.comparisson == this.comparisson &&
-          other.value == this.value);
+          other.conditionCompTo == this.conditionCompTo &&
+          other.durationSeconds == this.durationSeconds &&
+          other.hasNotification == this.hasNotification &&
+          other.isTimed == this.isTimed &&
+          other.isStateParam == this.isStateParam &&
+          other.parameter == this.parameter);
 }
 
 class UserAlertCompanion extends UpdateCompanion<UserAlertData> {
-  final Value<BigInt> idAlert;
-  final Value<bool> hasNotification;
-  final Value<String> parameter;
+  final Value<String> idAlert;
   final Value<String> comparisson;
-  final Value<double> value;
+  final Value<String> conditionCompTo;
+  final Value<int> durationSeconds;
+  final Value<bool> hasNotification;
+  final Value<bool> isTimed;
+  final Value<bool> isStateParam;
+  final Value<String> parameter;
+  final Value<int> rowid;
   const UserAlertCompanion({
     this.idAlert = const Value.absent(),
-    this.hasNotification = const Value.absent(),
-    this.parameter = const Value.absent(),
     this.comparisson = const Value.absent(),
-    this.value = const Value.absent(),
+    this.conditionCompTo = const Value.absent(),
+    this.durationSeconds = const Value.absent(),
+    this.hasNotification = const Value.absent(),
+    this.isTimed = const Value.absent(),
+    this.isStateParam = const Value.absent(),
+    this.parameter = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   UserAlertCompanion.insert({
-    this.idAlert = const Value.absent(),
-    required bool hasNotification,
-    required String parameter,
+    required String idAlert,
     required String comparisson,
-    required double value,
-  })  : hasNotification = Value(hasNotification),
-        parameter = Value(parameter),
+    required String conditionCompTo,
+    required int durationSeconds,
+    required bool hasNotification,
+    required bool isTimed,
+    required bool isStateParam,
+    required String parameter,
+    this.rowid = const Value.absent(),
+  })  : idAlert = Value(idAlert),
         comparisson = Value(comparisson),
-        value = Value(value);
+        conditionCompTo = Value(conditionCompTo),
+        durationSeconds = Value(durationSeconds),
+        hasNotification = Value(hasNotification),
+        isTimed = Value(isTimed),
+        isStateParam = Value(isStateParam),
+        parameter = Value(parameter);
   static Insertable<UserAlertData> custom({
-    Expression<BigInt>? idAlert,
-    Expression<bool>? hasNotification,
-    Expression<String>? parameter,
+    Expression<String>? idAlert,
     Expression<String>? comparisson,
-    Expression<double>? value,
+    Expression<String>? conditionCompTo,
+    Expression<int>? durationSeconds,
+    Expression<bool>? hasNotification,
+    Expression<bool>? isTimed,
+    Expression<bool>? isStateParam,
+    Expression<String>? parameter,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idAlert != null) 'id_alert': idAlert,
-      if (hasNotification != null) 'has_notification': hasNotification,
-      if (parameter != null) 'parameter': parameter,
       if (comparisson != null) 'comparisson': comparisson,
-      if (value != null) 'value': value,
+      if (conditionCompTo != null) 'condition_comp_to': conditionCompTo,
+      if (durationSeconds != null) 'duration_seconds': durationSeconds,
+      if (hasNotification != null) 'has_notification': hasNotification,
+      if (isTimed != null) 'is_timed': isTimed,
+      if (isStateParam != null) 'is_state_param': isStateParam,
+      if (parameter != null) 'parameter': parameter,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   UserAlertCompanion copyWith(
-      {Value<BigInt>? idAlert,
-      Value<bool>? hasNotification,
-      Value<String>? parameter,
+      {Value<String>? idAlert,
       Value<String>? comparisson,
-      Value<double>? value}) {
+      Value<String>? conditionCompTo,
+      Value<int>? durationSeconds,
+      Value<bool>? hasNotification,
+      Value<bool>? isTimed,
+      Value<bool>? isStateParam,
+      Value<String>? parameter,
+      Value<int>? rowid}) {
     return UserAlertCompanion(
       idAlert: idAlert ?? this.idAlert,
-      hasNotification: hasNotification ?? this.hasNotification,
-      parameter: parameter ?? this.parameter,
       comparisson: comparisson ?? this.comparisson,
-      value: value ?? this.value,
+      conditionCompTo: conditionCompTo ?? this.conditionCompTo,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
+      hasNotification: hasNotification ?? this.hasNotification,
+      isTimed: isTimed ?? this.isTimed,
+      isStateParam: isStateParam ?? this.isStateParam,
+      parameter: parameter ?? this.parameter,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2100,19 +2704,31 @@ class UserAlertCompanion extends UpdateCompanion<UserAlertData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idAlert.present) {
-      map['id_alert'] = Variable<BigInt>(idAlert.value);
-    }
-    if (hasNotification.present) {
-      map['has_notification'] = Variable<bool>(hasNotification.value);
-    }
-    if (parameter.present) {
-      map['parameter'] = Variable<String>(parameter.value);
+      map['id_alert'] = Variable<String>(idAlert.value);
     }
     if (comparisson.present) {
       map['comparisson'] = Variable<String>(comparisson.value);
     }
-    if (value.present) {
-      map['value'] = Variable<double>(value.value);
+    if (conditionCompTo.present) {
+      map['condition_comp_to'] = Variable<String>(conditionCompTo.value);
+    }
+    if (durationSeconds.present) {
+      map['duration_seconds'] = Variable<int>(durationSeconds.value);
+    }
+    if (hasNotification.present) {
+      map['has_notification'] = Variable<bool>(hasNotification.value);
+    }
+    if (isTimed.present) {
+      map['is_timed'] = Variable<bool>(isTimed.value);
+    }
+    if (isStateParam.present) {
+      map['is_state_param'] = Variable<bool>(isStateParam.value);
+    }
+    if (parameter.present) {
+      map['parameter'] = Variable<String>(parameter.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -2121,10 +2737,14 @@ class UserAlertCompanion extends UpdateCompanion<UserAlertData> {
   String toString() {
     return (StringBuffer('UserAlertCompanion(')
           ..write('idAlert: $idAlert, ')
-          ..write('hasNotification: $hasNotification, ')
-          ..write('parameter: $parameter, ')
           ..write('comparisson: $comparisson, ')
-          ..write('value: $value')
+          ..write('conditionCompTo: $conditionCompTo, ')
+          ..write('durationSeconds: $durationSeconds, ')
+          ..write('hasNotification: $hasNotification, ')
+          ..write('isTimed: $isTimed, ')
+          ..write('isStateParam: $isStateParam, ')
+          ..write('parameter: $parameter, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2139,24 +2759,24 @@ class $AlertNotificationTable extends AlertNotification
   static const VerificationMeta _idNotificationMeta =
       const VerificationMeta('idNotification');
   @override
-  late final GeneratedColumn<BigInt> idNotification = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idNotification = GeneratedColumn<String>(
       'id_notification', aliasedName, false,
-      type: DriftSqlType.bigInt, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _idAnimalMeta =
       const VerificationMeta('idAnimal');
   @override
-  late final GeneratedColumn<BigInt> idAnimal = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAnimal = GeneratedColumn<String>(
       'id_animal', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
   static const VerificationMeta _idAlertMeta =
       const VerificationMeta('idAlert');
   @override
-  late final GeneratedColumn<BigInt> idAlert = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAlert = GeneratedColumn<String>(
       'id_alert', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES user_alert (id_alert)'));
@@ -2177,6 +2797,8 @@ class $AlertNotificationTable extends AlertNotification
           _idNotificationMeta,
           idNotification.isAcceptableOrUnknown(
               data['id_notification']!, _idNotificationMeta));
+    } else if (isInserting) {
+      context.missing(_idNotificationMeta);
     }
     if (data.containsKey('id_animal')) {
       context.handle(_idAnimalMeta,
@@ -2200,11 +2822,11 @@ class $AlertNotificationTable extends AlertNotification
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AlertNotificationData(
       idNotification: attachedDatabase.typeMapping.read(
-          DriftSqlType.bigInt, data['${effectivePrefix}id_notification'])!,
+          DriftSqlType.string, data['${effectivePrefix}id_notification'])!,
       idAnimal: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_animal'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_animal'])!,
       idAlert: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_alert'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_alert'])!,
     );
   }
 
@@ -2216,9 +2838,9 @@ class $AlertNotificationTable extends AlertNotification
 
 class AlertNotificationData extends DataClass
     implements Insertable<AlertNotificationData> {
-  final BigInt idNotification;
-  final BigInt idAnimal;
-  final BigInt idAlert;
+  final String idNotification;
+  final String idAnimal;
+  final String idAlert;
   const AlertNotificationData(
       {required this.idNotification,
       required this.idAnimal,
@@ -2226,9 +2848,9 @@ class AlertNotificationData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_notification'] = Variable<BigInt>(idNotification);
-    map['id_animal'] = Variable<BigInt>(idAnimal);
-    map['id_alert'] = Variable<BigInt>(idAlert);
+    map['id_notification'] = Variable<String>(idNotification);
+    map['id_animal'] = Variable<String>(idAnimal);
+    map['id_alert'] = Variable<String>(idAlert);
     return map;
   }
 
@@ -2244,23 +2866,23 @@ class AlertNotificationData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AlertNotificationData(
-      idNotification: serializer.fromJson<BigInt>(json['idNotification']),
-      idAnimal: serializer.fromJson<BigInt>(json['idAnimal']),
-      idAlert: serializer.fromJson<BigInt>(json['idAlert']),
+      idNotification: serializer.fromJson<String>(json['idNotification']),
+      idAnimal: serializer.fromJson<String>(json['idAnimal']),
+      idAlert: serializer.fromJson<String>(json['idAlert']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idNotification': serializer.toJson<BigInt>(idNotification),
-      'idAnimal': serializer.toJson<BigInt>(idAnimal),
-      'idAlert': serializer.toJson<BigInt>(idAlert),
+      'idNotification': serializer.toJson<String>(idNotification),
+      'idAnimal': serializer.toJson<String>(idAnimal),
+      'idAlert': serializer.toJson<String>(idAlert),
     };
   }
 
   AlertNotificationData copyWith(
-          {BigInt? idNotification, BigInt? idAnimal, BigInt? idAlert}) =>
+          {String? idNotification, String? idAnimal, String? idAlert}) =>
       AlertNotificationData(
         idNotification: idNotification ?? this.idNotification,
         idAnimal: idAnimal ?? this.idAnimal,
@@ -2289,40 +2911,48 @@ class AlertNotificationData extends DataClass
 
 class AlertNotificationCompanion
     extends UpdateCompanion<AlertNotificationData> {
-  final Value<BigInt> idNotification;
-  final Value<BigInt> idAnimal;
-  final Value<BigInt> idAlert;
+  final Value<String> idNotification;
+  final Value<String> idAnimal;
+  final Value<String> idAlert;
+  final Value<int> rowid;
   const AlertNotificationCompanion({
     this.idNotification = const Value.absent(),
     this.idAnimal = const Value.absent(),
     this.idAlert = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AlertNotificationCompanion.insert({
-    this.idNotification = const Value.absent(),
-    required BigInt idAnimal,
-    required BigInt idAlert,
-  })  : idAnimal = Value(idAnimal),
+    required String idNotification,
+    required String idAnimal,
+    required String idAlert,
+    this.rowid = const Value.absent(),
+  })  : idNotification = Value(idNotification),
+        idAnimal = Value(idAnimal),
         idAlert = Value(idAlert);
   static Insertable<AlertNotificationData> custom({
-    Expression<BigInt>? idNotification,
-    Expression<BigInt>? idAnimal,
-    Expression<BigInt>? idAlert,
+    Expression<String>? idNotification,
+    Expression<String>? idAnimal,
+    Expression<String>? idAlert,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idNotification != null) 'id_notification': idNotification,
       if (idAnimal != null) 'id_animal': idAnimal,
       if (idAlert != null) 'id_alert': idAlert,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   AlertNotificationCompanion copyWith(
-      {Value<BigInt>? idNotification,
-      Value<BigInt>? idAnimal,
-      Value<BigInt>? idAlert}) {
+      {Value<String>? idNotification,
+      Value<String>? idAnimal,
+      Value<String>? idAlert,
+      Value<int>? rowid}) {
     return AlertNotificationCompanion(
       idNotification: idNotification ?? this.idNotification,
       idAnimal: idAnimal ?? this.idAnimal,
       idAlert: idAlert ?? this.idAlert,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2330,13 +2960,16 @@ class AlertNotificationCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idNotification.present) {
-      map['id_notification'] = Variable<BigInt>(idNotification.value);
+      map['id_notification'] = Variable<String>(idNotification.value);
     }
     if (idAnimal.present) {
-      map['id_animal'] = Variable<BigInt>(idAnimal.value);
+      map['id_animal'] = Variable<String>(idAnimal.value);
     }
     if (idAlert.present) {
-      map['id_alert'] = Variable<BigInt>(idAlert.value);
+      map['id_alert'] = Variable<String>(idAlert.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -2346,7 +2979,8 @@ class AlertNotificationCompanion
     return (StringBuffer('AlertNotificationCompanion(')
           ..write('idNotification: $idNotification, ')
           ..write('idAnimal: $idAnimal, ')
-          ..write('idAlert: $idAlert')
+          ..write('idAlert: $idAlert, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2361,18 +2995,18 @@ class $AlertAnimalsTable extends AlertAnimals
   static const VerificationMeta _idAnimalMeta =
       const VerificationMeta('idAnimal');
   @override
-  late final GeneratedColumn<BigInt> idAnimal = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAnimal = GeneratedColumn<String>(
       'id_animal', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
   static const VerificationMeta _idAlertMeta =
       const VerificationMeta('idAlert');
   @override
-  late final GeneratedColumn<BigInt> idAlert = GeneratedColumn<BigInt>(
+  late final GeneratedColumn<String> idAlert = GeneratedColumn<String>(
       'id_alert', aliasedName, false,
-      type: DriftSqlType.bigInt,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES user_alert (id_alert)'));
@@ -2409,9 +3043,9 @@ class $AlertAnimalsTable extends AlertAnimals
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AlertAnimal(
       idAnimal: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_animal'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_animal'])!,
       idAlert: attachedDatabase.typeMapping
-          .read(DriftSqlType.bigInt, data['${effectivePrefix}id_alert'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_alert'])!,
     );
   }
 
@@ -2422,14 +3056,14 @@ class $AlertAnimalsTable extends AlertAnimals
 }
 
 class AlertAnimal extends DataClass implements Insertable<AlertAnimal> {
-  final BigInt idAnimal;
-  final BigInt idAlert;
+  final String idAnimal;
+  final String idAlert;
   const AlertAnimal({required this.idAnimal, required this.idAlert});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_animal'] = Variable<BigInt>(idAnimal);
-    map['id_alert'] = Variable<BigInt>(idAlert);
+    map['id_animal'] = Variable<String>(idAnimal);
+    map['id_alert'] = Variable<String>(idAlert);
     return map;
   }
 
@@ -2444,20 +3078,20 @@ class AlertAnimal extends DataClass implements Insertable<AlertAnimal> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AlertAnimal(
-      idAnimal: serializer.fromJson<BigInt>(json['idAnimal']),
-      idAlert: serializer.fromJson<BigInt>(json['idAlert']),
+      idAnimal: serializer.fromJson<String>(json['idAnimal']),
+      idAlert: serializer.fromJson<String>(json['idAlert']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idAnimal': serializer.toJson<BigInt>(idAnimal),
-      'idAlert': serializer.toJson<BigInt>(idAlert),
+      'idAnimal': serializer.toJson<String>(idAnimal),
+      'idAlert': serializer.toJson<String>(idAlert),
     };
   }
 
-  AlertAnimal copyWith({BigInt? idAnimal, BigInt? idAlert}) => AlertAnimal(
+  AlertAnimal copyWith({String? idAnimal, String? idAlert}) => AlertAnimal(
         idAnimal: idAnimal ?? this.idAnimal,
         idAlert: idAlert ?? this.idAlert,
       );
@@ -2481,8 +3115,8 @@ class AlertAnimal extends DataClass implements Insertable<AlertAnimal> {
 }
 
 class AlertAnimalsCompanion extends UpdateCompanion<AlertAnimal> {
-  final Value<BigInt> idAnimal;
-  final Value<BigInt> idAlert;
+  final Value<String> idAnimal;
+  final Value<String> idAlert;
   final Value<int> rowid;
   const AlertAnimalsCompanion({
     this.idAnimal = const Value.absent(),
@@ -2490,14 +3124,14 @@ class AlertAnimalsCompanion extends UpdateCompanion<AlertAnimal> {
     this.rowid = const Value.absent(),
   });
   AlertAnimalsCompanion.insert({
-    required BigInt idAnimal,
-    required BigInt idAlert,
+    required String idAnimal,
+    required String idAlert,
     this.rowid = const Value.absent(),
   })  : idAnimal = Value(idAnimal),
         idAlert = Value(idAlert);
   static Insertable<AlertAnimal> custom({
-    Expression<BigInt>? idAnimal,
-    Expression<BigInt>? idAlert,
+    Expression<String>? idAnimal,
+    Expression<String>? idAlert,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2508,7 +3142,7 @@ class AlertAnimalsCompanion extends UpdateCompanion<AlertAnimal> {
   }
 
   AlertAnimalsCompanion copyWith(
-      {Value<BigInt>? idAnimal, Value<BigInt>? idAlert, Value<int>? rowid}) {
+      {Value<String>? idAnimal, Value<String>? idAlert, Value<int>? rowid}) {
     return AlertAnimalsCompanion(
       idAnimal: idAnimal ?? this.idAnimal,
       idAlert: idAlert ?? this.idAlert,
@@ -2520,10 +3154,10 @@ class AlertAnimalsCompanion extends UpdateCompanion<AlertAnimal> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idAnimal.present) {
-      map['id_animal'] = Variable<BigInt>(idAnimal.value);
+      map['id_animal'] = Variable<String>(idAnimal.value);
     }
     if (idAlert.present) {
-      map['id_alert'] = Variable<BigInt>(idAlert.value);
+      map['id_alert'] = Variable<String>(idAlert.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2551,6 +3185,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
   late final $FenceAnimalsTable fenceAnimals = $FenceAnimalsTable(this);
   late final $AnimalLocationsTable animalLocations =
       $AnimalLocationsTable(this);
+  late final $SensorsTable sensors = $SensorsTable(this);
   late final $UserAlertTable userAlert = $UserAlertTable(this);
   late final $AlertNotificationTable alertNotification =
       $AlertNotificationTable(this);
@@ -2566,6 +3201,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
         animal,
         fenceAnimals,
         animalLocations,
+        sensors,
         userAlert,
         alertNotification,
         alertAnimals

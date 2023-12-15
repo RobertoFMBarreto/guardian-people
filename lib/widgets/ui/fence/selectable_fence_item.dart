@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/settings/colors.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/ui/common/color_circle.dart';
 
 /// Class that represents a selectable fence item widget
@@ -60,7 +60,7 @@ class SelectableFenceItem extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(right: 4.0),
                           child: Text(
-                            '${localizations.color.capitalize()}:',
+                            '${localizations.color.capitalizeFirst!}:',
                             style: theme.textTheme.bodyLarge!.copyWith(
                               fontSize: 16,
                             ),
