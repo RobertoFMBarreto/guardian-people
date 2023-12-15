@@ -43,21 +43,24 @@ class AnimalItemRemovable extends StatelessWidget {
             ),
           ),
           trailing: animal.data.isNotEmpty && animal.data.first.battery.value != null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DeviceWidgetProvider.getBatteryWidget(
-                      deviceBattery: animal.data.first.battery.value!,
-                      color: theme.colorScheme.secondary,
-                    ),
-                    Text(
-                      '${animal.data.first.battery.value.toString()}%',
-                      style: theme.textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w500,
+              ? SizedBox(
+                  width: 40,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      DeviceWidgetProvider.getBatteryWidget(
+                        deviceBattery: animal.data.first.battery.value!,
+                        color: theme.colorScheme.secondary,
                       ),
-                    ),
-                  ],
+                      Text(
+                        '${animal.data.first.battery.value.toString()}%',
+                        style: theme.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : const SizedBox(),
         ),

@@ -61,23 +61,26 @@ class AnimalItemSelectable extends StatelessWidget {
                 ),
               ),
               if (deviceBattery != null)
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      DeviceWidgetProvider.getBatteryWidget(
-                        deviceBattery: deviceBattery!,
-                        color: theme.colorScheme.secondary,
-                      ),
-                      Text(
-                        '${deviceBattery.toString()}%',
-                        style: theme.textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.w500,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SizedBox(
+                    width: 40,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DeviceWidgetProvider.getBatteryWidget(
+                          deviceBattery: deviceBattery!,
+                          color: theme.colorScheme.secondary,
                         ),
-                      ),
-                    ],
+                        Text(
+                          '${deviceBattery.toString()}%',
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
             ],

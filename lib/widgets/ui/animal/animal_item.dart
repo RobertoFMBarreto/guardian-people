@@ -92,24 +92,27 @@ class AnimalItem extends StatelessWidget {
               ],
             ),
             trailing: animal.data.isNotEmpty && animal.data.first.battery.value != null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      DeviceWidgetProvider.getBatteryWidget(
-                        deviceBattery: animal.data.first.battery.value!,
-                        color: isSelected
-                            ? theme.colorScheme.onSecondary
-                            : theme.colorScheme.secondary,
-                      ),
-                      Text(
-                        '${animal.data.first.battery.value}%',
-                        style: theme.textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: isSelected ? theme.colorScheme.onSecondary : null,
+                ? SizedBox(
+                    width: 40,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DeviceWidgetProvider.getBatteryWidget(
+                          deviceBattery: animal.data.first.battery.value!,
+                          color: isSelected
+                              ? theme.colorScheme.onSecondary
+                              : theme.colorScheme.secondary,
                         ),
-                      ),
-                    ],
+                        Text(
+                          '${animal.data.first.battery.value}%',
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: isSelected ? theme.colorScheme.onSecondary : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 : const SizedBox(),
           ),
