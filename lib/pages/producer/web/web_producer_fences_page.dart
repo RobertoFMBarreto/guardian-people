@@ -179,7 +179,6 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
       context: context,
       fenceId: fence!.idFence,
       onDataGotten: () async {
-        print('Here');
         await removeAnimalFence(fence.idFence, animal.animal.idAnimal.value);
       },
       onFailed: (statusCode) {

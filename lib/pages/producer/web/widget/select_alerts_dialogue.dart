@@ -1,17 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
-import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/main.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 
-import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/widgets/ui/alert/selectable_alert_management_item.dart';
 
@@ -89,112 +86,6 @@ class _SelectAlertsDialogueState extends State<SelectAlertsDialogue> {
             _alerts = [];
             _alerts.addAll(allAlerts);
           });
-        }
-      },
-    );
-  }
-
-  /// Method that allows to get all local user alerts
-  Future<void> _getLocalUserAlerts() async {
-    await getUserAlerts().then(
-      (allAlerts) {
-        if (mounted) {
-          setState(() {
-            _alerts = [];
-            _alerts.addAll(allAlerts);
-          });
-        }
-      },
-    );
-  }
-
-  /// Method that allows to delete all user alerts deleting first locally and then from the api
-  Future<void> _deleteAll() async {
-    _deleteAllFromApi().then((failedAlerts) {
-      if (failedAlerts.isNotEmpty) {
-        setState(() {
-          _alerts.addAll(failedAlerts);
-        });
-      }
-    });
-  }
-
-  /// Method that allows to delete all alerts from api
-  ///
-  /// In case of fail the alert is added again
-  ///
-  /// In case everything goes wright the animals of alert are removed
-  Future<List<UserAlertCompanion>> _deleteAllFromApi() async {
-    List<UserAlertCompanion> failedAlerts = [];
-    for (UserAlertCompanion alert in _alerts) {
-      await AlertRequests.deleteUserAlertFromApi(
-        context: context,
-        alertId: alert.idAlert.value,
-        onDataGotten: (data) {
-          setState(() {
-            _alerts.removeWhere((element) => element.idAlert.value == alert.idAlert.value);
-          });
-          deleteAlert(alert.idAlert.value).then(
-            (value) => removeAllAlertAnimals(alert.idAlert.value),
-          );
-        },
-        onFailed: (statusCode) {
-          failedAlerts.add(alert);
-          if (!hasConnection && !isSnackbarActive) {
-            showNoConnectionSnackBar();
-          } else {
-            if (statusCode == 507 || statusCode == 404) {
-              if (_firstRun == true) {
-                showNoConnectionSnackBar();
-              }
-              _firstRun = false;
-            } else if (!isSnackbarActive) {
-              AppLocalizations localizations = AppLocalizations.of(context)!;
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-            }
-          }
-        },
-      );
-    }
-    return failedAlerts;
-  }
-
-  /// Method that allows to delete an alert first locally and then from api
-  ///
-  /// In case of fail the alert is added again
-  ///
-  /// In case everything goes wright the animals of alert are removed
-  Future<void> _deleteAlert(int index) async {
-    final alert = _alerts[index];
-
-    setState(() {
-      _alerts.removeAt(index);
-    });
-    await AlertRequests.deleteUserAlertFromApi(
-      context: context,
-      alertId: alert.idAlert.value,
-      onDataGotten: (data) {
-        deleteAlert(alert.idAlert.value);
-        removeAllAlertAnimals(alert.idAlert.value);
-      },
-      onFailed: (statusCode) {
-        setState(() {
-          _alerts.add(alert);
-        });
-        if (!hasConnection && !isSnackbarActive) {
-          showNoConnectionSnackBar();
-        } else {
-          if (statusCode == 507 || statusCode == 404) {
-            if (_firstRun == true) {
-              showNoConnectionSnackBar();
-            }
-            _firstRun = false;
-          } else if (!isSnackbarActive) {
-            AppLocalizations localizations = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-          }
         }
       },
     );

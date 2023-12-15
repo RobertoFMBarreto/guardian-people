@@ -169,10 +169,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
     _updateData();
-    print('Check: ${data.isNotEmpty && _showHeatMap}');
-    print('Check2: ${data.map(
-          (e) => WeightedLatLng(LatLng(e.lat.value!, e.lon.value!), 1),
-        ).toList()}');
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {

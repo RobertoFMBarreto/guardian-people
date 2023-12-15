@@ -13,7 +13,6 @@ import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:guardian/pages/producer/web/widget/device_settings.dart';
-import 'package:guardian/pages/producer/web/widget/select_alerts_dialogue.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_time_widget.dart';

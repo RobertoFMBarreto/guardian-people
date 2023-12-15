@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
@@ -388,8 +387,8 @@ class _DeviceSettingsState extends State<DeviceSettings> {
               theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
           child: Container(
             constraints: const BoxConstraints(maxWidth: 400),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
+            child: const ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
               child: Scaffold(
                 body: SelectFencesDialogue(),
               ),
