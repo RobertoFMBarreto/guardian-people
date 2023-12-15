@@ -3,7 +3,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_users_operations.dart';
 import 'package:guardian/models/db/drift/query_models/producer_with_devices_amount.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/dropdown/home_dropdown.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -85,7 +85,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         title: Padding(
                           padding: const EdgeInsets.only(right: 20.0),
                           child: SearchFieldInput(
-                            label: localizations.search.capitalize(),
+                            label: localizations.search.capitalizeFirst!,
                             onChanged: (value) {
                               _searchString = value;
                               _loadUsers();
@@ -100,7 +100,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0, top: 8.0),
                       child: Text(
-                        localizations.producers.capitalize(),
+                        localizations.producers.capitalizeFirst!,
                         style: theme.textTheme.headlineMedium!.copyWith(fontSize: kIsWeb ? 42 : 22),
                       ),
                     ),
@@ -126,7 +126,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           },
                         ));
               },
-              tooltip: '${localizations.add.capitalize()} ${localizations.producer}',
+              tooltip: '${localizations.add.capitalizeFirst!} ${localizations.producer}',
               backgroundColor: theme.colorScheme.secondary,
               shape: const CircleBorder(),
               child: Icon(

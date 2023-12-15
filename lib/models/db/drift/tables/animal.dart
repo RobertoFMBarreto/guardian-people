@@ -7,8 +7,8 @@ import 'package:guardian/models/db/drift/tables/user.dart';
 ///
 /// [idUser] relates with the table [User] on its primary key
 class Animal extends Table {
-  Int64Column get idAnimal => int64()();
-  Int64Column get idUser => int64().references(User, #idUser)();
+  TextColumn get idAnimal => text()();
+  TextColumn get idUser => text().references(User, #idUser)();
   TextColumn get animalIdentification => text()();
   TextColumn get animalName => text()();
   TextColumn get animalColor => text()();

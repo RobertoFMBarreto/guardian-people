@@ -5,12 +5,12 @@ import 'package:guardian/models/db/drift/database.dart';
 /// Method for creating animal location data [animalData] returning it as [AnimalLocationsCompanion]
 Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion animalData) async {
   final db = Get.find<GuardianDb>();
-  db.into(db.animalLocations).insertOnConflictUpdate(animalData);
+  await db.into(db.animalLocations).insertOnConflictUpdate(animalData);
   return animalData;
 }
 
 /// Method to get last animal data from a single animal [idAnimal] returning as a [AnimalLocationsCompanion]
-Future<AnimalLocationsCompanion?> getLastAnimalData(BigInt idAnimal) async {
+Future<AnimalLocationsCompanion?> getLastAnimalData(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.animalLocations)
         ..where(
@@ -56,22 +56,23 @@ Future<double> getMaxTemperature() async {
 Future<List<AnimalLocationsCompanion>> getAnimalData({
   DateTime? startDate,
   DateTime? endDate,
-  required BigInt idAnimal,
+  required String idAnimal,
   bool isInterval = false,
 }) async {
   final db = Get.find<GuardianDb>();
   List<AnimalLocationsCompanion> animalData = [];
   List<AnimalLocation> data = [];
-  if (isInterval && startDate!.difference(endDate!).inSeconds.abs() > 60) {
+  if (isInterval &&
+      (startDate!.difference(endDate ?? DateTime.now()).inSeconds.abs() > 60 || endDate == null)) {
     final dt = await db.customSelect('''
       SELECT * FROM ${db.animalLocations.actualTableName}
       JOIN ${db.animal.actualTableName} ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name}
       WHERE ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ? AND ${db.animalLocations.date.name} BETWEEN ? AND ?
       ORDER BY ${db.animalLocations.date.name} DESC
     ''', variables: [
-      drift.Variable.withBigInt(idAnimal),
+      drift.Variable.withString(idAnimal),
       drift.Variable.withDateTime(startDate),
-      drift.Variable.withDateTime(endDate)
+      drift.Variable.withDateTime(endDate ?? DateTime.now().add(const Duration(seconds: 60)))
     ]).get();
     if (dt.isNotEmpty) {
       for (var locationData in dt) {
@@ -79,12 +80,10 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
           AnimalLocationsCompanion(
             accuracy: drift.Value(locationData.data[db.animalLocations.accuracy.name]),
             battery: drift.Value(locationData.data[db.animalLocations.battery.name]),
-            dataUsage: drift.Value(locationData.data[db.animalLocations.dataUsage.name]),
             date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                locationData.data[db.animalLocations.date.name])),
-            animalDataId:
-                drift.Value(BigInt.from(locationData.data[db.animalLocations.animalDataId.name])),
-            idAnimal: drift.Value(BigInt.from(locationData.data[db.animal.idAnimal.name])),
+                locationData.data[db.animalLocations.date.name] * 1000)),
+            animalDataId: drift.Value(locationData.data[db.animalLocations.animalDataId.name]),
+            idAnimal: drift.Value(locationData.data[db.animal.idAnimal.name]),
             elevation: drift.Value(locationData.data[db.animalLocations.elevation.name]),
             lat: drift.Value(locationData.data[db.animalLocations.lat.name]),
             lon: drift.Value(locationData.data[db.animalLocations.lon.name]),

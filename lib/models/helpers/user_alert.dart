@@ -45,21 +45,26 @@ extension ParseCmpToString on AlertComparissons {
   }
 }
 
-/// Extensions of [AlertParameter]
-extension ParseParToString on AlertParameter {
-  /// Extension to parse from [AlertParameter] to [String]
-  String toShortString(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
+/// Extensions of [AlertComparissons]
+extension ParseCmpToOp on AlertComparissons {
+  /// Extension to parse from [AlertComparissons] to [String]
+  String toOperator() {
     String value = toString().split('.').last;
     switch (value) {
-      case 'temperature':
-        return localizations.temperature;
+      case 'equal':
+        return '=';
 
-      case 'dataUsage':
-        return localizations.data_used;
+      case 'greater':
+        return '>';
 
-      case 'battery':
-        return localizations.battery;
+      case 'less':
+        return '<';
+
+      case 'greaterOrEqual':
+        return '>=';
+
+      case 'lessOrEqual':
+        return '<=';
 
       default:
         return value;
@@ -67,43 +72,112 @@ extension ParseParToString on AlertParameter {
   }
 }
 
-/// Method that parses from [text] [String] to [AlertParameter]
-AlertParameter parseAlertParameterFromString(String text) {
-  String value = text.toString().split('.').last;
-  switch (value) {
-    case 'temperature':
-      return AlertParameter.temperature;
+String parseComparisson(String op, AppLocalizations localizations) {
+  switch (op) {
+    case '=':
+      return localizations.equal;
 
-    case 'dataUsage':
-      return AlertParameter.dataUsage;
+    case '>':
+      return localizations.greater;
 
-    case 'battery':
-      return AlertParameter.battery;
+    case '<':
+      return localizations.less;
+
+    case '>=':
+      return localizations.greaterOrEqual;
+
+    case '<=':
+      return localizations.lessOrEqual;
 
     default:
-      throw Exception('Invalid alert parameter');
+      return op;
+  }
+}
+
+String parseSensor(String name, AppLocalizations localizations) {
+  switch (name) {
+    case 'Skin Temperature':
+      return localizations.temperature;
+
+    case 'dataUsage':
+      return localizations.data_used;
+
+    case 'Battery':
+      return localizations.battery;
+
+    default:
+      return name;
+  }
+}
+
+/// Method that parses from [text] [String] to [AlertParameter]
+String parseAlertParameterFromId(String text, AppLocalizations localizations) {
+  switch (text) {
+    case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
+      return localizations.temperature;
+
+    case '33246c98-651a-4a73-aeff-0ab248de0a32':
+      return 'altitude';
+
+    case 'a5f677a6-f3a4-495a-9ae9-f19c5997bb69':
+      return localizations.battery;
+
+    default:
+      throw Exception('Invalid sensor');
+  }
+}
+
+/// Method that parses from [sesnor] [String] to type of value
+String getValueType(String sensor, AppLocalizations localizations) {
+  switch (sensor) {
+    case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
+      return 'ºC';
+
+    case '33246c98-651a-4a73-aeff-0ab248de0a32':
+      return 'm';
+
+    case 'a5f677a6-f3a4-495a-9ae9-f19c5997bb69':
+      return '%';
+
+    default:
+      throw Exception('Invalid sensor');
+  }
+}
+
+/// Method that parses from [sesnor] [String] to type of value
+String getValue(String sensor, String value, AppLocalizations localizations) {
+  switch (sensor) {
+    case 'fa6917df-ed01-45f2-bb55-a9a25b5a470a':
+      return value;
+
+    case '33246c98-651a-4a73-aeff-0ab248de0a32':
+      return value;
+
+    case 'a5f677a6-f3a4-495a-9ae9-f19c5997bb69':
+      return double.parse(value).ceil().toString();
+
+    default:
+      throw Exception('Invalid sensor');
   }
 }
 
 /// Method that parses from [text] [String] to [AlertComparissons]
-AlertComparissons parseComparissonFromString(String text) {
-  String value = text.toString().split('.').last;
+String parseComparissonFromString(String text, AppLocalizations localizations) {
+  switch (text) {
+    case '=':
+      return localizations.equal;
 
-  switch (value) {
-    case 'equal':
-      return AlertComparissons.equal;
+    case '>':
+      return localizations.greater;
 
-    case 'greater':
-      return AlertComparissons.greater;
+    case '<':
+      return localizations.less;
 
-    case 'less':
-      return AlertComparissons.less;
+    case '>=':
+      return localizations.greaterOrEqual;
 
-    case 'greaterOrEqual':
-      return AlertComparissons.greaterOrEqual;
-
-    case 'lessOrEqual':
-      return AlertComparissons.lessOrEqual;
+    case '<=':
+      return localizations.lessOrEqual;
 
     default:
       throw Exception('Invalid alert comparisson');

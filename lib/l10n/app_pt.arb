@@ -49,7 +49,7 @@
   "to": "a",
   "yes": "sim",
   "no": "não",
-  "warning": "aviso",
+  "warning": "alerta",
   "color": "cor",
   "localization": "localização",
   "current": "atual",
@@ -110,5 +110,84 @@
   "server_error": "erro de comunicação",
   "server_error_body": "não foi possível comunicar com o servidor",
   "longer_than_expected": "a demorar mais tempo do que o esperado",
-  "verify_connection": "verifique a sua conexão à internet"
+  "verify_connection": "verifique a sua conexão à internet",
+  "fencing_noti_outside": "{animalName} está fora da cerca {fenceName}",
+  "@fencing_noti_outside": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "fenceName": {
+        "type": "String",
+        "example": "1.0"
+      }
+    }
+  },
+  "fencing_noti_inside": "{animalName} está dentro da cerca {fenceName}",
+  "@fencing_noti_inside": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "fenceName": {
+        "type": "String",
+        "example": "1.0"
+      }
+    }
+  },
+  "notification_alert_altitude_body_string": "A altitude do animal {animalName} encontra-se a {value}m",
+  "@notification_alert_altitude_body_string": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "value": {
+        "type": "double",
+        "example": "1.0"
+      }
+    }
+  },
+  "notification_alert_battery_body_string": "A bateria do animal {animalName} encontra-se a {value}%",
+  "@notification_alert_battery_body_string": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "value": {
+        "type": "double",
+        "example": "1.0"
+      }
+    }
+  },
+  "notification_alert_temperature_body_string": "A temperatura do animal {animalName} encontra-se a {value}ºC",
+  "@notification_alert_temperature_body_string": {
+    "placeholders": {
+      "animalName": {
+        "type": "String",
+        "example": "name"
+      },
+      "value": {
+        "type": "double",
+        "example": "1.0"
+      }
+    }
+  },
+  "realtime": "tempo real",
+  "keep_animal": "manter o animal",
+  "inside": "dentro",
+  "outside": "fora",
+  "manage_fences": "gerir cercas",
+  "online": "ligado",
+  "no_gps": "sem localização",
+  "offline": "desligado",
+  "no_server_connection": "modo offline",
+  "satellite": "satélite",
+  "email_password_wrong": "email ou password errados",
+  "configurations": "configurações",
+  "alert": "alerta",
+  "animals": "animais"
 }

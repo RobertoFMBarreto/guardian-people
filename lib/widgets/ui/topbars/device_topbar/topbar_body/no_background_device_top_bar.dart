@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
+import 'package:guardian/models/helpers/device_status.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
 import 'package:guardian/widgets/ui/common/color_circle.dart';
@@ -16,12 +19,14 @@ class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Widget? tailWidget;
   final Function(String) onColorChanged;
   final double maxHeight;
+  final DeviceStatus deviceStatus;
   const NoBackgroundDeviceTopBar({
     super.key,
     required this.animal,
     required this.maxHeight,
     required this.tailWidget,
     required this.onColorChanged,
+    required this.deviceStatus,
   });
 
   @override
@@ -30,6 +35,7 @@ class NoBackgroundDeviceTopBar extends StatefulWidget {
 
 class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
   late Color animalColor;
+  List<String> states = ['Comer', 'Pastar', 'Andar', 'Parada', 'Descansar', 'Estático'];
 
   @override
   void initState() {
@@ -51,7 +57,6 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
   }
 
   Future<void> _onColorUpdate(Color color) async {
-    // TODO: Logic to update device color
     setState(() {
       animalColor = color;
       widget.onColorChanged(HexColor.toHex(color: animalColor));
@@ -138,7 +143,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                   if (widget.animal.data.isEmpty)
                     Expanded(
                       child: Text(
-                        localizations.no_device_data.capitalize(),
+                        localizations.no_device_data.capitalizeFirst!,
                         style: theme.textTheme.bodyLarge!.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
@@ -146,81 +151,130 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                       ),
                     ),
                   if (widget.animal.data.isNotEmpty)
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Expanded(child: SizedBox()),
-                          Expanded(
-                            flex: 3,
-                            child: FittedBox(
-                              fit: BoxFit.fitHeight,
-                              child: IconText(
-                                icon: Icons.sim_card,
-                                iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.dataUsage.value}/10MB',
-                                textColor: theme.colorScheme.onSecondary,
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20.0),
+                                child: IconText(
+                                  icon: Icons.device_thermostat,
+                                  iconColor: theme.colorScheme.onSecondary,
+                                  text: '${widget.animal.data.first.temperature.value ?? 'N/A'}ºC',
+                                  textColor: theme.colorScheme.onSecondary,
+                                  iconSize: 25,
+                                  fontSize: 25,
+                                ),
                               ),
-                            ),
-                          ),
-                          const Expanded(child: SizedBox()),
-                          Expanded(
-                            flex: 3,
-                            child: FittedBox(
-                              fit: BoxFit.fitHeight,
-                              child: IconText(
-                                isInverted: true,
+                              IconText(
                                 icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '10000m',
+                                text: '${widget.animal.data.first.elevation.value!.ceil()}m',
                                 // text: '${widget.device.data.first.elevation.value.round()}m',
                                 textColor: theme.colorScheme.onSecondary,
+                                iconSize: 25,
+                                fontSize: 25,
                               ),
-                            ),
+                            ],
                           ),
-                          const Expanded(child: SizedBox()),
-                        ],
-                      ),
-                    ),
-                  if (widget.animal.data.isNotEmpty)
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Expanded(child: SizedBox()),
-                          Expanded(
-                            flex: 2,
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: IconText(
-                                icon: Icons.device_thermostat,
-                                iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.temperature.value}ºC',
-                                textColor: theme.colorScheme.onSecondary,
-                              ),
-                            ),
-                          ),
-                          const Expanded(child: SizedBox()),
-                          Expanded(
-                            flex: 2,
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: IconText(
-                                icon: DeviceWidgetProvider.getBatteryIcon(
-                                  deviceBattery: 80,
-                                  color: theme.colorScheme.onSecondary,
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20.0),
+                                child: IconText(
+                                  icon: DeviceWidgetProvider.getBatteryIcon(
+                                    deviceBattery: widget.animal.data.first.battery.value!.ceil(),
+                                    color: theme.colorScheme.onSecondary,
+                                  ),
+                                  iconSize: 25,
+                                  fontSize: 25,
+                                  isInverted: true,
+                                  iconColor: theme.colorScheme.onSecondary,
+                                  text: '${widget.animal.data.first.battery.value ?? 'N/A'}%',
+                                  textColor: theme.colorScheme.onSecondary,
                                 ),
+                              ),
+                              IconText(
+                                icon: Icons.info_outline,
                                 isInverted: true,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: '${widget.animal.data.first.battery.value}%',
+                                text: states[Random().nextInt(states.length)],
                                 textColor: theme.colorScheme.onSecondary,
+                                iconSize: 25,
+                                fontSize: 25,
                               ),
-                            ),
+                            ],
                           ),
-                          const Expanded(child: SizedBox()),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+                  // if (widget.animal.data.isNotEmpty)
+                  //   Expanded(
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         const Expanded(child: SizedBox()),
+                  //         IconText(
+                  //           icon: Icons.device_thermostat,
+                  //           iconColor: theme.colorScheme.onSecondary,
+                  //           text: '${widget.animal.data.first.temperature.value}ºC',
+                  //           textColor: theme.colorScheme.onSecondary,
+                  //           iconSize: 25,
+                  //           fontSize: 25,
+                  //         ),
+                  //         const Expanded(child: SizedBox()),
+                  //         IconText(
+                  //           icon: DeviceWidgetProvider.getBatteryIcon(
+                  //             deviceBattery: widget.animal.data.first.battery.value!.ceil(),
+                  //             color: theme.colorScheme.onSecondary,
+                  //           ),
+                  //           iconSize: 25,
+                  //           fontSize: 25,
+                  //           isInverted: true,
+                  //           iconColor: theme.colorScheme.onSecondary,
+                  //           text: '${widget.animal.data.first.battery.value}%',
+                  //           textColor: theme.colorScheme.onSecondary,
+                  //         ),
+                  //         const Expanded(child: SizedBox()),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // if (widget.animal.data.isNotEmpty)
+                  //   Expanded(
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         const Expanded(child: SizedBox()),
+                  //         IconText(
+                  //           icon: Icons.landscape,
+                  //           iconColor: theme.colorScheme.onSecondary,
+                  //           text: '${widget.animal.data.first.elevation.value!.ceil()}m',
+                  //           // text: '${widget.device.data.first.elevation.value.round()}m',
+                  //           textColor: theme.colorScheme.onSecondary,
+                  //           iconSize: 25,
+                  //           fontSize: 25,
+                  //         ),
+                  //         const Expanded(child: SizedBox()),
+                  //         IconText(
+                  //           icon: Icons.info_outline,
+                  //           isInverted: true,
+                  //           iconColor: theme.colorScheme.onSecondary,
+                  //           text: states[Random().nextInt(states.length)],
+                  //           textColor: theme.colorScheme.onSecondary,
+                  //           iconSize: 25,
+                  //           fontSize: 25,
+                  //         ),
+                  //         const Expanded(child: SizedBox()),
+                  //       ],
+                  //     ),
+                  //   ),
                   Expanded(
                     child: Center(
                       child: Row(
@@ -247,7 +301,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Text(
-                                        localizations.animal_color.capitalize(),
+                                        localizations.animal_color.capitalizeFirst!,
                                         style: theme.textTheme.bodyLarge!.copyWith(
                                           color: theme.colorScheme.onSecondary,
                                         ),

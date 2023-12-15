@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/providers/permissions_provider.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -50,8 +50,8 @@ Future<void> getCurrentPosition(
           builder: (context) {
             AppLocalizations localizations = AppLocalizations.of(context)!;
             return AlertDialog(
-              title: Text(localizations.no_localization.capitalize()),
-              content: Text(localizations.no_localization_body.capitalize()),
+              title: Text(localizations.no_localization.capitalizeFirst!),
+              content: Text(localizations.no_localization_body.capitalizeFirst!),
             );
           });
       return;

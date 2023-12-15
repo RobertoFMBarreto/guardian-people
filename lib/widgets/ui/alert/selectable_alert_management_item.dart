@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/helpers/user_alert.dart';
+import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 
 /// Class that represents a selectable alert management item widget
 class SelectableAlertManagementItem extends StatelessWidget {
@@ -39,29 +39,32 @@ class SelectableAlertManagementItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        RichText(
-                          maxLines: 2,
-                          text: TextSpan(
-                            text: '${localizations.when.capitalize()} ',
-                            style: theme.textTheme.bodyLarge,
-                            children: [
-                              TextSpan(
-                                text:
-                                    '''${parseAlertParameterFromString(alert.parameter.value).toShortString(context).capitalize()} ${parseComparissonFromString(alert.comparisson.value).toShortString(context)} ${alert.comparisson.value == AlertComparissons.equal.toString() ? localizations.to : localizations.than} ${alert.value.value}''',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          RichText(
+                            maxLines: 2,
+                            text: TextSpan(
+                              text: '${localizations.when.capitalizeFirst!} ',
+                              style: theme.textTheme.bodyLarge,
+                              children: [
+                                TextSpan(
+                                  text:
+                                      '${parseAlertParameterFromId(alert.parameter.value, localizations).capitalizeFirst!} ${parseComparissonFromString(alert.comparisson.value, localizations)} ${alert.comparisson.value != '=' ? localizations.than : localizations.to} ${getValue(alert.parameter.value, alert.conditionCompTo.value, localizations)}${getValueType(alert.parameter.value, localizations)}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
-                        "${localizations.notification.capitalize()}: ${alert.hasNotification.value ? localizations.yes.capitalize() : localizations.no.capitalize()}",
+                        "${localizations.notification.capitalizeFirst!}: ${alert.hasNotification.value ? localizations.yes.capitalizeFirst! : localizations.no.capitalizeFirst!}",
                         style: theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),

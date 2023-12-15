@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
-import 'package:guardian/models/db/drift/operations/fence_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/fence_animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
+import 'package:guardian/models/providers/api/requests/alerts_requests.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
+import 'package:guardian/pages/producer/web/widget/select_alerts_dialogue.dart';
+import 'package:guardian/pages/producer/web/widget/select_fences_dialogue.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:guardian/widgets/ui/alert/alert_management_item.dart';
@@ -19,7 +26,9 @@ import 'package:guardian/widgets/ui/fence/fence_item.dart';
 class DeviceSettings extends StatefulWidget {
   final Animal animal;
   final Function(String)? onColorChanged;
-  const DeviceSettings({super.key, required this.animal, this.onColorChanged});
+  final Function(String) onNameChanged;
+  const DeviceSettings(
+      {super.key, required this.animal, this.onColorChanged, required this.onNameChanged});
 
   @override
   State<DeviceSettings> createState() => _DeviceSettingsState();
@@ -28,11 +37,12 @@ class DeviceSettings extends StatefulWidget {
 class _DeviceSettingsState extends State<DeviceSettings> {
   late Future _future;
 
-  String _animalName = '';
   String _animalColor = '';
+  String _animalName = '';
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
   TextEditingController controller = TextEditingController();
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -49,7 +59,6 @@ class _DeviceSettingsState extends State<DeviceSettings> {
   /// Method that does the initial setup of the page
   ///
   /// 1. set the animal name
-  /// 1. set the animal color
   /// 2. get the device alerts
   /// 3. get the device fences
   /// 4. setup the text of the controller to the animal name
@@ -57,7 +66,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     _animalName = widget.animal.animal.animalName.value;
     _animalColor = widget.animal.animal.animalColor.value;
     await _getDeviceAlerts();
-    await _getDeviceFences();
+    await _getLocalFences();
     controller.text = widget.animal.animal.animalName.value;
   }
 
@@ -71,6 +80,34 @@ class _DeviceSettingsState extends State<DeviceSettings> {
     });
   }
 
+  /// Method that allows to get all fences from api, searching for the device fences then
+  Future<void> _getLocalFences() async {
+    _getDeviceFences().then(
+      (_) => FencingRequests.getUserFences(
+        context: context,
+        onGottenData: (_) async {
+          await _getDeviceFences();
+        },
+        onFailed: (statusCode) {
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
+          }
+        },
+      ),
+    );
+  }
+
   /// Method that load the device fences into the [_fences] list
   Future<void> _getDeviceFences() async {
     getAnimalFence(widget.animal.animal.idAnimal.value).then((deviceFence) {
@@ -81,6 +118,143 @@ class _DeviceSettingsState extends State<DeviceSettings> {
         }
       }
     });
+  }
+
+  /// Method that updates animal name locally and on api
+  Future<void> _updateAnimal() async {
+    final newAnimal = Animal(
+      animal: widget.animal.animal.copyWith(
+        animalName: drift.Value(_animalName),
+        animalColor: drift.Value(_animalColor),
+      ),
+      data: widget.animal.data,
+    );
+    AnimalRequests.updateAnimal(
+      animal: newAnimal,
+      context: context,
+      onFailed: (statusCode) {
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+      },
+      onDataGotten: () async {
+        await updateAnimal(newAnimal.animal);
+      },
+    );
+  }
+
+  /// Method that allows to remove a fence
+  Future<void> _removeFence(int index) async {
+    final fence = _fences[index];
+    setState(() {
+      _fences.removeWhere(
+        (element) => element.idFence == _fences[index].idFence,
+      );
+    });
+    FencingRequests.removeAnimalFence(
+      fenceId: fence.idFence,
+      animalIds: [
+        widget.animal.animal.idAnimal.value.toString(),
+      ],
+      context: context,
+      onFailed: (statusCode) {
+        setState(() {
+          _fences.add(fence);
+        });
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+      },
+      onDataGotten: () async {
+        await removeAnimalFence(fence.idFence, widget.animal.animal.idAnimal.value);
+      },
+    );
+  }
+
+  /// Method that allows to delete an alert from device
+  Future<void> _deleteAlertFromDevice(UserAlertCompanion alert) async {
+    final removedAlert = alert;
+    await removeAlertAnimal(alert.idAlert.value, widget.animal.animal.idAnimal.value);
+    setState(() {
+      _alerts.removeWhere((element) => element.idAlert == alert.idAlert);
+    });
+
+    getAlertAnimals(alert.idAlert.value).then(
+      (animals) => AlertRequests.getUserAlertsFromApi(
+        context: context,
+        onDataGotten: (data) {
+          AlertRequests.updateAlertToApi(
+            context: context,
+            alert: alert,
+            animals: [...animals],
+            onDataGotten: (data) {},
+            onFailed: (statusCode) {
+              addAlertAnimal(
+                AlertAnimalsCompanion(
+                  idAlert: alert.idAlert,
+                  idAnimal: widget.animal.animal.idAnimal,
+                ),
+              );
+              setState(() {
+                _alerts.add(removedAlert);
+              });
+              if (!hasConnection && !isSnackbarActive) {
+                showNoConnectionSnackBar();
+              } else {
+                if (statusCode == 507 || statusCode == 404) {
+                  if (_firstRun == true) {
+                    showNoConnectionSnackBar();
+                  }
+                  _firstRun = false;
+                } else if (!isSnackbarActive) {
+                  AppLocalizations localizations = AppLocalizations.of(context)!;
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                }
+              }
+            },
+          );
+        },
+        onFailed: (statusCode) {
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
+          }
+        },
+      ),
+    );
   }
 
   /// Method that shows a color picker to change the [_animalColor]
@@ -99,36 +273,41 @@ class _DeviceSettingsState extends State<DeviceSettings> {
 
   /// Method that update the [_animalColor] and updates the database
   Future<void> _onColorUpdate(Color color) async {
-    // TODO: Logic to update device color
+    _animalColor = HexColor.toHex(color: color);
+    await _updateAnimal();
     setState(() {
-      _animalColor = HexColor.toHex(color: color);
       widget.onColorChanged!(HexColor.toHex(color: color));
     });
-
-    await updateAnimal(
-      widget.animal.animal.copyWith(
-        animalColor: drift.Value(HexColor.toHex(color: color)),
-      ),
-    );
   }
 
   /// Method that pushes to the alerts management page in select mode and loads the selected alerts into the [_alerts] list
   ///
   /// It also inserts in the database the connection between the animal and the alert
-  Future<void> _onSelectAlerts() async {
-    Navigator.push(
-      context,
-      CustomPageRouter(
-          page: '/producer/alerts/management',
-          settings: RouteSettings(
-            arguments: {'isSelect': true, 'idAnimal': widget.animal.animal.idAnimal.value},
-          )),
-    ).then((gottenAlerts) async {
-      if (gottenAlerts.runtimeType == List<UserAlertCompanion>) {
-        final selectedAlerts = gottenAlerts as List<UserAlertCompanion>;
-        setState(() {
-          _alerts.addAll(selectedAlerts);
-        });
+  Future<void> _onAddAlerts() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        ThemeData theme = Theme.of(context);
+        return Dialog(
+          backgroundColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Scaffold(
+                body: SelectAlertsDialogue(
+                  idAnimal: widget.animal.animal.idAnimal.value,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((selectedDevices) async {
+      if (selectedDevices.runtimeType == List<UserAlertCompanion>) {
+        final selectedAlerts = selectedDevices as List<UserAlertCompanion>;
+
         for (var selectedAlert in selectedAlerts) {
           await addAlertAnimal(
             AlertAnimalsCompanion(
@@ -136,24 +315,122 @@ class _DeviceSettingsState extends State<DeviceSettings> {
               idAlert: selectedAlert.idAlert,
             ),
           );
+          setState(() {
+            _alerts.add(selectedAlert);
+          });
         }
-        // TODO: add service call
+        for (var selectedAlert in selectedAlerts) {
+          getAlertAnimals(selectedAlert.idAlert.value).then(
+            (animals) => AlertRequests.getUserAlertsFromApi(
+              context: context,
+              onDataGotten: (data) {
+                AlertRequests.updateAlertToApi(
+                  context: context,
+                  alert: selectedAlert,
+                  animals: [...animals],
+                  onDataGotten: (data) {},
+                  onFailed: (statusCode) {
+                    setState(() {
+                      _alerts.removeWhere(
+                        (a) => a.idAlert == selectedAlert.idAlert,
+                      );
+                    });
+                    if (!hasConnection && !isSnackbarActive) {
+                      showNoConnectionSnackBar();
+                    } else {
+                      if (statusCode == 507 || statusCode == 404) {
+                        if (_firstRun == true) {
+                          showNoConnectionSnackBar();
+                        }
+                        _firstRun = false;
+                      } else if (!isSnackbarActive) {
+                        AppLocalizations localizations = AppLocalizations.of(context)!;
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                      }
+                    }
+                  },
+                );
+              },
+              onFailed: (statusCode) {
+                if (!hasConnection && !isSnackbarActive) {
+                  showNoConnectionSnackBar();
+                } else {
+                  if (statusCode == 507 || statusCode == 404) {
+                    if (_firstRun == true) {
+                      showNoConnectionSnackBar();
+                    }
+                    _firstRun = false;
+                  } else if (!isSnackbarActive) {
+                    AppLocalizations localizations = AppLocalizations.of(context)!;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                  }
+                }
+              },
+            ),
+          );
+        }
       }
     });
   }
 
-  /// Method that pushes the fences page in select mode and loads the fence into the [_fences] list
+  /// Method that pushes to the devices pages and allows to select the devices for the alert
   ///
-  /// It also inserts in the database the connection between the fence and the device
-  Future<void> _onSelectFence() async {
-    Navigator.of(context).pushNamed('/producer/fences', arguments: true).then((newFenceData) {
-      // TODO: Check if its wright
-      if (newFenceData != null && newFenceData.runtimeType == FenceData) {
-        final newFence = newFenceData as FenceData;
+  /// When it gets back from the page it inserts all devices in the [_alertAnimals] list
+  Future<void> _onAddFence() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        ThemeData theme = Theme.of(context);
+        return Dialog(
+          backgroundColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Scaffold(
+                body: SelectFencesDialogue(),
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((selectedFences) async {
+      if (selectedFences != null && selectedFences.runtimeType == FenceData) {
+        final newFence = selectedFences as FenceData;
+
         setState(() {
           _fences.add(newFence);
         });
-        createFenceDevice(
+        FencingRequests.addAnimalFence(
+          animalIds: [widget.animal.animal.idAnimal.value],
+          context: context,
+          fenceId: newFence.idFence,
+          onFailed: (statusCode) {
+            setState(() {
+              _fences.removeWhere(
+                (element) => element.idFence == newFence.idFence,
+              );
+            });
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              }
+            }
+          },
+        );
+        createFenceAnimal(
           FenceAnimalsCompanion(
             idFence: drift.Value(newFence.idFence),
             idAnimal: widget.animal.animal.idAnimal,
@@ -182,7 +459,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                       child: TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                          label: Text(localizations.name.capitalize()),
+                          label: Text(localizations.name.capitalizeFirst!),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -208,12 +485,12 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: GestureDetector(
-                    onTap: _onSelectAlerts,
+                    onTap: _onAddAlerts,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations.device_warnings.capitalize(),
+                          localizations.device_warnings.capitalizeFirst!,
                           style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                         ),
                         const Icon(Icons.add)
@@ -224,7 +501,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Expanded(
                   child: _alerts.isEmpty
                       ? Center(
-                          child: Text(localizations.no_selected_alerts.capitalize()),
+                          child: Text(localizations.no_selected_alerts.capitalizeFirst!),
                         )
                       : ListView.builder(
                           itemCount: _alerts.length,
@@ -233,15 +510,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                             child: AlertManagementItem(
                               alert: _alerts[index],
                               onTap: () {},
-                              onDelete: (alert) {
-                                // TODO: Delete code for alert
-                                removeAlertAnimal(
-                                    alert.idAlert.value, widget.animal.animal.idAnimal.value);
-                                setState(() {
-                                  _alerts
-                                      .removeWhere((element) => element.idAlert == alert.idAlert);
-                                });
-                              },
+                              onDelete: _deleteAlertFromDevice,
                             ),
                           ),
                         ),
@@ -249,15 +518,14 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: GestureDetector(
-                    onTap: _onSelectFence,
+                    onTap: _onAddFence,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations.device_fences.capitalize(),
+                          localizations.device_fences.capitalizeFirst!,
                           style: theme.textTheme.headlineMedium!.copyWith(fontSize: 22),
                         ),
-                        // TODO: se poder ter várias cercas trocar
                         _fences.isEmpty ? const Icon(Icons.add) : const SizedBox()
                       ],
                     ),
@@ -266,7 +534,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                 Expanded(
                   child: _fences.isEmpty
                       ? Center(
-                          child: Text(localizations.no_selected_fences.capitalize()),
+                          child: Text(localizations.no_selected_fences.capitalizeFirst!),
                         )
                       : ListView.builder(
                           itemCount: _fences.length,
@@ -277,14 +545,7 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                               onTap: () {},
                               color: HexColor(_fences[index].color),
                               onRemove: () {
-                                removeAnimalFence(
-                                    _fences[index].idFence, widget.animal.animal.idAnimal.value);
-                                setState(() {
-                                  _fences.removeWhere(
-                                    (element) => element.idFence == _fences[index].idFence,
-                                  );
-                                });
-                                // TODO remove item service call
+                                _removeFence(index);
                               },
                             ),
                           ),
@@ -307,20 +568,17 @@ class _DeviceSettingsState extends State<DeviceSettings> {
                             backgroundColor: const MaterialStatePropertyAll(gdCancelBtnColor),
                           ),
                           child: Text(
-                            localizations.cancel.capitalize(),
+                            localizations.cancel.capitalizeFirst!,
                           ),
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          final newAnimal = widget.animal.animal.copyWith(
-                            animalName: drift.Value(_animalName),
-                          );
-                          updateAnimal(newAnimal)
-                              .then((value) => Navigator.of(context).pop(newAnimal));
+                          _updateAnimal();
+                          widget.onNameChanged(_animalName);
                         },
                         child: Text(
-                          localizations.confirm.capitalize(),
+                          localizations.confirm.capitalizeFirst!,
                         ),
                       ),
                     ],

@@ -1,34 +1,30 @@
 import 'dart:async';
-import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
-import 'package:guardian/models/helpers/db_helpers.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
-import 'package:guardian/models/providers/api/animals_provider.dart';
-import 'package:guardian/models/providers/api/auth_provider.dart';
-import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
-import 'package:guardian/models/providers/session_provider.dart';
+import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
 import 'package:guardian/widgets/ui/animal/animal_item_selectable.dart';
-import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
 import '../../../widgets/ui/drawers/producer_page_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Class that represents the producer devices page
-class ProducerDevicesPage extends StatefulWidget {
+class ProducerAnimalsPage extends StatefulWidget {
   final bool isSelect;
-  final BigInt? idFence;
-  final BigInt? idAlert;
-  final List<BigInt>? notToShowAnimals;
+  final String? idFence;
+  final String? idAlert;
+  final List<String>? notToShowAnimals;
 
-  const ProducerDevicesPage({
+  const ProducerAnimalsPage({
     super.key,
     this.isSelect = false,
     this.idFence,
@@ -37,10 +33,10 @@ class ProducerDevicesPage extends StatefulWidget {
   });
 
   @override
-  State<ProducerDevicesPage> createState() => _ProducerDevicesPageState();
+  State<ProducerAnimalsPage> createState() => _ProducerAnimalsPageState();
 }
 
-class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
+class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late double _maxElevation;
@@ -55,6 +51,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
 
   List<Animal> _selectedAnimals = [];
   List<Animal> _animals = [];
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -69,6 +66,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   /// 2. filter the animals to load all local animals
   /// 3. get the animals from the api
   Future<void> _setup() async {
+    isSnackbarActive = false;
     await _setupFilterRanges();
     await _filterAnimals();
     await _getAnimalsFromApi();
@@ -95,8 +93,8 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
       setState(() {
         _batteryRangeValues = const RangeValues(0, 100);
         _dtUsageRangeValues = const RangeValues(0, 10);
-        _elevationRangeValues = RangeValues(0, _maxTemperature);
-        _tmpRangeValues = RangeValues(0, _maxElevation);
+        _elevationRangeValues = RangeValues(0, _maxElevation);
+        _tmpRangeValues = RangeValues(0, _maxTemperature);
       });
     }
   }
@@ -107,45 +105,27 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
   ///
   /// If the server takes too long to answer then the user receives and alert
   Future<void> _getAnimalsFromApi() async {
-    AnimalProvider.getAnimals().then((response) async {
-      if (response.statusCode == 200) {
-        setShownNoServerConnection(false);
-        await animalsFromJson(response.body);
-        await _filterAnimals();
-      } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
-          if (resp.statusCode == 200) {
-            setShownNoServerConnection(false);
-            final newToken = jsonDecode(resp.body)['token'];
-            await setSessionToken(newToken);
-            _getAnimalsFromApi();
-          } else if (response.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
-              if (!hasShown) {
-                setShownNoServerConnection(true).then(
-                  (_) => showDialog(
-                      context: context, builder: (context) => const ServerErrorDialogue()),
-                );
-              }
-            });
+    AnimalRequests.getAnimalsFromApiWithLastLocation(
+        context: context,
+        onFailed: (statusCode) {
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
           } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
           }
+        },
+        onDataGotten: () {
+          _filterAnimals();
         });
-      } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
-          if (!hasShown) {
-            setShownNoServerConnection(true).then(
-              (_) =>
-                  showDialog(context: context, builder: (context) => const ServerErrorDialogue()),
-            );
-          }
-        });
-      }
-    });
   }
 
   /// Method that filters all animals loading them into the [_animals] list
@@ -160,7 +140,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
       await getUserFenceUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
-        dtUsageRangeValues: _dtUsageRangeValues,
         searchString: _searchString,
         tmpRangeValues: _tmpRangeValues,
         idFence: widget.idFence!,
@@ -172,8 +151,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           });
         }
       });
-    }
-    if (widget.isSelect && widget.idAlert != null) {
+    } else if (widget.isSelect && widget.idAlert != null) {
       await getUserAlertUnselectedAnimalsFiltered(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
@@ -228,7 +206,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text(
-              localizations.devices.capitalize(),
+              localizations.devices.capitalizeFirst!,
               style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
             ),
             centerTitle: true,
@@ -279,7 +257,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                     Navigator.of(context).pop(_selectedAnimals);
                   },
                   label: Text(
-                    localizations.confirm.capitalize(),
+                    localizations.confirm.capitalizeFirst!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -337,7 +315,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       color: theme.colorScheme.secondary,
                                     ),
                                     Text(
-                                      localizations.select_all.capitalize(),
+                                      localizations.select_all.capitalizeFirst!,
                                       style: theme.textTheme.bodyLarge!.copyWith(
                                         color: theme.colorScheme.secondary,
                                       ),
@@ -350,7 +328,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                         Expanded(
                           child: _animals.isEmpty
                               ? Center(
-                                  child: Text(localizations.no_devices.capitalize()),
+                                  child: Text(localizations.no_devices.capitalizeFirst!),
                                 )
                               : Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -363,9 +341,6 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                       child: widget.isSelect
                                           ? AnimalItemSelectable(
                                               deviceImei: _animals[index].animal.animalName.value,
-                                              deviceData: _animals[index].data.isNotEmpty
-                                                  ? _animals[index].data.first.dataUsage.value
-                                                  : null,
                                               deviceBattery: _animals[index].data.isNotEmpty
                                                   ? _animals[index].data.first.battery.value
                                                   : null,
@@ -392,6 +367,7 @@ class _ProducerDevicesPageState extends State<ProducerDevicesPage> {
                                             )
                                           : AnimalItem(
                                               animal: _animals[index],
+                                              deviceStatus: _animals[index].deviceStatus!,
                                               onBackFromDeviceScreen: () {
                                                 _filterAnimals();
                                               },

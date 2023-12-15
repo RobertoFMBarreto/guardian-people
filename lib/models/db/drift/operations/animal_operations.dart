@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/helpers/device_status.dart';
 
 /// Method for creating an [animal] returning it as an [AnimalCompanion]
 Future<AnimalCompanion> createAnimal(
@@ -14,7 +15,7 @@ Future<AnimalCompanion> createAnimal(
 }
 
 /// Method for deleting an animal [idAnimal]
-Future<void> deleteAnimal(BigInt idAnimal) async {
+Future<void> deleteAnimal(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   (db.delete(db.animal)..where((tbl) => tbl.idAnimal.equals(idAnimal))).go();
 }
@@ -28,12 +29,32 @@ Future<AnimalCompanion> updateAnimal(AnimalCompanion animal) async {
 }
 
 /// Method to get animal [idAnimal] information as [AnimalData]
-Future<AnimalData> getAnimal(BigInt idAnimal) async {
+Future<AnimalData> getAnimal(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data =
       await (db.select(db.animal)..where((tbl) => tbl.idAnimal.equals(idAnimal))).getSingle();
 
   return data;
+}
+
+/// Method to get animal [idAnimal] information as [AnimalData]
+Future<DeviceStatus> getAnimalStatus(String idAnimal) async {
+  final db = Get.find<GuardianDb>();
+  final data = await (db.select(db.animalLocations)
+        ..where((tbl) => tbl.idAnimal.equals(idAnimal))
+        ..orderBy(
+          [(tbl) => drift.OrderingTerm.desc(tbl.date)],
+        ))
+      .get();
+  if (data.isNotEmpty) {
+    if (data.first.lat == null && data.first.lon == null) {
+      return DeviceStatus.noGps;
+    } else {
+      return DeviceStatus.online;
+    }
+  } else {
+    return DeviceStatus.offline;
+  }
 }
 
 /// Method to get all user animals as a [List<AnimalData>]
@@ -56,19 +77,20 @@ Future<List<AnimalData>> getUserAnimals() async {
 }
 
 /// Method to get an animal [idAnimal] information with all its locations data as an [Animal]
-Future<Animal> getAnimalWithData(BigInt idAnimal) async {
+Future<Animal> getAnimalWithData(String idAnimal) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
     '''
       SELECT * FROM ${db.animal.actualTableName}
       JOIN (
-        SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC) A
-        GROUP BY A.${db.animalLocations.idAnimal.name}
-      ) as device_data ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = device_data.${db.animalLocations.idAnimal.name}
+          SELECT * FROM ${db.animalLocations.actualTableName} 
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          ORDER BY ${db.animalLocations.date.name} DESC 
+      ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE ${db.animal.actualTableName}.${db.animalLocations.idAnimal.name} = ?
     ''',
     variables: [
-      drift.Variable.withBigInt(idAnimal),
+      drift.Variable.withString(idAnimal),
     ],
   ).getSingle();
 
@@ -81,11 +103,11 @@ Future<Animal> getAnimalWithData(BigInt idAnimal) async {
         idUser: drift.Value(data.data[db.animal.idUser.name]),
         animalIdentification: drift.Value(data.data[db.animal.animalIdentification.name]),
       ),
+      deviceStatus: await getAnimalStatus(data.data[db.animal.idAnimal.name]),
       data: [
         AnimalLocationsCompanion(
           accuracy: drift.Value(data.data['accuracy']),
           battery: drift.Value(data.data['battery']),
-          dataUsage: drift.Value(data.data['data_usage']),
           date: drift.Value(data.data['date']),
           animalDataId: drift.Value(data.data['animal_data_id']),
           idAnimal: drift.Value(data.data['device_id']),
@@ -109,7 +131,6 @@ Future<List<Animal>> getUserAnimalsWithData() async {
         ${db.animal.animalColor.name},
         ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
-        ${db.animalLocations.dataUsage.name},
         ${db.animalLocations.temperature.name},
         ${db.animalLocations.battery.name},
         ${db.animalLocations.lat.name},
@@ -121,11 +142,141 @@ Future<List<Animal>> getUserAnimalsWithData() async {
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-        SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC) A
-        GROUP BY A.${db.animalLocations.idAnimal.name}
-      ) as device_data ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = device_data.${db.animalLocations.idAnimal.name}
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+      ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
     ''').get();
 
+  List<Animal> animals = [];
+  for (var deviceData in data) {
+    Animal animal = Animal(
+        animal: AnimalCompanion(
+          animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
+          isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
+          animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
+          animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+        ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
+        data: [
+          if (deviceData.data[db.animalLocations.date.name] != null)
+            AnimalLocationsCompanion(
+              accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
+              battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
+              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                  deviceData.data[db.animalLocations.date.name] * 1000)),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+              elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
+              lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
+              lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
+              state: drift.Value(deviceData.data[db.animalLocations.state.name]),
+              temperature: drift.Value(deviceData.data[db.animalLocations.temperature.name]),
+            ),
+        ]);
+    animals.add(animal);
+  }
+
+  return animals;
+}
+
+/// Method to get all user animals information with last location data as a [List<Animal>]
+Future<List<Animal>> getUserAnimalsWithLastLocation() async {
+  final db = Get.find<GuardianDb>();
+  final data = await db.customSelect('''
+      SELECT 
+        ${db.animal.idUser.name},
+        ${db.animal.animalName.name},
+        ${db.animal.animalIdentification.name},
+        ${db.animal.animalColor.name},
+        ${db.animal.actualTableName}.${db.animal.isActive.name},
+        ${db.animalLocations.animalDataId.name},
+        ${db.animalLocations.temperature.name},
+        ${db.animalLocations.battery.name},
+        ${db.animalLocations.lat.name},
+        ${db.animalLocations.lon.name},
+        ${db.animalLocations.elevation.name},
+        ${db.animalLocations.accuracy.name},
+        ${db.animalLocations.date.name},
+        ${db.animalLocations.state.name},
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name}
+      FROM ${db.animal.actualTableName}
+      JOIN (
+          SELECT * FROM  (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
+      ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
+    ''').get();
+
+  List<Animal> animals = [];
+  for (var deviceData in data) {
+    Animal animal = Animal(
+        animal: AnimalCompanion(
+          animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
+          isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
+          animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
+          animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+        ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
+        data: [
+          if (deviceData.data[db.animalLocations.date.name] != null)
+            AnimalLocationsCompanion(
+              accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
+              battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
+              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                  deviceData.data[db.animalLocations.date.name] * 1000)),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
+              elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
+              lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
+              lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
+              state: drift.Value(deviceData.data[db.animalLocations.state.name]),
+              temperature: drift.Value(deviceData.data[db.animalLocations.temperature.name]),
+            ),
+        ]);
+    animals.add(animal);
+  }
+
+  return animals;
+}
+
+/// Method to get all user animals information with last location data as a [List<Animal>]
+Future<List<Animal>> getUserAnimalWithLastLocation(String idAnimal) async {
+  final db = Get.find<GuardianDb>();
+  final data = await db.customSelect(
+    '''
+      SELECT 
+        ${db.animal.idUser.name},
+        ${db.animal.animalName.name},
+        ${db.animal.animalIdentification.name},
+        ${db.animal.animalColor.name},
+        ${db.animal.actualTableName}.${db.animal.isActive.name},
+        ${db.animalLocations.animalDataId.name},
+        ${db.animalLocations.temperature.name},
+        ${db.animalLocations.battery.name},
+        ${db.animalLocations.lat.name},
+        ${db.animalLocations.lon.name},
+        ${db.animalLocations.elevation.name},
+        ${db.animalLocations.accuracy.name},
+        ${db.animalLocations.date.name},
+        ${db.animalLocations.state.name},
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name}
+      FROM ${db.animal.actualTableName}
+      JOIN (
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
+      ) A ON A.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
+      WHERE ${db.animal.actualTableName}.${db.animal.idAnimal.name} = ?
+    ''',
+    variables: [
+      drift.Variable.withString(idAnimal),
+    ],
+  ).get();
+//${db.animalLocations.actualTableName} ON ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
   List<Animal> animals = [];
 
   for (var deviceData in data) {
@@ -134,21 +285,20 @@ Future<List<Animal>> getUserAnimalsWithData() async {
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
           isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
           animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-          idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-          idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
             AnimalLocationsCompanion(
               accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
               battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
-              dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                  deviceData.data[db.animalLocations.date.name])),
-              animalDataId:
-                  drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-              idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+                  deviceData.data[db.animalLocations.date.name] * 1000)),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
               elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
               lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
               lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
@@ -156,6 +306,7 @@ Future<List<Animal>> getUserAnimalsWithData() async {
               temperature: drift.Value(deviceData.data[db.animalLocations.temperature.name]),
             ),
         ]);
+
     animals.add(animal);
   }
 
@@ -173,6 +324,13 @@ Future<List<Animal>> getUserAnimalsFiltered({
   required String searchString,
 }) async {
   final db = Get.find<GuardianDb>();
+  // WHERE
+  //
+  //    (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+  //    deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+  //    deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+  //    ${db.animal.animalIdentification.name} LIKE ?)
+
   final data = await db.customSelect(
     '''
       SELECT
@@ -182,7 +340,6 @@ Future<List<Animal>> getUserAnimalsFiltered({
         ${db.animal.animalColor.name},
         ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
-        ${db.animalLocations.dataUsage.name},
         ${db.animalLocations.temperature.name},
         ${db.animalLocations.battery.name},
         ${db.animalLocations.lat.name},
@@ -194,25 +351,22 @@ Future<List<Animal>> getUserAnimalsFiltered({
         ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-        SELECT * FROM
-          (
-            SELECT * FROM ${db.animalLocations.actualTableName}
-            ORDER BY ${db.animalLocations.date.name} DESC
-          ) as deviceDt
-        GROUP BY deviceDt.${db.animalLocations.idAnimal.name}
-      ) deviceData ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = deviceData.${db.animalLocations.idAnimal.name}
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
+      ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
-        (deviceData.${db.animalLocations.dataUsage.name} >= ? AND  deviceData.${db.animalLocations.dataUsage.name} <= ? AND
-        deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
-        deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
-        deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
-        ${db.animal.animalIdentification.name} LIKE ?) OR (${db.animal.animalIdentification.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL)
+          (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+          deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+          deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+          ${db.animal.animalName.name} LIKE ?)
+        OR
+          ${db.animal.animalName.name} LIKE ?
       ORDER BY
-        ${db.animal.animalIdentification.name}
+        ${db.animal.animalName.name}
+      
     ''',
     variables: [
-      drift.Variable.withInt(dtUsageRangeValues.start.toInt()),
-      drift.Variable.withInt(dtUsageRangeValues.end.toInt()),
       drift.Variable.withReal(tmpRangeValues.start),
       drift.Variable.withReal(tmpRangeValues.end),
       drift.Variable.withInt(batteryRangeValues.start.toInt()),
@@ -230,21 +384,20 @@ Future<List<Animal>> getUserAnimalsFiltered({
           animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
           isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
           animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-          idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+          idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
           animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-          idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+          idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
         ),
+        deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
         data: [
           if (deviceData.data[db.animalLocations.date.name] != null)
             AnimalLocationsCompanion(
               accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
               battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
-              dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                  deviceData.data[db.animalLocations.date.name])),
-              animalDataId:
-                  drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-              idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+                  deviceData.data[db.animalLocations.date.name] * 1000)),
+              animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+              idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
               elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
               lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
               lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
@@ -264,13 +417,13 @@ Future<List<Animal>> getUserAnimalsFiltered({
 /// These animals can be filtered by ranges: [batteryRangeValues], [dtUsageRangeValues], [tmpRangeValues], [elevationRangeValues]
 Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
   required RangeValues batteryRangeValues,
-  required RangeValues dtUsageRangeValues,
   required RangeValues tmpRangeValues,
   required RangeValues elevationRangeValues,
   required String searchString,
-  required BigInt idFence,
+  required String idFence,
 }) async {
   final db = Get.find<GuardianDb>();
+
   final data = await db.customSelect(
     '''
       SELECT
@@ -281,7 +434,6 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
         ${db.animal.animalColor.name},
         ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
-        ${db.animalLocations.dataUsage.name},
         ${db.animalLocations.temperature.name},
         ${db.animalLocations.battery.name},
         ${db.animalLocations.lat.name},
@@ -290,33 +442,28 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
         ${db.animalLocations.accuracy.name},
         ${db.animalLocations.date.name},
         ${db.animalLocations.state.name}
-      FROM ${db.animal.actualTableName} 
+      FROM ${db.animal.actualTableName}
       LEFT JOIN (
-        SELECT * FROM
-          (
-            SELECT * FROM ${db.animalLocations.actualTableName}
-            ORDER BY ${db.animalLocations.date.name} DESC
-          ) as deviceDt
-        GROUP BY deviceDt.${db.animalLocations.idAnimal.name}
-      ) deviceData ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = deviceData.${db.animalLocations.idAnimal.name}
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
+      ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
-        ((deviceData.${db.animalLocations.dataUsage.name} >= ? AND  deviceData.${db.animalLocations.dataUsage.name} <= ? AND
+        ((
           deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
           deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
           deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
-          ${db.animal.animalName.name} LIKE ?) OR 
-        (${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL))
+          ${db.animal.animalName.name} LIKE ?) OR
+          (${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL))
         AND
         ${db.animal.actualTableName}.${db.animal.idAnimal.name} NOT IN (
-            SELECT ${db.animal.idAnimal.name} FROM ${db.fenceAnimals.actualTableName} 
+            SELECT ${db.animal.idAnimal.name} FROM ${db.fenceAnimals.actualTableName}
             WHERE ${db.fenceAnimals.actualTableName}.${db.fenceAnimals.idFence.name} = ?
         )
       ORDER BY
         ${db.animal.actualTableName}.${db.animal.animalName.name}
     ''',
     variables: [
-      drift.Variable.withInt(dtUsageRangeValues.start.toInt()),
-      drift.Variable.withInt(dtUsageRangeValues.end.toInt()),
       drift.Variable.withReal(tmpRangeValues.start),
       drift.Variable.withReal(tmpRangeValues.end),
       drift.Variable.withInt(batteryRangeValues.start.toInt()),
@@ -325,7 +472,7 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
       drift.Variable.withReal(elevationRangeValues.end),
       drift.Variable.withString('%$searchString%'),
       drift.Variable.withString('%$searchString%'),
-      drift.Variable.withBigInt(idFence),
+      drift.Variable.withString(idFence),
     ],
   ).get();
 
@@ -337,21 +484,20 @@ Future<List<Animal>> getUserFenceUnselectedAnimalsFiltered({
             animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
             isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
             animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-            idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+            idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-            idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+            idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
           ),
+          deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
           data: [
             if (deviceData.data[db.animalLocations.date.name] != null)
               AnimalLocationsCompanion(
                 accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
                 battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
-                dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
                 date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                    deviceData.data[db.animalLocations.date.name])),
-                animalDataId:
-                    drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-                idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+                    deviceData.data[db.animalLocations.date.name] * 1000)),
+                animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+                idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
                 elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
                 lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
                 lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),
@@ -373,7 +519,7 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
   required RangeValues tmpRangeValues,
   required RangeValues elevationRangeValues,
   required String searchString,
-  required BigInt idAlert,
+  required String idAlert,
 }) async {
   final db = Get.find<GuardianDb>();
   final data = await db.customSelect(
@@ -381,13 +527,11 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
       SELECT
         ${db.animal.idUser.name},
         ${db.animal.animalName.name},
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name},
         ${db.animal.animalIdentification.name},
         ${db.animal.animalColor.name},
-        ${db.animal.actualTableName}.${db.animal.idAnimal.name},
-        ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animal.actualTableName}.${db.animal.isActive.name},
         ${db.animalLocations.animalDataId.name},
-        ${db.animalLocations.dataUsage.name},
         ${db.animalLocations.temperature.name},
         ${db.animalLocations.battery.name},
         ${db.animalLocations.lat.name},
@@ -395,30 +539,29 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
         ${db.animalLocations.elevation.name},
         ${db.animalLocations.accuracy.name},
         ${db.animalLocations.date.name},
-        ${db.animalLocations.state.name},
+        ${db.animalLocations.state.name}
       FROM ${db.animal.actualTableName}
       LEFT JOIN (
-        SELECT * FROM
-          (
-            SELECT * FROM ${db.animalLocations.actualTableName}
-            ORDER BY ${db.animalLocations.date.name} DESC
-          ) as deviceDt
-        GROUP BY deviceDt.${db.animalLocations.idAnimal}
-      ) deviceData ON ${db.animal.actualTableName}.${db.animal.idAnimal.name} = deviceData.${db.animalLocations.idAnimal.name}
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
+      ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
-        (deviceData.${db.animalLocations.dataUsage.name} >= ? AND  deviceData.${db.animalLocations.dataUsage.name} <= ? AND
-        deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
-        deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
-        deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ?
-        ${db.animal.animalName.name} LIKE ?) OR 
-        (${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL) AND
-        ${db.animal.actualTableName}.${db.animal.idAnimal.name} NOT IN (SELECT ${db.animal.idAnimal.name} FROM ${db.alertAnimals.actualTableName})
+        ((
+          deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
+          deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
+          deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
+          ${db.animal.animalName.name} LIKE ?) OR
+          (${db.animal.animalName.name} LIKE ? AND deviceData.${db.animalLocations.temperature.name} IS NULL))
+        AND
+        ${db.animal.actualTableName}.${db.animal.idAnimal.name} NOT IN (
+            SELECT ${db.animal.idAnimal.name} FROM ${db.alertAnimals.actualTableName}
+            WHERE ${db.alertAnimals.actualTableName}.${db.alertAnimals.idAlert.name} = ?
+        )
       ORDER BY
-        ${db.animal.animalName.name}
+        ${db.animal.actualTableName}.${db.animal.animalName.name}
     ''',
     variables: [
-      drift.Variable.withInt(dtUsageRangeValues.start.toInt()),
-      drift.Variable.withInt(dtUsageRangeValues.end.toInt()),
       drift.Variable.withReal(tmpRangeValues.start),
       drift.Variable.withReal(tmpRangeValues.end),
       drift.Variable.withInt(batteryRangeValues.start.toInt()),
@@ -427,6 +570,7 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
       drift.Variable.withReal(elevationRangeValues.end),
       drift.Variable.withString('%$searchString%'),
       drift.Variable.withString('%$searchString%'),
+      drift.Variable.withString(idAlert),
     ],
   ).get();
 
@@ -439,21 +583,20 @@ Future<List<Animal>> getUserAlertUnselectedAnimalsFiltered({
             animalColor: drift.Value(deviceData.data[db.animal.animalColor.name]),
             isActive: drift.Value(deviceData.data[db.animal.isActive.name] == 1),
             animalName: drift.Value(deviceData.data[db.animal.animalName.name]),
-            idUser: drift.Value(BigInt.from(deviceData.data[db.animal.idUser.name])),
+            idUser: drift.Value(deviceData.data[db.animal.idUser.name]),
             animalIdentification: drift.Value(deviceData.data[db.animal.animalIdentification.name]),
-            idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+            idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
           ),
+          deviceStatus: await getAnimalStatus(deviceData.data[db.animal.idAnimal.name]),
           data: [
             if (deviceData.data[db.animalLocations.date.name] != null)
               AnimalLocationsCompanion(
                 accuracy: drift.Value(deviceData.data[db.animalLocations.accuracy.name]),
                 battery: drift.Value(deviceData.data[db.animalLocations.battery.name]),
-                dataUsage: drift.Value(deviceData.data[db.animalLocations.dataUsage.name]),
                 date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                    deviceData.data[db.animalLocations.date.name])),
-                animalDataId:
-                    drift.Value(BigInt.from(deviceData.data[db.animalLocations.animalDataId.name])),
-                idAnimal: drift.Value(BigInt.from(deviceData.data[db.animal.idAnimal.name])),
+                    deviceData.data[db.animalLocations.date.name] * 1000)),
+                animalDataId: drift.Value(deviceData.data[db.animalLocations.animalDataId.name]),
+                idAnimal: drift.Value(deviceData.data[db.animal.idAnimal.name]),
                 elevation: drift.Value(deviceData.data[db.animalLocations.elevation.name]),
                 lat: drift.Value(deviceData.data[db.animalLocations.lat.name]),
                 lon: drift.Value(deviceData.data[db.animalLocations.lon.name]),

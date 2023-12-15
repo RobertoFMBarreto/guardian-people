@@ -4,7 +4,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:guardian/widgets/ui/animal/animal_item.dart';
@@ -14,7 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminDeviceManagementPage extends StatefulWidget {
   final Animal device;
-  final BigInt producerId;
+  final String producerId;
 
   const AdminDeviceManagementPage({
     super.key,
@@ -44,7 +44,6 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
   }
 
   Future<void> _loadAnimals() async {
-    // TODO : create operation for this
     await getProducerAnimals(widget.producerId).then((allAnimals) {
       if (mounted) {
         setState(() {
@@ -122,7 +121,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                       child: Text(
-                        '${localizations.other_producer_devices.capitalize()}:',
+                        '${localizations.other_producer_devices.capitalizeFirst!}:',
                         style: theme.textTheme.headlineSmall!.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -132,7 +131,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                   ),
                   if (_animals.isEmpty)
                     SliverFillRemaining(
-                      child: Center(child: Text(localizations.no_devices.capitalize())),
+                      child: Center(child: Text(localizations.no_devices.capitalizeFirst!)),
                     ),
                   if (_animals.isNotEmpty)
                     SliverFillRemaining(
@@ -142,6 +141,7 @@ class _AdminDeviceManagementPageState extends State<AdminDeviceManagementPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: AnimalItem(
                             animal: _animals[index],
+                            deviceStatus: _animals[index].deviceStatus!,
                             producerId: widget.producerId,
                           ),
                         ),

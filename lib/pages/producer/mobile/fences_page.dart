@@ -5,9 +5,11 @@ import 'package:guardian/custom_page_router.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/main.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
+import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/models/helpers/hex_color.dart';
+import 'package:guardian/models/providers/api/requests/fencing_requests.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
 import 'package:guardian/widgets/ui/fence/fence_item.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
@@ -33,6 +35,7 @@ class _FencesPageState extends State<FencesPage> {
   String _searchString = '';
   List<FenceData> _fences = [];
   FenceData? _selectedFence;
+  bool _firstRun = true;
 
   @override
   void initState() {
@@ -42,21 +45,106 @@ class _FencesPageState extends State<FencesPage> {
 
   /// Method that does the initial setup of the page
   Future<void> _setup() async {
-    await _searchFences();
+    isSnackbarActive = false;
+    await _searchFences().then(
+      (value) => FencingRequests.getUserFences(
+        context: context,
+        onFailed: (statusCode) {
+          if (!hasConnection && !isSnackbarActive) {
+            showNoConnectionSnackBar();
+          } else {
+            if (statusCode == 507 || statusCode == 404) {
+              if (_firstRun == true) {
+                showNoConnectionSnackBar();
+              }
+              _firstRun = false;
+            } else if (!isSnackbarActive) {
+              AppLocalizations localizations = AppLocalizations.of(context)!;
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+            }
+          }
+        },
+        onGottenData: (_) {
+          searchFences(_searchString);
+        },
+      ),
+    );
   }
 
   /// Method that searches for the fences with the [searchString] loading them into the [_fences] list
   ///
   /// To prevent duplicates the list is reseted before adding the fences
   Future<void> _searchFences() async {
-    await searchFences(_searchString).then((allFences) {
-      if (mounted) {
-        setState(() {
-          _fences = [];
-          _fences.addAll(allFences);
-        });
-      }
+    searchFences(_searchString).then(
+      (allFences) {
+        if (mounted) {
+          setState(() {
+            _fences = [];
+            _fences.addAll(allFences);
+          });
+        }
+      },
+    );
+  }
+
+  /// Method that allows to delete a fence and update the fences list
+  Future<void> _deleteFence(String idFence) async {
+    final fence = _fences.firstWhere((element) => element.idFence == idFence);
+    setState(() {
+      _fences.removeWhere((element) => element.idFence == idFence);
     });
+    await FencingRequests.removeFence(
+      idFence: idFence,
+      context: context,
+      onGottenData: () async {
+        removeFence(idFence).then(
+          (_) => _searchFences().then(
+            (value) => FencingRequests.getUserFences(
+              context: context,
+              onFailed: (statusCode) {
+                if (!hasConnection && !isSnackbarActive) {
+                  showNoConnectionSnackBar();
+                } else {
+                  if (statusCode == 507 || statusCode == 404) {
+                    if (_firstRun == true) {
+                      showNoConnectionSnackBar();
+                    }
+                    _firstRun = false;
+                  } else if (!isSnackbarActive) {
+                    AppLocalizations localizations = AppLocalizations.of(context)!;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+                  }
+                }
+              },
+              onGottenData: (_) {
+                searchFences(_searchString);
+              },
+            ),
+          ),
+        );
+      },
+      onFailed: (statusCode) {
+        setState(() {
+          _fences.add(fence);
+        });
+        if (!hasConnection && !isSnackbarActive) {
+          showNoConnectionSnackBar();
+        } else {
+          if (statusCode == 507 || statusCode == 404) {
+            if (_firstRun == true) {
+              showNoConnectionSnackBar();
+            }
+            _firstRun = false;
+          } else if (!isSnackbarActive) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -79,7 +167,7 @@ class _FencesPageState extends State<FencesPage> {
                     Navigator.of(context).pop(_selectedFence);
                   },
                   label: Text(
-                    localizations.confirm.capitalize(),
+                    localizations.confirm.capitalizeFirst!,
                     style: theme.textTheme.bodyLarge!.copyWith(
                       color: theme.colorScheme.onSecondary,
                       fontWeight: FontWeight.bold,
@@ -113,7 +201,7 @@ class _FencesPageState extends State<FencesPage> {
                     ),
           appBar: AppBar(
             title: Text(
-              localizations.fences.capitalize(),
+              localizations.fences.capitalizeFirst!,
               style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
             ),
             centerTitle: true,
@@ -130,7 +218,7 @@ class _FencesPageState extends State<FencesPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: SearchFieldInput(
-                            label: localizations.search.capitalize(),
+                            label: localizations.search.capitalizeFirst!,
                             onChanged: (value) {
                               _searchString = value;
                               _searchFences();
@@ -141,7 +229,7 @@ class _FencesPageState extends State<FencesPage> {
                           child: _fences.isEmpty
                               ? Center(
                                   child: Text(
-                                    localizations.no_fences.capitalize(),
+                                    localizations.no_fences.capitalizeFirst!,
                                   ),
                                 )
                               : ListView.builder(
@@ -155,7 +243,6 @@ class _FencesPageState extends State<FencesPage> {
                                             color: HexColor(_fences[index].color),
                                             isSelected: _fences[index] == _selectedFence,
                                             onSelected: () {
-                                              // TODO: select code
                                               if (_selectedFence == _fences[index]) {
                                                 setState(() {
                                                   _selectedFence = null;
@@ -178,9 +265,7 @@ class _FencesPageState extends State<FencesPage> {
                                                   );
                                             },
                                             onRemove: () {
-                                              // TODO remove item from list
-                                              removeFence(_fences[index].idFence)
-                                                  .then((_) => _searchFences());
+                                              _deleteFence(_fences[index].idFence);
                                             },
                                           ),
                                   ),

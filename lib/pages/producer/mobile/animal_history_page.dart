@@ -1,11 +1,12 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/ui/animal/animal_data_info_list_item.dart';
 
 /// Class that represents the animal history page
@@ -30,6 +31,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
 
   /// Method that does the initial setup of the page setting the [_selectedValue] to now and then gets the animal data
   Future<void> _setup() async {
+    isSnackbarActive = false;
     final now = DateTime.now();
     _selectedValue = DateTime(now.year, now.month, now.day);
 
@@ -67,7 +69,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          localizations.state_history.capitalize(),
+          localizations.state_history.capitalizeFirst!,
           style: theme.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -138,7 +140,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                 ? Expanded(
                     child: Center(
                       child: Text(
-                        localizations.no_data_to_show.capitalize(),
+                        localizations.no_data_to_show.capitalizeFirst!,
                       ),
                     ),
                   )

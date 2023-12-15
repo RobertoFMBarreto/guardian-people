@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_title_string">%1$s</string>
+    <string name="notification_fence_outside_body_string">%1$s está fora da cerca %2$s</string>
+    <string name="notification_fence_inside_body_string">%1$s está dentro da cerca %2$s</string>
+    <string name="notification_alert_altitude_body_string">A altitude do animal %1$s encontra-se a %2$sm</string>
+    <string name="notification_alert_battery_body_string">A bateria do animal %1$s encontra-se a %2$s%%</string>
+    <string name="notification_alert_temperature_body_string">A temperatura do animal %1$s encontra-se a %2$sºC</string>
+</resources>

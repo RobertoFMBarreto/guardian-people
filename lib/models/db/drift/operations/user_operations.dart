@@ -10,7 +10,7 @@ Future<UserCompanion> createUser(UserCompanion user) async {
 }
 
 /// Method for deleting an user [idUser]
-Future<void> deleteUser(BigInt idUser) async {
+Future<void> deleteUser(String idUser) async {
   final db = Get.find<GuardianDb>();
 
   (db.delete(db.user)..where((tbl) => tbl.idUser.equals(idUser))).go();
@@ -25,7 +25,7 @@ Future<UserCompanion> updateUser(UserCompanion user) async {
 }
 
 /// Method to get an user information [idUser]  as [UserData?]
-Future<UserData?> getUser(BigInt idUser) async {
+Future<UserData?> getUser(String idUser) async {
   final db = Get.find<GuardianDb>();
   final data =
       await (db.select(db.user)..where((tbl) => tbl.idUser.equals(idUser))).getSingleOrNull();
@@ -34,7 +34,7 @@ Future<UserData?> getUser(BigInt idUser) async {
 }
 
 /// Method to check if an user [idUser] is an admin [bool]
-Future<bool> userIsAdmin(BigInt idUser) async {
+Future<bool> userIsAdmin(String idUser) async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.user)..where((tbl) => tbl.idUser.equals(idUser))).getSingle();
 

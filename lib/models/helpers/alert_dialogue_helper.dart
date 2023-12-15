@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
+import 'package:guardian/main.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/colors.dart';
@@ -25,7 +26,7 @@ void showLoadingDialog(BuildContext context) {
                 height: 15,
               ),
               // Some text
-              Text(localizations.loading.capitalize())
+              Text(localizations.loading.capitalizeFirst!)
             ],
           ),
         ),
@@ -51,18 +52,18 @@ Future<void> showNoWifiDialog(BuildContext context) async {
           builder: (BuildContext context) {
             return AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.background,
-              title: Text(localizations.no_wifi.capitalize()),
+              title: Text(localizations.no_wifi.capitalizeFirst!),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text(localizations.no_wifi_operations.capitalize()),
+                    Text(localizations.no_wifi_operations.capitalizeFirst!),
                   ],
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   child: Text(
-                    localizations.ok.capitalize(),
+                    localizations.ok.capitalizeFirst!,
                     style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                   onPressed: () {
@@ -89,11 +90,11 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(localizations.no_wifi.capitalize()),
+        title: Text(localizations.no_wifi.capitalizeFirst!),
         actions: <Widget>[
           TextButton(
             child: Text(
-              localizations.ok.capitalize(),
+              localizations.ok.capitalizeFirst!,
               style: TextStyle(color: theme.colorScheme.secondary),
             ),
             onPressed: () {
@@ -104,4 +105,23 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
       );
     },
   );
+}
+
+void showNoConnectionSnackBar() {
+  if (!isSnackbarActive) {
+    AppLocalizations localizations = AppLocalizations.of(navigatorKey.currentContext!)!;
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      SnackBar(
+        content: Text(
+          localizations.no_server_connection.capitalize!,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white),
+        ),
+        duration: const Duration(days: 365),
+        backgroundColor: gdErrorColor,
+        padding: const EdgeInsets.only(top: 2, bottom: 4),
+      ),
+    );
+    isSnackbarActive = true;
+  }
 }

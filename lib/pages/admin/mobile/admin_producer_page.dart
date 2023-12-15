@@ -8,7 +8,7 @@ import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_devices_operations.dart';
 import 'package:guardian/models/db/drift/operations/admin/admin_users_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/settings/settings.dart';
 import 'package:guardian/widgets/ui/common/custom_circular_progress_indicator.dart';
@@ -24,7 +24,7 @@ import 'package:guardian/widgets/ui/topbars/main_topbar/sliver_main_app_bar.dart
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminProducerPage extends StatefulWidget {
-  final BigInt producerId;
+  final String producerId;
 
   const AdminProducerPage({
     super.key,
@@ -186,7 +186,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                   options: [
                     CustomFloatingActionButtonOption(
                       title:
-                          '${localizations.add.capitalize()} ${localizations.device.capitalize()}',
+                          '${localizations.add.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
                       icon: Icons.add,
                       onTap: () {
                         showModalBottomSheet(
@@ -215,8 +215,8 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                     ),
                     CustomFloatingActionButtonOption(
                       title: _isRemoveMode
-                          ? localizations.cancel.capitalize()
-                          : '${localizations.remove.capitalize()} ${localizations.device.capitalize()}',
+                          ? localizations.cancel.capitalizeFirst!
+                          : '${localizations.remove.capitalizeFirst!} ${localizations.device.capitalizeFirst!}',
                       icon: _isRemoveMode ? Icons.cancel : Icons.remove,
                       onTap: () {
                         setState(() {
@@ -249,7 +249,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    localizations.devices.capitalize(),
+                                    localizations.devices.capitalizeFirst!,
                                     style: theme.textTheme.headlineSmall!.copyWith(
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -262,7 +262,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                             });
                                           },
                                           child: Text(
-                                            localizations.confirm.capitalize(),
+                                            localizations.confirm.capitalizeFirst!,
                                             style: theme.textTheme.bodyMedium!.copyWith(
                                               color: gdCancelTextColor,
                                             ),
@@ -320,7 +320,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                         ),
                         if (_devices.isEmpty)
                           SliverFillRemaining(
-                            child: Center(child: Text(localizations.no_devices.capitalize())),
+                            child: Center(child: Text(localizations.no_devices.capitalizeFirst!)),
                           ),
                         if (_devices.isNotEmpty)
                           SliverList.builder(
@@ -344,6 +344,7 @@ class _AdminProducerPageState extends State<AdminProducerPage> {
                                     )
                                   : AnimalItem(
                                       animal: _devices[index],
+                                      deviceStatus: _devices[index].deviceStatus!,
                                       producerId: widget.producerId,
                                     ),
                             ),

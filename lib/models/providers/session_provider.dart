@@ -4,10 +4,11 @@ import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Method for setting the user session with [idUser] and the session token [token]
-Future<void> setUserSession(BigInt idUser, String token) async {
+Future<void> setUserSession(String idUser, String token, String refreshToken) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   await prefs.setString("token", token);
+  await prefs.setString("refresh-token", refreshToken);
   await prefs.setString("idUser", idUser.toString());
 }
 
@@ -80,18 +81,26 @@ Future<void> setSessionToken(String value) async {
 /// Method that allows to get the id of the user
 ///
 /// If the id isn't setted then the user will be redirected to login
-Future<BigInt?> getUid(BuildContext context) async {
+Future<String?> getUid(BuildContext context, {bool autoLogin = true}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? dt = prefs.getString('idUser');
   if (dt != null) {
-    BigInt? idUser = BigInt.from(int.parse(dt));
+    String? idUser = dt;
     return idUser;
   } else {
-    clearUserSession().then((_) => deleteEverything().then(
-          (_) {
-            Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
-          },
-        ));
+    if (autoLogin) {
+      await clearUserSession().then((_) async => await deleteEverything().then(
+            (_) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.pushReplacement(
+                context,
+                CustomPageRouter(
+                  page: '/login',
+                ),
+              );
+            },
+          ));
+    }
   }
   return null;
 }
@@ -101,5 +110,13 @@ Future<String?> getToken() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   String? token = prefs.getString('token');
+  return token;
+}
+
+/// Method that allows to get the session token
+Future<String?> getRefreshToken() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  String? token = prefs.getString('refresh-token');
   return token;
 }

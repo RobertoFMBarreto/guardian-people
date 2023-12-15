@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_title_string">%1$s</string>
+    <string name="notification_fence_outside_body_string">%1$s is outside fence %2$s</string>
+    <string name="notification_fence_inside_body_string">%1$s is inside fence %2$s</string>
+    <string name="notification_alert_altitude_body_string">The animal %1$s is at %2$sm altitude</string>
+    <string name="notification_alert_battery_body_string">The animal %1$s has %2$s%% battery</string>
+    <string name="notification_alert_temperature_body_string">The animal %1$s has %2$sºC temperature</string>
+</resources>

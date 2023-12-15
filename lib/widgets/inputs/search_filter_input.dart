@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:guardian/models/extensions/string_extension.dart';
+import 'package:get/get.dart';
 import 'package:guardian/widgets/inputs/search_field_input.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,7 +19,7 @@ class SearchWithFilterInput extends StatelessWidget {
         Expanded(
           flex: 12,
           child: SearchFieldInput(
-            label: localizations.search.capitalize(),
+            label: localizations.search.capitalizeFirst!,
             onChanged: onSearchChanged,
           ),
         ),
