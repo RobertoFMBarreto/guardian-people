@@ -298,10 +298,12 @@ class _LoginFormState extends State<LoginForm> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20.0),
-                            child: Text(
-                              'Guardian',
-                              style: theme.textTheme.headlineMedium,
-                            ),
+                            child: Image.asset('assets/logo/GuardianLogo_white_shadow.png',
+                                width: 300),
+                            // Text(
+                            //   'Guardian',
+                            //   style: theme.textTheme.headlineMedium,
+                            // ),
                           ),
                           errorString.isNotEmpty
                               ? Padding(
@@ -327,7 +329,7 @@ class _LoginFormState extends State<LoginForm> {
                                 )
                               : const SizedBox(),
                           Padding(
-                            padding: const EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
                             child: TextFormField(
                               decoration: const InputDecoration(
                                 label: Text('Email'),
