@@ -145,12 +145,10 @@ class FCMMessagingProvider {
 
     FirebaseMessaging.instance.getToken().then((String? token) {
       assert(token != null);
-      if (kDebugMode) {
-        print(token);
-      }
       AuthRequests.refreshDevicetoken(
         context: navigatorKey.currentContext!,
         devicetoken: token ?? '',
+        onFailGoLogin: false,
         onDataGotten: () {
           if (kDebugMode) {
             print(token);
@@ -160,14 +158,14 @@ class FCMMessagingProvider {
     });
 
     FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      if (kDebugMode) {
+        print(
+            'New Token: $token | ${ModalRoute.of(navigatorKey.currentState!.context)!.settings.name}');
+      }
       AuthRequests.refreshDevicetoken(
         context: navigatorKey.currentContext!,
         devicetoken: token,
-        onDataGotten: () {
-          if (kDebugMode) {
-            print(token);
-          }
-        },
+        onDataGotten: () {},
       );
     });
 

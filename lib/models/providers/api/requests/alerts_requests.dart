@@ -28,38 +28,38 @@ class AlertRequests {
           (_) async => await onDataGotten(response.body),
         );
       } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
+        await AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
             ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
-              (value) => getAlertableSensorsFromApi(
+              (value) async => await getAlertableSensorsFromApi(
                 context: context,
                 onDataGotten: onDataGotten,
                 onFailed: onFailed,
               ),
             );
           } else if (resp.statusCode == 507) {
-            hasShownNoServerConnection().then((hasShown) async {
+            await hasShownNoServerConnection().then((hasShown) async {
               if (!hasShown) {
-                setShownNoServerConnection(true).then((_) =>
+                await setShownNoServerConnection(true).then((_) =>
                     showDialog(context: context, builder: (context) => const ServerErrorDialogue())
                         .then((_) => onFailed(resp.statusCode)));
               }
             });
             onFailed(resp.statusCode);
           } else {
-            clearUserSession().then((_) => deleteEverything().then(
+            await clearUserSession().then((_) async => await deleteEverything().then(
                   (_) => Navigator.pushNamedAndRemoveUntil(
                       context, '/login', (Route<dynamic> route) => false),
                 ));
           }
         });
       } else if (response.statusCode == 507) {
-        hasShownNoServerConnection().then((hasShown) async {
+        await hasShownNoServerConnection().then((hasShown) async {
           if (!hasShown) {
-            setShownNoServerConnection(true).then((_) =>
+            await setShownNoServerConnection(true).then((_) =>
                 showDialog(context: context, builder: (context) => const ServerErrorDialogue())
                     .then((_) => onFailed(response.statusCode)));
           }

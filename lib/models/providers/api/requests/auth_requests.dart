@@ -16,6 +16,7 @@ class AuthRequests {
   static Future<void> refreshDevicetoken(
       {required BuildContext context,
       required String devicetoken,
+      bool onFailGoLogin = true,
       required Function onDataGotten}) async {
     AuthProvider.refreshDeviceToken(devicetoken).then((response) async {
       if (response.statusCode == 200) {
@@ -43,10 +44,12 @@ class AuthRequests {
               }
             });
           } else {
-            clearUserSession().then((_) => deleteEverything().then(
-                  (_) => Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (Route<dynamic> route) => false),
-                ));
+            if (onFailGoLogin) {
+              await clearUserSession().then((_) async => await deleteEverything().then(
+                    (_) => Navigator.pushNamedAndRemoveUntil(
+                        context, '/login', (Route<dynamic> route) => false),
+                  ));
+            }
           }
         });
       } else if (response.statusCode == 507) {
