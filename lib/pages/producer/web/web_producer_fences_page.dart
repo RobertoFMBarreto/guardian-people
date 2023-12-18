@@ -41,6 +41,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
   List<Animal> _animals = [];
   List<Animal> _fenceAnimals = [];
   List<FenceData> _fences = [];
+  bool _isFencesExpanded = true;
 
   @override
   void initState() {
@@ -288,232 +289,254 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CustomCircularProgressIndicator();
           } else {
-            return Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            localizations.fences.capitalizeFirst!,
-                                            style: theme.textTheme.headlineMedium,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          TextButton.icon(
-                                            onPressed: () {
-                                              if (_selectedFence != null) {
-                                                _selectedFence = null;
-                                              }
-                                              setState(() {
-                                                isInteractingFence = !isInteractingFence;
-                                              });
-                                            },
-                                            icon: Icon(
-                                              _selectedFence == null && !isInteractingFence
-                                                  ? Icons.add
-                                                  : Icons.close,
-                                            ),
-                                            label: Text(
-                                              _selectedFence == null && !isInteractingFence
-                                                  ? '${localizations.add.capitalizeFirst!} ${localizations.fence.capitalizeFirst!}'
-                                                  : localizations.cancel.capitalizeFirst!,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SearchWithFilterInput(
-                                              onFilter: () {},
-                                              onSearchChanged: (value) {
-                                                _filterFences();
-                                              },
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: ListView.builder(
-                                                itemCount: _fences.length,
-                                                itemBuilder: (context, index) {
-                                                  return FenceItem(
-                                                    name: _fences[index].name,
-                                                    isSelected: _selectedFence != null &&
-                                                        _selectedFence!.idFence ==
-                                                            _fences[index].idFence,
-                                                    onTap: () {
-                                                      if (_selectedFence != null &&
-                                                          _selectedFence!.idFence ==
-                                                              _fences[index].idFence) {
-                                                        setState(() {
-                                                          _selectedFence = null;
-                                                          isInteractingFence = false;
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          _selectedFence = _fences[index];
-                                                          isInteractingFence = true;
-                                                        });
-                                                        _loadFenceAnimals();
-                                                      }
-                                                    },
-                                                    color: HexColor(_fences[index].color),
-                                                    onRemove: () {
-                                                      _deleteFence(_fences[index].idFence);
-                                                    },
-                                                  );
-                                                }),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (isInteractingFence)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20, right: 20),
+            return Padding(
+              padding: _isFencesExpanded ? const EdgeInsets.only(left: 20) : EdgeInsets.all(0),
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: _isFencesExpanded,
+                    child: Expanded(
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Row(
+                          Expanded(
+                            flex: 4,
+                            child: Column(
                               children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      localizations.animals.capitalizeFirst!,
-                                      style: theme.textTheme.headlineMedium,
-                                    ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              localizations.fences.capitalizeFirst!,
+                                              style: theme.textTheme.headlineMedium,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            TextButton.icon(
+                                              onPressed: () {
+                                                if (_selectedFence != null) {
+                                                  _selectedFence = null;
+                                                }
+                                                setState(() {
+                                                  isInteractingFence = !isInteractingFence;
+                                                });
+                                              },
+                                              icon: Icon(
+                                                _selectedFence == null && !isInteractingFence
+                                                    ? Icons.add
+                                                    : Icons.close,
+                                              ),
+                                              label: Text(
+                                                _selectedFence == null && !isInteractingFence
+                                                    ? '${localizations.add.capitalizeFirst!} ${localizations.fence.capitalizeFirst!}'
+                                                    : localizations.cancel.capitalizeFirst!,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isInteractingFence = false;
-                                            _selectedFence = null;
-                                          });
-                                        },
-                                        icon: const Icon(Icons.close),
-                                      )
-                                    ],
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: SearchWithFilterInput(
+                                                onFilter: () {},
+                                                onSearchChanged: (value) {
+                                                  _filterFences();
+                                                },
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                  itemCount: _fences.length,
+                                                  itemBuilder: (context, index) {
+                                                    return FenceItem(
+                                                      name: _fences[index].name,
+                                                      isSelected: _selectedFence != null &&
+                                                          _selectedFence!.idFence ==
+                                                              _fences[index].idFence,
+                                                      onTap: () {
+                                                        if (_selectedFence != null &&
+                                                            _selectedFence!.idFence ==
+                                                                _fences[index].idFence) {
+                                                          setState(() {
+                                                            _selectedFence = null;
+                                                            isInteractingFence = false;
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            _selectedFence = _fences[index];
+                                                            isInteractingFence = true;
+                                                          });
+                                                          _loadFenceAnimals();
+                                                        }
+                                                      },
+                                                      color: HexColor(_fences[index].color),
+                                                      onRemove: () {
+                                                        _deleteFence(_fences[index].idFence);
+                                                      },
+                                                    );
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 )
                               ],
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton.icon(
-                                onPressed: _onAddAnimals,
-                                icon: Icon(
-                                  Icons.add,
-                                  color: theme.colorScheme.secondary,
-                                ),
-                                label: Text(
-                                  '${localizations.add.capitalizeFirst!} ${localizations.devices.capitalizeFirst!}',
-                                  style: theme.textTheme.bodyLarge!.copyWith(
-                                    color: theme.colorScheme.secondary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: ListView.builder(
-                                key: Key('$_fenceAnimals'),
-                                itemCount: _fenceAnimals.length,
-                                itemBuilder: (context, index) => AnimalItemRemovable(
-                                  key: Key(_fenceAnimals[index].animal.idAnimal.value.toString()),
-                                  animal: _fenceAnimals[index],
-                                  onRemoveDevice: () => _onRemoveDevice(index),
-                                ),
-                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                Expanded(
-                  key: _mapParentKey,
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: isInteractingFence
-                          ? Geofencing(
-                              key: Key(
-                                  '${_selectedFence != null ? _selectedFence!.idFence.toString() : _selectedFence}'),
-                              fence: _selectedFence,
-                              onFenceCreated: () async {
-                                setState(() {
-                                  isInteractingFence = false;
-                                  _selectedFence = null;
-                                });
-                                await _loadFences();
-                              },
-                            )
-                          : AnimalsLocationsMap(
-                              key: Key(_fences.toString()),
-                              showCurrentPosition: true,
-                              animals: _animals,
-                              fences: _fences,
-                              centerOnPoly: _fences.isNotEmpty,
-                              parent: _mapParentKey,
+                  Visibility(
+                    visible: isInteractingFence && _isFencesExpanded,
+                    child: Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20, right: 20),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        localizations.animals.capitalizeFirst!,
+                                        style: theme.textTheme.headlineMedium,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              isInteractingFence = false;
+                                              _selectedFence = null;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.close),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton.icon(
+                                  onPressed: _onAddAnimals,
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: theme.colorScheme.secondary,
+                                  ),
+                                  label: Text(
+                                    '${localizations.add.capitalizeFirst!} ${localizations.devices.capitalizeFirst!}',
+                                    style: theme.textTheme.bodyLarge!.copyWith(
+                                      color: theme.colorScheme.secondary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: ListView.builder(
+                                  key: Key('$_fenceAnimals'),
+                                  itemCount: _fenceAnimals.length,
+                                  itemBuilder: (context, index) => AnimalItemRemovable(
+                                    key: Key(_fenceAnimals[index].animal.idAnimal.value.toString()),
+                                    animal: _fenceAnimals[index],
+                                    onRemoveDevice: () => _onRemoveDevice(index),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  RotatedBox(
+                    quarterTurns: 1,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _isFencesExpanded = !_isFencesExpanded;
+                        });
+                      },
+                      icon: Icon(
+                          _isFencesExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+                      label: Text(
+                        _isFencesExpanded
+                            ? localizations.close.capitalize!
+                            : localizations.open.capitalize!,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    key: _mapParentKey,
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: isInteractingFence
+                            ? Geofencing(
+                                key: Key(
+                                    '${_selectedFence != null ? _selectedFence!.idFence.toString() : _selectedFence}'),
+                                fence: _selectedFence,
+                                onFenceCreated: () async {
+                                  setState(() {
+                                    isInteractingFence = false;
+                                    _selectedFence = null;
+                                  });
+                                  await _loadFences();
+                                },
+                              )
+                            : AnimalsLocationsMap(
+                                key: Key(_fences.toString()),
+                                showCurrentPosition: true,
+                                animals: _animals,
+                                fences: _fences,
+                                centerOnPoly: _fences.isNotEmpty,
+                                parent: _mapParentKey,
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
         });

@@ -189,5 +189,7 @@
   "email_password_wrong": "email ou password errados",
   "configurations": "configurações",
   "alert": "alerta",
-  "animals": "animais"
+  "animals": "animais",
+  "close": "fechar",
+  "open": "abrir"
 }

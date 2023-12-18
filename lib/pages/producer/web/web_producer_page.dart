@@ -133,10 +133,7 @@ class _WebProducerPageState extends State<WebProducerPage> {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: _currentPage,
-              ),
+              child: _currentPage,
             )
           ],
         ),

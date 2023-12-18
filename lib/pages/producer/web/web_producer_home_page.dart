@@ -162,106 +162,109 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CustomCircularProgressIndicator();
           } else {
-            return Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Text(
-                                localizations.devices.capitalizeFirst!,
-                                style: theme.textTheme.headlineMedium,
-                              ),
-                            ),
-                            Expanded(
-                              child: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: ListView.builder(
-                                      itemCount: _animals.length,
-                                      itemBuilder: (context, index) => AnimalItem(
-                                        animal: _animals[index],
-                                        deviceStatus: _animals[index].deviceStatus!,
-                                        onTap: () {
-                                          widget.onSelectAnimal(_animals[index]);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
+            return Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
                           child: Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: Text(
-                                  localizations.warnings.capitalizeFirst!,
+                                  localizations.devices.capitalizeFirst!,
                                   style: theme.textTheme.headlineMedium,
                                 ),
                               ),
                               Expanded(
                                 child: Card(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: _alertNotifications.isEmpty
-                                        ? Center(
-                                            child: Text(localizations.no_alerts.capitalizeFirst!),
-                                          )
-                                        : ListView.builder(
-                                            itemCount: _alertNotifications.length,
-                                            itemBuilder: (context, index) => AlertItem(
-                                              alertNotification: _alertNotifications[index],
-                                              onRemove: () async {
-                                                await removeNotification(
-                                                  _alertNotifications[index].alertNotificationId,
-                                                ).then(
-                                                  (_) async => await _loadAlertNotifications(),
-                                                );
-                                              },
-                                            ),
-                                          ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: ListView.builder(
+                                        itemCount: _animals.length,
+                                        itemBuilder: (context, index) => AnimalItem(
+                                          animal: _animals[index],
+                                          deviceStatus: _animals[index].deviceStatus!,
+                                          onTap: () {
+                                            widget.onSelectAnimal(_animals[index]);
+                                          },
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               )
                             ],
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    localizations.warnings.capitalizeFirst!,
+                                    style: theme.textTheme.headlineMedium,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Card(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: _alertNotifications.isEmpty
+                                          ? Center(
+                                              child: Text(localizations.no_alerts.capitalizeFirst!),
+                                            )
+                                          : ListView.builder(
+                                              itemCount: _alertNotifications.length,
+                                              itemBuilder: (context, index) => AlertItem(
+                                                alertNotification: _alertNotifications[index],
+                                                onRemove: () async {
+                                                  await removeNotification(
+                                                    _alertNotifications[index].alertNotificationId,
+                                                  ).then(
+                                                    (_) async => await _loadAlertNotifications(),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  key: _mapParentKey,
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: AnimalsLocationsMap(
-                        key: Key(_reloadMap.toString()),
-                        parent: _mapParentKey,
-                        showCurrentPosition: true,
-                        animals: _animals,
-                        fences: _fences,
+                  Expanded(
+                    key: _mapParentKey,
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: AnimalsLocationsMap(
+                          key: Key(_reloadMap.toString()),
+                          parent: _mapParentKey,
+                          showCurrentPosition: true,
+                          animals: _animals,
+                          fences: _fences,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }
         });

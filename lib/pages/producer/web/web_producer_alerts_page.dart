@@ -35,6 +35,7 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
   List<FenceData> _fences = [];
   bool isInteractingAlert = false;
   bool _firstRun = false;
+  bool _isAlertsExpanded = true;
 
   @override
   void initState() {
@@ -198,183 +199,205 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CustomCircularProgressIndicator();
           } else {
-            return Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment: isInteractingAlert
-                                            ? MainAxisAlignment.center
-                                            : MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            localizations.alerts.capitalizeFirst!,
-                                            style: theme.textTheme.headlineMedium,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    if (!isInteractingAlert)
+            return Padding(
+              padding: _isAlertsExpanded ? const EdgeInsets.only(left: 20) : EdgeInsets.all(0),
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: _isAlertsExpanded,
+                    child: Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
                                       Expanded(
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisAlignment: isInteractingAlert
+                                              ? MainAxisAlignment.center
+                                              : MainAxisAlignment.end,
                                           children: [
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                setState(() {
-                                                  isInteractingAlert = !isInteractingAlert;
-                                                });
-                                              },
-                                              icon: const Icon(Icons.add),
-                                              label: Text(
-                                                '${localizations.add.capitalizeFirst!} ${localizations.alert.capitalizeFirst!}',
-                                              ),
+                                            Text(
+                                              localizations.alerts.capitalizeFirst!,
+                                              style: theme.textTheme.headlineMedium,
                                             ),
                                           ],
                                         ),
                                       ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            child: ListView.builder(
-                                                itemCount: _alerts.length,
-                                                itemBuilder: (context, index) {
-                                                  return AlertManagementItem(
-                                                    key: Key(
-                                                        _alerts[index].idAlert.value.toString()),
-                                                    onTap: () {
-                                                      if (hasConnection) {
-                                                        Future.delayed(
-                                                                const Duration(milliseconds: 300))
-                                                            .then((value) => setState(() {
-                                                                  isInteractingAlert = true;
-                                                                  _selectedAlert = _alerts[index];
-                                                                }));
-                                                      }
-                                                    },
-                                                    alert: _alerts[index],
-                                                    onDelete: (_) {
-                                                      _deleteAlert(index);
-                                                    },
-                                                  );
-                                                }),
+                                      if (!isInteractingAlert)
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              TextButton.icon(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    isInteractingAlert = !isInteractingAlert;
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.add),
+                                                label: Text(
+                                                  '${localizations.add.capitalizeFirst!} ${localizations.alert.capitalizeFirst!}',
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: ListView.builder(
+                                                  itemCount: _alerts.length,
+                                                  itemBuilder: (context, index) {
+                                                    return AlertManagementItem(
+                                                      key: Key(
+                                                          _alerts[index].idAlert.value.toString()),
+                                                      onTap: () {
+                                                        if (hasConnection) {
+                                                          Future.delayed(
+                                                                  const Duration(milliseconds: 300))
+                                                              .then((value) => setState(() {
+                                                                    isInteractingAlert = true;
+                                                                    _selectedAlert = _alerts[index];
+                                                                  }));
+                                                        }
+                                                      },
+                                                      alert: _alerts[index],
+                                                      onDelete: (_) {
+                                                        _deleteAlert(index);
+                                                      },
+                                                    );
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (isInteractingAlert)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20, right: 20),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      localizations.device_settings.capitalizeFirst!,
-                                      style: theme.textTheme.headlineMedium,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isInteractingAlert = false;
-                                            _selectedAlert = null;
-                                          });
-                                        },
-                                        icon: const Icon(Icons.close),
-                                      )
-                                    ],
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: AddAlert(
-                                key: Key('${_selectedAlert?.idAlert.value}'),
-                                alert: _selectedAlert,
-                                isEdit: _selectedAlert != null,
-                                onCreate: () async {
-                                  await _loadAlerts().then(
-                                    (_) => setState(() {
-                                      isInteractingAlert = false;
-                                      _selectedAlert = null;
-                                    }),
-                                  );
-                                },
-                                onCancel: () {
-                                  setState(() {
-                                    isInteractingAlert = false;
-                                    _selectedAlert = null;
-                                  });
-                                }),
-                          ),
                         ],
                       ),
                     ),
                   ),
-                Expanded(
-                  key: _mapParentKey,
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: AnimalsLocationsMap(
-                        key: Key(_fences.toString()),
-                        showCurrentPosition: true,
-                        animals: _animals,
-                        fences: _fences,
-                        centerOnPoly: _fences.isNotEmpty,
-                        parent: _mapParentKey,
+                  Visibility(
+                    visible: isInteractingAlert && _isAlertsExpanded,
+                    child: Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20, right: 20),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        localizations.device_settings.capitalizeFirst!,
+                                        style: theme.textTheme.headlineMedium,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              isInteractingAlert = false;
+                                              _selectedAlert = null;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.close),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: AddAlert(
+                                  key: Key('${_selectedAlert?.idAlert.value}'),
+                                  alert: _selectedAlert,
+                                  isEdit: _selectedAlert != null,
+                                  onCreate: () async {
+                                    await _loadAlerts().then(
+                                      (_) => setState(() {
+                                        isInteractingAlert = false;
+                                        _selectedAlert = null;
+                                      }),
+                                    );
+                                  },
+                                  onCancel: () {
+                                    setState(() {
+                                      isInteractingAlert = false;
+                                      _selectedAlert = null;
+                                    });
+                                  }),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  RotatedBox(
+                    quarterTurns: 1,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _isAlertsExpanded = !_isAlertsExpanded;
+                        });
+                      },
+                      icon: Icon(
+                          _isAlertsExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+                      label: Text(
+                        _isAlertsExpanded
+                            ? localizations.close.capitalize!
+                            : localizations.open.capitalize!,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    key: _mapParentKey,
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: AnimalsLocationsMap(
+                          key: Key(_fences.toString()),
+                          showCurrentPosition: true,
+                          animals: _animals,
+                          fences: _fences,
+                          centerOnPoly: _fences.isNotEmpty,
+                          parent: _mapParentKey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
         });

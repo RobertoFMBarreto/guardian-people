@@ -53,6 +53,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
   RangeValues _elevationRangeValues = const RangeValues(0, 1000);
   RangeValues _tmpRangeValues = const RangeValues(0, 25);
+  bool _isDevicesExpanded = true;
 
   @override
   void dispose() {
@@ -301,306 +302,329 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CustomCircularProgressIndicator();
           } else {
-            return Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: _showSettings || _selectedAnimal == null ? 1 : 2,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(bottom: 8.0),
-                                          child: FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              localizations.devices.capitalizeFirst!,
-                                              style: theme.textTheme.headlineMedium,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (_selectedAnimal != null && !_showSettings)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _showSettings = !_showSettings;
-                                                });
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  const Icon(Icons.settings),
-                                                  Text(localizations
-                                                      .device_settings.capitalizeFirst!)
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                ],
-                              ),
-                              Expanded(
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Column(
+            return Padding(
+              padding: _isDevicesExpanded ? const EdgeInsets.only(left: 20) : EdgeInsets.all(0),
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: _isDevicesExpanded,
+                    child: Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: _showSettings || _selectedAnimal == null ? 1 : 2,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SearchWithFilterInput(
-                                              onFilter: () {},
-                                              onSearchChanged: (value) {
-                                                _searchString = value;
-                                                filterAnimals();
-                                              },
+                                            padding: const EdgeInsets.only(bottom: 8.0),
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(
+                                                localizations.devices.capitalizeFirst!,
+                                                style: theme.textTheme.headlineMedium,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: ListView.builder(
-                                                itemCount: _animals.length,
-                                                itemBuilder: (context, index) {
-                                                  return AnimalItem(
-                                                    animal: _animals[index],
-                                                    deviceStatus: _animals[index].deviceStatus!,
-                                                    isSelected: _selectedAnimal != null &&
-                                                        _animals[index].animal.idAnimal.value ==
-                                                            _selectedAnimal!.animal.idAnimal.value,
-                                                    onTap: () async {
-                                                      if (_selectedAnimal != null) {
-                                                        await AnimalRequests.stopRealtimeStreaming(
-                                                          idAnimal: _selectedAnimal!
-                                                              .animal.idAnimal.value,
-                                                          context: context,
-                                                          onDataGotten: () {},
-                                                          onFailed: (status) {},
-                                                        );
-                                                      }
-                                                      if (_selectedAnimal != null &&
-                                                          _selectedAnimal!.animal.idAnimal.value ==
-                                                              _animals[index]
-                                                                  .animal
-                                                                  .idAnimal
-                                                                  .value) {
-                                                        setState(() {
-                                                          _selectedAnimal = null;
-                                                          _showSettings = false;
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          _selectedAnimal = _animals[index];
-                                                        });
-                                                        if (_endDate == null ||
-                                                            _startDate
-                                                                    .difference(_endDate!)
-                                                                    .inSeconds
-                                                                    .abs() >
-                                                                60) {
-                                                          await _loadAnimalData();
-                                                        }
-                                                      }
-
-                                                      if (_selectedAnimal != null &&
-                                                          _selectedAnimal!.data.isEmpty) {
-                                                        // ignore: use_build_context_synchronously
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(SnackBar(
-                                                          content: Text(
-                                                            localizations.there_is_no_animal_data
-                                                                .capitalizeFirst!,
-                                                          ),
-                                                        ));
-                                                      }
-                                                    },
-                                                  );
-                                                }),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        if (_selectedAnimal != null) ...[
-                          if (_endDate != null)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    if (mounted) {
-                                      setState(() {
-                                        _endDate = null;
-                                        _startDate = DateTime.now();
-                                        _isInterval = false;
-
-                                        _loadAnimalData();
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    localizations.realtime.capitalize!,
-                                    style: theme.textTheme.bodyLarge!
-                                        .copyWith(color: gdSecondaryColor),
-                                  ),
-                                )
-                              ],
-                            ),
-                          Expanded(
-                            child: AnimalTimeRangeWidget(
-                              key: Key('$_startDate|$_endDate'),
-                              startDate: _startDate,
-                              endDate: _endDate,
-                              onDateChanged: (newStartDate, newEndDate) async {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  _startDate = newStartDate;
-                                  _endDate = newEndDate;
-                                  _isInterval = true;
-                                });
-                                await _loadAnimalData();
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                  ),
-                ),
-                if (_selectedAnimal != null && _showSettings)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20, right: 20),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      localizations.device_settings.capitalizeFirst!,
-                                      style: theme.textTheme.headlineMedium,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _showSettings = false;
-                                          });
-                                        },
-                                        icon: const Icon(Icons.close),
+                                    if (_selectedAnimal != null && !_showSettings)
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _showSettings = !_showSettings;
+                                                  });
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(Icons.settings),
+                                                    Text(localizations
+                                                        .device_settings.capitalizeFirst!)
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       )
-                                    ],
+                                  ],
+                                ),
+                                Expanded(
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: SearchWithFilterInput(
+                                                onFilter: () {},
+                                                onSearchChanged: (value) {
+                                                  _searchString = value;
+                                                  filterAnimals();
+                                                },
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                  itemCount: _animals.length,
+                                                  itemBuilder: (context, index) {
+                                                    return AnimalItem(
+                                                      animal: _animals[index],
+                                                      deviceStatus: _animals[index].deviceStatus!,
+                                                      isSelected: _selectedAnimal != null &&
+                                                          _animals[index].animal.idAnimal.value ==
+                                                              _selectedAnimal!
+                                                                  .animal.idAnimal.value,
+                                                      onTap: () async {
+                                                        if (_selectedAnimal != null) {
+                                                          await AnimalRequests
+                                                              .stopRealtimeStreaming(
+                                                            idAnimal: _selectedAnimal!
+                                                                .animal.idAnimal.value,
+                                                            context: context,
+                                                            onDataGotten: () {},
+                                                            onFailed: (status) {},
+                                                          );
+                                                        }
+                                                        if (_selectedAnimal != null &&
+                                                            _selectedAnimal!
+                                                                    .animal.idAnimal.value ==
+                                                                _animals[index]
+                                                                    .animal
+                                                                    .idAnimal
+                                                                    .value) {
+                                                          setState(() {
+                                                            _selectedAnimal = null;
+                                                            _showSettings = false;
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            _selectedAnimal = _animals[index];
+                                                          });
+                                                          if (_endDate == null ||
+                                                              _startDate
+                                                                      .difference(_endDate!)
+                                                                      .inSeconds
+                                                                      .abs() >
+                                                                  60) {
+                                                            await _loadAnimalData();
+                                                          }
+                                                        }
+
+                                                        if (_selectedAnimal != null &&
+                                                            _selectedAnimal!.data.isEmpty) {
+                                                          // ignore: use_build_context_synchronously
+                                                          ScaffoldMessenger.of(context)
+                                                              .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                              localizations.there_is_no_animal_data
+                                                                  .capitalizeFirst!,
+                                                            ),
+                                                          ));
+                                                        }
+                                                      },
+                                                    );
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: DeviceSettings(
-                              key: Key(_selectedAnimal!.animal.idAnimal.value),
-                              animal: _selectedAnimal!,
-                              onColorChanged: (color) {
-                                setState(() {
-                                  _selectedAnimal = Animal(
-                                    animal: _selectedAnimal!.animal.copyWith(
-                                      animalColor: drift.Value(color),
+                          if (_selectedAnimal != null) ...[
+                            if (_endDate != null)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      if (mounted) {
+                                        setState(() {
+                                          _endDate = null;
+                                          _startDate = DateTime.now();
+                                          _isInterval = false;
+
+                                          _loadAnimalData();
+                                        });
+                                      }
+                                    },
+                                    child: Text(
+                                      localizations.realtime.capitalize!,
+                                      style: theme.textTheme.bodyLarge!
+                                          .copyWith(color: gdSecondaryColor),
                                     ),
-                                    data: _selectedAnimal!.data,
-                                  );
-                                });
-                                _loadAnimals();
-                              },
-                              onNameChanged: (name) {
-                                setState(() {
-                                  _selectedAnimal = Animal(
-                                    animal: _selectedAnimal!.animal.copyWith(
-                                      animalName: drift.Value(name),
-                                    ),
-                                    data: _selectedAnimal!.data,
-                                  );
-                                });
-                                _loadAnimals();
-                              },
+                                  )
+                                ],
+                              ),
+                            Expanded(
+                              child: AnimalTimeRangeWidget(
+                                key: Key('$_startDate|$_endDate'),
+                                startDate: _startDate,
+                                endDate: _endDate,
+                                onDateChanged: (newStartDate, newEndDate) async {
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    _startDate = newStartDate;
+                                    _endDate = newEndDate;
+                                    _isInterval = true;
+                                  });
+                                  await _loadAnimalData();
+                                },
+                              ),
                             ),
-                          ),
+                          ]
                         ],
                       ),
                     ),
                   ),
-                Expanded(
-                  key: _firstItemDataKey,
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: _selectedAnimal != null
-                          ? SingleAnimalLocationMap(
-                              key: Key(
-                                  '${_selectedAnimal?.animal.idAnimal.value}|${_selectedAnimal?.data}'),
-                              showCurrentPosition: true,
-                              deviceData: _selectedAnimal!.data
-                                  .where((element) => element.lat.value != null)
-                                  .toList(),
-                              onZoomChange: (newZoom) {
-                                // No need to setstate because we dont need to update the screen
-                                // just need to store the value in case the map restarts to keep zoom
-                                _currentZoom = newZoom;
-                              },
-                              parent: _firstItemDataKey,
-                              startingZoom: _currentZoom,
-                              startDate: _startDate,
-                              endDate: _endDate ?? DateTime.now(),
-                              isInterval: _isInterval,
-                              idAnimal: _selectedAnimal!.animal.idAnimal.value,
-                              deviceColor: _selectedAnimal!.animal.animalColor.value,
-                            )
-                          : AnimalsLocationsMap(
-                              showCurrentPosition: true,
-                              animals: _animals,
-                              fences: _fences,
-                              parent: _firstItemDataKey,
+                  if (_selectedAnimal != null && _showSettings && _isDevicesExpanded)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20, right: 20),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        localizations.device_settings.capitalizeFirst!,
+                                        style: theme.textTheme.headlineMedium,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _showSettings = false;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.close),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
+                            Expanded(
+                              child: DeviceSettings(
+                                key: Key(_selectedAnimal!.animal.idAnimal.value),
+                                animal: _selectedAnimal!,
+                                onColorChanged: (color) {
+                                  setState(() {
+                                    _selectedAnimal = Animal(
+                                      animal: _selectedAnimal!.animal.copyWith(
+                                        animalColor: drift.Value(color),
+                                      ),
+                                      data: _selectedAnimal!.data,
+                                    );
+                                  });
+                                  _loadAnimals();
+                                },
+                                onNameChanged: (name) {
+                                  setState(() {
+                                    _selectedAnimal = Animal(
+                                      animal: _selectedAnimal!.animal.copyWith(
+                                        animalName: drift.Value(name),
+                                      ),
+                                      data: _selectedAnimal!.data,
+                                    );
+                                  });
+                                  _loadAnimals();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  RotatedBox(
+                    quarterTurns: 1,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _isDevicesExpanded = !_isDevicesExpanded;
+                        });
+                      },
+                      icon: Icon(
+                          _isDevicesExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+                      label: Text(
+                        _isDevicesExpanded
+                            ? localizations.close.capitalize!
+                            : localizations.open.capitalize!,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    key: _firstItemDataKey,
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: _selectedAnimal != null
+                            ? SingleAnimalLocationMap(
+                                key: Key(
+                                    '${_selectedAnimal?.animal.idAnimal.value}|${_selectedAnimal?.data}'),
+                                showCurrentPosition: true,
+                                deviceData: _selectedAnimal!.data
+                                    .where((element) => element.lat.value != null)
+                                    .toList(),
+                                onZoomChange: (newZoom) {
+                                  // No need to setstate because we dont need to update the screen
+                                  // just need to store the value in case the map restarts to keep zoom
+                                  _currentZoom = newZoom;
+                                },
+                                parent: _firstItemDataKey,
+                                startingZoom: _currentZoom,
+                                startDate: _startDate,
+                                endDate: _endDate ?? DateTime.now(),
+                                isInterval: _isInterval,
+                                idAnimal: _selectedAnimal!.animal.idAnimal.value,
+                                deviceColor: _selectedAnimal!.animal.animalColor.value,
+                              )
+                            : AnimalsLocationsMap(
+                                showCurrentPosition: true,
+                                animals: _animals,
+                                fences: _fences,
+                                parent: _firstItemDataKey,
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
         });
