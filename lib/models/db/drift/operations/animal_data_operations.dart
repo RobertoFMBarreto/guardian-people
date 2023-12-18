@@ -9,6 +9,26 @@ Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion anima
   return animalData;
 }
 
+Future<void> deleteAnimalData(String idData) async {
+  final db = Get.find<GuardianDb>();
+
+  await (db.delete(db.animalLocations)..where((tbl) => tbl.animalDataId.equals(idData))).go();
+}
+
+Future<void> deleteAnimalDataInInterval({
+  DateTime? startDate,
+  DateTime? endDate,
+  required String idAnimal,
+  bool isInterval = false,
+}) async {
+  final data = await getAnimalData(
+      startDate: startDate, endDate: endDate, idAnimal: idAnimal, isInterval: isInterval);
+
+  for (AnimalLocationsCompanion location in data) {
+    await deleteAnimalData(location.animalDataId.value);
+  }
+}
+
 /// Method to get last animal data from a single animal [idAnimal] returning as a [AnimalLocationsCompanion]
 Future<AnimalLocationsCompanion?> getLastAnimalData(String idAnimal) async {
   final db = Get.find<GuardianDb>();

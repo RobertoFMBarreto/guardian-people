@@ -14,6 +14,15 @@ Future<AnimalCompanion> createAnimal(
   return animal;
 }
 
+Future<void> deleteAllAnimals() async {
+  final db = Get.find<GuardianDb>();
+
+  final data = await db.select(db.animal).get();
+  for (AnimalData animal in data) {
+    deleteAnimal(animal.idAnimal);
+  }
+}
+
 /// Method for deleting an animal [idAnimal]
 Future<void> deleteAnimal(String idAnimal) async {
   final db = Get.find<GuardianDb>();

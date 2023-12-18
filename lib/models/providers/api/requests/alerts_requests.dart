@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/alert_devices_operations.dart';
+import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
@@ -196,7 +197,11 @@ class AlertRequests {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
-        alertsFromJson(response.body).then((_) => onDataGotten(response.body));
+        await deleteAllAlerts().then(
+          (_) async => await alertsFromJson(response.body).then(
+            (_) async => await onDataGotten(response.body),
+          ),
+        );
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {

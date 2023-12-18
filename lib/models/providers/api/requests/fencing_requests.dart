@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
 import 'package:guardian/models/providers/api/auth_provider.dart';
@@ -132,8 +133,10 @@ class FencingRequests {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
-        await fencesFromJson(response.body).then(
-          (_) => onGottenData(response.body),
+        await removeAllFences().then(
+          (_) async => await fencesFromJson(response.body).then(
+            (_) async => await onGottenData(response.body),
+          ),
         );
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:guardian/models/helpers/navigator_key_helper.dart';
@@ -24,7 +26,13 @@ class AnimalRequests {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
-        await animalsFromJson(response.body);
+
+        // Delete all animals
+        await deleteAllAnimals().then((_) async {
+          // Delete animals last location
+          await animalsFromJson(response.body);
+        });
+
         onDataGotten();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {
@@ -88,9 +96,17 @@ class AnimalRequests {
         setShownNoServerConnection(false);
         final body = jsonDecode(response.body);
 
-        for (var dt in body) {
-          await animalDataFromJson(dt, idAnimal);
-        }
+        await deleteAnimalDataInInterval(
+          idAnimal: idAnimal,
+          startDate: startDate,
+          endDate: endDate,
+          isInterval: true,
+        ).then((_) async {
+          for (var dt in body) {
+            await animalDataFromJson(dt, idAnimal);
+          }
+        });
+
         onDataGotten();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken().then((resp) async {

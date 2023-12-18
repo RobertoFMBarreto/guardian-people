@@ -19,6 +19,14 @@ Future<FenceCompanion> updateFence(FenceCompanion fence) async {
   return fence;
 }
 
+Future<void> removeAllFences() async {
+  final db = Get.find<GuardianDb>();
+  final data = await db.select(db.fence).get();
+  for (FenceData fence in data) {
+    await removeFence(fence.idFence);
+  }
+}
+
 /// Method to remove a fence [idFence]
 Future<void> removeFence(String idFence) async {
   final db = Get.find<GuardianDb>();
