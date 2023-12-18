@@ -102,21 +102,7 @@ class _WelcomePageState extends State<WelcomePage> {
               Expanded(
                 flex: 10,
                 child: Center(
-                  child: Text(
-                    'Guardian',
-                    style: theme.textTheme.headlineLarge!.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: theme.colorScheme.onSecondary,
-                      fontSize: 60,
-                      shadows: <Shadow>[
-                        const Shadow(
-                          offset: Offset(1, 1.5),
-                          blurRadius: 25.0,
-                          color: Color.fromARGB(255, 71, 71, 71),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: Image.asset('assets/logo/GuardianLogo_white_shadow.png'),
                 ),
               ),
               Expanded(

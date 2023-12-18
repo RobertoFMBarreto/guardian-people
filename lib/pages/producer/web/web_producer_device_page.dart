@@ -57,18 +57,20 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
   @override
   void dispose() {
-    AnimalRequests.stopRealtimeStreaming(
-      idAnimal: _selectedAnimal!.animal.idAnimal.value,
-      context: context,
-      onDataGotten: () {
-        rabbitMQProvider.stop();
-      },
-      onFailed: (statusCode) {
-        AppLocalizations localizations = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(localizations.server_error)));
-      },
-    );
+    if (_selectedAnimal != null) {
+      AnimalRequests.stopRealtimeStreaming(
+        idAnimal: _selectedAnimal!.animal.idAnimal.value,
+        context: context,
+        onDataGotten: () {
+          rabbitMQProvider.stop();
+        },
+        onFailed: (statusCode) {
+          AppLocalizations localizations = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+        },
+      );
+    }
 
     super.dispose();
   }
