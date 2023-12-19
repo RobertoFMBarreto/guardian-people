@@ -117,12 +117,12 @@ class _MyAppState extends State<MyApp> {
     return null;
   }
 
-  // Method that allows to get the initial connection state
+  /// Method that allows to get the initial connection state
   Future<void> _setupInitialConnectionState() async {
     if (kIsWeb) hasConnection = await checkInternetConnection(context);
   }
 
-  // Method that allows to get all alertable sensors
+  /// Method that allows to get all alertable sensors
   Future<void> _getAlertableSensors() async {
     await AlertRequests.getAlertableSensorsFromApi(
       context: context,
