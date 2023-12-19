@@ -9,7 +9,7 @@ import 'package:http/http.dart';
 
 /// This class is the provider of alerts from the guardian api
 class AlertsProvider {
-  /// Method that allows to get all alertable sensors
+  /// Method that allows that calls the api to get all alertable sensors
   static Future<Response> getAlertableSensors() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -30,7 +30,7 @@ class AlertsProvider {
     }
   }
 
-  /// Method for creating an alert
+  /// Method that allows to call the api to create an alert
   static Future<Response> createAlert(UserAlertCompanion alert, List<Animal> animals) async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -59,7 +59,7 @@ class AlertsProvider {
     }
   }
 
-  /// Method for updating an alert
+  /// Method that allows to call the api to update an alert
   static Future<Response> updateAlert(UserAlertCompanion alert, List<Animal> animals) async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -88,7 +88,7 @@ class AlertsProvider {
     }
   }
 
-  /// Method that allows to get all user alerts
+  /// Method that calls the api to get all alerts
   static Future<Response> getAllAlerts() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -109,7 +109,7 @@ class AlertsProvider {
     }
   }
 
-  /// Method that allows to get all user alerts
+  /// Method that calls the api to delete an alert [alertId]
   static Future<Response> deleteAlert(String alertId) async {
     String? token = await getToken();
     Map<String, String> headers = {

@@ -8,7 +8,7 @@ import 'package:http/http.dart';
 
 /// This class is the provider of fencing from the guardian api
 class FencingProvider {
-  /// Method that allows to send the new fence to the api
+  /// Method that calls the api to create a fence with [fence] and [fencePoints]
   static Future<Response> createFence(
       FenceCompanion fence, List<FencePointsCompanion> fencePoints) async {
     String? token = await getToken();
@@ -42,7 +42,7 @@ class FencingProvider {
     }
   }
 
-  /// Method that allows to remove a fence from the api
+  /// Method that calls the api to remove a fence from the api
   static Future<Response> removeFence(String idFence) async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -60,7 +60,7 @@ class FencingProvider {
     }
   }
 
-  /// Method that allows to remove a fence from the api
+  /// Method that calls the api to get all user fences
   static Future<Response> getUserFences() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -78,7 +78,7 @@ class FencingProvider {
     }
   }
 
-  /// Method that allows to update a fence in api
+  /// Method that calls the api to update a fence with [fence] and [fencePoints]
   static Future<Response> updateFence(
       FenceCompanion fence, List<FencePointsCompanion> fencePoints) async {
     String? token = await getToken();
@@ -112,7 +112,7 @@ class FencingProvider {
     }
   }
 
-  /// Method that allows to add an animal to a fence in api
+  /// Method that calls the api to add animals [animalsIds] to a fence [fenceId]
   static Future<Response> addAnimalFence(String fenceId, List<String> animalIds) async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -130,7 +130,7 @@ class FencingProvider {
     }
   }
 
-  /// Method that allows to remove an animal from a fence in api
+  /// Method that calls the api to remove animals [animalIds] from the fence [fenceId]
   static Future<Response> removeAnimalFence(String fenceId, List<String> animalIds) async {
     String? token = await getToken();
     Map<String, String> headers = {

@@ -14,8 +14,15 @@ import 'package:guardian/models/providers/api/parsers/sensor_parser.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
+/// Class that represents the alert requests
 class AlertRequests {
-  /// Method that allows to get all alertablet sensors from the api
+  /// Method that allows to get all alertable sensors from the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> getAlertableSensorsFromApi(
       {required BuildContext context,
       required Function(String) onDataGotten,
@@ -70,7 +77,13 @@ class AlertRequests {
     });
   }
 
-  /// Method that allows to create an alert
+  /// Method that allows to create an alert in the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> addAlertToApi(
       {required BuildContext context,
       required UserAlertCompanion alert,
@@ -127,7 +140,13 @@ class AlertRequests {
     });
   }
 
-  /// Method that allows to create an alert
+  /// Method that allows to update an alert in the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> updateAlertToApi(
       {required BuildContext context,
       required UserAlertCompanion alert,
@@ -188,7 +207,13 @@ class AlertRequests {
     });
   }
 
-  /// Method that allows to get all user alerts from api
+  /// Method that allows to get all user alerts from API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> getUserAlertsFromApi(
       {required BuildContext context,
       required Function(String) onDataGotten,
@@ -245,7 +270,13 @@ class AlertRequests {
     });
   }
 
-  /// Method that allows to delete user alert from api
+  /// Method that allows to delete user alert from API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> deleteUserAlertFromApi(
       {required BuildContext context,
       required String alertId,

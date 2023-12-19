@@ -6,6 +6,9 @@ import 'package:guardian/models/db/drift/operations/alert_notifications_operatio
 import 'package:guardian/models/db/drift/operations/sensors_operations.dart';
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 
+/// Method taht parses the notification json [body] and creates an alert notification [createAlertNotification] inserting it on database
+///
+/// It also creates the refered sensor and alert inserting them on the database
 Future<void> parseNotifications(String body) async {
   final data = jsonDecode(body);
   for (var dt in data) {

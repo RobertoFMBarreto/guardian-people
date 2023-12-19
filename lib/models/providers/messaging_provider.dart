@@ -15,7 +15,9 @@ import 'package:guardian/models/providers/api/requests/auth_requests.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the fcm messaging provider
 class FCMMessagingProvider {
+  /// Method that handles a background message
   @pragma('vm:entry-point')
   static Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     // If you're going to use other Firebase services in the background, such as Firestore,
@@ -27,6 +29,7 @@ class FCMMessagingProvider {
     }
   }
 
+  /// Method that allows to get a message body
   static String getMessageBody(BuildContext context, String data, String channel) {
     final body = jsonDecode(data);
     AppLocalizations localizations = AppLocalizations.of(context)!;
@@ -49,6 +52,7 @@ class FCMMessagingProvider {
     return '';
   }
 
+  /// Method that handles a notification click
   static Future<void> _notificationClickHandler(
     RemoteMessage message,
     GlobalKey<NavigatorState> navigatorKey,
@@ -99,6 +103,7 @@ class FCMMessagingProvider {
     } catch (e) {}
   }
 
+  /// Method tat starts the fcm messaging
   static Future<void> initInfo(
     GlobalKey<NavigatorState> navigatorKey,
   ) async {

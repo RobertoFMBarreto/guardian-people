@@ -6,7 +6,7 @@ import 'package:guardian/models/db/drift/operations/alert_devices_operations.dar
 import 'package:guardian/models/db/drift/operations/user_alert_operations.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 
-/// Method that allows to read json [body] and parse to an [UserAlertCompanion] inserting it on the database in the process
+/// Method that allows to read json [body] and parse to an [UserAlertCompanion] in the [alertFromJson] method
 Future<void> alertsFromJson(dynamic body) async {
   final dt = jsonDecode(body);
   for (var alert in dt) {

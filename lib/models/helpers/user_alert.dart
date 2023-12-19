@@ -72,6 +72,7 @@ extension ParseCmpToOp on AlertComparissons {
   }
 }
 
+/// Method that parses the comparisson operator
 String parseComparisson(String op, AppLocalizations localizations) {
   switch (op) {
     case '=':
@@ -94,6 +95,7 @@ String parseComparisson(String op, AppLocalizations localizations) {
   }
 }
 
+/// Method that parses the sensor name
 String parseSensor(String name, AppLocalizations localizations) {
   switch (name) {
     case 'Skin Temperature':

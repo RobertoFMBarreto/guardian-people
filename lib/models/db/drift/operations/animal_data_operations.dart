@@ -9,12 +9,14 @@ Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion anima
   return animalData;
 }
 
+/// Method that allows to delete animal data by [AnimalDataId]
 Future<void> deleteAnimalData(String idData) async {
   final db = Get.find<GuardianDb>();
 
   await (db.delete(db.animalLocations)..where((tbl) => tbl.animalDataId.equals(idData))).go();
 }
 
+/// Method that allows to delete animal [idAnimal] data between [startDate] and [endDate]
 Future<void> deleteAnimalDataInInterval({
   DateTime? startDate,
   DateTime? endDate,

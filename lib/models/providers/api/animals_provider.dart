@@ -8,7 +8,7 @@ import 'package:http/http.dart';
 
 /// This class is the provider of animals from the guardian api
 class AnimalProvider {
-  /// Method for getting all user animals from api
+  /// Method that calls the api to get all user animals
   static Future<Response> getAnimals() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -29,7 +29,7 @@ class AnimalProvider {
     }
   }
 
-  /// Method for getting all user animals from api with last location
+  /// Method that calls the api to get all user animals with last location
   static Future<Response> getAnimalsWithLastLocation() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -50,7 +50,7 @@ class AnimalProvider {
     }
   }
 
-  /// Method for getting all animal data [idAnimal] between [startDate] and [endDate]
+  /// Method that calls the api to get all animal data [idAnimal] between [startDate] and [endDate]
   static Future<Response> getAnimalData(
       String idAnimal, DateTime startDate, DateTime endDate) async {
     String? token = await getToken();
@@ -73,7 +73,7 @@ class AnimalProvider {
     }
   }
 
-  /// Method that enables the realtime straming for the animal [idAnimal]
+  /// Method that calls the api to start the realtime streaming for the animal [idAnimal]
   static Future<Response> startRealtimeStreaming(String idAnimal) async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -93,7 +93,7 @@ class AnimalProvider {
     }
   }
 
-  /// Method that stops the realtime straming for the animal [idAnimal]
+  ///  Method that calls the api to stop the realtime streaming for the animal [idAnimal]
   static Future<Response> stopRealtimeStreaming(String idAnimal) async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -112,6 +112,7 @@ class AnimalProvider {
     }
   }
 
+  /// Method that calls the api to update the animal [animal]
   static Future<Response> updateAnimal(AnimalCompanion animal) async {
     String? token = await getToken();
     Map<String, String> headers = {

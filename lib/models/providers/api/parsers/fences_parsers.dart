@@ -6,6 +6,9 @@ import 'package:guardian/models/db/drift/operations/fence_operations.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
 import 'package:drift/drift.dart' as drift;
 
+/// Method that parsers json fence from [body] to a [FenceCompanion] inserting it in the database
+///
+/// This method also parses the fence points [fencePointFromJson] and animals [fenceAnimalFromJson] inserting on the database
 Future<void> fencesFromJson(String body) async {
   final data = jsonDecode(body);
 
@@ -26,6 +29,7 @@ Future<void> fencesFromJson(String body) async {
   }
 }
 
+/// Method that parses fence point data [data] from the fence [idFence] and inserts it on database
 Future<void> fencePointFromJson(Map<dynamic, dynamic> data, String idFence) async {
   await createFencePoint(
     FencePointsCompanion(
@@ -38,6 +42,7 @@ Future<void> fencePointFromJson(Map<dynamic, dynamic> data, String idFence) asyn
   );
 }
 
+/// Method that parses animal data [data] from the fence [idFence] and inserts it on database
 Future<void> fenceAnimalFromJson(Map<dynamic, dynamic> data, String idFence) async {
   await createFenceAnimal(
     FenceAnimalsCompanion(

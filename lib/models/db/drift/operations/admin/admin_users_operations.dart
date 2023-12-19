@@ -57,6 +57,7 @@ Future<List<ProducerWithDevicesAmount>> getProducersWithSearchAndDevicesAmount(
       .toList();
 }
 
+/// Method that allows to get all producers from the database
 Future<List<UserData>> getProducers() async {
   final db = Get.find<GuardianDb>();
   final data = await (db.select(db.user)..where((tbl) => tbl.isSuperuser.equals(false))).get();

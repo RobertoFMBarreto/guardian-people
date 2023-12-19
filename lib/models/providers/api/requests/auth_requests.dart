@@ -7,12 +7,15 @@ import 'package:guardian/models/providers/api/auth_provider.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
+/// Class that represents the auth requests
 class AuthRequests {
-  /// Method that loads the animals with last location from the api into the [_animals] list
+  /// Method that refreshes user device token in the API
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
   ///
-  /// If the server takes too long to answer then the user receives and alert
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> refreshDevicetoken(
       {required BuildContext context,
       required String devicetoken,

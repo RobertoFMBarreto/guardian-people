@@ -21,13 +21,17 @@ import 'package:flutter/material.dart';
 import 'package:guardian/themes/dark_theme.dart';
 import 'package:guardian/themes/light_theme.dart';
 
+// only import the libraries of the current platform
 import 'package:guardian/models/providers/caching/caching_stub.dart'
     if (dart.library.io) 'package:guardian/models/providers/caching/caching_provider_mobile.dart'
     if (dart.library.js) 'package:guardian/models/providers/caching/caching_provider_web.dart'
     as caching_helper;
 
+// global variable that stores the device connection state
 late bool hasConnection;
+// global variable that stores the snackbar state
 bool isSnackbarActive = false;
+// global variable that is true if te screen is big enough for tablet mode
 bool isBigScreen = true;
 
 Future<void> main() async {
@@ -113,10 +117,12 @@ class _MyAppState extends State<MyApp> {
     return null;
   }
 
+  // Method that allows to get the initial connection state
   Future<void> _setupInitialConnectionState() async {
     if (kIsWeb) hasConnection = await checkInternetConnection(context);
   }
 
+  // Method that allows to get all alertable sensors
   Future<void> _getAlertableSensors() async {
     await AlertRequests.getAlertableSensorsFromApi(
       context: context,
@@ -161,6 +167,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     /// Set orientation only to portait
+    /// Or landscape if the screen is big enough
     if (!kIsWeb) {
       SystemChrome.setPreferredOrientations([
         if (!kIsWeb && !isBigScreen) DeviceOrientation.portraitUp,

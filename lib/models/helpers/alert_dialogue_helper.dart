@@ -107,6 +107,7 @@ Future<void> showNoWifiLoginDialog(BuildContext context) async {
   );
 }
 
+/// Method that allows to show a no connection warning snackbar
 void showNoConnectionSnackBar() {
   if (!isSnackbarActive) {
     AppLocalizations localizations = AppLocalizations.of(navigatorKey.currentContext!)!;

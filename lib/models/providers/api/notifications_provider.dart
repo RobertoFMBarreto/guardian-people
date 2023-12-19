@@ -6,7 +6,7 @@ import 'package:http/http.dart';
 
 /// This class is the provider of notifications from the guardian api
 class NotificationsProvider {
-  /// Method that allows to get notifications from the api
+  /// Method that calls the api to get all user notifications
   static Future<Response> getNotifications() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -27,7 +27,7 @@ class NotificationsProvider {
     }
   }
 
-  /// Method that allows to get notifications from the api
+  /// Method that calls the api to delete all user notifications
   static Future<Response> deleteAllNotifications() async {
     String? token = await getToken();
     Map<String, String> headers = {
@@ -48,7 +48,7 @@ class NotificationsProvider {
     }
   }
 
-  /// Method that allows to get notifications from the api
+  /// Method that calls the api to delete a notification
   static Future<Response> deleteNotification(String idNotification) async {
     String? token = await getToken();
     Map<String, String> headers = {

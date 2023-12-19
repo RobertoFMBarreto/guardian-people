@@ -9,8 +9,15 @@ import 'package:guardian/models/providers/api/parsers/notifications_parsers.dart
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
+/// Class that represents the notifications requests
 class NotificationsRequests {
-  /// Method that allows to get all user notifications from api
+  /// Method that allows to get all user notifications from API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> getUserNotificationsFromApi(
       {required BuildContext context,
       required Function(String) onDataGotten,
@@ -63,7 +70,13 @@ class NotificationsRequests {
     });
   }
 
-  /// Method that allows to get all user notifications from api
+  /// Method that allows to delete all user notifications from API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> deleteAllNotificationsFromApi(
       {required BuildContext context,
       required Function(String) onDataGotten,
@@ -116,7 +129,13 @@ class NotificationsRequests {
     });
   }
 
-  /// Method that allows to get all user notifications from api
+  /// Method that allows to delete a notification [idNotification] from the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> deleteNotificationFromApi(
       {required BuildContext context,
       required String idNotification,

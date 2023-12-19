@@ -88,29 +88,6 @@ double calcScaleTo100Pixels(GlobalKey parent, MapController mapController) {
   return distance;
 }
 
-const ColorFilter greyscale = ColorFilter.matrix(<double>[
-  0.2126,
-  0.7152,
-  0.0722,
-  0,
-  0,
-  0.2126,
-  0.7152,
-  0.0722,
-  0,
-  0,
-  0.2126,
-  0.7152,
-  0.0722,
-  0,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-]);
-
 Color darken(Color color, [double amount = .1]) {
   assert(amount >= 0 && amount <= 1);
 

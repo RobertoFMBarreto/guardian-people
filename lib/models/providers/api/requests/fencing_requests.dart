@@ -11,8 +11,15 @@ import 'package:guardian/models/providers/api/parsers/fences_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
+/// Class that represents the fencing requests
 class FencingRequests {
-  /// Method that allows to request for the creation of a new fence
+  /// Method that allows to request for the creation of a new fence in the API
+  ///   ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> createFence({
     required FenceCompanion fence,
     required List<FencePointsCompanion> fencePoints,
@@ -67,7 +74,13 @@ class FencingRequests {
     });
   }
 
-  /// Method that allows to request for the creation of a new fence
+  /// Method that allows to remove a fence in the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> removeFence({
     required String idFence,
     required BuildContext context,
@@ -123,7 +136,13 @@ class FencingRequests {
     });
   }
 
-  /// Method that allows to request for the creation of a new fence
+  /// Method that allows to get all user fences from the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> getUserFences({
     required BuildContext context,
     required Function(String) onGottenData,
@@ -181,7 +200,13 @@ class FencingRequests {
     });
   }
 
-  /// Method that allows to request to update a fence
+  /// Method that allows to request to update a fence in the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> updateFence({
     required FenceCompanion fence,
     required List<FencePointsCompanion> fencePoints,
@@ -236,7 +261,13 @@ class FencingRequests {
     });
   }
 
-  /// Method that allows to request to add an animal to a fence
+  /// Method that allows to request to add an animal to a fence in the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> addAnimalFence({
     required String fenceId,
     required List<String> animalIds,
@@ -291,7 +322,13 @@ class FencingRequests {
     });
   }
 
-  /// Method that allows to request to remove an animal from a fence
+  /// Method that allows to request to remove an animal from a fence in the API
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> removeAnimalFence({
     required String fenceId,
     required List<String> animalIds,

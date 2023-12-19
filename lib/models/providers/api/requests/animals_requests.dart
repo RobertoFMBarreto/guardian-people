@@ -12,12 +12,15 @@ import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/widgets/ui/dialogues/server_error_dialogue.dart';
 
+/// Class that represents the animal requests
 class AnimalRequests {
-  /// Method that loads the animals with last location from the api into the [_animals] list
+  /// Method that loads the animals with last location from the API into the [_animals] list
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
   ///
-  /// If the server takes too long to answer then the user receives and alert
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> getAnimalsFromApiWithLastLocation(
       {required BuildContext context,
       required Function onDataGotten,
@@ -79,9 +82,11 @@ class AnimalRequests {
 
   /// Method that loads all animal data in interval from the API into the [_animals] list
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
   ///
-  /// If the server takes too long to answer then the user receives and alert
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> getAnimalDataIntervalFromApi({
     required String idAnimal,
     required DateTime startDate,
@@ -156,9 +161,11 @@ class AnimalRequests {
 
   /// Method that allows to call the start realtime stream service
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
   ///
-  /// If the server takes too long to answer then the user receives and alert
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> startRealtimeStreaming({
     required String idAnimal,
     required BuildContext context,
@@ -216,9 +223,11 @@ class AnimalRequests {
 
   /// Method that allows to call the stop realtime stream service
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
   ///
-  /// If the server takes too long to answer then the user receives and alert
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> stopRealtimeStreaming({
     required String idAnimal,
     required BuildContext context,
@@ -274,11 +283,13 @@ class AnimalRequests {
     });
   }
 
-  /// Method that allows to call the stop realtime stream service
+  /// Method that allows to update an animal in the API
   ///
-  /// In case the session token expires then it calls the api to refresh the token and doest the initial request again
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
   ///
-  /// If the server takes too long to answer then the user receives and alert
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
   static Future<void> updateAnimal({
     required Animal animal,
     required BuildContext context,

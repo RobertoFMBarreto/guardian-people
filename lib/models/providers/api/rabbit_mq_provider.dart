@@ -6,6 +6,7 @@ import 'package:guardian/settings/app_settings.dart';
 class RabbitMQProvider {
   late Consumer consumer;
 
+  /// Method that starts the listening to rabbit mq channel for a [topicId]
   Future<void> listen({
     required String topicId,
     required Function(Map<dynamic, dynamic>) onDataReceived,

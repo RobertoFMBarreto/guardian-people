@@ -14,6 +14,7 @@ Future<AnimalCompanion> createAnimal(
   return animal;
 }
 
+/// Method that allows to delete all animals
 Future<void> deleteAllAnimals() async {
   final db = Get.find<GuardianDb>();
 
@@ -333,12 +334,6 @@ Future<List<Animal>> getUserAnimalsFiltered({
   required String searchString,
 }) async {
   final db = Get.find<GuardianDb>();
-  // WHERE
-  //
-  //    (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND
-  //    deviceData.${db.animalLocations.battery.name} >= ? AND deviceData.${db.animalLocations.battery.name} <= ? AND
-  //    deviceData.${db.animalLocations.elevation.name} >= ? AND deviceData.${db.animalLocations.elevation.name} <= ? AND
-  //    ${db.animal.animalIdentification.name} LIKE ?)
 
   final data = await db.customSelect(
     '''

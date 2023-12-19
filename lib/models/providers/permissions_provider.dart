@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-/// Method for getting user permission for location services
+/// Method that allows to get user permission for location services
 ///
 Future<bool> handleLocationPermission(BuildContext context) async {
   bool serviceEnabled;
