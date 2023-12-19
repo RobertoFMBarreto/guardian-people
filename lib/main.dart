@@ -155,6 +155,8 @@ class _MyAppState extends State<MyApp> {
       SystemUiOverlayStyle(
         statusBarColor:
             Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.light,
       ),
     );
 

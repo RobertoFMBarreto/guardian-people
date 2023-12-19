@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/pages/producer/web/web_producer_alerts_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
@@ -75,67 +76,86 @@ class _WebProducerPageState extends State<WebProducerPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
-                      theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
+
+    /// Change status bar color
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor:
+            Theme.of(context).brightness == Brightness.light ? gdGradientEnd : gdDarkGradientEnd,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+
+    return SafeArea(
+      child: AnnotatedRegion(
+        value: SystemUiOverlayStyle(
+          statusBarColor:
+              theme.brightness == Brightness.light ? gdBackgroundColor : gdDarkBackgroundColor,
+          statusBarIconBrightness:
+              theme.brightness == Brightness.light ? Brightness.dark : Brightness.light,
+        ),
+        child: Scaffold(
+          body: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        theme.brightness == Brightness.dark ? gdDarkGradientStart : gdGradientStart,
+                        theme.brightness == Brightness.dark ? gdDarkGradientEnd : gdGradientEnd,
+                      ],
+                    ),
+                  ),
+                  child: NavigationRail(
+                    backgroundColor: Colors.transparent,
+                    onDestinationSelected: (value) {
+                      goToPage(value);
+                    },
+                    leading: const CircleAvatarBorder(
+                      radius: 30,
+                    ),
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home_outlined),
+                        selectedIcon: Icon(Icons.home),
+                        label: Text('First'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.account_circle_outlined),
+                        selectedIcon: Icon(Icons.account_circle),
+                        label: Text('First'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.sensors),
+                        selectedIcon: Icon(Icons.sensors),
+                        label: Text('First'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.fence),
+                        selectedIcon: Icon(Icons.fence),
+                        label: Text('First'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.warning_amber_sharp),
+                        selectedIcon: Icon(Icons.warning_outlined),
+                        label: Text('First'),
+                      ),
                     ],
+                    selectedIndex: _selectedDestination,
                   ),
-                ),
-                child: NavigationRail(
-                  backgroundColor: Colors.transparent,
-                  onDestinationSelected: (value) {
-                    goToPage(value);
-                  },
-                  leading: const CircleAvatarBorder(
-                    radius: 30,
-                  ),
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home_outlined),
-                      selectedIcon: Icon(Icons.home),
-                      label: Text('First'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.account_circle_outlined),
-                      selectedIcon: Icon(Icons.account_circle),
-                      label: Text('First'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.sensors),
-                      selectedIcon: Icon(Icons.sensors),
-                      label: Text('First'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.fence),
-                      selectedIcon: Icon(Icons.fence),
-                      label: Text('First'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.warning_amber_sharp),
-                      selectedIcon: Icon(Icons.warning_outlined),
-                      label: Text('First'),
-                    ),
-                  ],
-                  selectedIndex: _selectedDestination,
                 ),
               ),
-            ),
-            Expanded(
-              child: _currentPage,
-            )
-          ],
+              Expanded(
+                child: _currentPage,
+              )
+            ],
+          ),
         ),
       ),
     );
