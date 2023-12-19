@@ -3,6 +3,7 @@ import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/extended_top_bar.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/normal_top_bar.dart';
 
+/// Class that represents the main top abr body
 //ignore: must_be_immutable
 class CustomMainTopBar extends StatelessWidget {
   double extent;

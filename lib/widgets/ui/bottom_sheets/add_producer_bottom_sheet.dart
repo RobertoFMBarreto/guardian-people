@@ -5,6 +5,7 @@ import 'package:guardian/models/helpers/focus_manager.dart';
 import 'package:guardian/widgets/ui/bottom_sheets/default_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the add producer bottom sheet widget
 class AddProducerBottomSheet extends StatefulWidget {
   final Function()? onAddProducer;
   const AddProducerBottomSheet({super.key, this.onAddProducer});

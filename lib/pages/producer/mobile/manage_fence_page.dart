@@ -34,10 +34,10 @@ class ManageFencePage extends StatefulWidget {
 class _ManageFencePageState extends State<ManageFencePage> {
   final GlobalKey _mapParentKey = GlobalKey();
 
+  late FenceData _fence;
+
   List<Animal> _animals = [];
   List<LatLng> _points = [];
-
-  late FenceData _fence;
 
   bool _isLoading = true;
   bool _firstRun = true;
@@ -153,6 +153,7 @@ class _ManageFencePageState extends State<ManageFencePage> {
     });
   }
 
+  /// Method that allows to add fence animals
   Future<void> _createFenceAnimals(List<Animal> selected) async {
     for (var animal in selected) {
       await createFenceAnimal(
@@ -164,6 +165,9 @@ class _ManageFencePageState extends State<ManageFencePage> {
     }
   }
 
+  /// Method that allows to remove an animal from the fence
+  ///
+  /// In case of failure the animal is added again
   Future<void> _onRemoveDevice(int index) async {
     //store the animal
     final animal = _animals[index];

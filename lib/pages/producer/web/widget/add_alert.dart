@@ -193,6 +193,7 @@ class _AddAlertState extends State<AddAlert> {
     });
   }
 
+  /// Method that allows to get all alertable sensors
   Future<void> _getAlertableSensors() async {
     await _getLocalAlertableSensors().then((_) async {
       await AlertRequests.getAlertableSensorsFromApi(
@@ -220,6 +221,7 @@ class _AddAlertState extends State<AddAlert> {
     });
   }
 
+  /// Method that allows to get all local alertable sensors
   Future<void> _getLocalAlertableSensors() async {
     await getLocalAlertableSensors().then((allSensors) {
       if (allSensors.isNotEmpty) {

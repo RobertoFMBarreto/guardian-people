@@ -17,9 +17,12 @@ class WebProducerPage extends StatefulWidget {
 
 class _WebProducerPageState extends State<WebProducerPage> {
   late Widget _currentPage;
+
   Animal? _selectedAnimal;
-  int _selectedDestination = 0;
+
   List<Widget> pages = [];
+
+  int _selectedDestination = 0;
 
   @override
   void initState() {

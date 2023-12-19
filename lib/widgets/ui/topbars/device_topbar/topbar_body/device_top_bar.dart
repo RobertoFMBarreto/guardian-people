@@ -5,6 +5,7 @@ import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/device_min_top_bar.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/no_background_device_top_bar.dart';
 
+/// Class that represents the default animal top bar
 class DeviceTopBar extends StatelessWidget {
   final double extent;
   final Animal device;

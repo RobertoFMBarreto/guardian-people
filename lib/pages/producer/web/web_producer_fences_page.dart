@@ -32,16 +32,19 @@ class WebProducerFencesPage extends StatefulWidget {
 }
 
 class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
+  final GlobalKey _mapParentKey = GlobalKey();
+
   late Future _future;
 
-  final GlobalKey _mapParentKey = GlobalKey();
   FenceData? _selectedFence;
-  bool isInteractingFence = false;
-  bool _firstRun = true;
+
   List<Animal> _animals = [];
-  List<Animal> _fenceAnimals = [];
   List<FenceData> _fences = [];
+  List<Animal> _fenceAnimals = [];
+
+  bool _firstRun = true;
   bool _isFencesExpanded = true;
+  bool isInteractingFence = false;
 
   @override
   void initState() {
@@ -104,6 +107,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
     );
   }
 
+  /// Method that allows to load all fence animals
   Future<void> _loadFenceAnimals() async {
     await getFenceAnimals(_selectedFence!.idFence).then(
       (allDevices) => setState(() {
@@ -121,7 +125,19 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
         }));
   }
 
-  Future<void> _filterFences() async {}
+  /// Method that allows to filter fences
+  Future<void> _filterFences(String searchString) async {
+    await searchFences(searchString).then(
+      (allFences) {
+        if (mounted) {
+          setState(() {
+            _fences = [];
+            _fences.addAll(allFences);
+          });
+        }
+      },
+    );
+  }
 
   /// Method that allows to delete a fence and update the fences list
   Future<void> _deleteFence(String idFence) async {
@@ -166,6 +182,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
         ));
   }
 
+  /// Method that allows to remove animal from fence
   Future<void> _onRemoveDevice(int index) async {
     //store the animal
     final animal = _fenceAnimals[index];
@@ -268,6 +285,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
     });
   }
 
+  /// Method that allows to add animal to fence
   Future<void> _createFenceAnimals(List<Animal> selected) async {
     for (var animal in selected) {
       await createFenceAnimal(
@@ -360,7 +378,7 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
                                               child: SearchWithFilterInput(
                                                 onFilter: () {},
                                                 onSearchChanged: (value) {
-                                                  _filterFences();
+                                                  _filterFences(value);
                                                 },
                                               ),
                                             ),

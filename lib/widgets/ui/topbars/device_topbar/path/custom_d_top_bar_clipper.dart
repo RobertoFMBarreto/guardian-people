@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents the D shape top bar clipper
 class CustomDTopBarClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

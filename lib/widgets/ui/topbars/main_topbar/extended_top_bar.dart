@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/ui/user/circle_avatar_border.dart';
 
+/// Class that represenst the extended top bar body
 //ignore: must_be_immutable
 class ExtendedTopBar extends StatelessWidget {
   double extent;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents the main topbar
 class CustomMainTopBarWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

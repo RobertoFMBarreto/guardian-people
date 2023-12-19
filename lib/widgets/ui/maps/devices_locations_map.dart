@@ -43,16 +43,14 @@ class AnimalsLocationsMap extends StatefulWidget {
 }
 
 class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
-  final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
-
-  late Future _future;
-
-  final List<LatLng> _animalsDataPoints = [];
+  final _polygons = <Polygon>[];
   final List<LatLng> _allFencesPoints = [];
+  final List<LatLng> _animalsDataPoints = [];
+  final GlobalKey _mapParentKey = GlobalKey();
   final MapController _mapController = MapController();
 
-  final GlobalKey _mapParentKey = GlobalKey();
+  late Future _future;
 
   double _distance = 0;
   double _lastZoom = 0;

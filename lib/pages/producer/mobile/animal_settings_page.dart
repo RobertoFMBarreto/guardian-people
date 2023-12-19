@@ -31,12 +31,14 @@ class AnimalSettingsPage extends StatefulWidget {
 }
 
 class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
+  final TextEditingController _controller = TextEditingController();
+
   late Future _future;
 
-  String _animalName = '';
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
-  TextEditingController controller = TextEditingController();
+
+  String _animalName = '';
   bool _firstRun = true;
 
   @override
@@ -47,7 +49,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -62,7 +64,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
     _animalName = widget.animal.animal.animalName.value;
     await _getDeviceAlerts();
     await _getLocalFences();
-    controller.text = widget.animal.animal.animalName.value;
+    _controller.text = widget.animal.animal.animalName.value;
   }
 
   /// Method that loads the device alerts into the [_alerts] list
@@ -439,7 +441,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextFormField(
-                        controller: controller,
+                        controller: _controller,
                         decoration: InputDecoration(
                           label: Text(localizations.name.capitalizeFirst!),
                         ),
@@ -528,7 +530,7 @@ class _AnimalSettingsPageState extends State<AnimalSettingsPage> {
                                 onPressed: () {
                                   setState(() {
                                     _animalName = widget.animal.animal.animalName.value;
-                                    controller.text = _animalName;
+                                    _controller.text = _animalName;
                                   });
                                 },
                                 style: theme.elevatedButtonTheme.style!.copyWith(

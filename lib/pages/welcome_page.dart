@@ -51,6 +51,7 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
+  /// Method that allows to get all alertablet sensor from the api
   Future<void> _getAlertableSensors() async {
     await AlertRequests.getAlertableSensorsFromApi(
       context: context,

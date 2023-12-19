@@ -26,10 +26,12 @@ class SelectFencesDialogue extends StatefulWidget {
 class _SelectFencesDialogueState extends State<SelectFencesDialogue> {
   late Future _future;
 
-  String _searchString = '';
-  List<FenceData> _fences = [];
   FenceData? _selectedFence;
+
+  String _searchString = '';
   bool _firstRun = true;
+
+  List<FenceData> _fences = [];
 
   @override
   void initState() {

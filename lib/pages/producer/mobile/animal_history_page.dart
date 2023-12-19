@@ -19,8 +19,10 @@ class AnimalHistoryPage extends StatefulWidget {
 }
 
 class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
-  late DateTime _selectedValue;
   final _firstItemDataKey = GlobalKey();
+
+  late DateTime _selectedValue;
+
   List<AnimalLocationsCompanion> _deviceData = [];
 
   @override

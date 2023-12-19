@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/settings/colors.dart';
 
-/// Class that represents the
+/// Class that represents the square animal info widget
 class SquareAnimalsInfo extends StatelessWidget {
   final String title;
   final String description;

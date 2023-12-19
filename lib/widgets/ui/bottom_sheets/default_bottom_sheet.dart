@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that representss the default bottom sheet
 class DefaultBottomSheet extends StatelessWidget {
   final String title;
   final List<Widget> body;

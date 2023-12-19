@@ -33,27 +33,27 @@ class WebProducerDevicePage extends StatefulWidget {
 
 class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   final List<FenceData> _fences = [];
-
-  late Future _future;
   final GlobalKey _firstItemDataKey = GlobalKey();
 
+  late Future _future;
+  late Consumer consumer;
+
   Animal? _selectedAnimal;
+  DateTime? _endDate;
 
   List<Animal> _animals = [];
 
   bool _isInterval = false;
   bool _showSettings = false;
-  DateTime _startDate = DateTime.now();
-  DateTime? _endDate;
+  bool _isDevicesExpanded = true;
   double _currentZoom = 17;
   String _searchString = '';
+  DateTime _startDate = DateTime.now();
   RabbitMQProvider rabbitMQProvider = RabbitMQProvider();
-  late Consumer consumer;
-  RangeValues _batteryRangeValues = const RangeValues(0, 100);
-  RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
-  RangeValues _elevationRangeValues = const RangeValues(0, 1000);
   RangeValues _tmpRangeValues = const RangeValues(0, 25);
-  bool _isDevicesExpanded = true;
+  RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
+  RangeValues _batteryRangeValues = const RangeValues(0, 100);
+  RangeValues _elevationRangeValues = const RangeValues(0, 1000);
 
   @override
   void dispose() {
@@ -161,6 +161,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     );
   }
 
+  /// Method that allows to load animal data in interval
   Future<void> _loadIntervalData() async {
     if (_isInterval) {
       // get data in interval
@@ -229,6 +230,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     }
   }
 
+  /// Method that allows to load animal data
   Future<void> _loadAnimalData() async {
     await _loadIntervalData().then((value) async {
       if (_endDate == null) {

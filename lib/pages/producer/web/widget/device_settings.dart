@@ -38,10 +38,11 @@ class _DeviceSettingsState extends State<DeviceSettings> {
 
   String _animalColor = '';
   String _animalName = '';
+  bool _firstRun = true;
+  TextEditingController controller = TextEditingController();
+
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
-  TextEditingController controller = TextEditingController();
-  bool _firstRun = true;
 
   @override
   void initState() {

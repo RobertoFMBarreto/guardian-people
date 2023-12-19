@@ -25,8 +25,9 @@ class AnimalTimeRangeWidget extends StatefulWidget {
 }
 
 class _AnimalTimeRangeWidgetState extends State<AnimalTimeRangeWidget> {
-  DateTime _startDate = DateTime.now();
   DateTime? _endDate = DateTime.now();
+
+  DateTime _startDate = DateTime.now();
 
   @override
   void initState() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents the normal top bar body
 class NormalTopBar extends StatelessWidget {
   final String name;
   const NormalTopBar({

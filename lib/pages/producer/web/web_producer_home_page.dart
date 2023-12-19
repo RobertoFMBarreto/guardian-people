@@ -28,11 +28,14 @@ class WebProducerHomePage extends StatefulWidget {
 
 class _WebProducerHomePageState extends State<WebProducerHomePage> {
   final GlobalKey _mapParentKey = GlobalKey();
+
   late Future _future;
-  int _reloadMap = 9999;
+
   List<Animal> _animals = [];
   List<FenceData> _fences = [];
   List<AlertNotification> _alertNotifications = [];
+
+  int _reloadMap = 9999;
 
   @override
   void initState() {

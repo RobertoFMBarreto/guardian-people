@@ -3,6 +3,7 @@ import 'package:guardian/widgets/ui/topbars/main_topbar/custom_main_top_bar.dart
 import 'package:flutter/material.dart';
 import 'package:guardian/widgets/ui/topbars/main_topbar/path/custom_s_top_bar_wave_clipper.dart';
 
+/// Class that represents the sliver main app bar
 class SliverMainAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;

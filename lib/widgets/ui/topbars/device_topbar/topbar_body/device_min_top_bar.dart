@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 
+/// Class that represents the minimum device top bar
 class DeviceMinTopBar extends StatelessWidget {
   final Animal animal;
   const DeviceMinTopBar({

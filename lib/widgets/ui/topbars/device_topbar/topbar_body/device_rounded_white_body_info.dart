@@ -6,6 +6,7 @@ import 'package:guardian/models/helpers/device_helper.dart';
 import 'package:guardian/widgets/ui/common/icon_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// class that represents the rounded body os animal top bar
 class DeviceRoundedWhiteBodyInfo extends StatelessWidget {
   final Animal device;
   const DeviceRoundedWhiteBodyInfo({super.key, required this.device});

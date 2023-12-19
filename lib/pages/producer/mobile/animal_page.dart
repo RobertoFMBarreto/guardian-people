@@ -28,8 +28,9 @@ class AnimalPage extends StatefulWidget {
 }
 
 class _AnimalPageState extends State<AnimalPage> {
-  bool _isInterval = false;
   late Animal _animal;
+
+  bool _isInterval = false;
   int _reloadNum = 0;
   bool _firstRun = true;
 

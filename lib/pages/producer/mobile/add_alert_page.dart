@@ -34,12 +34,13 @@ class AddAlertPage extends StatefulWidget {
 
 class _AddAlertPageState extends State<AddAlertPage> {
   final _formKey = GlobalKey<FormState>();
-  List<Sensor> _availableSensors = [];
+  final List<Animal> _alertAnimals = [];
 
   late Future _future;
   late Sensor _alertParameter;
 
-  final List<Animal> _alertAnimals = [];
+  List<Sensor> _availableSensors = [];
+
   AlertComparissons _alertComparisson = AlertComparissons.equal;
   String _comparissonValue = "0";
   bool _sendNotification = true;
@@ -54,8 +55,8 @@ class _AddAlertPageState extends State<AddAlertPage> {
 
   /// Method that does the initial setup for the page
   ///
-  /// 1. Parse received alert data if there is one
-  /// 2. Get alert devices
+  /// 1. Get alertable sensors
+  /// 2. get alert devices
   Future<void> _setup() async {
     await _getAlertableSensors().then((_) async {
       if (widget.alert != null) {
@@ -185,6 +186,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
+  // Method that allows to get all alertable sensors
   Future<void> _getAlertableSensors() async {
     await _getLocalAlertableSensors().then((_) async {
       await AlertRequests.getAlertableSensorsFromApi(
@@ -212,6 +214,7 @@ class _AddAlertPageState extends State<AddAlertPage> {
     });
   }
 
+  /// Method that allows to get all local alertable sensors
   Future<void> _getLocalAlertableSensors() async {
     await getLocalAlertableSensors().then((allSensors) {
       if (allSensors.isNotEmpty) {

@@ -6,6 +6,7 @@ import 'package:guardian/widgets/ui/bottom_sheets/default_bottom_sheet.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Class that represents the add device bottom sheet widget
 class AddDeviceBottomSheet extends StatefulWidget {
   final Function(String, String) onAddDevice;
   const AddDeviceBottomSheet({super.key, required this.onAddDevice});

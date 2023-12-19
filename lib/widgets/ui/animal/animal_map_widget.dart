@@ -31,15 +31,16 @@ class AnimalMapWidget extends StatefulWidget {
 
 class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   final _firstItemDataKey = GlobalKey();
+
   late Future _future;
+
+  DateTime? _endDate;
 
   List<AnimalLocationsCompanion> _animalData = [];
 
-  DateTime _startDate = DateTime.now();
-  DateTime? _endDate;
-
   bool _showHeatMap = false;
   double _currentZoom = 17;
+  DateTime _startDate = DateTime.now();
   RabbitMQProvider rabbitMQProvider = RabbitMQProvider();
 
   late Consumer consumer;

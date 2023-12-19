@@ -17,6 +17,7 @@ class CustomCircularProgressIndicator extends StatefulWidget {
 class _CustomCircularProgressIndicatorState extends State<CustomCircularProgressIndicator> {
   bool _showTakingLong = false;
   bool _showVerifyConnection = false;
+
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 5)).then((value) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents teh s shaped top abr
 class CustomSTopBarWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

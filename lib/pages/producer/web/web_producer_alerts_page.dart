@@ -29,10 +29,13 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
   late Future _future;
 
   final GlobalKey _mapParentKey = GlobalKey();
+
   UserAlertCompanion? _selectedAlert;
+  
   List<Animal> _animals = [];
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
+  
   bool isInteractingAlert = false;
   bool _firstRun = false;
   bool _isAlertsExpanded = true;

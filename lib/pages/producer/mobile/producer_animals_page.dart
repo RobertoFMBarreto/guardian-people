@@ -44,6 +44,7 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   late Future<void> _future;
 
   String _searchString = '';
+  bool _firstRun = true;
   RangeValues _batteryRangeValues = const RangeValues(0, 100);
   RangeValues _dtUsageRangeValues = const RangeValues(0, 10);
   RangeValues _elevationRangeValues = const RangeValues(0, 1000);
@@ -51,7 +52,6 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
 
   List<Animal> _selectedAnimals = [];
   List<Animal> _animals = [];
-  bool _firstRun = true;
 
   @override
   void initState() {

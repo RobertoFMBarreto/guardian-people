@@ -43,25 +43,25 @@ class Geofencing extends StatefulWidget {
 }
 
 class _GeofencingState extends State<Geofencing> {
-  List<Polygon> _polygons = <Polygon>[];
-
   final TextEditingController _nameController = TextEditingController();
 
+  late Future _future;
   late PolyEditor _polyEditor;
   late Polygon _editingPolygon;
-  late Future _future;
 
   Position? _currentPosition;
 
-  bool _isCircle = false;
-  bool isLoading = true;
-  bool _isStayInside = true;
-  String _fenceName = '';
-  Color _fenceColor = Colors.red;
-  bool _firstRun = true;
-  bool _satellite = false;
-  List<LatLng> _fencePoints = [];
   List<Animal> _animals = [];
+  List<LatLng> _fencePoints = [];
+  List<Polygon> _polygons = <Polygon>[];
+
+  bool isLoading = true;
+  bool _firstRun = true;
+  bool _isCircle = false;
+  String _fenceName = '';
+  bool _satellite = false;
+  bool _isStayInside = true;
+  Color _fenceColor = Colors.red;
 
   @override
   void dispose() {

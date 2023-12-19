@@ -5,6 +5,7 @@ import 'package:guardian/widgets/ui/topbars/device_topbar/path/custom_inverted_d
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/device_rounded_white_body_info.dart';
 import 'package:guardian/widgets/ui/topbars/device_topbar/topbar_body/device_top_bar.dart';
 
+/// Class that represents the sliver animal app bar
 class SliverDeviceAppBar extends SliverPersistentHeaderDelegate {
   Widget? leadingWidget;
   Widget? tailWidget;

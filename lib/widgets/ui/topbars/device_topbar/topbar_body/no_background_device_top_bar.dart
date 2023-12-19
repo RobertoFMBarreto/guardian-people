@@ -14,6 +14,7 @@ import 'package:guardian/widgets/inputs/color_picker_input.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:drift/drift.dart' as drift;
 
+/// Class that represents the no background device top bar
 class NoBackgroundDeviceTopBar extends StatefulWidget {
   final Animal animal;
   final Widget? tailWidget;
@@ -35,6 +36,7 @@ class NoBackgroundDeviceTopBar extends StatefulWidget {
 
 class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
   late Color animalColor;
+
   List<String> states = ['Comer', 'Pastar', 'Andar', 'Parada', 'Descansar', 'Estático'];
 
   @override
@@ -43,6 +45,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
     super.initState();
   }
 
+  /// Method that allows to show the color picker and change the animal color
   void _showColorPicker() {
     showDialog(
       context: context,
@@ -56,6 +59,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
     );
   }
 
+  /// Method that executes when the animal color changes
   Future<void> _onColorUpdate(Color color) async {
     setState(() {
       animalColor = color;

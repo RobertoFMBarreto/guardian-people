@@ -54,33 +54,34 @@ class SingleAnimalLocationMap extends StatefulWidget {
 }
 
 class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
-  final _polygons = <Polygon>[];
   final _circles = <Polygon>[];
-  final MapController _mapController = MapController();
+  final _polygons = <Polygon>[];
   final GlobalKey _mapParentKey = GlobalKey();
+  final MapController _mapController = MapController();
   final List<String> _dropdownItems = [
     'normal',
     'heatmap',
   ];
 
+  late Future _future;
+  late String _dropDownValue;
+
   AnimalLocationsCompanion? lastLocation;
-  List<AnimalLocationsCompanion> data = [];
+
   List<Marker> markersList = [];
+  List<AnimalLocationsCompanion> data = [];
   List<Map<double, MaterialColor>> gradients = [
     HeatMapOptions.defaultGradient,
     {0.25: Colors.blue, 0.55: Colors.red, 0.85: Colors.pink, 1.0: Colors.purple}
   ];
 
-  late Future _future;
-  late String _dropDownValue;
-
   double _distance = 0;
   double _lastZoom = 0;
+  bool _firstRun = true;
   bool _showFence = true;
   bool _showRoute = false;
-  bool _showHeatMap = false;
   bool _satellite = false;
-  bool _firstRun = true;
+  bool _showHeatMap = false;
 
   @override
   void initState() {

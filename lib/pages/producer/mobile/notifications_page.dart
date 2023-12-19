@@ -27,6 +27,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   late Future _future;
 
   List<AlertNotification> _alerts = [];
+
   bool _firstRun = true;
 
   @override

@@ -19,6 +19,7 @@ class AnimalDataInfoList extends StatefulWidget {
 
 class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
   int _currentTopicExtent = 10;
+
   List<bool> animalDataInfo = [];
   List<bool> currentAnimalDataInfo = [];
   List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];

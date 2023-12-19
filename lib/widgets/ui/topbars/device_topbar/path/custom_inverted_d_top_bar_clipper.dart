@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Class that represents the inverted D shape top bar clipper
 class CustomInvertedDTopBarClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

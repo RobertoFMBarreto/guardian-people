@@ -31,10 +31,12 @@ class AlertsPage extends StatefulWidget {
 }
 
 class _AlertsPageState extends State<AlertsPage> {
+  final List<UserAlertCompanion> _selectedAlerts = [];
+
   late Future _future;
 
   List<UserAlertCompanion> _alerts = [];
-  final List<UserAlertCompanion> _selectedAlerts = [];
+
   bool _firstRun = true;
 
   @override

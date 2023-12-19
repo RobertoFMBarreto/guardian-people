@@ -32,9 +32,11 @@ class FencesPage extends StatefulWidget {
 class _FencesPageState extends State<FencesPage> {
   late Future _future;
 
-  String _searchString = '';
-  List<FenceData> _fences = [];
   FenceData? _selectedFence;
+
+  List<FenceData> _fences = [];
+
+  String _searchString = '';
   bool _firstRun = true;
 
   @override
