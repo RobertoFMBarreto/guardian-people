@@ -112,9 +112,9 @@ class AnimalRequests {
           }
         });
 
-        onDataGotten();
+        await onDataGotten();
       } else if (response.statusCode == 401) {
-        AuthProvider.refreshToken().then((resp) async {
+        await AuthProvider.refreshToken().then((resp) async {
           if (resp.statusCode == 200) {
             ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
             setShownNoServerConnection(false);

@@ -308,7 +308,9 @@ class _WebProducerFencesPageState extends State<WebProducerFencesPage> {
             return const CustomCircularProgressIndicator();
           } else {
             return Padding(
-              padding: _isFencesExpanded ? const EdgeInsets.only(left: 20) : EdgeInsets.all(0),
+              padding: _isFencesExpanded
+                  ? const EdgeInsets.all(20)
+                  : const EdgeInsets.only(left: 0, top: 20, bottom: 20, right: 20),
               child: Row(
                 children: [
                   Visibility(

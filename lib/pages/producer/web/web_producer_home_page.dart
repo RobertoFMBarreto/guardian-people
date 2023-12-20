@@ -62,12 +62,12 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   /// 2. add to list
   /// 3. load api animals
   Future<void> _loadAnimals() async {
-    await getUserAnimalsWithLastLocation().then((allAnimals) {
+    await getUserAnimalsWithLastLocation().then((allAnimals) async {
       _animals = [];
       setState(() {
         _animals.addAll(allAnimals);
       });
-      AnimalRequests.getAnimalsFromApiWithLastLocation(
+      await AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
           onFailed: (statusCode) {
             AppLocalizations localizations = AppLocalizations.of(context)!;
@@ -125,7 +125,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
   ///
   /// Resets the list to avoid duplicates
   Future<void> _loadAlertNotifications() async {
-    _loadLocalAlertNotifications().then((_) => _getNotificationsFromApi());
+    await _loadLocalAlertNotifications().then((_) async => await _getNotificationsFromApi());
   }
 
   /// Method that loads all alert notifications into the [_alertNotifications] list
@@ -142,7 +142,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
 
   /// Method that loads all notifications from api
   Future<void> _getNotificationsFromApi() async {
-    NotificationsRequests.getUserNotificationsFromApi(
+    await NotificationsRequests.getUserNotificationsFromApi(
       context: context,
       onDataGotten: (data) {
         _loadLocalAlertNotifications();
@@ -166,7 +166,7 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
             return const CustomCircularProgressIndicator();
           } else {
             return Padding(
-              padding: const EdgeInsets.only(left: 20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Expanded(

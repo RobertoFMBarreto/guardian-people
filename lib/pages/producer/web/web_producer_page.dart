@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
+import 'package:guardian/models/helpers/db_helpers.dart';
+import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/pages/producer/web/web_producer_alerts_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_device_page.dart';
 import 'package:guardian/pages/producer/web/web_producer_fences_page.dart';
@@ -64,6 +66,10 @@ class _WebProducerPageState extends State<WebProducerPage> {
           },
         );
       case 1:
+        clearUserSession().then((_) => deleteEverything().then(
+              (_) => Navigator.pushNamedAndRemoveUntil(
+                  context, '/login', (Route<dynamic> route) => false),
+            ));
         _currentPage = pages[1];
       case 2:
         _currentPage = WebProducerDevicePage(

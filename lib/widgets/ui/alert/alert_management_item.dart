@@ -10,12 +10,14 @@ class AlertManagementItem extends StatelessWidget {
   final UserAlertCompanion alert;
   final Function() onTap;
   final Function(UserAlertCompanion) onDelete;
+  final bool isSelected;
 
   const AlertManagementItem({
     super.key,
     required this.alert,
     required this.onDelete,
     required this.onTap,
+    this.isSelected = false,
   });
 
   @override
@@ -23,6 +25,7 @@ class AlertManagementItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Card(
+      color: isSelected ? theme.colorScheme.secondary : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),

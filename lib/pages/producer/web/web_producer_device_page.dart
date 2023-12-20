@@ -36,6 +36,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   final GlobalKey _firstItemDataKey = GlobalKey();
 
   late Future _future;
+  late Future<void> _mapFuture;
   late Consumer consumer;
 
   Animal? _selectedAnimal;
@@ -87,9 +88,14 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     setState(() {
       _selectedAnimal = widget.selectedAnimal;
     });
+    _mapFuture = _setupAnimals();
+
+    await _setupFilterRanges();
+  }
+
+  Future<void> _setupAnimals() async {
     await _loadAnimals();
     await _loadAnimalData();
-    await _setupFilterRanges();
   }
 
   /// Method that does the setup of filters based on de database values
@@ -113,20 +119,20 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   /// 2. add to list
   /// 3. load api animals
   Future<void> _loadAnimals() async {
-    await getUserAnimalsWithLastLocation().then((allAnimals) {
+    await getUserAnimalsWithLastLocation().then((allAnimals) async {
       _animals = [];
       setState(() {
         _animals.addAll(allAnimals);
       });
-      AnimalRequests.getAnimalsFromApiWithLastLocation(
+      await AnimalRequests.getAnimalsFromApiWithLastLocation(
           context: context,
           onFailed: (statusCode) {
             AppLocalizations localizations = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(localizations.server_error)));
           },
-          onDataGotten: () {
-            getUserAnimalsWithLastLocation().then((allDevices) {
+          onDataGotten: () async {
+            await getUserAnimalsWithLastLocation().then((allDevices) {
               if (mounted) {
                 setState(() {
                   _animals = [];
@@ -139,7 +145,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   }
 
   /// Method that loads that local animal data into the [_animalData] list
-  Future<void> _getAnimalData() async {
+  Future<void> _getAnimalData({setstate = true}) async {
     await getAnimalData(
       startDate: _startDate,
       endDate: _endDate,
@@ -148,7 +154,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     ).then(
       (data) async {
         List<AnimalLocationsCompanion> animalData = [];
-        if (mounted) {
+        if (setstate && mounted) {
           setState(() {
             animalData.addAll(data);
             _selectedAnimal = Animal(
@@ -162,17 +168,17 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   }
 
   /// Method that allows to load animal data in interval
-  Future<void> _loadIntervalData() async {
+  Future<void> _loadIntervalData({setstate = true}) async {
     if (_isInterval) {
       // get data in interval
-      await _getAnimalData().then(
-        (_) => AnimalRequests.getAnimalDataIntervalFromApi(
+      await _getAnimalData(setstate: setstate).then(
+        (_) async => await AnimalRequests.getAnimalDataIntervalFromApi(
           idAnimal: _selectedAnimal!.animal.idAnimal.value,
           startDate: _startDate,
           endDate: _endDate ?? DateTime.now(),
           context: context,
-          onDataGotten: () {
-            _getAnimalData();
+          onDataGotten: () async {
+            await _getAnimalData();
           },
           onFailed: (statusCode) {
             hasShownNoServerConnection().then((hasShown) async {
@@ -231,8 +237,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   }
 
   /// Method that allows to load animal data
-  Future<void> _loadAnimalData() async {
-    await _loadIntervalData().then((value) async {
+  Future<void> _loadAnimalData({setstate = true}) async {
+    await _loadIntervalData(setstate: setstate).then((value) async {
       if (_endDate == null) {
         // make realtime request
         if (kDebugMode) {
@@ -307,7 +313,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
             return const CustomCircularProgressIndicator();
           } else {
             return Padding(
-              padding: _isDevicesExpanded ? const EdgeInsets.only(left: 20) : EdgeInsets.all(0),
+              padding: _isDevicesExpanded
+                  ? const EdgeInsets.all(20)
+                  : const EdgeInsets.only(left: 0, top: 20, bottom: 20, right: 20),
               child: Row(
                 children: [
                   Visibility(
@@ -463,15 +471,14 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (mounted) {
                                         setState(() {
                                           _endDate = null;
                                           _startDate = DateTime.now();
                                           _isInterval = false;
-
-                                          _loadAnimalData();
                                         });
+                                        await _loadAnimalData();
                                       }
                                     },
                                     child: Text(
@@ -494,7 +501,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                     _endDate = newEndDate;
                                     _isInterval = true;
                                   });
-                                  await _loadAnimalData();
+                                  _mapFuture = _loadAnimalData(setstate: false);
                                 },
                               ),
                             ),
@@ -545,7 +552,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                               child: DeviceSettings(
                                 key: Key(_selectedAnimal!.animal.idAnimal.value),
                                 animal: _selectedAnimal!,
-                                onColorChanged: (color) {
+                                onColorChanged: (color) async {
                                   setState(() {
                                     _selectedAnimal = Animal(
                                       animal: _selectedAnimal!.animal.copyWith(
@@ -554,9 +561,9 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                       data: _selectedAnimal!.data,
                                     );
                                   });
-                                  _loadAnimals();
+                                  await _loadAnimals();
                                 },
-                                onNameChanged: (name) {
+                                onNameChanged: (name) async {
                                   setState(() {
                                     _selectedAnimal = Animal(
                                       animal: _selectedAnimal!.animal.copyWith(
@@ -565,7 +572,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                       data: _selectedAnimal!.data,
                                     );
                                   });
-                                  _loadAnimals();
+                                  await _loadAnimals();
                                 },
                               ),
                             ),
@@ -597,33 +604,41 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: _selectedAnimal != null
-                            ? SingleAnimalLocationMap(
-                                key: Key(
-                                    '${_selectedAnimal?.animal.idAnimal.value}|${_selectedAnimal?.data}'),
-                                showCurrentPosition: true,
-                                deviceData: _selectedAnimal!.data
-                                    .where((element) => element.lat.value != null)
-                                    .toList(),
-                                onZoomChange: (newZoom) {
-                                  // No need to setstate because we dont need to update the screen
-                                  // just need to store the value in case the map restarts to keep zoom
-                                  _currentZoom = newZoom;
-                                },
-                                parent: _firstItemDataKey,
-                                startingZoom: _currentZoom,
-                                startDate: _startDate,
-                                endDate: _endDate ?? DateTime.now(),
-                                isInterval: _isInterval,
-                                idAnimal: _selectedAnimal!.animal.idAnimal.value,
-                                deviceColor: _selectedAnimal!.animal.animalColor.value,
-                              )
-                            : AnimalsLocationsMap(
-                                showCurrentPosition: true,
-                                animals: _animals,
-                                fences: _fences,
-                                parent: _firstItemDataKey,
-                              ),
+                        child: FutureBuilder(
+                            future: _mapFuture,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CustomCircularProgressIndicator();
+                              } else {
+                                return _selectedAnimal != null
+                                    ? SingleAnimalLocationMap(
+                                        key: Key(
+                                            '${_selectedAnimal?.animal.idAnimal.value}|${_selectedAnimal?.data}'),
+                                        showCurrentPosition: true,
+                                        deviceData: _selectedAnimal!.data
+                                            .where((element) => element.lat.value != null)
+                                            .toList(),
+                                        onZoomChange: (newZoom) {
+                                          // No need to setstate because we dont need to update the screen
+                                          // just need to store the value in case the map restarts to keep zoom
+                                          _currentZoom = newZoom;
+                                        },
+                                        parent: _firstItemDataKey,
+                                        startingZoom: _currentZoom,
+                                        startDate: _startDate,
+                                        endDate: _endDate ?? DateTime.now(),
+                                        isInterval: _isInterval,
+                                        idAnimal: _selectedAnimal!.animal.idAnimal.value,
+                                        deviceColor: _selectedAnimal!.animal.animalColor.value,
+                                      )
+                                    : AnimalsLocationsMap(
+                                        showCurrentPosition: true,
+                                        animals: _animals,
+                                        fences: _fences,
+                                        parent: _firstItemDataKey,
+                                      );
+                              }
+                            }),
                       ),
                     ),
                   ),

@@ -31,11 +31,11 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
   final GlobalKey _mapParentKey = GlobalKey();
 
   UserAlertCompanion? _selectedAlert;
-  
+
   List<Animal> _animals = [];
   List<UserAlertCompanion> _alerts = [];
   List<FenceData> _fences = [];
-  
+
   bool isInteractingAlert = false;
   bool _firstRun = false;
   bool _isAlertsExpanded = true;
@@ -203,7 +203,9 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
             return const CustomCircularProgressIndicator();
           } else {
             return Padding(
-              padding: _isAlertsExpanded ? const EdgeInsets.only(left: 20) : EdgeInsets.all(0),
+              padding: _isAlertsExpanded
+                  ? const EdgeInsets.all(20)
+                  : const EdgeInsets.only(left: 0, top: 20, bottom: 20, right: 20),
               child: Row(
                 children: [
                   Visibility(
@@ -269,6 +271,9 @@ class _WebProducerAlertsPageState extends State<WebProducerAlertsPage> {
                                                     return AlertManagementItem(
                                                       key: Key(
                                                           _alerts[index].idAlert.value.toString()),
+                                                      isSelected: _selectedAlert != null &&
+                                                          _selectedAlert!.idAlert ==
+                                                              _alerts[index].idAlert,
                                                       onTap: () {
                                                         if (hasConnection) {
                                                           Future.delayed(
