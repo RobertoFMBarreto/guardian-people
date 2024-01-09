@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28" />
 
     <application
-        android:label="Guardian Interno"
+        android:label="Guardian"
         android:name="${applicationName}"
         android:icon="@drawable/icon_512"
         android:enableOnBackInvokedCallback="true">
