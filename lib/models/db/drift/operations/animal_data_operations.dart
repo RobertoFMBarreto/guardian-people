@@ -236,6 +236,6 @@ Future<AnimalLocationsCompanion> getClosestAnimalActivity(
       temperature: drift.Value(dt.data[db.animalLocations.temperature.name]),
     );
   } else {
-    return AnimalLocationsCompanion();
+    return const AnimalLocationsCompanion();
   }
 }

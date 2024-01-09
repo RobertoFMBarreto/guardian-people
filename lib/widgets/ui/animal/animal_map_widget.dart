@@ -237,7 +237,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
       (data) async {
         _animalData = [];
         if (mounted) {
-          print('Data: ${_animalData}');
           setState(() {
             _animalData.addAll(data);
           });
@@ -250,7 +249,6 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   Future<void> _getLastLocation() async {
     await getUserAnimalWithLastLocation(widget.animal.animal.idAnimal.value).then((animal) {
       setState(() {
-        print('Last Loc: $_animalData');
         _animalData = [];
         _animalData.addAll(animal.first.data);
       });

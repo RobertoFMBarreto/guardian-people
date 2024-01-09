@@ -159,7 +159,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
     required DateTime date,
     required DateTime maxDate,
   }) {
-    DateTime _newDate = _selectedDate;
+    DateTime newDate = _selectedDate;
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -184,7 +184,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                     SfDateRangePicker(
                       onSelectionChanged: (args) {
                         final data = args.value as DateTime;
-                        _newDate = data;
+                        newDate = data;
                       },
                       selectionMode: DateRangePickerSelectionMode.single,
                       initialSelectedDate: _selectedDate,
@@ -208,7 +208,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            onDateChange(_newDate);
+                            onDateChange(newDate);
                           },
                           child: Text(localizations.confirm),
                         ),
@@ -280,7 +280,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.calendar_month,
                             size: 50,
                           ),
@@ -320,7 +320,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
               future: _future,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Expanded(child: Center(child: const CustomCircularProgressIndicator()));
+                  return const Expanded(child: Center(child: CustomCircularProgressIndicator()));
                 } else {
                   return _deviceData.isEmpty
                       ? Expanded(

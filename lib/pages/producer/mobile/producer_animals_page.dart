@@ -71,7 +71,6 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   @override
   void initState() {
     _future = _setup();
-
     super.initState();
   }
 
@@ -85,86 +84,6 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
     await _setupFilterRanges();
     await _filterAnimals();
     await _getAnimalsFromApi();
-    print('Devices');
-
-    await FlutterBluePlus.startScan(
-      timeout: Duration(seconds: 4),
-      withServices: [
-        Guid.fromString('6E400001-B5A3-F393-E0A9-E50E24DCCA9E'),
-        Guid.fromString('6E400003-B5A3-F393-E0A9-E50E24DCCA9E'),
-      ],
-    );
-
-    FlutterBluePlus.onScanResults.listen((results) async {
-      for (ScanResult res in results) {
-        print("[BT][Connectiong] - Connecting to device: ${res.device.remoteId}");
-        device = res.device;
-
-        // listen for disconnection
-        subscription = device.connectionState.listen((BluetoothConnectionState state) async {
-          if (state == BluetoothConnectionState.disconnected) {
-            // 1. typically, start a periodic timer that tries to
-            //    reconnect, or just call connect() again right now
-            // 2. you must always re-discover services after disconnection!
-            print(
-                "[BT][STOP] - ${device.disconnectReason?.code} ${device.disconnectReason?.description}");
-          }
-        });
-        await device.connect();
-
-        final services = await res.device.discoverServices();
-        for (BluetoothService service in services) {
-          print('[BT][Service] - Service: $service');
-          if (service.serviceUuid == Guid.fromString('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')) {
-            final characteristics = service.characteristics;
-            for (BluetoothCharacteristic characteristic in characteristics) {
-              print('[BT][Characteristic] - Characteristic: ${characteristic.characteristicUuid}');
-              if (characteristic.characteristicUuid ==
-                  Guid.fromString('6e400003-b5a3-f393-e0a9-e50e24dcca9e')) {
-                String toSend = '';
-                final characteristicSubscription = characteristic.onValueReceived.listen((payload) {
-                  print("[BT][Payload] - ${payload}");
-                  String data = String.fromCharCodes(payload
-                      .toList()
-                      .getRange(0, payload.length)
-                      .join(',')
-                      .split(',')
-                      .map(int.parse));
-                  if (data.contains('\$END')) {
-                    toSend += data.replaceAll("STR\$", "").replaceAll("\$END", "");
-                    connectToSocket(toSend);
-                    toSend = '';
-                  } else {
-                    toSend += data.replaceAll("STR\$", "").replaceAll("\$END", "");
-                  }
-                  print("[BT][DATA] - ${data.replaceAll("STR\$", "").replaceAll("\$END", "")}");
-                });
-                device.cancelWhenDisconnected(characteristicSubscription);
-
-                await characteristic.setNotifyValue(true);
-              }
-            }
-          }
-        }
-      }
-    });
-  }
-
-  void connectToSocket(String toSend) {
-    var addressesIListenFrom = InternetAddress.anyIPv4;
-    int portIListenOn = 16123; //0 is random
-    RawDatagramSocket.bind(addressesIListenFrom, portIListenOn).then((RawDatagramSocket udpSocket) {
-      udpSocket.forEach((RawSocketEvent event) {
-        if (event == RawSocketEvent.read) {
-          Datagram? dg = udpSocket.receive();
-          if (dg != null) dg.data.forEach((x) => print(x));
-        }
-      });
-      // final hexString = '0X${toSend.toRadixString(16)}';
-      // print(hexString);
-      udpSocket.send(utf8.encode(toSend), InternetAddress('77.54.1.149'), 47659);
-      print('Did send data on the stream..');
-    });
   }
 
   /// Method that does the setup of filters based on de database values
