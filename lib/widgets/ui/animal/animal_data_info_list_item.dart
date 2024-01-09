@@ -20,13 +20,14 @@ class AnimalDataInfoList extends StatefulWidget {
 class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
   late DateFormat _dateFormat;
 
-  int _currentTopicExtent = 10;
+  late int _currentTopicExtent;
 
   List<bool> animalDataInfo = [];
   List<bool> currentAnimalDataInfo = [];
   List<int> extensionsMade = [];
   @override
   void initState() {
+    _currentTopicExtent = widget.deviceData.length < 10 ? widget.deviceData.length : 10;
     if (widget.deviceData.length == 1) {
       animalDataInfo.add(false);
     } else {
