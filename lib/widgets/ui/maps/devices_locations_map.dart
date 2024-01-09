@@ -148,7 +148,7 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                   boundsOptions: FitBoundsOptions(
                       padding: kIsWeb || isBigScreen
                           ? const EdgeInsets.all(100)
-                          : const EdgeInsets.all(60)),
+                          : const EdgeInsets.all(80)),
                   zoom: 17,
                   minZoom: 6,
                   maxZoom: 18,

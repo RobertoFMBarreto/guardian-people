@@ -65,13 +65,9 @@
   "start_date": "data inicial",
   "end_date": "data final",
   "confirm": "confirmar",
-  "ruminating": "ruminar",
-  "eating": "comer",
-  "walking": "andar",
-  "running": "correr",
-  "fighting": "lutar",
-  "stopped": "parada",
+
   "was": "esteve a",
+  "was_no_adjective": "esteve",
   "hide": "esconder",
   "load": "carregar",
   "more": "mais",
@@ -191,5 +187,11 @@
   "alert": "alerta",
   "animals": "animais",
   "close": "fechar",
-  "open": "abrir"
+  "open": "abrir",
+  "still": "parado",
+  "grazing": "ruminar",
+  "resting": "descansar",
+  "standing": "em pé",
+  "walking": "andar",
+  "eating": "comer"
 }

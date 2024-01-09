@@ -1,5 +1,8 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'dart:io';
+import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:guardian/main.dart';
@@ -43,6 +46,9 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   late double _maxTemperature;
   late Future<void> _future;
 
+  late StreamSubscription<BluetoothConnectionState> subscription;
+  late BluetoothDevice device;
+
   String _searchString = '';
   bool _firstRun = true;
   RangeValues _batteryRangeValues = const RangeValues(0, 100);
@@ -52,6 +58,15 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
 
   List<Animal> _selectedAnimals = [];
   List<Animal> _animals = [];
+
+  @override
+  void dispose() {
+    if (device.isConnected) {
+      device.disconnect();
+    }
+    subscription.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -70,6 +85,78 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
     await _setupFilterRanges();
     await _filterAnimals();
     await _getAnimalsFromApi();
+    print('Devices');
+
+    await FlutterBluePlus.startScan(
+      timeout: Duration(seconds: 4),
+      withServices: [
+        Guid.fromString('6E400001-B5A3-F393-E0A9-E50E24DCCA9E'),
+        Guid.fromString('6E400003-B5A3-F393-E0A9-E50E24DCCA9E'),
+      ],
+    );
+
+    FlutterBluePlus.onScanResults.listen((results) async {
+      for (ScanResult res in results) {
+        print("[BT][Connectiong] - Connecting to device: ${res.device.remoteId}");
+        device = res.device;
+
+        // listen for disconnection
+        subscription = device.connectionState.listen((BluetoothConnectionState state) async {
+          if (state == BluetoothConnectionState.disconnected) {
+            // 1. typically, start a periodic timer that tries to
+            //    reconnect, or just call connect() again right now
+            // 2. you must always re-discover services after disconnection!
+            print(
+                "[BT][STOP] - ${device.disconnectReason?.code} ${device.disconnectReason?.description}");
+          }
+        });
+        await device.connect();
+
+        final services = await res.device.discoverServices();
+        for (BluetoothService service in services) {
+          print('[BT][Service] - Service: $service');
+          if (service.serviceUuid == Guid.fromString('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')) {
+            final characteristics = service.characteristics;
+            for (BluetoothCharacteristic characteristic in characteristics) {
+              print('[BT][Characteristic] - Characteristic: ${characteristic.characteristicUuid}');
+              if (characteristic.characteristicUuid ==
+                  Guid.fromString('6e400003-b5a3-f393-e0a9-e50e24dcca9e')) {
+                final characteristicSubscription = characteristic.onValueReceived.listen((payload) {
+                  print("[BT][Payload] - ${payload}");
+                  String data = String.fromCharCodes(payload
+                      .toList()
+                      .getRange(0, payload.length)
+                      .join(',')
+                      .split(',')
+                      .map(int.parse));
+                  print("[BT][DATA] - ${data}");
+
+                  connectToSocket(data);
+                });
+                device.cancelWhenDisconnected(characteristicSubscription);
+                await characteristic.setNotifyValue(true);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  void connectToSocket(String toSend) {
+    var addressesIListenFrom = InternetAddress.anyIPv4;
+    int portIListenOn = 16123; //0 is random
+    RawDatagramSocket.bind(addressesIListenFrom, portIListenOn).then((RawDatagramSocket udpSocket) {
+      udpSocket.forEach((RawSocketEvent event) {
+        if (event == RawSocketEvent.read) {
+          Datagram? dg = udpSocket.receive();
+          if (dg != null) dg.data.forEach((x) => print(x));
+        }
+      });
+      udpSocket.send('af333530343537373930373335383437102262731323334353637681'.codeUnits,
+          InternetAddress('77.54.1.149'), 47659);
+      print('Did send data on the stream..');
+    });
   }
 
   /// Method that does the setup of filters based on de database values
@@ -197,7 +284,6 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     AppLocalizations localizations = AppLocalizations.of(context)!;
-
     return GestureDetector(
         onTap: () {
           CustomFocusManager.unfocus(context);

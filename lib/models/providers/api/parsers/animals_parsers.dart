@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/db/drift/operations/animal_operations.dart';
@@ -31,14 +30,14 @@ Future<void> animalsFromJson(String body) async {
 
 /// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
 Future<void> animalDataFromJson(Map<dynamic, dynamic> data, String idAnimal) async {
-  List<String> states = ['Ruminar', 'Comer', 'Andar', 'Correr', 'Parada'];
   await deleteAnimalData(data['id_data']).then(
     (_) async => await createAnimalData(
       AnimalLocationsCompanion(
         date: drift.Value(DateTime.parse(data['date'])),
         animalDataId: drift.Value(data['id_data']),
         idAnimal: drift.Value(idAnimal),
-        state: drift.Value(states[Random().nextInt(states.length)]),
+        state:
+            data['activity'] != null ? drift.Value(data['activity']) : const drift.Value.absent(),
         accuracy: data['accuracy'] != null
             ? drift.Value(double.tryParse(data['accuracy']))
             : const drift.Value.absent(),
@@ -60,4 +59,21 @@ Future<void> animalDataFromJson(Map<dynamic, dynamic> data, String idAnimal) asy
       ),
     ),
   );
+}
+
+/// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
+Future<void> animalActivityFromJson(Map<dynamic, dynamic> data, String idAnimal) async {
+  // await deleteAnimalActivity(data['id_data']).then(
+  //   (_) async =>
+  await createAnimalActivity(
+    AnimalActivityCompanion(
+      activityDate: drift.Value(DateTime.parse(data['read_date'])),
+      animalDataActivityId: drift.Value(data['id_data']),
+      idAnimalActivity: drift.Value(idAnimal),
+      activity: data['sensor_data'] != null
+          ? drift.Value(data['sensor_data'])
+          : const drift.Value.absent(),
+    ),
+  );
+  // );
 }

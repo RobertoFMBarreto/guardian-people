@@ -9,11 +9,26 @@ Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion anima
   return animalData;
 }
 
+/// Method for creating animal activity data [animalActivity] returning it as [AnimalActivityCompanion]
+Future<AnimalActivityCompanion> createAnimalActivity(AnimalActivityCompanion animalActivity) async {
+  final db = Get.find<GuardianDb>();
+  await db.into(db.animalActivity).insertOnConflictUpdate(animalActivity);
+  return animalActivity;
+}
+
 /// Method that allows to delete animal data by [AnimalDataId]
 Future<void> deleteAnimalData(String idData) async {
   final db = Get.find<GuardianDb>();
 
   await (db.delete(db.animalLocations)..where((tbl) => tbl.animalDataId.equals(idData))).go();
+}
+
+/// Method that allows to delete animal activity by [AnimalDataId]
+Future<void> deleteAnimalActivity(String idData) async {
+  final db = Get.find<GuardianDb>();
+
+  await (db.delete(db.animalActivity)..where((tbl) => tbl.animalDataActivityId.equals(idData)))
+      .go();
 }
 
 /// Method that allows to delete animal [idAnimal] data between [startDate] and [endDate]
@@ -131,4 +146,96 @@ Future<List<AnimalLocationsCompanion>> getAnimalData({
 
   animalData.addAll(data.map((e) => e.toCompanion(true)));
   return animalData;
+}
+
+/// Method to get all animal activity from a single animal [idAnimal]
+///
+/// If the [isInterval] parameter is `false` the method returns the last registered data
+///
+/// If the [isInterval] parameter is `true` than [startDate] and [endDate] must be set and with a diffence of
+/// at least 60 seconds. Then the query will select all animal data between [startDate] and [endDate]
+///
+/// Returns the animal data as a [List<AnimalLocationsCompanion>]
+Future<List<AnimalLocationsCompanion>> getAnimalActivity(
+    {required DateTime startDate, required DateTime endDate, required String idAnimal}) async {
+  final db = Get.find<GuardianDb>();
+  List<AnimalLocationsCompanion> animalData = [];
+  if (startDate.difference(endDate).inSeconds.abs() > 60) {
+    final dt = await db.customSelect('''
+      SELECT * FROM ${db.animalActivity.actualTableName}
+      WHERE ${db.animalActivity.actualTableName}.${db.animalActivity.idAnimalActivity.name} = ?
+        AND ${db.animalActivity.activityDate.name} BETWEEN ? AND ?
+      ORDER BY ${db.animalActivity.activityDate.name} DESC
+    ''', variables: [
+      drift.Variable.withString(idAnimal),
+      drift.Variable.withDateTime(startDate),
+      drift.Variable.withDateTime(endDate)
+    ]).get();
+
+    if (dt.isNotEmpty) {
+      for (var activityData in dt) {
+        await getClosestAnimalActivity(
+          idAnimal: idAnimal,
+          time: DateTime.fromMillisecondsSinceEpoch(
+            activityData.data[db.animalActivity.activityDate.name] * 1000,
+          ),
+        ).then(
+          (locationData) => animalData.add(
+            locationData.copyWith(
+              state: drift.Value(activityData.data[db.animalActivity.activity.name]),
+              date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
+                  activityData.data[db.animalActivity.activityDate.name] * 1000)),
+              animalDataId:
+                  drift.Value(activityData.data[db.animalActivity.animalDataActivityId.name]),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  return animalData;
+}
+
+/// Method that allows to get the closest data from time
+Future<AnimalLocationsCompanion> getClosestAnimalActivity(
+    {required DateTime time, required String idAnimal}) async {
+  final db = Get.find<GuardianDb>();
+
+  final dt = await db.customSelect('''
+      SELECT 
+        *
+      FROM 
+        ${db.animalLocations.actualTableName}
+      WHERE
+        ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name} = ?
+        AND 
+        ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} < ?
+      ORDER BY
+        ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} DESC
+      LIMIT 1
+    ''', variables: [
+    drift.Variable.withString(idAnimal),
+    drift.Variable.withDateTime(time),
+  ]).getSingleOrNull();
+  if (dt != null) {
+    return AnimalLocationsCompanion(
+      accuracy: drift.Value(dt.data[db.animalLocations.accuracy.name]),
+      battery: drift.Value(dt.data[db.animalLocations.battery.name]),
+      date: drift.Value(
+        DateTime.fromMillisecondsSinceEpoch(
+          dt.data[db.animalLocations.date.name] * 1000,
+        ),
+      ),
+      animalDataId: drift.Value(dt.data[db.animalLocations.animalDataId.name]),
+      idAnimal: drift.Value(dt.data[db.animal.idAnimal.name]),
+      elevation: drift.Value(dt.data[db.animalLocations.elevation.name]),
+      lat: drift.Value(dt.data[db.animalLocations.lat.name]),
+      lon: drift.Value(dt.data[db.animalLocations.lon.name]),
+      state: drift.Value(dt.data[db.animalLocations.state.name]),
+      temperature: drift.Value(dt.data[db.animalLocations.temperature.name]),
+    );
+  } else {
+    return AnimalLocationsCompanion();
+  }
 }

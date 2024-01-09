@@ -73,6 +73,29 @@ class AnimalProvider {
     }
   }
 
+  /// Method that calls the api to get all animal activity [idAnimal] between [startDate] and [endDate]
+  static Future<Response> getAnimalActivity(
+      String idAnimal, DateTime startDate, DateTime endDate) async {
+    String? token = await getToken();
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    };
+    var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/$idAnimal/activity');
+    try {
+      var response = await post(url,
+          headers: headers,
+          body: jsonEncode(
+              {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()}));
+
+      return response;
+    } on SocketException catch (e) {
+      return Response(e.message, 507);
+    } catch (e) {
+      return Response('error', 507);
+    }
+  }
+
   /// Method that calls the api to start the realtime streaming for the animal [idAnimal]
   static Future<Response> startRealtimeStreaming(String idAnimal) async {
     String? token = await getToken();

@@ -76,6 +76,8 @@ dependencies:
   flutter_map_location_marker: any
   flutter_compass: any
   flutter_svg: any
+  flutter_blue_plus: ^1.30.8
+  socket_io_client: ^2.0.3+1
 
 dev_dependencies:
   drift_dev: ^2.11.1

@@ -159,6 +159,89 @@ class AnimalRequests {
     });
   }
 
+  /// Method that loads all animal activity in interval from the API into the [_animals] list
+  ///
+  /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page
+  ///
+  /// In case of server unreachable [507] it shows the user that there is no connection to the server
+  ///
+  /// Any other error will send the user to login deleting all data
+  static Future<void> getAnimalActivityIntervalFromApi({
+    required String idAnimal,
+    required DateTime startDate,
+    required DateTime endDate,
+    required BuildContext context,
+    required Function onDataGotten,
+    required Function(int) onFailed,
+  }) async {
+    await AnimalProvider.getAnimalActivity(idAnimal, startDate, endDate).then((response) async {
+      if (response.statusCode == 200) {
+        print(response.body);
+        ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
+        setShownNoServerConnection(false);
+        final body = jsonDecode(response.body);
+
+        // await deleteAnimalDataInInterval(
+        //   idAnimal: idAnimal,
+        //   startDate: startDate,
+        //   endDate: endDate,
+        //   isInterval: true,
+        // ).then((_) async {
+        //   for (var dt in body) {
+        //     await animalDataFromJson(dt, idAnimal);
+        //   }
+        // });
+        for (var dt in body) {
+          await animalActivityFromJson(dt, idAnimal);
+        }
+
+        await onDataGotten();
+      } else if (response.statusCode == 401) {
+        await AuthProvider.refreshToken().then((resp) async {
+          if (resp.statusCode == 200) {
+            ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
+            setShownNoServerConnection(false);
+            final newToken = jsonDecode(resp.body)['token'];
+            await setSessionToken(newToken).then(
+              (value) => getAnimalActivityIntervalFromApi(
+                idAnimal: idAnimal,
+                startDate: startDate,
+                endDate: endDate,
+                onDataGotten: onDataGotten,
+                onFailed: onFailed,
+                context: context,
+              ),
+            );
+          } else if (resp.statusCode == 507) {
+            hasShownNoServerConnection().then((hasShown) async {
+              if (!hasShown) {
+                setShownNoServerConnection(true).then((_) =>
+                    showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                        .then((_) => onFailed(resp.statusCode)));
+              }
+            });
+            onFailed(resp.statusCode);
+          } else {
+            clearUserSession().then((_) => deleteEverything().then(
+                  (_) => Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (Route<dynamic> route) => false),
+                ));
+          }
+        });
+      } else if (response.statusCode == 507) {
+        hasShownNoServerConnection().then((hasShown) async {
+          if (!hasShown) {
+            setShownNoServerConnection(true).then((_) =>
+                showDialog(context: context, builder: (context) => const ServerErrorDialogue())
+                    .then((_) => onFailed(response.statusCode)));
+          }
+        });
+      } else {
+        onFailed(response.statusCode);
+      }
+    });
+  }
+
   /// Method that allows to call the start realtime stream service
   ///
   /// In case of auth error [401] it refreshes the token and tries again if it fails again it send the user to the login page

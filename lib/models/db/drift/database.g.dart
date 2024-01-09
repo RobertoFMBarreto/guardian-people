@@ -59,9 +59,10 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
   List<GeneratedColumn> get $columns =>
       [idUser, name, email, phone, isSuperuser, isProducer, isOverViewer];
   @override
-  String get aliasedName => _alias ?? 'user';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'user';
+  String get actualTableName => $name;
+  static const String $name = 'user';
   @override
   VerificationContext validateIntegrity(Insertable<UserData> instance,
       {bool isInserting = false}) {
@@ -428,9 +429,10 @@ class $FenceTable extends Fence with TableInfo<$FenceTable, FenceData> {
   List<GeneratedColumn> get $columns =>
       [idFence, idUser, name, color, isStayInside];
   @override
-  String get aliasedName => _alias ?? 'fence';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'fence';
+  String get actualTableName => $name;
+  static const String $name = 'fence';
   @override
   VerificationContext validateIntegrity(Insertable<FenceData> instance,
       {bool isInserting = false}) {
@@ -734,9 +736,10 @@ class $FencePointsTable extends FencePoints
   List<GeneratedColumn> get $columns =>
       [idFencePoint, idFence, lat, lon, isCenter];
   @override
-  String get aliasedName => _alias ?? 'fence_points';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'fence_points';
+  String get actualTableName => $name;
+  static const String $name = 'fence_points';
   @override
   VerificationContext validateIntegrity(Insertable<FencePoint> instance,
       {bool isInserting = false}) {
@@ -1052,9 +1055,10 @@ class $AnimalTable extends Animal with TableInfo<$AnimalTable, AnimalData> {
         isActive
       ];
   @override
-  String get aliasedName => _alias ?? 'animal';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'animal';
+  String get actualTableName => $name;
+  static const String $name = 'animal';
   @override
   VerificationContext validateIntegrity(Insertable<AnimalData> instance,
       {bool isInserting = false}) {
@@ -1380,9 +1384,10 @@ class $FenceAnimalsTable extends FenceAnimals
   @override
   List<GeneratedColumn> get $columns => [idFence, idAnimal];
   @override
-  String get aliasedName => _alias ?? 'fence_animals';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'fence_animals';
+  String get actualTableName => $name;
+  static const String $name = 'fence_animals';
   @override
   VerificationContext validateIntegrity(Insertable<FenceAnimal> instance,
       {bool isInserting = false}) {
@@ -1622,9 +1627,10 @@ class $AnimalLocationsTable extends AnimalLocations
         state
       ];
   @override
-  String get aliasedName => _alias ?? 'animal_locations';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'animal_locations';
+  String get actualTableName => $name;
+  static const String $name = 'animal_locations';
   @override
   VerificationContext validateIntegrity(Insertable<AnimalLocation> instance,
       {bool isInserting = false}) {
@@ -2076,9 +2082,10 @@ class $SensorsTable extends Sensors with TableInfo<$SensorsTable, Sensor> {
   List<GeneratedColumn> get $columns =>
       [idSensor, sensorName, fullSensorName, canAlert];
   @override
-  String get aliasedName => _alias ?? 'sensors';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'sensors';
+  String get actualTableName => $name;
+  static const String $name = 'sensors';
   @override
   VerificationContext validateIntegrity(Insertable<Sensor> instance,
       {bool isInserting = false}) {
@@ -2389,9 +2396,10 @@ class $UserAlertTable extends UserAlert
         parameter
       ];
   @override
-  String get aliasedName => _alias ?? 'user_alert';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'user_alert';
+  String get actualTableName => $name;
+  static const String $name = 'user_alert';
   @override
   VerificationContext validateIntegrity(Insertable<UserAlertData> instance,
       {bool isInserting = false}) {
@@ -2783,9 +2791,10 @@ class $AlertNotificationTable extends AlertNotification
   @override
   List<GeneratedColumn> get $columns => [idNotification, idAnimal, idAlert];
   @override
-  String get aliasedName => _alias ?? 'alert_notification';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'alert_notification';
+  String get actualTableName => $name;
+  static const String $name = 'alert_notification';
   @override
   VerificationContext validateIntegrity(
       Insertable<AlertNotificationData> instance,
@@ -3013,9 +3022,10 @@ class $AlertAnimalsTable extends AlertAnimals
   @override
   List<GeneratedColumn> get $columns => [idAnimal, idAlert];
   @override
-  String get aliasedName => _alias ?? 'alert_animals';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'alert_animals';
+  String get actualTableName => $name;
+  static const String $name = 'alert_animals';
   @override
   VerificationContext validateIntegrity(Insertable<AlertAnimal> instance,
       {bool isInserting = false}) {
@@ -3176,6 +3186,289 @@ class AlertAnimalsCompanion extends UpdateCompanion<AlertAnimal> {
   }
 }
 
+class $AnimalActivityTable extends AnimalActivity
+    with TableInfo<$AnimalActivityTable, AnimalActivityData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AnimalActivityTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _animalDataActivityIdMeta =
+      const VerificationMeta('animalDataActivityId');
+  @override
+  late final GeneratedColumn<String> animalDataActivityId =
+      GeneratedColumn<String>('animal_data_activity_id', aliasedName, false,
+          type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _idAnimalActivityMeta =
+      const VerificationMeta('idAnimalActivity');
+  @override
+  late final GeneratedColumn<String> idAnimalActivity = GeneratedColumn<String>(
+      'id_animal_activity', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
+  static const VerificationMeta _activityMeta =
+      const VerificationMeta('activity');
+  @override
+  late final GeneratedColumn<String> activity = GeneratedColumn<String>(
+      'activity', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _activityDateMeta =
+      const VerificationMeta('activityDate');
+  @override
+  late final GeneratedColumn<DateTime> activityDate = GeneratedColumn<DateTime>(
+      'activity_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [animalDataActivityId, idAnimalActivity, activity, activityDate];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'animal_activity';
+  @override
+  VerificationContext validateIntegrity(Insertable<AnimalActivityData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('animal_data_activity_id')) {
+      context.handle(
+          _animalDataActivityIdMeta,
+          animalDataActivityId.isAcceptableOrUnknown(
+              data['animal_data_activity_id']!, _animalDataActivityIdMeta));
+    } else if (isInserting) {
+      context.missing(_animalDataActivityIdMeta);
+    }
+    if (data.containsKey('id_animal_activity')) {
+      context.handle(
+          _idAnimalActivityMeta,
+          idAnimalActivity.isAcceptableOrUnknown(
+              data['id_animal_activity']!, _idAnimalActivityMeta));
+    }
+    if (data.containsKey('activity')) {
+      context.handle(_activityMeta,
+          activity.isAcceptableOrUnknown(data['activity']!, _activityMeta));
+    } else if (isInserting) {
+      context.missing(_activityMeta);
+    }
+    if (data.containsKey('activity_date')) {
+      context.handle(
+          _activityDateMeta,
+          activityDate.isAcceptableOrUnknown(
+              data['activity_date']!, _activityDateMeta));
+    } else if (isInserting) {
+      context.missing(_activityDateMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {animalDataActivityId};
+  @override
+  AnimalActivityData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AnimalActivityData(
+      animalDataActivityId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}animal_data_activity_id'])!,
+      idAnimalActivity: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}id_animal_activity']),
+      activity: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
+      activityDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}activity_date'])!,
+    );
+  }
+
+  @override
+  $AnimalActivityTable createAlias(String alias) {
+    return $AnimalActivityTable(attachedDatabase, alias);
+  }
+}
+
+class AnimalActivityData extends DataClass
+    implements Insertable<AnimalActivityData> {
+  final String animalDataActivityId;
+  final String? idAnimalActivity;
+  final String activity;
+  final DateTime activityDate;
+  const AnimalActivityData(
+      {required this.animalDataActivityId,
+      this.idAnimalActivity,
+      required this.activity,
+      required this.activityDate});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['animal_data_activity_id'] = Variable<String>(animalDataActivityId);
+    if (!nullToAbsent || idAnimalActivity != null) {
+      map['id_animal_activity'] = Variable<String>(idAnimalActivity);
+    }
+    map['activity'] = Variable<String>(activity);
+    map['activity_date'] = Variable<DateTime>(activityDate);
+    return map;
+  }
+
+  AnimalActivityCompanion toCompanion(bool nullToAbsent) {
+    return AnimalActivityCompanion(
+      animalDataActivityId: Value(animalDataActivityId),
+      idAnimalActivity: idAnimalActivity == null && nullToAbsent
+          ? const Value.absent()
+          : Value(idAnimalActivity),
+      activity: Value(activity),
+      activityDate: Value(activityDate),
+    );
+  }
+
+  factory AnimalActivityData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AnimalActivityData(
+      animalDataActivityId:
+          serializer.fromJson<String>(json['animalDataActivityId']),
+      idAnimalActivity: serializer.fromJson<String?>(json['idAnimalActivity']),
+      activity: serializer.fromJson<String>(json['activity']),
+      activityDate: serializer.fromJson<DateTime>(json['activityDate']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'animalDataActivityId': serializer.toJson<String>(animalDataActivityId),
+      'idAnimalActivity': serializer.toJson<String?>(idAnimalActivity),
+      'activity': serializer.toJson<String>(activity),
+      'activityDate': serializer.toJson<DateTime>(activityDate),
+    };
+  }
+
+  AnimalActivityData copyWith(
+          {String? animalDataActivityId,
+          Value<String?> idAnimalActivity = const Value.absent(),
+          String? activity,
+          DateTime? activityDate}) =>
+      AnimalActivityData(
+        animalDataActivityId: animalDataActivityId ?? this.animalDataActivityId,
+        idAnimalActivity: idAnimalActivity.present
+            ? idAnimalActivity.value
+            : this.idAnimalActivity,
+        activity: activity ?? this.activity,
+        activityDate: activityDate ?? this.activityDate,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('AnimalActivityData(')
+          ..write('animalDataActivityId: $animalDataActivityId, ')
+          ..write('idAnimalActivity: $idAnimalActivity, ')
+          ..write('activity: $activity, ')
+          ..write('activityDate: $activityDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      animalDataActivityId, idAnimalActivity, activity, activityDate);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AnimalActivityData &&
+          other.animalDataActivityId == this.animalDataActivityId &&
+          other.idAnimalActivity == this.idAnimalActivity &&
+          other.activity == this.activity &&
+          other.activityDate == this.activityDate);
+}
+
+class AnimalActivityCompanion extends UpdateCompanion<AnimalActivityData> {
+  final Value<String> animalDataActivityId;
+  final Value<String?> idAnimalActivity;
+  final Value<String> activity;
+  final Value<DateTime> activityDate;
+  final Value<int> rowid;
+  const AnimalActivityCompanion({
+    this.animalDataActivityId = const Value.absent(),
+    this.idAnimalActivity = const Value.absent(),
+    this.activity = const Value.absent(),
+    this.activityDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AnimalActivityCompanion.insert({
+    required String animalDataActivityId,
+    this.idAnimalActivity = const Value.absent(),
+    required String activity,
+    required DateTime activityDate,
+    this.rowid = const Value.absent(),
+  })  : animalDataActivityId = Value(animalDataActivityId),
+        activity = Value(activity),
+        activityDate = Value(activityDate);
+  static Insertable<AnimalActivityData> custom({
+    Expression<String>? animalDataActivityId,
+    Expression<String>? idAnimalActivity,
+    Expression<String>? activity,
+    Expression<DateTime>? activityDate,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (animalDataActivityId != null)
+        'animal_data_activity_id': animalDataActivityId,
+      if (idAnimalActivity != null) 'id_animal_activity': idAnimalActivity,
+      if (activity != null) 'activity': activity,
+      if (activityDate != null) 'activity_date': activityDate,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AnimalActivityCompanion copyWith(
+      {Value<String>? animalDataActivityId,
+      Value<String?>? idAnimalActivity,
+      Value<String>? activity,
+      Value<DateTime>? activityDate,
+      Value<int>? rowid}) {
+    return AnimalActivityCompanion(
+      animalDataActivityId: animalDataActivityId ?? this.animalDataActivityId,
+      idAnimalActivity: idAnimalActivity ?? this.idAnimalActivity,
+      activity: activity ?? this.activity,
+      activityDate: activityDate ?? this.activityDate,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (animalDataActivityId.present) {
+      map['animal_data_activity_id'] =
+          Variable<String>(animalDataActivityId.value);
+    }
+    if (idAnimalActivity.present) {
+      map['id_animal_activity'] = Variable<String>(idAnimalActivity.value);
+    }
+    if (activity.present) {
+      map['activity'] = Variable<String>(activity.value);
+    }
+    if (activityDate.present) {
+      map['activity_date'] = Variable<DateTime>(activityDate.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnimalActivityCompanion(')
+          ..write('animalDataActivityId: $animalDataActivityId, ')
+          ..write('idAnimalActivity: $idAnimalActivity, ')
+          ..write('activity: $activity, ')
+          ..write('activityDate: $activityDate, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$GuardianDb extends GeneratedDatabase {
   _$GuardianDb(QueryExecutor e) : super(e);
   late final $UserTable user = $UserTable(this);
@@ -3190,6 +3483,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
   late final $AlertNotificationTable alertNotification =
       $AlertNotificationTable(this);
   late final $AlertAnimalsTable alertAnimals = $AlertAnimalsTable(this);
+  late final $AnimalActivityTable animalActivity = $AnimalActivityTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3204,6 +3498,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
         sensors,
         userAlert,
         alertNotification,
-        alertAnimals
+        alertAnimals,
+        animalActivity
       ];
 }

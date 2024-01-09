@@ -65,13 +65,8 @@
   "start_date": "start date",
   "end_date": "end date",
   "confirm": "confirm",
-  "ruminating": "ruminating",
-  "eating": "eating",
-  "walking": "walking",
-  "running": "running",
-  "fighting": "fighting",
-  "stopped": "stopped",
   "was": "was",
+  "was_no_adjective": "was",
   "hide": "hide",
   "load": "load",
   "more": "more",
@@ -191,5 +186,11 @@
   "alert": "alert",
   "animals": "animals",
   "close": "close",
-  "open": "open"
+  "open": "open",  
+  "still": "still",
+  "eating": "eating",
+  "grazing": "grazing",
+  "resting": "resting",
+  "standing": "standing",
+  "walking": "walking"
 }

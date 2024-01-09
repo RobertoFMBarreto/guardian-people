@@ -334,7 +334,14 @@ Future<List<Animal>> getUserAnimalsFiltered({
   required String searchString,
 }) async {
   final db = Get.find<GuardianDb>();
-
+  /*
+   LEFT JOIN (
+          SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
+          GROUP BY ${db.animalLocations.idAnimal.name}
+          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
+      ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
+      
+   */
   final data = await db.customSelect(
     '''
       SELECT
@@ -357,7 +364,6 @@ Future<List<Animal>> getUserAnimalsFiltered({
       LEFT JOIN (
           SELECT * FROM (SELECT * FROM ${db.animalLocations.actualTableName} ORDER BY ${db.animalLocations.date.name} DESC)
           GROUP BY ${db.animalLocations.idAnimal.name}
-          HAVING ${db.animalLocations.lat.name} IS NOT NULL AND ${db.animalLocations.lon.name} IS NOT NULL
       ) deviceData ON deviceData.${db.animalLocations.idAnimal.name} = ${db.animal.actualTableName}.${db.animal.idAnimal.name}
       WHERE
           (deviceData.${db.animalLocations.temperature.name} >= ? AND deviceData.${db.animalLocations.temperature.name} <= ? AND

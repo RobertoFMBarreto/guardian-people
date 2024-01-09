@@ -7,6 +7,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:guardian/main.dart';
 import 'package:guardian/models/db/drift/operations/fence_points_operations.dart';
@@ -67,6 +68,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   late String _dropDownValue;
 
   AnimalLocationsCompanion? lastLocation;
+  Position? _currentPosition;
 
   List<Marker> markersList = [];
   List<AnimalLocationsCompanion> data = [];
@@ -82,7 +84,6 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
   bool _showRoute = false;
   bool _satellite = false;
   bool _showHeatMap = false;
-
   @override
   void initState() {
     _future = _setup();
@@ -118,6 +119,14 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
     setState(() {
       _dropDownValue = _dropdownItems.first;
     });
+    await getCurrentPosition(
+      context,
+      (position) {
+        if (mounted) {
+          setState(() => _currentPosition = position);
+        }
+      },
+    );
     await _loadAnimalFences().then(
       (_) => FencingRequests.getUserFences(
         context: context,
@@ -188,9 +197,13 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                       ? widget.isInterval ||
                               data.first.lat.value == null ||
                               data.first.lon.value == null
-                          ? null
+                          ? _currentPosition != null
+                              ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+                              : null
                           : LatLng(data.first.lat.value!, data.first.lon.value!)
-                      : null,
+                      : _currentPosition != null
+                          ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+                          : null,
                   onMapReady: () {
                     if (_distance == 0 && _lastZoom == 0) {
                       setState(() {
@@ -214,7 +227,7 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                   boundsOptions: FitBoundsOptions(
                       padding: kIsWeb || isBigScreen
                           ? const EdgeInsets.all(100)
-                          : const EdgeInsets.all(20)),
+                          : const EdgeInsets.all(80)),
                   bounds: (_polygons.isNotEmpty || _circles.isNotEmpty) && data.isEmpty
                       ? LatLngBounds.fromPoints(
                           _polygons.isEmpty ? _circles.first.points : _polygons.first.points)
@@ -226,12 +239,11 @@ class _SingleAnimalLocationMapState extends State<SingleAnimalLocationMap> {
                 ),
                 children: [
                   getTileLayer(context, satellite: _satellite),
-                  if (widget.isInterval && data.isEmpty)
-                    CurrentLocationLayer(
-                      followAnimationCurve: Curves.linear,
-                      rotateAnimationCurve: Curves.linear,
-                      moveAnimationCurve: Curves.linear,
-                    ),
+                  CurrentLocationLayer(
+                    followAnimationCurve: Curves.linear,
+                    rotateAnimationCurve: Curves.linear,
+                    moveAnimationCurve: Curves.linear,
+                  ),
                   if (_showFence) ...[
                     getCircleFences(_circles),
                     getPolygonFences(_polygons),
