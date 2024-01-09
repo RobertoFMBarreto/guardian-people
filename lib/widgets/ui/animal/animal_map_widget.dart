@@ -23,7 +23,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class AnimalMapWidget extends StatefulWidget {
   final Animal animal;
   final bool isInterval;
-  const AnimalMapWidget({super.key, required this.animal, required this.isInterval});
+  final Function(AnimalLocationsCompanion) onNewData;
+  const AnimalMapWidget(
+      {super.key, required this.animal, required this.isInterval, required this.onNewData});
 
   @override
   State<AnimalMapWidget> createState() => _AnimalMapWidgetState();
@@ -194,10 +196,11 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
         onDataGotten: () {
           rabbitMQProvider.listen(
             topicId: widget.animal.animal.idAnimal.value,
-            onDataReceived: (message) async {
+            onDataReceived: (message) {
               if (message['lat'] != null && message['lon'] != null) {
                 animalDataFromJson(message, widget.animal.animal.idAnimal.value).then(
-                  (_) => _getAnimalData(),
+                  (newData) => (widget.isInterval ? _getAnimalData() : _getLastLocation())
+                      .then((value) => widget.onNewData(newData)),
                 );
               }
             },
@@ -234,6 +237,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
       (data) async {
         _animalData = [];
         if (mounted) {
+          print('Data: ${_animalData}');
           setState(() {
             _animalData.addAll(data);
           });
@@ -246,6 +250,7 @@ class _AnimalMapWidgetState extends State<AnimalMapWidget> {
   Future<void> _getLastLocation() async {
     await getUserAnimalWithLastLocation(widget.animal.animal.idAnimal.value).then((animal) {
       setState(() {
+        print('Last Loc: $_animalData');
         _animalData = [];
         _animalData.addAll(animal.first.data);
       });

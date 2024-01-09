@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
@@ -146,7 +147,8 @@ class _AnimalPageState extends State<AnimalPage> {
           slivers: [
             if (!_isInterval)
               SliverPersistentHeader(
-                key: Key("${_animal.animal.animalName.value}$hasConnection${theme.brightness}"),
+                key: Key(
+                    "${_animal.animal.animalName.value}${_animal.data}$hasConnection${theme.brightness}"),
                 pinned: true,
                 delegate: SliverDeviceAppBar(
                   maxHeight: MediaQuery.of(context).size.height * 0.4,
@@ -287,6 +289,17 @@ class _AnimalPageState extends State<AnimalPage> {
                       key: Key('$_reloadNum'),
                       animal: _animal,
                       isInterval: _isInterval,
+                      onNewData: (AnimalLocationsCompanion newData) {
+                        print(newData.temperature);
+                        setState(() {
+                          if (_isInterval) {
+                            _animal.data.add(newData);
+                          } else {
+                            _animal.data.removeLast();
+                            _animal.data.add(newData);
+                          }
+                        });
+                      },
                     ),
                   ),
                 ],

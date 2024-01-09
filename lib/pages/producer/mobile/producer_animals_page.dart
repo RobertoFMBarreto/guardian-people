@@ -121,6 +121,7 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
               print('[BT][Characteristic] - Characteristic: ${characteristic.characteristicUuid}');
               if (characteristic.characteristicUuid ==
                   Guid.fromString('6e400003-b5a3-f393-e0a9-e50e24dcca9e')) {
+                String toSend = '';
                 final characteristicSubscription = characteristic.onValueReceived.listen((payload) {
                   print("[BT][Payload] - ${payload}");
                   String data = String.fromCharCodes(payload
@@ -129,11 +130,17 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
                       .join(',')
                       .split(',')
                       .map(int.parse));
-                  print("[BT][DATA] - ${data}");
-
-                  connectToSocket(data);
+                  if (data.contains('\$END')) {
+                    toSend += data.replaceAll("STR\$", "").replaceAll("\$END", "");
+                    connectToSocket(toSend);
+                    toSend = '';
+                  } else {
+                    toSend += data.replaceAll("STR\$", "").replaceAll("\$END", "");
+                  }
+                  print("[BT][DATA] - ${data.replaceAll("STR\$", "").replaceAll("\$END", "")}");
                 });
                 device.cancelWhenDisconnected(characteristicSubscription);
+
                 await characteristic.setNotifyValue(true);
               }
             }
@@ -153,8 +160,9 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
           if (dg != null) dg.data.forEach((x) => print(x));
         }
       });
-      udpSocket.send('af333530343537373930373335383437102262731323334353637681'.codeUnits,
-          InternetAddress('77.54.1.149'), 47659);
+      // final hexString = '0X${toSend.toRadixString(16)}';
+      // print(hexString);
+      udpSocket.send(utf8.encode(toSend), InternetAddress('77.54.1.149'), 47659);
       print('Did send data on the stream..');
     });
   }
