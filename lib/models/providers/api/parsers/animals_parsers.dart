@@ -31,7 +31,6 @@ Future<void> animalsFromJson(String body, {bool showLog = false}) async {
 /// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
 Future<AnimalLocationsCompanion> animalDataFromJson(Map<dynamic, dynamic> data, String idAnimal,
     {bool showLog = false}) async {
-  if (showLog) print("[RECEIVED] -> $data");
   return await deleteAnimalData(data['id_data']).then(
     (_) async => await createAnimalData(
       AnimalLocationsCompanion(
