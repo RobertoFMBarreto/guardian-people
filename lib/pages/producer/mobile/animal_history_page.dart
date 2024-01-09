@@ -1,4 +1,3 @@
-import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -335,7 +334,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
                             padding: const EdgeInsets.only(top: 10),
                             child: SingleChildScrollView(
                               child: AnimalDataInfoList(
-                                key: Key('${_deviceData}'),
+                                key: Key('$_deviceData'),
                                 mapKey: _firstItemDataKey,
                                 deviceData: _deviceData,
                               ),

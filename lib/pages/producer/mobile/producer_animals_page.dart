@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -60,15 +57,6 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   List<Animal> _animals = [];
 
   @override
-  void dispose() {
-    if (device.isConnected) {
-      device.disconnect();
-    }
-    subscription.cancel();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     _future = _setup();
     super.initState();
@@ -119,7 +107,7 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
   ///
   /// If the server takes too long to answer then the user receives and alert
   Future<void> _getAnimalsFromApi() async {
-    AnimalRequests.getAnimalsFromApiWithLastLocation(
+    AnimalRequests.getAnimalsFromApiWithLastData(
         context: context,
         onFailed: (statusCode) {
           if (!hasConnection && !isSnackbarActive) {
@@ -182,7 +170,7 @@ class _ProducerAnimalsPageState extends State<ProducerAnimalsPage> {
         }
       });
     } else {
-      getUserAnimalsFiltered(
+      getUserAnimalsFilteredLastData(
         batteryRangeValues: _batteryRangeValues,
         elevationRangeValues: _elevationRangeValues,
         dtUsageRangeValues: _dtUsageRangeValues,

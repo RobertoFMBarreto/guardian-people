@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:guardian/models/db/drift/database.dart';
+import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/helpers/alert_dialogue_helper.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/settings/colors.dart';
@@ -55,9 +56,68 @@ class _AnimalPageState extends State<AnimalPage> {
   @override
   void initState() {
     isSnackbarActive = false;
-    _animal = widget.animal;
+    print(widget.animal.data);
+    if (widget.animal.data.isNotEmpty) {
+      if (widget.animal.data.first.lat.value != null &&
+          widget.animal.data.first.lon.value != null) {
+        _animal = widget.animal;
+      } else {
+        _animal = widget.animal;
+        _loadAnimal();
+      }
+    } else {
+      _animal = widget.animal;
+      _loadAnimal();
+    }
     connectToAnimal();
     super.initState();
+  }
+
+  /// Method that loads the animals into the [_animals] list
+  ///
+  /// 1. load local animals
+  /// 2. add to list
+  /// 3. load api animals
+  Future<void> _loadAnimal() async {
+    await getUserAnimalWithLastLocation(widget.animal.animal.idAnimal.value)
+        .then((newAnimal) async {
+      print("New: $newAnimal");
+      if (newAnimal.isNotEmpty) {
+        setState(() {
+          _animal.data.add(newAnimal.first.data.first);
+        });
+      }
+
+      await AnimalRequests.getAnimalsFromApiWithLastLocation(
+          context: context,
+          onFailed: (statusCode) {
+            if (!hasConnection && !isSnackbarActive) {
+              showNoConnectionSnackBar();
+            } else {
+              if (statusCode == 507 || statusCode == 404) {
+                if (_firstRun == true) {
+                  showNoConnectionSnackBar();
+                }
+                _firstRun = false;
+              } else if (!isSnackbarActive) {
+                AppLocalizations localizations = AppLocalizations.of(context)!;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+              }
+            }
+          },
+          onDataGotten: () async {
+            await getUserAnimalWithLastLocation(widget.animal.animal.idAnimal.value)
+                .then((reloadNewAnimal) {
+              print("reloadNewAnimal: $reloadNewAnimal");
+              if (mounted) {
+                setState(() {
+                  _animal.data.add(reloadNewAnimal.first.data.first);
+                });
+              }
+            });
+          });
+    });
   }
 
   Future<void> connectToAnimal() async {
