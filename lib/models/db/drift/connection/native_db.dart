@@ -13,6 +13,6 @@ LazyDatabase openConnection() {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'guardian_db.sqlite'));
 
-    return NativeDatabase.createInBackground(file, logStatements: true);
+    return NativeDatabase.createInBackground(file);
   });
 }
