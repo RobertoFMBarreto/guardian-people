@@ -246,8 +246,6 @@ class AnimalRequests {
     required Function(int) onFailed,
   }) async {
     await AnimalProvider.getactivity(idAnimal, startDate, endDate).then((response) async {
-      print(response.body);
-      print(response.statusCode);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
@@ -264,7 +262,6 @@ class AnimalRequests {
         //   }
         // });
         for (var dt in body) {
-          print('[DATA HERE] - $dt');
           await activityFromJson(dt, idAnimal);
         }
 

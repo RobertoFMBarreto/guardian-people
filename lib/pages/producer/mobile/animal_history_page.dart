@@ -131,7 +131,6 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   }
 
   Future<void> _getAnimalLocalActivity() async {
-    print("HERE");
     await getAnimalActivity(
       startDate: _selectedDate,
       endDate: DateTime(
@@ -144,7 +143,6 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
       ),
       idAnimal: widget.animal.animal.idAnimal.value,
     ).then((newDeviceData) {
-      print('newDeviceData: $newDeviceData');
       setState(() {
         _deviceData = [];
         _deviceData.addAll(newDeviceData);

@@ -83,17 +83,14 @@ class AnimalProvider {
     };
     var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/$idAnimal/activity');
     try {
-      DateFormat _formatterDate = DateFormat.yMd();
-      DateFormat _formatterTime = DateFormat.Hms();
-      print(
-          "[DATE] ${startDate.year}/${startDate.month < 10 ? '0' : ''}${startDate.month}/${startDate.day < 10 ? '0' : ''}${startDate.day} ${_formatterTime.format(startDate)} | ${endDate.year}/${endDate.month < 10 ? '0' : ''}${endDate.month}/${endDate.day < 10 ? '0' : ''}${endDate.day} ${_formatterTime.format(endDate)}");
+      DateFormat formatterTime = DateFormat.Hms();
       var response = await post(url,
           headers: headers,
           body: jsonEncode({
             "startDate":
-                "${startDate.year}/${startDate.month < 10 ? '0' : ''}${startDate.month}/${startDate.day < 10 ? '0' : ''}${startDate.day} ${_formatterTime.format(startDate)}",
+                "${startDate.year}/${startDate.month < 10 ? '0' : ''}${startDate.month}/${startDate.day < 10 ? '0' : ''}${startDate.day} ${formatterTime.format(startDate)}",
             "endDate":
-                "${endDate.year}/${endDate.month < 10 ? '0' : ''}${endDate.month}/${endDate.day < 10 ? '0' : ''}${endDate.day} ${_formatterTime.format(endDate)}"
+                "${endDate.year}/${endDate.month < 10 ? '0' : ''}${endDate.month}/${endDate.day < 10 ? '0' : ''}${endDate.day} ${formatterTime.format(endDate)}"
           }));
 
       return response;
