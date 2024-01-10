@@ -198,8 +198,7 @@ Future<List<AnimalLocationsCompanion>> getAnimalActivity(
 Future<AnimalLocationsCompanion> getClosestAnimalActivity(
     {required DateTime time, required String idAnimal}) async {
   final db = Get.find<GuardianDb>();
-  //AND
-  // ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} < ?
+
   final dt = await db.customSelect('''
       SELECT 
         *
@@ -207,7 +206,8 @@ Future<AnimalLocationsCompanion> getClosestAnimalActivity(
         ${db.animalLocations.actualTableName}
       WHERE
         ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name} = ?
-        
+        AND
+        ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} < ?
         AND
         ${db.animalLocations.actualTableName}.${db.animalLocations.lat.name} IS NOT NULL
         AND
