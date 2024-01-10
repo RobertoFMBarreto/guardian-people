@@ -169,45 +169,53 @@ class _AnimalDataInfoListState extends State<AnimalDataInfoList> {
                   ],
                 );
               },
-              body: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconText(
-                        icon: Icons.device_thermostat,
-                        iconColor: theme.colorScheme.secondary,
-                        text: '${widget.deviceData[index].temperature.value}ºC',
-                        fontSize: 15,
-                        iconSize: 30,
-                      ),
-                      IconText(
-                        icon: DeviceWidgetProvider.getBatteryIcon(
-                          deviceBattery: widget.deviceData[index].battery.value,
-                          color: theme.colorScheme.secondary,
+              body: widget.deviceData[index].temperature.value != null ||
+                      widget.deviceData[index].battery.value != null ||
+                      widget.deviceData[index].elevation.value != null
+                  ? Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            IconText(
+                              icon: Icons.device_thermostat,
+                              iconColor: theme.colorScheme.secondary,
+                              text: '${widget.deviceData[index].temperature.value ?? 'N/A '}ºC',
+                              fontSize: 15,
+                              iconSize: 30,
+                            ),
+                            IconText(
+                              icon: DeviceWidgetProvider.getBatteryIcon(
+                                deviceBattery: widget.deviceData[index].battery.value,
+                                color: theme.colorScheme.secondary,
+                              ),
+                              isInverted: true,
+                              iconColor: theme.colorScheme.secondary,
+                              text: '${widget.deviceData[index].battery.value ?? 'N/A '} %',
+                              fontSize: 15,
+                              iconSize: 30,
+                            ),
+                          ],
                         ),
-                        isInverted: true,
-                        iconColor: theme.colorScheme.secondary,
-                        text: '${widget.deviceData[index].battery.value ?? 'N/A'} %',
-                        fontSize: 15,
-                        iconSize: 30,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: IconText(
+                            isInverted: true,
+                            icon: Icons.landscape,
+                            iconColor: theme.colorScheme.secondary,
+                            text:
+                                '${widget.deviceData[index].elevation.value != null ? widget.deviceData[index].elevation.value!.roundToDouble() : 'N/A '} m',
+                            fontSize: 15,
+                            iconSize: 30,
+                          ),
+                        )
+                      ],
+                    )
+                  : Center(
+                      child: Text(
+                        localizations.no_data_to_show.capitalizeFirst!,
                       ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: IconText(
-                      isInverted: true,
-                      icon: Icons.landscape,
-                      iconColor: theme.colorScheme.secondary,
-                      text:
-                          '${widget.deviceData[index].elevation.value != null ? widget.deviceData[index].elevation.value!.roundToDouble() : 'N/A'} m',
-                      fontSize: 15,
-                      iconSize: 30,
                     ),
-                  )
-                ],
-              ),
             );
           }).toList(),
         ),

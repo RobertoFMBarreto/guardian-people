@@ -217,13 +217,9 @@ Future<AnimalLocationsCompanion> getClosestAnimalActivity(
       LIMIT 1
     ''', variables: [
     drift.Variable.withString(idAnimal),
-    //drift.Variable.withDateTime(time),
+    drift.Variable.withDateTime(time),
   ]).getSingleOrNull();
   if (dt != null) {
-    print("[NOT NULL]${dt.data}");
-    print("[NOT NULL]${DateTime.fromMillisecondsSinceEpoch(
-      dt.data[db.animalLocations.date.name] * 1000,
-    )} | $time");
     return AnimalLocationsCompanion(
       accuracy: drift.Value(dt.data[db.animalLocations.accuracy.name]),
       battery: drift.Value(dt.data[db.animalLocations.battery.name]),
