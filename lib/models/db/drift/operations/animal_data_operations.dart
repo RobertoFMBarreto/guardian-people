@@ -207,11 +207,15 @@ Future<AnimalLocationsCompanion> getClosestAnimalActivity(
       WHERE
         ${db.animalLocations.actualTableName}.${db.animalLocations.idAnimal.name} = ?
         AND
-        ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} < ?
+          ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} < ?
         AND
-        ${db.animalLocations.actualTableName}.${db.animalLocations.lat.name} IS NOT NULL
-        AND
-        ${db.animalLocations.actualTableName}.${db.animalLocations.lon.name} IS NOT NULL
+        (
+            ${db.animalLocations.actualTableName}.${db.animalLocations.battery.name} IS NOT NULL
+          OR
+            ${db.animalLocations.actualTableName}.${db.animalLocations.temperature.name} IS NOT NULL
+          OR
+            ${db.animalLocations.actualTableName}.${db.animalLocations.elevation.name} IS NOT NULL
+        )
       ORDER BY
         ${db.animalLocations.actualTableName}.${db.animalLocations.date.name} DESC
       LIMIT 1
