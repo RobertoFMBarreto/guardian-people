@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:guardian/custom_page_router.dart';
+import 'package:guardian/models/db/drift/database.dart';
 import 'package:guardian/models/helpers/db_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -89,17 +92,19 @@ Future<String?> getUid(BuildContext context, {bool autoLogin = true}) async {
     return idUser;
   } else {
     if (autoLogin) {
-      await clearUserSession().then((_) async => await deleteEverything().then(
-            (_) {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(
-                  page: '/login',
-                ),
-              );
-            },
-          ));
+      await clearUserSession().then(
+        (_) async => await deleteEverything().then(
+          (_) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.pushReplacement(
+              context,
+              CustomPageRouter(
+                page: '/login',
+              ),
+            );
+          },
+        ),
+      );
     }
   }
   return null;

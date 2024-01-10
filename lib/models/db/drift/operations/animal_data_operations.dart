@@ -9,11 +9,11 @@ Future<AnimalLocationsCompanion> createAnimalData(AnimalLocationsCompanion anima
   return animalData;
 }
 
-/// Method for creating animal activity data [animalActivity] returning it as [AnimalActivityCompanion]
-Future<AnimalActivityCompanion> createAnimalActivity(AnimalActivityCompanion animalActivity) async {
+/// Method for creating animal location data [animalData] returning it as [AnimalLocationsCompanion]
+Future<ActivityDataCompanion> createAnimalActivity(ActivityDataCompanion animalData) async {
   final db = Get.find<GuardianDb>();
-  await db.into(db.animalActivity).insertOnConflictUpdate(animalActivity);
-  return animalActivity;
+  await db.into(db.activityData).insertOnConflictUpdate(animalData);
+  return animalData;
 }
 
 /// Method that allows to delete animal data by [AnimalDataId]
@@ -23,12 +23,11 @@ Future<void> deleteAnimalData(String idData) async {
   await (db.delete(db.animalLocations)..where((tbl) => tbl.animalDataId.equals(idData))).go();
 }
 
-/// Method that allows to delete animal activity by [AnimalDataId]
-Future<void> deleteAnimalActivity(String idData) async {
+/// Method that allows to delete animal data by [AnimalDataId]
+Future<void> deleteActivityData(String idData) async {
   final db = Get.find<GuardianDb>();
 
-  await (db.delete(db.animalActivity)..where((tbl) => tbl.animalDataActivityId.equals(idData)))
-      .go();
+  await (db.delete(db.activityData)..where((tbl) => tbl.idActivityData.equals(idData))).go();
 }
 
 /// Method that allows to delete animal [idAnimal] data between [startDate] and [endDate]
@@ -162,34 +161,32 @@ Future<List<AnimalLocationsCompanion>> getAnimalActivity(
   List<AnimalLocationsCompanion> animalData = [];
   if (startDate.difference(endDate).inSeconds.abs() > 60) {
     final dt = await db.customSelect('''
-      SELECT * FROM ${db.animalActivity.actualTableName}
-      WHERE ${db.animalActivity.actualTableName}.${db.animalActivity.idAnimalActivity.name} = ?
-        AND ${db.animalActivity.activityDate.name} BETWEEN ? AND ?
-      ORDER BY ${db.animalActivity.activityDate.name} DESC
+      SELECT * FROM ${db.activityData.actualTableName}
+      WHERE ${db.activityData.actualTableName}.${db.activityData.idAnimal.name} = ?
+        AND ${db.activityData.date.name} BETWEEN ? AND ?
+      ORDER BY ${db.activityData.date.name} DESC
     ''', variables: [
       drift.Variable.withString(idAnimal),
       drift.Variable.withDateTime(startDate),
-      drift.Variable.withDateTime(endDate)
+      drift.Variable.withDateTime(endDate),
     ]).get();
-
     if (dt.isNotEmpty) {
       for (var activityData in dt) {
         await getClosestAnimalActivity(
           idAnimal: idAnimal,
           time: DateTime.fromMillisecondsSinceEpoch(
-            activityData.data[db.animalActivity.activityDate.name] * 1000,
+            activityData.data[db.activityData.date.name] * 1000,
           ),
-        ).then(
-          (locationData) => animalData.add(
+        ).then((locationData) {
+          animalData.add(
             locationData.copyWith(
-              state: drift.Value(activityData.data[db.animalActivity.activity.name]),
+              state: drift.Value(activityData.data[db.activityData.activity.name]),
               date: drift.Value(DateTime.fromMillisecondsSinceEpoch(
-                  activityData.data[db.animalActivity.activityDate.name] * 1000)),
-              animalDataId:
-                  drift.Value(activityData.data[db.animalActivity.animalDataActivityId.name]),
+                  activityData.data[db.activityData.date.name] * 1000)),
+              animalDataId: drift.Value(activityData.data[db.activityData.idActivityData.name]),
             ),
-          ),
-        );
+          );
+        });
       }
     }
   }
@@ -236,6 +233,6 @@ Future<AnimalLocationsCompanion> getClosestAnimalActivity(
       temperature: drift.Value(dt.data[db.animalLocations.temperature.name]),
     );
   } else {
-    return const AnimalLocationsCompanion();
+    return AnimalLocationsCompanion();
   }
 }

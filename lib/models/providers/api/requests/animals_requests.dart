@@ -237,7 +237,7 @@ class AnimalRequests {
   /// In case of server unreachable [507] it shows the user that there is no connection to the server
   ///
   /// Any other error will send the user to login deleting all data
-  static Future<void> getAnimalActivityIntervalFromApi({
+  static Future<void> getactivityIntervalFromApi({
     required String idAnimal,
     required DateTime startDate,
     required DateTime endDate,
@@ -245,7 +245,9 @@ class AnimalRequests {
     required Function onDataGotten,
     required Function(int) onFailed,
   }) async {
-    await AnimalProvider.getAnimalActivity(idAnimal, startDate, endDate).then((response) async {
+    await AnimalProvider.getactivity(idAnimal, startDate, endDate).then((response) async {
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);
@@ -262,7 +264,8 @@ class AnimalRequests {
         //   }
         // });
         for (var dt in body) {
-          await animalActivityFromJson(dt, idAnimal);
+          print('[DATA HERE] - $dt');
+          await activityFromJson(dt, idAnimal);
         }
 
         await onDataGotten();
@@ -273,7 +276,7 @@ class AnimalRequests {
             setShownNoServerConnection(false);
             final newToken = jsonDecode(resp.body)['token'];
             await setSessionToken(newToken).then(
-              (value) => getAnimalActivityIntervalFromApi(
+              (value) => getactivityIntervalFromApi(
                 idAnimal: idAnimal,
                 startDate: startDate,
                 endDate: endDate,
