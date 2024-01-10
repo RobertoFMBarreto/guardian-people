@@ -146,7 +146,7 @@ class _AnimalPageState extends State<AnimalPage> {
             }
           }
         });
-        await device.connect();
+        await device.connect(mtu: 230);
 
         final services = await res.device.discoverServices();
         for (BluetoothService service in services) {

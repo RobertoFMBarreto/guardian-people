@@ -79,7 +79,7 @@ class DeviceWidgetProvider {
         icon = Icons.battery_0_bar;
       }
     } else {
-      icon = Icons.question_mark;
+      icon = Icons.battery_0_bar;
     }
 
     return icon;
