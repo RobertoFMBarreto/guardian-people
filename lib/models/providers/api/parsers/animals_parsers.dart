@@ -69,7 +69,6 @@ Future<AnimalLocationsCompanion> animalDataFromJson(Map<dynamic, dynamic> data, 
 Future<void> activityFromJson(Map<dynamic, dynamic> data, String idAnimal) async {
   // await deleteactivity(data['id_data']).then(
   //   (_) async =>
-  print(data);
   await createAnimalActivity(
     ActivityDataCompanion(
       date: drift.Value(DateTime.parse(data['read_date'])),
