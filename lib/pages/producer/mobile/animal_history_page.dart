@@ -54,7 +54,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   ///
   /// Resets the list to prevent duplicates
   Future<void> _getDeviceData() async {
-    await AnimalRequests.getAnimalActivityIntervalFromApi(
+    await AnimalRequests.getactivityIntervalFromApi(
       context: context,
       startDate: _selectedDate,
       endDate: DateTime(
@@ -94,7 +94,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   Future<void> _getDeviceActivity() async {
     await _getAnimalLocalActivity().then(
       (value) async => {
-        await AnimalRequests.getAnimalActivityIntervalFromApi(
+        await AnimalRequests.getactivityIntervalFromApi(
           context: context,
           startDate: _selectedDate,
           endDate: DateTime(
@@ -131,6 +131,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   }
 
   Future<void> _getAnimalLocalActivity() async {
+    print("HERE");
     await getAnimalActivity(
       startDate: _selectedDate,
       endDate: DateTime(
@@ -143,6 +144,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
       ),
       idAnimal: widget.animal.animal.idAnimal.value,
     ).then((newDeviceData) {
+      print('newDeviceData: $newDeviceData');
       setState(() {
         _deviceData = [];
         _deviceData.addAll(newDeviceData);
