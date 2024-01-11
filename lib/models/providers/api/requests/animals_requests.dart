@@ -94,6 +94,7 @@ class AnimalRequests {
       required Function onDataGotten,
       required Function(int) onFailed}) async {
     await AnimalProvider.getAnimalsWithLastLocation().then((response) async {
+      print(response.body);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(navigatorKey.currentContext!).clearSnackBars();
         setShownNoServerConnection(false);

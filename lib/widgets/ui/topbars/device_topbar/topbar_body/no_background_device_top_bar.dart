@@ -164,7 +164,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 child: IconText(
                                   icon: Icons.device_thermostat,
                                   iconColor: theme.colorScheme.onSecondary,
-                                  text: '${widget.animal.data.last.temperature.value ?? 'N/A '}ºC',
+                                  text: '${widget.animal.data.first.temperature.value ?? 'N/A '}ºC',
                                   textColor: theme.colorScheme.onSecondary,
                                   iconSize: 25,
                                   fontSize: 25,
@@ -174,7 +174,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 icon: Icons.landscape,
                                 iconColor: theme.colorScheme.onSecondary,
                                 text:
-                                    '${widget.animal.data.last.elevation.value != null ? widget.animal.data.last.elevation.value!.ceil() : 'N/A '}m',
+                                    '${widget.animal.data.first.elevation.value != null ? widget.animal.data.first.elevation.value!.ceil() : 'N/A '}m',
                                 // text: '${widget.device.data.first.elevation.value.round()}m',
                                 textColor: theme.colorScheme.onSecondary,
                                 iconSize: 25,
@@ -192,8 +192,8 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 padding: const EdgeInsets.only(bottom: 20.0),
                                 child: IconText(
                                   icon: DeviceWidgetProvider.getBatteryIcon(
-                                    deviceBattery: widget.animal.data.last.battery.value != null
-                                        ? widget.animal.data.last.battery.value!.ceil()
+                                    deviceBattery: widget.animal.data.first.battery.value != null
+                                        ? widget.animal.data.first.battery.value!.ceil()
                                         : 0,
                                     color: theme.colorScheme.onSecondary,
                                   ),
@@ -201,7 +201,7 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                   fontSize: 25,
                                   isInverted: true,
                                   iconColor: theme.colorScheme.onSecondary,
-                                  text: '${widget.animal.data.last.battery.value ?? 'N/A '}%',
+                                  text: '${widget.animal.data.first.battery.value ?? 'N/A '}%',
                                   textColor: theme.colorScheme.onSecondary,
                                 ),
                               ),
@@ -209,9 +209,9 @@ class _NoBackgroundDeviceTopBarState extends State<NoBackgroundDeviceTopBar> {
                                 icon: Icons.info_outline,
                                 isInverted: true,
                                 iconColor: theme.colorScheme.onSecondary,
-                                text: widget.animal.data.last.state.value != null
+                                text: widget.animal.data.first.state.value != null
                                     ? activityToString(
-                                        context, widget.animal.data.last.state.value!)
+                                        context, widget.animal.data.first.state.value!)
                                     : 'N/A ',
                                 textColor: theme.colorScheme.onSecondary,
                                 iconSize: 25,
