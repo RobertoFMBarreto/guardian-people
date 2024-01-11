@@ -24,6 +24,7 @@ class DeviceTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    print('Rebuild: ${device.data}');
     return Container(
       width: MediaQuery.of(context).size.width,
       height: maxHeight,

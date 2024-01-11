@@ -316,7 +316,7 @@ class _AnimalPageState extends State<AnimalPage> {
             if (!_isInterval)
               SliverPersistentHeader(
                 key: Key(
-                    "${_animal.animal.animalName.value}${_animal.data.last.battery}${_animal.data.last.temperature}${_animal.data.last.elevation}${_animal.data.last.state}$hasConnection${theme.brightness}"),
+                    "${_animal.animal.animalName.value}${_animal.data.first.battery}${_animal.data.first.temperature}${_animal.data.first.elevation}${_animal.data.first.state}$hasConnection${theme.brightness}"),
                 pinned: true,
                 delegate: SliverDeviceAppBar(
                   maxHeight: MediaQuery.of(context).size.height * 0.4,
@@ -460,13 +460,9 @@ class _AnimalPageState extends State<AnimalPage> {
                       onNewData: (AnimalLocationsCompanion newData) {
                         print("[NEW] $newData");
                         setState(() {
-                          if (_isInterval) {
-                            _animal.data.add(newData);
-                          } else {
-                            _animal.data.removeLast();
-                            _animal.data.add(newData);
-                          }
+                          _animal.data.insert(0, newData);
                         });
+                        print(_animal.data);
                       },
                     ),
                   ),
