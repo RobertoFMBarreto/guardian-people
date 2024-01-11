@@ -7,7 +7,6 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
-import 'package:guardian/models/db/drift/tables/Device/animal_activity.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';

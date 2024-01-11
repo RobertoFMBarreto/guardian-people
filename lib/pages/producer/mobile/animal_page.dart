@@ -458,11 +458,9 @@ class _AnimalPageState extends State<AnimalPage> {
                       animal: _animal,
                       isInterval: _isInterval,
                       onNewData: (AnimalLocationsCompanion newData) {
-                        print("[NEW] $newData");
                         setState(() {
                           _animal.data.insert(0, newData);
                         });
-                        print(_animal.data);
                       },
                     ),
                   ),
