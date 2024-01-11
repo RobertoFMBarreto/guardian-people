@@ -66,14 +66,14 @@ Future<AnimalLocationsCompanion> animalDataFromJson(Map<dynamic, dynamic> data, 
 }
 
 /// Method that allows to read json [data] that contains a device location data and parses it to an [AnimalLocationsCompanion] inserting it on the database in the process
-Future<void> animalActivityFromJson(Map<dynamic, dynamic> data, String idAnimal) async {
-  // await deleteAnimalActivity(data['id_data']).then(
+Future<void> activityFromJson(Map<dynamic, dynamic> data, String idAnimal) async {
+  // await deleteactivity(data['id_data']).then(
   //   (_) async =>
   await createAnimalActivity(
-    AnimalActivityCompanion(
-      activityDate: drift.Value(DateTime.parse(data['read_date'])),
-      animalDataActivityId: drift.Value(data['id_data']),
-      idAnimalActivity: drift.Value(idAnimal),
+    ActivityDataCompanion(
+      date: drift.Value(DateTime.parse(data['read_date'])),
+      idActivityData: drift.Value(data['id_data']),
+      idAnimal: drift.Value(idAnimal),
       activity: data['sensor_data'] != null
           ? drift.Value(data['sensor_data'])
           : const drift.Value.absent(),

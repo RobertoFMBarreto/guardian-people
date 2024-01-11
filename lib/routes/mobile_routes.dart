@@ -22,7 +22,7 @@ import 'package:guardian/pages/profile_page.dart';
 import 'package:guardian/pages/welcome_page.dart';
 
 Map<String, Widget Function(BuildContext)> mobileRoutes = {
-  '/': (context) => const WelcomePage(),
+  '/': (context) => const WelcomePage(), //
   '/login': (context) => const LoginPage(),
   '/profile': (context) => const ProfilePage(),
   '/admin': (context) => const AdminHomePage(),

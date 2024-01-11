@@ -3186,25 +3186,25 @@ class AlertAnimalsCompanion extends UpdateCompanion<AlertAnimal> {
   }
 }
 
-class $AnimalActivityTable extends AnimalActivity
-    with TableInfo<$AnimalActivityTable, AnimalActivityData> {
+class $ActivityDataTable extends ActivityData
+    with TableInfo<$ActivityDataTable, ActivityDataData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $AnimalActivityTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _animalDataActivityIdMeta =
-      const VerificationMeta('animalDataActivityId');
+  $ActivityDataTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idActivityDataMeta =
+      const VerificationMeta('idActivityData');
   @override
-  late final GeneratedColumn<String> animalDataActivityId =
-      GeneratedColumn<String>('animal_data_activity_id', aliasedName, false,
-          type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _idAnimalActivityMeta =
-      const VerificationMeta('idAnimalActivity');
+  late final GeneratedColumn<String> idActivityData = GeneratedColumn<String>(
+      'id_activity_data', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _idAnimalMeta =
+      const VerificationMeta('idAnimal');
   @override
-  late final GeneratedColumn<String> idAnimalActivity = GeneratedColumn<String>(
-      'id_animal_activity', aliasedName, true,
+  late final GeneratedColumn<String> idAnimal = GeneratedColumn<String>(
+      'id_animal', aliasedName, false,
       type: DriftSqlType.string,
-      requiredDuringInsert: false,
+      requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES animal (id_animal)'));
   static const VerificationMeta _activityMeta =
@@ -3213,38 +3213,37 @@ class $AnimalActivityTable extends AnimalActivity
   late final GeneratedColumn<String> activity = GeneratedColumn<String>(
       'activity', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _activityDateMeta =
-      const VerificationMeta('activityDate');
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
-  late final GeneratedColumn<DateTime> activityDate = GeneratedColumn<DateTime>(
-      'activity_date', aliasedName, false,
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+      'date', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [animalDataActivityId, idAnimalActivity, activity, activityDate];
+      [idActivityData, idAnimal, activity, date];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'animal_activity';
+  static const String $name = 'activity_data';
   @override
-  VerificationContext validateIntegrity(Insertable<AnimalActivityData> instance,
+  VerificationContext validateIntegrity(Insertable<ActivityDataData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('animal_data_activity_id')) {
+    if (data.containsKey('id_activity_data')) {
       context.handle(
-          _animalDataActivityIdMeta,
-          animalDataActivityId.isAcceptableOrUnknown(
-              data['animal_data_activity_id']!, _animalDataActivityIdMeta));
+          _idActivityDataMeta,
+          idActivityData.isAcceptableOrUnknown(
+              data['id_activity_data']!, _idActivityDataMeta));
     } else if (isInserting) {
-      context.missing(_animalDataActivityIdMeta);
+      context.missing(_idActivityDataMeta);
     }
-    if (data.containsKey('id_animal_activity')) {
-      context.handle(
-          _idAnimalActivityMeta,
-          idAnimalActivity.isAcceptableOrUnknown(
-              data['id_animal_activity']!, _idAnimalActivityMeta));
+    if (data.containsKey('id_animal')) {
+      context.handle(_idAnimalMeta,
+          idAnimal.isAcceptableOrUnknown(data['id_animal']!, _idAnimalMeta));
+    } else if (isInserting) {
+      context.missing(_idAnimalMeta);
     }
     if (data.containsKey('activity')) {
       context.handle(_activityMeta,
@@ -3252,184 +3251,173 @@ class $AnimalActivityTable extends AnimalActivity
     } else if (isInserting) {
       context.missing(_activityMeta);
     }
-    if (data.containsKey('activity_date')) {
+    if (data.containsKey('date')) {
       context.handle(
-          _activityDateMeta,
-          activityDate.isAcceptableOrUnknown(
-              data['activity_date']!, _activityDateMeta));
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
     } else if (isInserting) {
-      context.missing(_activityDateMeta);
+      context.missing(_dateMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {animalDataActivityId};
+  Set<GeneratedColumn> get $primaryKey => {idActivityData};
   @override
-  AnimalActivityData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ActivityDataData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return AnimalActivityData(
-      animalDataActivityId: attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}animal_data_activity_id'])!,
-      idAnimalActivity: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}id_animal_activity']),
+    return ActivityDataData(
+      idActivityData: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}id_activity_data'])!,
+      idAnimal: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id_animal'])!,
       activity: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
-      activityDate: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}activity_date'])!,
+      date: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
     );
   }
 
   @override
-  $AnimalActivityTable createAlias(String alias) {
-    return $AnimalActivityTable(attachedDatabase, alias);
+  $ActivityDataTable createAlias(String alias) {
+    return $ActivityDataTable(attachedDatabase, alias);
   }
 }
 
-class AnimalActivityData extends DataClass
-    implements Insertable<AnimalActivityData> {
-  final String animalDataActivityId;
-  final String? idAnimalActivity;
+class ActivityDataData extends DataClass
+    implements Insertable<ActivityDataData> {
+  final String idActivityData;
+  final String idAnimal;
   final String activity;
-  final DateTime activityDate;
-  const AnimalActivityData(
-      {required this.animalDataActivityId,
-      this.idAnimalActivity,
+  final DateTime date;
+  const ActivityDataData(
+      {required this.idActivityData,
+      required this.idAnimal,
       required this.activity,
-      required this.activityDate});
+      required this.date});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['animal_data_activity_id'] = Variable<String>(animalDataActivityId);
-    if (!nullToAbsent || idAnimalActivity != null) {
-      map['id_animal_activity'] = Variable<String>(idAnimalActivity);
-    }
+    map['id_activity_data'] = Variable<String>(idActivityData);
+    map['id_animal'] = Variable<String>(idAnimal);
     map['activity'] = Variable<String>(activity);
-    map['activity_date'] = Variable<DateTime>(activityDate);
+    map['date'] = Variable<DateTime>(date);
     return map;
   }
 
-  AnimalActivityCompanion toCompanion(bool nullToAbsent) {
-    return AnimalActivityCompanion(
-      animalDataActivityId: Value(animalDataActivityId),
-      idAnimalActivity: idAnimalActivity == null && nullToAbsent
-          ? const Value.absent()
-          : Value(idAnimalActivity),
+  ActivityDataCompanion toCompanion(bool nullToAbsent) {
+    return ActivityDataCompanion(
+      idActivityData: Value(idActivityData),
+      idAnimal: Value(idAnimal),
       activity: Value(activity),
-      activityDate: Value(activityDate),
+      date: Value(date),
     );
   }
 
-  factory AnimalActivityData.fromJson(Map<String, dynamic> json,
+  factory ActivityDataData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return AnimalActivityData(
-      animalDataActivityId:
-          serializer.fromJson<String>(json['animalDataActivityId']),
-      idAnimalActivity: serializer.fromJson<String?>(json['idAnimalActivity']),
+    return ActivityDataData(
+      idActivityData: serializer.fromJson<String>(json['idActivityData']),
+      idAnimal: serializer.fromJson<String>(json['idAnimal']),
       activity: serializer.fromJson<String>(json['activity']),
-      activityDate: serializer.fromJson<DateTime>(json['activityDate']),
+      date: serializer.fromJson<DateTime>(json['date']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'animalDataActivityId': serializer.toJson<String>(animalDataActivityId),
-      'idAnimalActivity': serializer.toJson<String?>(idAnimalActivity),
+      'idActivityData': serializer.toJson<String>(idActivityData),
+      'idAnimal': serializer.toJson<String>(idAnimal),
       'activity': serializer.toJson<String>(activity),
-      'activityDate': serializer.toJson<DateTime>(activityDate),
+      'date': serializer.toJson<DateTime>(date),
     };
   }
 
-  AnimalActivityData copyWith(
-          {String? animalDataActivityId,
-          Value<String?> idAnimalActivity = const Value.absent(),
+  ActivityDataData copyWith(
+          {String? idActivityData,
+          String? idAnimal,
           String? activity,
-          DateTime? activityDate}) =>
-      AnimalActivityData(
-        animalDataActivityId: animalDataActivityId ?? this.animalDataActivityId,
-        idAnimalActivity: idAnimalActivity.present
-            ? idAnimalActivity.value
-            : this.idAnimalActivity,
+          DateTime? date}) =>
+      ActivityDataData(
+        idActivityData: idActivityData ?? this.idActivityData,
+        idAnimal: idAnimal ?? this.idAnimal,
         activity: activity ?? this.activity,
-        activityDate: activityDate ?? this.activityDate,
+        date: date ?? this.date,
       );
   @override
   String toString() {
-    return (StringBuffer('AnimalActivityData(')
-          ..write('animalDataActivityId: $animalDataActivityId, ')
-          ..write('idAnimalActivity: $idAnimalActivity, ')
+    return (StringBuffer('ActivityDataData(')
+          ..write('idActivityData: $idActivityData, ')
+          ..write('idAnimal: $idAnimal, ')
           ..write('activity: $activity, ')
-          ..write('activityDate: $activityDate')
+          ..write('date: $date')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      animalDataActivityId, idAnimalActivity, activity, activityDate);
+  int get hashCode => Object.hash(idActivityData, idAnimal, activity, date);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is AnimalActivityData &&
-          other.animalDataActivityId == this.animalDataActivityId &&
-          other.idAnimalActivity == this.idAnimalActivity &&
+      (other is ActivityDataData &&
+          other.idActivityData == this.idActivityData &&
+          other.idAnimal == this.idAnimal &&
           other.activity == this.activity &&
-          other.activityDate == this.activityDate);
+          other.date == this.date);
 }
 
-class AnimalActivityCompanion extends UpdateCompanion<AnimalActivityData> {
-  final Value<String> animalDataActivityId;
-  final Value<String?> idAnimalActivity;
+class ActivityDataCompanion extends UpdateCompanion<ActivityDataData> {
+  final Value<String> idActivityData;
+  final Value<String> idAnimal;
   final Value<String> activity;
-  final Value<DateTime> activityDate;
+  final Value<DateTime> date;
   final Value<int> rowid;
-  const AnimalActivityCompanion({
-    this.animalDataActivityId = const Value.absent(),
-    this.idAnimalActivity = const Value.absent(),
+  const ActivityDataCompanion({
+    this.idActivityData = const Value.absent(),
+    this.idAnimal = const Value.absent(),
     this.activity = const Value.absent(),
-    this.activityDate = const Value.absent(),
+    this.date = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  AnimalActivityCompanion.insert({
-    required String animalDataActivityId,
-    this.idAnimalActivity = const Value.absent(),
+  ActivityDataCompanion.insert({
+    required String idActivityData,
+    required String idAnimal,
     required String activity,
-    required DateTime activityDate,
+    required DateTime date,
     this.rowid = const Value.absent(),
-  })  : animalDataActivityId = Value(animalDataActivityId),
+  })  : idActivityData = Value(idActivityData),
+        idAnimal = Value(idAnimal),
         activity = Value(activity),
-        activityDate = Value(activityDate);
-  static Insertable<AnimalActivityData> custom({
-    Expression<String>? animalDataActivityId,
-    Expression<String>? idAnimalActivity,
+        date = Value(date);
+  static Insertable<ActivityDataData> custom({
+    Expression<String>? idActivityData,
+    Expression<String>? idAnimal,
     Expression<String>? activity,
-    Expression<DateTime>? activityDate,
+    Expression<DateTime>? date,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (animalDataActivityId != null)
-        'animal_data_activity_id': animalDataActivityId,
-      if (idAnimalActivity != null) 'id_animal_activity': idAnimalActivity,
+      if (idActivityData != null) 'id_activity_data': idActivityData,
+      if (idAnimal != null) 'id_animal': idAnimal,
       if (activity != null) 'activity': activity,
-      if (activityDate != null) 'activity_date': activityDate,
+      if (date != null) 'date': date,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  AnimalActivityCompanion copyWith(
-      {Value<String>? animalDataActivityId,
-      Value<String?>? idAnimalActivity,
+  ActivityDataCompanion copyWith(
+      {Value<String>? idActivityData,
+      Value<String>? idAnimal,
       Value<String>? activity,
-      Value<DateTime>? activityDate,
+      Value<DateTime>? date,
       Value<int>? rowid}) {
-    return AnimalActivityCompanion(
-      animalDataActivityId: animalDataActivityId ?? this.animalDataActivityId,
-      idAnimalActivity: idAnimalActivity ?? this.idAnimalActivity,
+    return ActivityDataCompanion(
+      idActivityData: idActivityData ?? this.idActivityData,
+      idAnimal: idAnimal ?? this.idAnimal,
       activity: activity ?? this.activity,
-      activityDate: activityDate ?? this.activityDate,
+      date: date ?? this.date,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3437,18 +3425,17 @@ class AnimalActivityCompanion extends UpdateCompanion<AnimalActivityData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (animalDataActivityId.present) {
-      map['animal_data_activity_id'] =
-          Variable<String>(animalDataActivityId.value);
+    if (idActivityData.present) {
+      map['id_activity_data'] = Variable<String>(idActivityData.value);
     }
-    if (idAnimalActivity.present) {
-      map['id_animal_activity'] = Variable<String>(idAnimalActivity.value);
+    if (idAnimal.present) {
+      map['id_animal'] = Variable<String>(idAnimal.value);
     }
     if (activity.present) {
       map['activity'] = Variable<String>(activity.value);
     }
-    if (activityDate.present) {
-      map['activity_date'] = Variable<DateTime>(activityDate.value);
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -3458,11 +3445,11 @@ class AnimalActivityCompanion extends UpdateCompanion<AnimalActivityData> {
 
   @override
   String toString() {
-    return (StringBuffer('AnimalActivityCompanion(')
-          ..write('animalDataActivityId: $animalDataActivityId, ')
-          ..write('idAnimalActivity: $idAnimalActivity, ')
+    return (StringBuffer('ActivityDataCompanion(')
+          ..write('idActivityData: $idActivityData, ')
+          ..write('idAnimal: $idAnimal, ')
           ..write('activity: $activity, ')
-          ..write('activityDate: $activityDate, ')
+          ..write('date: $date, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3483,7 +3470,7 @@ abstract class _$GuardianDb extends GeneratedDatabase {
   late final $AlertNotificationTable alertNotification =
       $AlertNotificationTable(this);
   late final $AlertAnimalsTable alertAnimals = $AlertAnimalsTable(this);
-  late final $AnimalActivityTable animalActivity = $AnimalActivityTable(this);
+  late final $ActivityDataTable activityData = $ActivityDataTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3499,6 +3486,6 @@ abstract class _$GuardianDb extends GeneratedDatabase {
         userAlert,
         alertNotification,
         alertAnimals,
-        animalActivity
+        activityData
       ];
 }

@@ -1,16 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:guardian/models/db/drift/tables/animal.dart';
 
-/// This class represents the AnimalActivity database table
-///
-/// [animalDataActivityId] is the primary key
-///
-/// [idAnimalActivity] relates with the table [Animal] on its primary key
-class AnimalActivity extends Table {
-  TextColumn get animalDataActivityId => text()();
-  TextColumn get idAnimalActivity => text().references(Animal, #idAnimal).nullable()();
+class ActivityData extends Table {
+  TextColumn get idActivityData => text()();
+  TextColumn get idAnimal => text().references(Animal, #idAnimal)();
   TextColumn get activity => text()();
-  DateTimeColumn get activityDate => dateTime()();
+  DateTimeColumn get date => dateTime()();
+
   @override
-  Set<Column> get primaryKey => {animalDataActivityId};
+  Set<Column> get primaryKey => {idActivityData};
 }

@@ -89,17 +89,19 @@ Future<String?> getUid(BuildContext context, {bool autoLogin = true}) async {
     return idUser;
   } else {
     if (autoLogin) {
-      await clearUserSession().then((_) async => await deleteEverything().then(
-            (_) {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.pushReplacement(
-                context,
-                CustomPageRouter(
-                  page: '/login',
-                ),
-              );
-            },
-          ));
+      await clearUserSession().then(
+        (_) async => await deleteEverything().then(
+          (_) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.pushReplacement(
+              context,
+              CustomPageRouter(
+                page: '/login',
+              ),
+            );
+          },
+        ),
+      );
     }
   }
   return null;

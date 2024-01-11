@@ -54,7 +54,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   ///
   /// Resets the list to prevent duplicates
   Future<void> _getDeviceData() async {
-    await AnimalRequests.getAnimalActivityIntervalFromApi(
+    await AnimalRequests.getAnimalDataIntervalFromApi(
       context: context,
       startDate: _selectedDate,
       endDate: DateTime(
@@ -94,7 +94,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   Future<void> _getDeviceActivity() async {
     await _getAnimalLocalActivity().then(
       (value) async => {
-        await AnimalRequests.getAnimalActivityIntervalFromApi(
+        await AnimalRequests.getactivityIntervalFromApi(
           context: context,
           startDate: _selectedDate,
           endDate: DateTime(

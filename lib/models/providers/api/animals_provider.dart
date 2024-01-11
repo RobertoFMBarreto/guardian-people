@@ -5,6 +5,7 @@ import 'package:guardian/models/providers/session_provider.dart';
 import 'package:guardian/settings/app_settings.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 
 /// This class is the provider of animals from the guardian api
 class AnimalProvider {
@@ -74,8 +75,7 @@ class AnimalProvider {
   }
 
   /// Method that calls the api to get all animal activity [idAnimal] between [startDate] and [endDate]
-  static Future<Response> getAnimalActivity(
-      String idAnimal, DateTime startDate, DateTime endDate) async {
+  static Future<Response> getactivity(String idAnimal, DateTime startDate, DateTime endDate) async {
     String? token = await getToken();
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
@@ -83,10 +83,15 @@ class AnimalProvider {
     };
     var url = Uri.http(kGDapiServerUrl, '/api/v1/animals/$idAnimal/activity');
     try {
+      DateFormat formatterTime = DateFormat.Hms();
       var response = await post(url,
           headers: headers,
-          body: jsonEncode(
-              {"startDate": startDate.toIso8601String(), "endDate": endDate.toIso8601String()}));
+          body: jsonEncode({
+            "startDate":
+                "${startDate.year}/${startDate.month < 10 ? '0' : ''}${startDate.month}/${startDate.day < 10 ? '0' : ''}${startDate.day} ${formatterTime.format(startDate)}",
+            "endDate":
+                "${endDate.year}/${endDate.month < 10 ? '0' : ''}${endDate.month}/${endDate.day < 10 ? '0' : ''}${endDate.day} ${formatterTime.format(endDate)}"
+          }));
 
       return response;
     } on SocketException catch (e) {
