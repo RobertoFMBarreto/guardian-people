@@ -92,7 +92,7 @@ class _AnimalActivityWidgetState extends State<AnimalActivityWidget> {
   Future<void> _getDeviceActivity() async {
     await _getAnimalLocalActivity().then(
       (value) async => {
-        await AnimalRequests.getAnimalActivityIntervalFromApi(
+        await AnimalRequests.getActivityIntervalFromApi(
           context: context,
           startDate: _selectedDate,
           endDate: DateTime(

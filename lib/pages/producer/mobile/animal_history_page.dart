@@ -94,7 +94,7 @@ class _AnimalHistoryPageState extends State<AnimalHistoryPage> {
   Future<void> _getDeviceActivity() async {
     await _getAnimalLocalActivity().then(
       (value) async => {
-        await AnimalRequests.getactivityIntervalFromApi(
+        await AnimalRequests.getActivityIntervalFromApi(
           context: context,
           startDate: _selectedDate,
           endDate: DateTime(
