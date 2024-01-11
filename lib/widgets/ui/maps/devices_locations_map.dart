@@ -27,6 +27,7 @@ class AnimalsLocationsMap extends StatefulWidget {
   final bool centerOnPoly;
   final bool centerOnDevice;
   final GlobalKey parent;
+  final Function(Animal)? onSelectAnimal;
   const AnimalsLocationsMap({
     super.key,
     required this.showCurrentPosition,
@@ -36,6 +37,7 @@ class AnimalsLocationsMap extends StatefulWidget {
     this.centerOnDevice = false,
     this.reloadMap,
     required this.parent,
+    this.onSelectAnimal,
   });
 
   @override
@@ -198,17 +200,23 @@ class _AnimalsLocationsMapState extends State<AnimalsLocationsMap> {
                             .first;
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              CustomPageRouter(
-                                page: '/producer/device',
-                                settings: RouteSettings(
-                                  arguments: {
-                                    'animal': animal,
-                                  },
+                            if (kIsWeb || isBigScreen) {
+                              if (widget.onSelectAnimal != null) {
+                                widget.onSelectAnimal!(animal);
+                              }
+                            } else {
+                              Navigator.push(
+                                context,
+                                CustomPageRouter(
+                                  page: '/producer/device',
+                                  settings: RouteSettings(
+                                    arguments: {
+                                      'animal': animal,
+                                    },
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(

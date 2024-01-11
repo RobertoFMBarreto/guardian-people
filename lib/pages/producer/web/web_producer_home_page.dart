@@ -262,6 +262,9 @@ class _WebProducerHomePageState extends State<WebProducerHomePage> {
                           showCurrentPosition: true,
                           animals: _animals,
                           fences: _fences,
+                          onSelectAnimal: (animal) {
+                            widget.onSelectAnimal(animal);
+                          },
                         ),
                       ),
                     ),

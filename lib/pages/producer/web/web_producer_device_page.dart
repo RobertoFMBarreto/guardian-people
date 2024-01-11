@@ -7,11 +7,13 @@ import 'package:guardian/models/db/drift/operations/animal_operations.dart';
 import 'package:guardian/models/db/drift/operations/animal_data_operations.dart';
 import 'package:guardian/models/db/drift/query_models/animal.dart';
 import 'package:get/get.dart';
+import 'package:guardian/models/db/drift/tables/Device/animal_activity.dart';
 import 'package:guardian/models/providers/api/parsers/animals_parsers.dart';
 import 'package:guardian/models/providers/api/rabbit_mq_provider.dart';
 import 'package:guardian/models/providers/api/requests/animals_requests.dart';
 import 'package:guardian/models/providers/session_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:guardian/pages/producer/web/widget/device_activity.dart';
 import 'package:guardian/pages/producer/web/widget/device_settings.dart';
 import 'package:guardian/settings/colors.dart';
 import 'package:guardian/widgets/inputs/search_filter_input.dart';
@@ -43,9 +45,11 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   DateTime? _endDate;
 
   List<Animal> _animals = [];
+  List<Animal> _animalsLastData = [];
 
   bool _isInterval = false;
   bool _showSettings = false;
+  bool _showActivity = false;
   bool _isDevicesExpanded = true;
   double _currentZoom = 17;
   String _searchString = '';
@@ -96,6 +100,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   Future<void> _setupAnimals() async {
     await _loadAnimals();
     await _loadAnimalData();
+    await _loadAnimalsLastData();
   }
 
   /// Method that does the setup of filters based on de database values
@@ -140,6 +145,26 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                 });
               }
             });
+          });
+    });
+  }
+
+  /// Method that loads the animals last data into the [_animals] list
+  ///
+  /// 1. load local animals
+  /// 2. add to list
+  /// 3. load api animals
+  Future<void> _loadAnimalsLastData() async {
+    await filterAnimals().then((_) async {
+      await AnimalRequests.getAnimalsFromApiWithLastData(
+          context: context,
+          onFailed: (statusCode) {
+            AppLocalizations localizations = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(localizations.server_error)));
+          },
+          onDataGotten: () async {
+            await filterAnimals();
           });
     });
   }
@@ -210,7 +235,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
       );
     } else {
       // get last location
-      if (_selectedAnimal!.data.isEmpty) {
+      if (_selectedAnimal != null) {
         await _getLastLocation().then((_) async {
           if (mounted) {
             setState(() {
@@ -227,8 +252,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(localizations.server_error)));
                 },
-                onDataGotten: () {
-                  _getLastLocation();
+                onDataGotten: () async {
+                  await _getLastLocation();
                 });
           }
         });
@@ -239,12 +264,11 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
   /// Method that allows to load animal data
   Future<void> _loadAnimalData({setstate = true}) async {
     await _loadIntervalData(setstate: setstate).then((value) async {
-      if (_endDate == null) {
+      if (_endDate == null && _selectedAnimal != null) {
         // make realtime request
         if (kDebugMode) {
           print('Start Realtime for ${_selectedAnimal!.animal.idAnimal.value}');
         }
-
         await AnimalRequests.startRealtimeStreaming(
           idAnimal: _selectedAnimal!.animal.idAnimal.value,
           context: context,
@@ -272,7 +296,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
 
   /// Method that filters the animals and loads them into the [_animals] list
   Future<void> filterAnimals() async {
-    await getUserAnimalsFiltered(
+    await getUserAnimalsFilteredLastData(
       batteryRangeValues: _batteryRangeValues,
       elevationRangeValues: _elevationRangeValues,
       dtUsageRangeValues: _dtUsageRangeValues,
@@ -281,8 +305,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
     ).then((filteredAnimals) {
       if (mounted) {
         setState(() {
-          _animals = [];
-          _animals.addAll(filteredAnimals);
+          _animalsLastData = [];
+          _animalsLastData.addAll(filteredAnimals);
         });
       }
     });
@@ -348,30 +372,36 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                         ],
                                       ),
                                     ),
-                                    if (_selectedAnimal != null && !_showSettings)
+                                    if (_selectedAnimal != null)
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Padding(
+                                          if (!_showSettings)
+                                            Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                               child: GestureDetector(
                                                 onTap: () {
                                                   setState(() {
                                                     _showSettings = !_showSettings;
+                                                    _showActivity = false;
                                                   });
                                                 },
-                                                child: Row(
-                                                  children: [
-                                                    const Icon(Icons.settings),
-                                                    Text(localizations
-                                                        .device_settings.capitalizeFirst!)
-                                                  ],
-                                                ),
+                                                child: const Icon(Icons.settings),
                                               ),
                                             ),
-                                          ),
+                                          if (!_showActivity)
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _showActivity = !_showActivity;
+                                                    _showSettings = false;
+                                                  });
+                                                },
+                                                child: const Icon(Icons.analytics_outlined),
+                                              ),
+                                            ),
                                         ],
                                       )
                                   ],
@@ -396,13 +426,17 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                             ),
                                             Expanded(
                                               child: ListView.builder(
-                                                  itemCount: _animals.length,
+                                                  itemCount: _animalsLastData.length,
                                                   itemBuilder: (context, index) {
                                                     return AnimalItem(
-                                                      animal: _animals[index],
-                                                      deviceStatus: _animals[index].deviceStatus!,
+                                                      animal: _animalsLastData[index],
+                                                      deviceStatus:
+                                                          _animalsLastData[index].deviceStatus!,
                                                       isSelected: _selectedAnimal != null &&
-                                                          _animals[index].animal.idAnimal.value ==
+                                                          _animalsLastData[index]
+                                                                  .animal
+                                                                  .idAnimal
+                                                                  .value ==
                                                               _selectedAnimal!
                                                                   .animal.idAnimal.value,
                                                       onTap: () async {
@@ -419,7 +453,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                         if (_selectedAnimal != null &&
                                                             _selectedAnimal!
                                                                     .animal.idAnimal.value ==
-                                                                _animals[index]
+                                                                _animalsLastData[index]
                                                                     .animal
                                                                     .idAnimal
                                                                     .value) {
@@ -429,7 +463,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                                           });
                                                         } else {
                                                           setState(() {
-                                                            _selectedAnimal = _animals[index];
+                                                            _selectedAnimal =
+                                                                _animalsLastData[index];
                                                           });
                                                           if (_endDate == null ||
                                                               _startDate
@@ -510,10 +545,12 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       ),
                     ),
                   ),
-                  if (_selectedAnimal != null && _showSettings && _isDevicesExpanded)
+                  if (_selectedAnimal != null &&
+                      _isDevicesExpanded &&
+                      (_showSettings || _showActivity))
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 20, right: 20),
+                        padding: const EdgeInsets.only(bottom: 20),
                         child: Column(
                           children: [
                             Padding(
@@ -538,6 +575,7 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                           onPressed: () {
                                             setState(() {
                                               _showSettings = false;
+                                              _showActivity = false;
                                             });
                                           },
                                           icon: const Icon(Icons.close),
@@ -548,34 +586,41 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                 ],
                               ),
                             ),
-                            Expanded(
-                              child: DeviceSettings(
-                                key: Key(_selectedAnimal!.animal.idAnimal.value),
-                                animal: _selectedAnimal!,
-                                onColorChanged: (color) async {
-                                  setState(() {
-                                    _selectedAnimal = Animal(
-                                      animal: _selectedAnimal!.animal.copyWith(
-                                        animalColor: drift.Value(color),
-                                      ),
-                                      data: _selectedAnimal!.data,
-                                    );
-                                  });
-                                  await _loadAnimals();
-                                },
-                                onNameChanged: (name) async {
-                                  setState(() {
-                                    _selectedAnimal = Animal(
-                                      animal: _selectedAnimal!.animal.copyWith(
-                                        animalName: drift.Value(name),
-                                      ),
-                                      data: _selectedAnimal!.data,
-                                    );
-                                  });
-                                  await _loadAnimals();
-                                },
+                            if (_showSettings)
+                              Expanded(
+                                child: DeviceSettings(
+                                  key: Key(_selectedAnimal!.animal.idAnimal.value),
+                                  animal: _selectedAnimal!,
+                                  onColorChanged: (color) async {
+                                    setState(() {
+                                      _selectedAnimal = Animal(
+                                        animal: _selectedAnimal!.animal.copyWith(
+                                          animalColor: drift.Value(color),
+                                        ),
+                                        data: _selectedAnimal!.data,
+                                      );
+                                    });
+                                    await _loadAnimals();
+                                  },
+                                  onNameChanged: (name) async {
+                                    setState(() {
+                                      _selectedAnimal = Animal(
+                                        animal: _selectedAnimal!.animal.copyWith(
+                                          animalName: drift.Value(name),
+                                        ),
+                                        data: _selectedAnimal!.data,
+                                      );
+                                    });
+                                    await _loadAnimals();
+                                  },
+                                ),
                               ),
-                            ),
+                            if (_showActivity)
+                              Expanded(
+                                child: AnimalActivityWidget(
+                                  animal: _selectedAnimal!,
+                                ),
+                              )
                           ],
                         ),
                       ),
@@ -586,6 +631,8 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                       onPressed: () {
                         setState(() {
                           _isDevicesExpanded = !_isDevicesExpanded;
+                          _showActivity = false;
+                          _showSettings = false;
                         });
                       },
                       icon: Icon(
@@ -636,6 +683,11 @@ class _WebProducerDevicePageState extends State<WebProducerDevicePage> {
                                         animals: _animals,
                                         fences: _fences,
                                         parent: _firstItemDataKey,
+                                        onSelectAnimal: (selectAnimal) {
+                                          setState(() {
+                                            _selectedAnimal = selectAnimal;
+                                          });
+                                        },
                                       );
                               }
                             }),

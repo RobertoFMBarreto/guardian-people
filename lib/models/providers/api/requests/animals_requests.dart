@@ -262,6 +262,7 @@ class AnimalRequests {
         //   }
         // });
         for (var dt in body) {
+          print(dt);
           await animalActivityFromJson(dt, idAnimal);
         }
 

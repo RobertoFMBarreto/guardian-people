@@ -28,7 +28,7 @@ import 'package:guardian/models/providers/caching/caching_stub.dart'
     as caching_helper;
 
 // global variable that stores the device connection state
-late bool hasConnection;
+bool hasConnection = true;
 // global variable that stores the snackbar state
 bool isSnackbarActive = false;
 // global variable that is true if te screen is big enough for tablet mode
